@@ -91,11 +91,6 @@ router.post("/agreement", async (req, res) => {
     console.error("Gemini Agreement Error:", err.message);
     res.status(500).json({ error: "Failed to analyze agreement" });
   }
-
-} catch (err) {
-  console.error("Gemini Agreement Error:", err.message);
-  res.status(500).json({ error: "Failed to analyze agreement" });
-}
 });
 
 /* ---------------- CASE ANALYSIS (Legal Issue) ---------------- */

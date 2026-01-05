@@ -76,12 +76,4 @@ export default function Agreements() {
       </div>
     </main>
   );
-  {
-    items.map((item, i) => (
-      <li key={i}>{item}</li>
-    ))
-  }
-      </ul >
-    </div >
-  );
 }
