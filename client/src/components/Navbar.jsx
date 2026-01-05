@@ -65,16 +65,16 @@ export default function Navbar() {
               </button>
             </div>
           ) : (
-            <div className="flex gap-3">
+            <div className="flex gap-2">
               <Link
                 to="/register"
-                className="px-6 py-1.5 rounded-full text-gray-600 font-semibold text-base hover:bg-gray-100 transition"
+                className="hidden sm:inline-block px-4 py-1.5 rounded-full text-gray-600 font-semibold text-sm hover:bg-gray-100 transition"
               >
                 Join now
               </Link>
               <Link
                 to="/login"
-                className="px-6 py-1.5 rounded-full text-blue-600 border border-blue-600 font-semibold text-base hover:bg-blue-50 transition"
+                className="px-4 py-1.5 rounded-full text-blue-600 border border-blue-600 font-semibold text-sm hover:bg-blue-50 transition"
               >
                 Sign in
               </Link>

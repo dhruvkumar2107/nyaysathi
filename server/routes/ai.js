@@ -72,46 +72,30 @@ router.post("/agreement", async (req, res) => {
       Analyze this legal agreement text:
       "${text.substring(0, 10000)}"
       
-      Identify:
-      1. Risks (Loophole, High liability)
-      2. Clauses (Payment, Jurisdiction, Termination)
-      3. Red Flags (Unfair terms)
+      Provide a comprehensive professional legal analysis in Markdown format.
+      Include sections for:
+      - Key Observations
+      - Potential Risks
+      - Notable Clauses
+      - Actionable Advice
       
-      Return JSON with keys: 
-      "risks" (array of strings),
-      "clauses" (array of strings),
-      "redFlags" (array of strings).
-      
-      Strict JSON only.
+      Do NOT return JSON. Return only the Markdown text.
     `;
 
     const result = await model.generateContent(prompt);
     const response = await result.response;
-    const rawText = response.text();
+    const analysis = response.text();
 
-    let cleaned = rawText.replace(/```json/g, "").replace(/```/g, "").trim();
-    const firstBrace = cleaned.indexOf('{');
-    const lastBrace = cleaned.lastIndexOf('}');
-    if (firstBrace !== -1 && lastBrace !== -1) {
-      cleaned = cleaned.substring(firstBrace, lastBrace + 1);
-    }
-
-    try {
-      const json = JSON.parse(cleaned);
-      res.json(json);
-    } catch (e) {
-      // Fallback if strict JSON fails
-      res.json({
-        risks: ["Could not parse specific risks."],
-        clauses: ["Analysis completed but formatting failed."],
-        redFlags: ["Please review manually."]
-      });
-    }
-
+    res.json({ analysis });
   } catch (err) {
     console.error("Gemini Agreement Error:", err.message);
     res.status(500).json({ error: "Failed to analyze agreement" });
   }
+
+} catch (err) {
+  console.error("Gemini Agreement Error:", err.message);
+  res.status(500).json({ error: "Failed to analyze agreement" });
+}
 });
 
 /* ---------------- CASE ANALYSIS (Legal Issue) ---------------- */

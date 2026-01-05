@@ -1,5 +1,6 @@
 import { useState } from "react";
 import axios from "axios";
+import ReactMarkdown from 'react-markdown';
 
 export default function Agreements() {
   const [text, setText] = useState("");
@@ -18,7 +19,7 @@ export default function Agreements() {
     try {
       const res = await axios.post("/api/ai/agreement", { text });
 
-      // The AI route returns structured data { risks, clauses, redFlags }
+      // The AI route now returns { analysis: "markdown string" }
       setResult(res.data);
     } catch (err) {
       console.error(err);
@@ -35,8 +36,7 @@ export default function Agreements() {
           Agreement Analyzer
         </h1>
         <p className="text-gray-500 mb-8 max-w-2xl">
-          Paste your agreement text below and let AI highlight risks, clauses,
-          and red flags.
+          Paste your agreement text below and let AI provide a professional analysis.
         </p>
 
         {/* INPUT AREA */}
@@ -66,51 +66,22 @@ export default function Agreements() {
 
         {/* RESULTS */}
         {result && (
-          <div className="mt-10 grid md:grid-cols-3 gap-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
-            <ResultCard
-              title="⚠️ Risks"
-              items={result.risks}
-              titleColor="text-red-600"
-              bgColor="bg-red-50"
-              borderColor="border-red-100"
-            />
-            <ResultCard
-              title="📄 Important Clauses"
-              items={result.clauses}
-              titleColor="text-blue-600"
-              bgColor="bg-blue-50"
-              borderColor="border-blue-100"
-            />
-            <ResultCard
-              title="🚩 Red Flags"
-              items={result.redFlags}
-              titleColor="text-amber-600"
-              bgColor="bg-amber-50"
-              borderColor="border-amber-100"
-            />
+          <div className="mt-10 bg-white border border-gray-200 rounded-2xl p-8 shadow-sm animate-in fade-in slide-in-from-bottom-4 duration-500">
+            <h2 className="text-2xl font-bold text-gray-900 mb-6 border-b border-gray-100 pb-4">Analysis Report</h2>
+            <div className="prose prose-blue max-w-none text-gray-700">
+              <ReactMarkdown>{result.analysis}</ReactMarkdown>
+            </div>
           </div>
         )}
       </div>
     </main>
   );
-}
-
-/* ---------------- COMPONENT ---------------- */
-
-function ResultCard({ title, items, titleColor, bgColor, borderColor }) {
-  return (
-    <div
-      className={`bg-white border ${borderColor} rounded-2xl p-6 shadow-sm`}
-    >
-      <h3 className={`text-lg font-bold mb-4 ${titleColor} flex items-center gap-2`}>{title}</h3>
-      <ul className="space-y-3 text-sm text-gray-600">
-        {items.map((item, i) => (
-          <li key={i} className="flex gap-3 items-start">
-            <span className={`mt-1 w-2 h-2 rounded-full flex-shrink-0 ${titleColor.replace('text', 'bg')}`}></span>
-            <span className="leading-relaxed">{item}</span>
-          </li>
-        ))}
-      </ul>
-    </div>
+  {
+    items.map((item, i) => (
+      <li key={i}>{item}</li>
+    ))
+  }
+      </ul >
+    </div >
   );
 }
