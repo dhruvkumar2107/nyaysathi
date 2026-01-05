@@ -95,8 +95,12 @@ export default function Nearby() {
   const fetchNearbyData = async (lat, lon) => {
     try {
       setLoading(true);
-      // Construct URL with query params
-      let url = "http://localhost:4000/api/nearby";
+      // Construct URL (Axios base URL is set in AuthContext, so we use relative path)
+      // Note: AuthContext sets base URL to "https://.../api" usually without /api suffix? 
+      // Wait, in AuthContext I set it to `apiUrl.replace(/\/api$/, "")`. 
+      // So if VITE_API_URL is `.../api`, base is `...`.
+      // So I should request `/api/nearby`.
+      let url = "/api/nearby";
       if (lat && lon) {
         url += `?lat=${lat}&lon=${lon}`;
       } else {

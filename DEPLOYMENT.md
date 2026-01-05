@@ -21,9 +21,9 @@ Render allows you to deploy Node.js, Python, and Static sites in one place.
 7. **Environment Variables**:
    - `MONGO_URI`: `mongodb+srv://dhruvkumar21075_db_user:Dhruv%402107@cluster0.iofqvq2.mongodb.net/nyaysathi?retryWrites=true&w=majority`
    - `JWT_SECRET`: `super_secret_key_change_later`
-   - `GEMINI_API_KEY`: `AIzaSyBPC2rr4TlFJQWZUE5RQVTfCS0NM4isU9E`
-   - `RZP_KEY_ID`: `rzp_test_RqBKFFolwTFZtE`
-   - `RZP_KEY_SECRET`: `L5tDHXfB5L7BqjtRBgITAMmf`
+   - `GEMINI_API_KEY`: (Get a NEW key from https://aistudio.google.com/app/apikey)
+   - `RZP_KEY_ID`: (Your Razorpay Test Key ID)
+   - `RZP_KEY_SECRET`: (Your Razorpay Test Key Secret)
    - `PYTHON_AI_URL`: (Not Required - AI runs natively in Node.js)
 
 ### 3. Frontend (React)
