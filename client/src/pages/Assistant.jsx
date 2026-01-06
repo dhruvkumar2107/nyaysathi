@@ -242,7 +242,7 @@ export default function Assistant() {
       <div className="max-w-[1128px] mx-auto px-6 space-y-6">
 
         {/* TOP TOOLBAR */}
-        <div className="flex flex-wrap gap-3 justify-between items-center bg-white p-3 rounded-xl border border-gray-200 shadow-sm sticky top-24 z-10">
+        <div className="flex flex-wrap gap-3 justify-between items-center bg-white p-3 rounded-xl border border-gray-200 shadow-sm mt-4">
           <select
             value={language}
             onChange={(e) => setLanguage(e.target.value)}
