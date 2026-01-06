@@ -117,6 +117,47 @@ const clientDist = path.join(__dirname, "..", "client", "dist");
 
 if (fs.existsSync(clientDist)) {
   app.use(express.static(clientDist));
+
+  // SEO SITEMAP
+  app.get("/sitemap.xml", async (req, res) => {
+    try {
+      const User = require("./models/User");
+      const lawyers = await User.find({ role: "lawyer" });
+
+      const baseUrl = "https://nyaysathi.com"; // Replace with actual domain
+
+      let xml = `<?xml version="1.0" encoding="UTF-8"?>
+      <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+        <url>
+          <loc>${baseUrl}/</loc>
+          <changefreq>daily</changefreq>
+          <priority>1.0</priority>
+        </url>
+        <url>
+          <loc>${baseUrl}/marketplace</loc>
+          <changefreq>daily</changefreq>
+          <priority>0.8</priority>
+        </url>`;
+
+      lawyers.forEach(lawyer => {
+        xml += `
+        <url>
+          <loc>${baseUrl}/lawyer/${lawyer._id}</loc>
+          <changefreq>weekly</changefreq>
+          <priority>0.7</priority>
+        </url>`;
+      });
+
+      xml += `</urlset>`;
+
+      res.header("Content-Type", "application/xml");
+      res.send(xml);
+    } catch (err) {
+      console.error(err);
+      res.status(500).send("Error generating sitemap");
+    }
+  });
+
   app.get("*", (req, res) => {
     if (!req.originalUrl.startsWith("/api")) {
       res.sendFile(path.join(clientDist, "index.html"));
