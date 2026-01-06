@@ -143,7 +143,7 @@ export default function LawyerDashboard() {
                     const filePath = upRes.data.path;
                     await axios.put(`/api/users/${user.phone || user.email}`, { resume: filePath });
 
-                    alert("Resume uploaded successfully! Verification pending.");
+                    alert("Resume uploaded successfully!");
                     window.location.reload();
                   } catch (err) {
                     console.error(err);
@@ -153,6 +153,52 @@ export default function LawyerDashboard() {
               />
             </label>
           </div>
+
+          {/* VERIFICATION BUTTON */}
+          {!user.verified && (
+            <div className="p-4 border-t border-gray-100 bg-yellow-50 hover:bg-yellow-100 cursor-pointer transition text-sm font-semibold text-yellow-700 text-center relative">
+              <label className="cursor-pointer block w-full h-full flex items-center justify-center gap-2">
+                <span>🛡️ Verify Account</span>
+                <input
+                  type="file"
+                  className="hidden"
+                  accept="image/*"
+                  onChange={async (e) => {
+                    const file = e.target.files[0];
+                    if (!file) return;
+
+                    const formData = new FormData();
+                    formData.append("file", file);
+                    alert("Verifying ID... Please wait (AI Processing)");
+
+                    try {
+                      // 1. Upload
+                      const upRes = await axios.post("/api/uploads", formData, {
+                        headers: { "Content-Type": "multipart/form-data" }
+                      });
+
+                      // 2. Verify
+                      const verifyRes = await axios.post("/api/lawyers/verify-id", {
+                        userId: user._id,
+                        imageUrl: upRes.data.path
+                      });
+
+                      if (verifyRes.data.valid) {
+                        alert(`Success! Verified as ${verifyRes.data.name}`);
+                        window.location.reload();
+                      } else {
+                        alert(`Verification Failed: ${verifyRes.data.reason}`);
+                      }
+
+                    } catch (err) {
+                      console.error(err);
+                      alert("Verification Error. Ensure clear image of Bar Council ID.");
+                    }
+                  }}
+                />
+              </label>
+            </div>
+          )}
           <button
             onClick={logout}
             className="w-full p-4 border-t border-gray-100 bg-red-50 hover:bg-red-100 cursor-pointer transition text-sm font-semibold text-red-600 text-center"
