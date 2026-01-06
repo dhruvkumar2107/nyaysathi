@@ -33,11 +33,6 @@ Sentry.init({
   profilesSampleRate: 1.0,
 });
 
-/* ================= MIDDLEWARE ================= */
-// Sentry RequestHandler must be the first middleware on the app
-app.use(Sentry.Handlers.requestHandler());
-app.use(Sentry.Handlers.tracingHandler());
-
 app.use(compression());
 app.use(helmet({
   contentSecurityPolicy: false, // Disable CSP for now to avoid breaking scripts/images during dev
@@ -118,8 +113,7 @@ loadRoute("/api/auth", "./routes/auth");
 // ... (routes) ...
 loadRoute("/api/messages", "./routes/messages");
 
-// Sentry ErrorHandler must be before any other error middleware and after all controllers
-app.use(Sentry.Handlers.errorHandler());
+loadRoute("/api/messages", "./routes/messages");
 loadRoute("/api/ai", "./routes/ai");
 loadRoute("/api/nearby", "./routes/nearby");
 loadRoute("/api/lawyers", "./routes/lawyers");
@@ -129,7 +123,13 @@ loadRoute("/api/users", "./routes/users");
 loadRoute("/api/cases", "./routes/cases");
 loadRoute("/api/posts", "./routes/posts");
 loadRoute("/api/topics", "./routes/topics");
-loadRoute("/api/messages", "./routes/messages"); // Ensure messages route is loaded
+
+// Custom Sentry Error Handler (Compatible with all versions)
+app.use((err, req, res, next) => {
+  console.error("❌ Sentry Caught Error:", err);
+  Sentry.captureException(err);
+  res.status(500).json({ error: "Internal Server Error" });
+});
 
 /* ================= STATIC ================= */
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
