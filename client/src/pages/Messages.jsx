@@ -112,6 +112,20 @@ export default function Messages() {
               <div className="w-8 h-8 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center text-sm">{activeChat.name[0]}</div>
               {activeChat.name}
             </h3>
+            <button
+              onClick={() => {
+                const roomId = `nyay-${Date.now()}`;
+                const link = `${window.location.origin}/meet/${roomId}`;
+                // Open for self
+                window.open(link, "_blank");
+                // Send link to chat
+                setInput(`📞 Join Video Meeting: ${link}`);
+                setTimeout(() => sendMessage(), 100);
+              }}
+              className="px-4 py-2 bg-purple-100 hover:bg-purple-200 text-purple-700 rounded-lg text-sm font-semibold transition flex items-center gap-2"
+            >
+              📹 Video Call
+            </button>
           </header>
 
           {/* MESSAGES */}

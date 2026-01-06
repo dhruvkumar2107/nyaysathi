@@ -20,6 +20,7 @@ const PaymentSuccess = lazy(() => import("./pages/PaymentSuccess"));
 /* Lazy Load Auth */
 const Login = lazy(() => import("./auth/Login"));
 const Register = lazy(() => import("./auth/Register"));
+const VideoCall = lazy(() => import("./pages/VideoCall"));
 
 /* Lazy Load Dashboards */
 const ClientDashboard = lazy(() => import("./dashboards/ClientDashboard"));
@@ -84,6 +85,7 @@ export default function App() {
               <Route path="/marketplace" element={<Marketplace />} />
               <Route path="/nearby" element={<Nearby />} />
               <Route path="/messages" element={<Messages />} />
+              <Route path="/meet/:id" element={<VideoCall />} />
               <Route path="/rent-agreement" element={<AgreementForm />} />
               <Route path="/payment/success" element={<PaymentSuccess />} />
             </Routes>
