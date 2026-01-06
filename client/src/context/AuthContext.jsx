@@ -50,14 +50,8 @@ export function AuthProvider({ children }) {
 
   const register = async (userData) => {
     try {
-      const response = await axios.post("/api/auth/register", userData);
-      const { token, user } = response.data;
-
-      localStorage.setItem("token", token);
-      localStorage.setItem("user", JSON.stringify(user));
-      axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
-
-      setUser(user);
+      await axios.post("/api/auth/register", userData);
+      // Do not auto-login. Pass control back to component to redirect.
       return { success: true };
     } catch (error) {
       console.error("Registration failed:", error.response?.data?.message);
