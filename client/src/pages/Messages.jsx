@@ -1,51 +1,98 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
+import axios from "axios";
 import { useAuth } from "../context/AuthContext";
 
 /* ---------------------------------------
-   MOCK CONVERSATIONS (BACKEND LATER)
+   CHAT CONTACTS (Ideally fetched from /api/lawyers)
 --------------------------------------- */
-const MOCK_CHATS = [
+const CONTACTS = [
   {
     id: 1,
     name: "Adv. Rahul Sharma",
     role: "lawyer",
-    lastMessage: "Please share the FIR details.",
+    specialization: "Criminal Law"
   },
   {
     id: 2,
     name: "Adv. Neha Verma",
     role: "lawyer",
-    lastMessage: "I can help you with company incorporation.",
+    specialization: "Corporate Law"
   },
+  {
+    id: 3,
+    name: "Adv. Ankit Patel",
+    role: "lawyer",
+    specialization: "Family Law"
+  }
 ];
 
 export default function Messages() {
   const { user } = useAuth();
-  const [activeChat, setActiveChat] = useState(MOCK_CHATS[0]);
-  const [messages, setMessages] = useState([
-    { from: "lawyer", text: "Hello, how can I help you?" },
-    { from: "client", text: "I have a legal issue." },
-  ]);
+  const [activeChat, setActiveChat] = useState(CONTACTS[0]);
+  const [messages, setMessages] = useState([]);
   const [input, setInput] = useState("");
+  const [loading, setLoading] = useState(false);
+  const scrollRef = useRef(null);
 
-  const sendMessage = () => {
+  /* 1. FETCH MESSAGES */
+  const fetchMessages = async () => {
+    try {
+      const res = await axios.get("/api/messages", {
+        params: { lawyer: activeChat.name }
+      });
+      setMessages(res.data);
+    } catch (err) {
+      console.error("Failed to fetch messages", err);
+    }
+  };
+
+  /* 2. INITIAL LOAD & POLLING */
+  useEffect(() => {
+    fetchMessages();
+    const interval = setInterval(fetchMessages, 3000); // Poll every 3s
+    return () => clearInterval(interval);
+  }, [activeChat]);
+
+  /* 3. AUTO SCROLL */
+  useEffect(() => {
+    scrollRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages]);
+
+  /* 4. SEND MESSAGE */
+  const sendMessage = async () => {
     if (!input.trim()) return;
 
-    setMessages([...messages, { from: "client", text: input }]);
+    // Optimistic Update
+    const tempMsg = {
+      sender: user?.role === 'lawyer' ? 'lawyer' : 'client',
+      text: input,
+      lawyerName: activeChat.name
+    };
+    setMessages([...messages, tempMsg]);
     setInput("");
+
+    try {
+      await axios.post("/api/messages", tempMsg);
+      fetchMessages(); // Sync with server
+    } catch (err) {
+      console.error("Send failed", err);
+      // alert("Failed to send");
+    }
   };
+
+  const myRole = user?.role === 'lawyer' ? 'lawyer' : 'client';
 
   return (
     <main className="min-h-screen bg-white text-gray-900 flex pt-24 pb-4 px-4 h-screen">
       <div className="flex-1 max-w-[1128px] mx-auto flex bg-white border border-gray-200 rounded-lg overflow-hidden shadow-sm">
         {/* SIDEBAR */}
-        <aside className="w-80 border-r border-gray-200 p-4 bg-gray-50">
+        <aside className="w-80 border-r border-gray-200 p-4 bg-gray-50 flex flex-col hidden md:flex">
           <h2 className="text-xl font-bold text-gray-800 mb-6 px-2">
             Messages
           </h2>
 
-          <div className="space-y-2">
-            {MOCK_CHATS.map((chat) => (
+          <div className="space-y-2 overflow-y-auto">
+            {CONTACTS.map((chat) => (
               <div
                 key={chat.id}
                 onClick={() => setActiveChat(chat)}
@@ -55,8 +102,8 @@ export default function Messages() {
                   }`}
               >
                 <p className={`font-semibold ${activeChat.id === chat.id ? "text-blue-700" : "text-gray-900"}`}>{chat.name}</p>
-                <p className="text-sm text-gray-500 truncate">
-                  {chat.lastMessage}
+                <p className="text-xs text-gray-500">
+                  {chat.specialization}
                 </p>
               </div>
             ))}
@@ -75,17 +122,27 @@ export default function Messages() {
 
           {/* MESSAGES */}
           <div className="flex-1 p-6 overflow-y-auto space-y-4 bg-gray-50/50">
-            {messages.map((msg, i) => (
-              <div
-                key={i}
-                className={`max-w-md px-5 py-3 rounded-2xl shadow-sm text-sm leading-relaxed ${msg.from === "client"
-                  ? "bg-blue-600 text-white ml-auto rounded-tr-none"
-                  : "bg-white border border-gray-200 text-gray-800 rounded-tl-none"
-                  }`}
-              >
-                {msg.text}
+            {messages.length === 0 && (
+              <div className="text-center text-gray-400 mt-10">
+                No messages yet. Start the conversation!
               </div>
-            ))}
+            )}
+
+            {messages.map((msg, i) => {
+              const isMe = msg.sender === myRole;
+              return (
+                <div
+                  key={i}
+                  className={`max-w-md px-5 py-3 rounded-2xl shadow-sm text-sm leading-relaxed ${isMe
+                      ? "bg-blue-600 text-white ml-auto rounded-tr-none"
+                      : "bg-white border border-gray-200 text-gray-800 rounded-tl-none"
+                    }`}
+                >
+                  {msg.text}
+                </div>
+              );
+            })}
+            <div ref={scrollRef}></div>
 
             {/* UNIQUE AI ASSIST */}
             {user?.plan !== "silver" && (

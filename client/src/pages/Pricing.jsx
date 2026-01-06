@@ -69,7 +69,7 @@ export default function Pricing() {
     try {
       // 1️⃣ CREATE ORDER (BACKEND)
       const { data } = await axios.post(
-        "http://localhost:4000/api/payments/create-order",
+        "/api/payments/create-order",
         {
           amount_rupees: Number(price),
           plan,
@@ -89,7 +89,7 @@ export default function Pricing() {
         handler: async function (response) {
           // 3️⃣ VERIFY PAYMENT
           const verifyRes = await axios.post(
-            "http://localhost:4000/api/payments/verify",
+            "/api/payments/verify",
             {
               razorpay_order_id: response.razorpay_order_id,
               razorpay_payment_id: response.razorpay_payment_id,
