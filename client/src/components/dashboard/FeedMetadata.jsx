@@ -30,6 +30,10 @@ export const lawyerFeed = [
         budget: "₹15k - ₹25k",
         description: "Seeking legal advice for a property succession certificate. Family dispute involved.",
         time: "10m ago",
+        title: "Property Succession Certificate",
+        desc: "Seeking legal advice for a property succession certificate. Family dispute involved.",
+        location: "Mumbai",
+        postedAt: new Date().toISOString()
     },
     {
         id: 102,
@@ -39,15 +43,25 @@ export const lawyerFeed = [
         budget: "₹5k - ₹10k",
         description: "Need review of a vendor agreement before signing. Urgent requirement.",
         time: "45m ago",
+        title: "Vendor Agreement Review",
+        desc: "Need review of a vendor agreement before signing. Urgent requirement.",
+        location: "Pune",
+        postedAt: new Date().toISOString()
     },
 ];
 
 export const suggestedLawyers = [
-    { id: 1, name: "Adv. Priya Sharma", role: "Family Law", location: "Mumbai" },
-    { id: 2, name: "Adv. Rajesh Verma", role: "Criminal Law", location: "Delhi" },
+    { id: 1, name: "Adv. Priya Sharma", role: "Family Law", location: "Mumbai", specialization: "Family Law" },
+    { id: 2, name: "Adv. Rajesh Verma", role: "Criminal Law", location: "Delhi", specialization: "Criminal Law" },
 ];
 
 export const activeCases = [
-    { id: 301, title: "Tenancy Agreement #2201", status: "Review Pending" },
-    { id: 302, title: "Consultation with Adv. Mehta", status: "Scheduled" },
+    { id: 301, title: "Tenancy Agreement #2201", status: "Review Pending", acceptedBy: null },
+    { id: 302, title: "Consultation with Adv. Mehta", status: "Scheduled", acceptedBy: "Adv. Mehta" },
+];
+
+export const CONTACTS = [
+    { id: 1, name: "Adv. Priya Sharma", specialization: "Family Law", avatar: "P" },
+    { id: 2, name: "Adv. Rajesh Verma", specialization: "Criminal Law", avatar: "R" },
+    { id: 3, name: "Adv. Anjali Gupta", specialization: "Corporate Law", avatar: "A" }
 ];

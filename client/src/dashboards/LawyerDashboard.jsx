@@ -10,8 +10,24 @@ export default function LawyerDashboard() {
   const [leads, setLeads] = useState([]);
 
   useEffect(() => {
-    if (user) fetchLeads();
+    if (user) {
+      fetchLeads();
+      fetchPosts();
+    }
   }, [user]);
+
+  // Social Feed State
+  const [posts, setPosts] = useState([]);
+  const [postContent, setPostContent] = useState("");
+  const [postFile, setPostFile] = useState(null);
+  const [postType, setPostType] = useState("text");
+
+  // Mock Topics
+  const topics = [
+    { _id: 1, name: "#SupremeCourt", count: 1240 },
+    { _id: 2, name: "Corporate Tax", count: 850 },
+    { _id: 3, name: "IPR Laws", count: 620 },
+  ];
 
   const fetchLeads = async () => {
     try {
