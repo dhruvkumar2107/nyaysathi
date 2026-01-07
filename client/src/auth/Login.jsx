@@ -86,20 +86,20 @@ export default function Login() {
         {/* TABS */}
         <div className="flex bg-gray-100 p-1 rounded-xl mb-6 border border-gray-200">
           <button
-            onClick={() => { setMethod("email"); setError(""); }}
+            onClick={() => { setMethod("email"); }}
             className={`flex-1 py-2 text-sm font-medium rounded-lg transition-colors ${method === "email" ? "bg-white shadow-sm text-blue-600" : "text-gray-500 hover:text-gray-900"}`}
           >
             Email
           </button>
           <button
-            onClick={() => { setMethod("mobile"); setError(""); }}
+            onClick={() => { setMethod("mobile"); }}
             className={`flex-1 py-2 text-sm font-medium rounded-lg transition-colors ${method === "mobile" ? "bg-white shadow-sm text-blue-600" : "text-gray-500 hover:text-gray-900"}`}
           >
             Mobile OTP
           </button>
         </div>
 
-        {error && <div className="bg-red-50 text-red-600 p-3 rounded-lg text-sm mb-4 border border-red-200">{error}</div>}
+        {/* Local error state removed in favor of toast */}
 
         {method === "email" ? (
           <>
