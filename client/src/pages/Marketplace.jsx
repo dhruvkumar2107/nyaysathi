@@ -149,7 +149,21 @@ function LawyerCard({ lawyer }) {
       </div>
 
       {/* ACTION */}
-      <button className="w-full py-3 rounded-xl bg-gray-50 hover:bg-blue-600 hover:text-white text-gray-700 transition font-bold border border-gray-200 group-hover:border-blue-500/50">
+      {/* ACTION */}
+      <button
+        onClick={() => {
+          // 🔒 CLIENT PLAN ENFORCEMENT
+          const userPlan = JSON.parse(localStorage.getItem("user"))?.plan?.toLowerCase() || "silver";
+
+          if (lawyer.plan === "diamond" && userPlan === "silver") {
+            alert("UPGRADE REQUIRED 💎\n\nTop 1% Elite Partners (Diamond) are only accessible to Gold/Diamond clients.\n\nPlease upgrade your plan to connect.");
+            return;
+          }
+
+          alert("Opening Lawyer Profile...");
+        }}
+        className="w-full py-3 rounded-xl bg-gray-50 hover:bg-blue-600 hover:text-white text-gray-700 transition font-bold border border-gray-200 group-hover:border-blue-500/50"
+      >
         View Profile
       </button>
     </div>

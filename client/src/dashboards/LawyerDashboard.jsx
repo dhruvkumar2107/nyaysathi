@@ -39,7 +39,28 @@ export default function LawyerDashboard() {
     }
   };
 
-  const acceptLead = async (id) => {
+  const acceptLead = async (id, leadTier, leadCategory) => {
+    // 🔒 PLAN ENFORCEMENT
+    const userPlan = user.plan?.toLowerCase() || "silver";
+
+    // 1. Criminal/Cyber Check (Requires Gold+)
+    if (["criminal defense", "cybercrime", "criminal"].includes(leadCategory?.toLowerCase()) && userPlan === "silver") {
+      alert("UPGRADE REQUIRED 🔒\n\nCriminal & Cybercrime cases are only available on GOLD plan or higher.\n\nPlease upgrade to accept this lead.");
+      return;
+    }
+
+    // 2. High Court Check (Requires Gold+)
+    if (leadTier === "gold" && userPlan === "silver") {
+      alert("UPGRADE REQUIRED 🔒\n\nHigh Court & State level cases are locked for Silver plan.\n\nUpgrade to GOLD to access.");
+      return;
+    }
+
+    // 3. Supreme Court / Diamond Check
+    if (leadTier === "diamond" && userPlan !== "diamond") {
+      alert("UPGRADE REQUIRED 💎\n\nSupreme Court & National cases are exclusive to DIAMOND partners.");
+      return;
+    }
+
     try {
       await axios.post(`/api/cases/${id}/accept`, { lawyerPhone: user.phone || user.email });
       alert("Lead Accepted! You can now contact the client.");
@@ -271,7 +292,7 @@ export default function LawyerDashboard() {
               </p>
               <div className="flex gap-3">
                 <button
-                  onClick={() => acceptLead(lead._id)}
+                  onClick={() => acceptLead(lead._id, lead.tier, lead.category)}
                   className="flex-1 bg-blue-600 hover:bg-blue-700 text-white rounded-lg py-2 text-sm font-semibold transition shadow-sm"
                 >
                   Accept Lead

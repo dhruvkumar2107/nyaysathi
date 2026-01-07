@@ -8,46 +8,94 @@ export default function Pricing() {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
 
-  // Default tab
-  const [activeTab, setActiveTab] = useState(
-    user?.role === "lawyer" ? "lawyer" : "client"
-  );
+  // Toggles for Client vs Lawyer
+  const [activeTab, setActiveTab] = useState(user?.role === "lawyer" ? "lawyer" : "client");
 
   const plans = {
     client: [
       {
         title: "Silver",
-        price: "0",
+        price: "200",
         features: [
-          "Basic Legal Access",
-          "AI Assistant (Limited)",
-          "Community Support"
+          "1 User (Individual)",
+          "District Courts & Local Tribunals",
+          "Civil, Property, Matrimonial, Consumer cases",
+          "5 Basic Legal Templates",
+          "Standard Email Support"
         ],
-        benefit: "Free Forever",
-        highlight: false
+        benefit: "Essential Legal Access",
+        highlight: false,
+        limitations: "No Criminal or Cybercrime support"
       },
       {
         title: "Gold",
-        price: "499",
+        price: "500",
         features: [
-          "Verified Expert Access",
-          "Unlimited AI Analysis",
-          "Priority Support",
-          "Direct Messaging"
+          "State/High Courts + District Courts",
+          "All cases (Criminal & Cybercrime included)",
+          "Unlimited Document Drafting",
+          "2 Free 15-min discovery calls/month",
+          "Priority Chat Support"
         ],
-        benefit: "Best for Individuals",
+        benefit: "Complete Protection",
         highlight: true
       },
       {
         title: "Diamond",
-        price: "999",
+        price: "1500",
         features: [
-          "Top 1% Lawyer Access",
-          "Dedicated Case Manager",
-          "Contract Redlining (5/mo)",
-          "Family Coverage"
+          "Family Coverage (User + Spouse + Parents + Children)",
+          "Supreme Court, High Court, All Tribunals",
+          "Full-spectrum Legal Protection",
+          "Custom Drafting (Wills/Trusts)",
+          "Unlimited Discovery Calls",
+          "24/7 Concierge Account Manager"
         ],
-        benefit: "Comprehensive Protection",
+        benefit: "Elite Family Coverage",
+        highlight: false
+      }
+    ],
+    lawyer: [
+      {
+        title: "Silver",
+        price: "1000",
+        features: [
+          "Individual Practitioner Profile",
+          "Listed for District-level queries",
+          "Access to basic Civil Leads",
+          "Basic Digital Signature Tools",
+          "Profile visible in local searches"
+        ],
+        benefit: "For Starting Practice",
+        highlight: false,
+        limitations: "No High/Supreme Court Leads"
+      },
+      {
+        title: "Gold",
+        price: "2500",
+        features: [
+          "\"Verified Professional\" Badge",
+          "Listed for High Court & State level",
+          "Access to high-stakes Criminal Leads",
+          "Advanced Legal Research Database",
+          "Priority listing in search results",
+          "Client Management Dashboard (CRM)"
+        ],
+        benefit: "Accelerate Your Growth",
+        highlight: true
+      },
+      {
+        title: "Diamond",
+        price: "5000",
+        features: [
+          "\"Elite Partner\" Status",
+          "Featured at Top of Search",
+          "Global/National Lead Generation",
+          "Dedicated \"Virtual Office\" Tools",
+          "Direct Booking Integration",
+          "Profile View Analytics & Insights"
+        ],
+        benefit: "Dominate Your Market",
         highlight: false
       }
     ]
@@ -140,8 +188,26 @@ export default function Pricing() {
           </p>
         </div>
 
+        {/* ROLE TABS */}
+        <div className="flex justify-center mb-12">
+          <div className="bg-gray-100 p-1 rounded-xl flex gap-1">
+            <button
+              onClick={() => setActiveTab("client")}
+              className={`px-8 py-3 rounded-lg font-semibold transition ${activeTab === "client" ? "bg-white shadow-sm text-blue-600" : "text-gray-500 hover:text-gray-900"}`}
+            >
+              For Clients
+            </button>
+            <button
+              onClick={() => setActiveTab("lawyer")}
+              className={`px-8 py-3 rounded-lg font-semibold transition ${activeTab === "lawyer" ? "bg-white shadow-sm text-blue-600" : "text-gray-500 hover:text-gray-900"}`}
+            >
+              For Lawyers
+            </button>
+          </div>
+        </div>
+
         <div className="grid md:grid-cols-3 gap-8">
-          {plans.client.map((p, i) => (
+          {plans[activeTab].map((p, i) => (
             <div
               key={i}
               className={`relative p-8 rounded-2xl border transition-all duration-300 shadow-sm flex flex-col

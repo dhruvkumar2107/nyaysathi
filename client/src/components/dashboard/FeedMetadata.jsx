@@ -27,6 +27,7 @@ export const lawyerFeed = [
         type: "lead",
         client: "Anonymous User (Mumbai)",
         category: "Property Dispute",
+        tier: "gold", // Requires Gold
         budget: "₹15k - ₹25k",
         description: "Seeking legal advice for a property succession certificate. Family dispute involved.",
         time: "10m ago",
@@ -40,6 +41,7 @@ export const lawyerFeed = [
         type: "lead",
         client: "Small Business Owner (Pune)",
         category: "Contract Review",
+        tier: "silver", // Accessible to Silver
         budget: "₹5k - ₹10k",
         description: "Need review of a vendor agreement before signing. Urgent requirement.",
         time: "45m ago",
@@ -48,11 +50,26 @@ export const lawyerFeed = [
         location: "Pune",
         postedAt: new Date().toISOString()
     },
+    {
+        id: 103,
+        type: "lead",
+        client: "Tech Startup (Bangalore)",
+        category: "Criminal Defense",
+        tier: "gold", // Criminal cases require Gold
+        budget: "₹50k+",
+        description: "Defending against a cybercrime allegation. Need High Court practitioner.",
+        time: "1h ago",
+        title: "Cybercrime Defense - High Court",
+        desc: "Defending against a cybercrime allegation. Need High Court practitioner.",
+        location: "Bangalore",
+        postedAt: new Date().toISOString()
+    },
 ];
 
 export const suggestedLawyers = [
-    { id: 1, name: "Adv. Priya Sharma", role: "Family Law", location: "Mumbai", specialization: "Family Law" },
-    { id: 2, name: "Adv. Rajesh Verma", role: "Criminal Law", location: "Delhi", specialization: "Criminal Law" },
+    { id: 1, name: "Adv. Priya Sharma", role: "Family Law", location: "Mumbai", specialization: "Family Law", tier: "silver", court: "District Court" },
+    { id: 2, name: "Adv. Rajesh Verma", role: "Criminal Law", location: "Delhi", specialization: "Criminal Law", tier: "gold", court: "High Court" },
+    { id: 3, name: "Adv. Anjali Gupta", role: "Corporate Law", location: "Bangalore", specialization: "Corporate Law", tier: "diamond", court: "Supreme Court" },
 ];
 
 export const activeCases = [
