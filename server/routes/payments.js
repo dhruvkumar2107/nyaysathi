@@ -75,12 +75,20 @@ router.post("/verify", async (req, res) => {
     const Payment = require("../models/Payment");
 
     // 1. Upgrade User
+    // Logic: Only Gold/Diamond plans grant the "Verified" badge automatically
+    const shouldVerify = ["gold", "diamond"].includes(plan.toLowerCase());
+
+    const updateData = {
+      plan: plan.toLowerCase()
+    };
+
+    if (shouldVerify) {
+      updateData.verified = true;
+    }
+
     const updatedUser = await User.findOneAndUpdate(
       { email },
-      {
-        plan: plan.toLowerCase(),
-        verified: true
-      },
+      updateData,
       { new: true }
     );
 
