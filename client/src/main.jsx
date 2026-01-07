@@ -25,7 +25,7 @@ Sentry.init({
 posthog.init(import.meta.env.VITE_POSTHOG_KEY || 'phc_TEST_KEY_JUST_A_PLACEHOLDER', {
   api_host: 'https://app.posthog.com',
   loaded: (posthog) => {
-    if (process.env.NODE_ENV === 'development') posthog.opt_out_capturing();
+    if (import.meta.env.DEV) posthog.opt_out_capturing();
   },
 });
 

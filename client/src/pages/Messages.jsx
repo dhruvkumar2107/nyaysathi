@@ -1,4 +1,5 @@
 import { io } from "socket.io-client";
+import { CONTACTS } from "../components/dashboard/FeedMetadata";
 
 // Connect to Socket.io (Backend URL)
 const socket = io(import.meta.env.VITE_API_URL?.replace("/api", "") || "http://localhost:4000");
