@@ -1,46 +1,42 @@
-# PROVEN VERCEL DEPLOYMENT CONFIG DO NOT EDIT
+# STAFF+ VERCEL NODE 24 DEPLOYMENT FIX
 
-This project has been patched to fix PostCSS/Autoprefixer failures and Node version mismatches.
-**Follow this guide EXACTLY.**
+**STRICT COMPLIANCE MODE: ENABLED**
+This repository has been retrofitted for **Node.js 24.x**. Dependencies are pinned, Semantic Versioning ranges (`^`, `~`) are REMOVED, and transitive dependencies are explicit.
 
-## 1. Vercel Project Settings (Dashboard)
+## 1. Vercel Dashboard Settings (MANDATORY)
 
-Go to **Settings > General** and ensure:
+Go to **Settings > General** on Vercel and configure EXACTLY:
 
-| Setting | Value |
-| :--- | :--- |
-| **Framework Preset** | `Vite` |
-| **Root Directory** | `client` |
-| **Build Command** | `vite build` |
-| **Output Directory** | `dist` |
-| **Install Command** | `npm install` |
-| **Node.js Version** | **18.x** (Strictly required) |
-
----
-
-## 2. Deployment Checklist
-
-1.  **Delete any existing lockfile** locally and re-install to confirm:
-    ```bash
-    cd client
-    rm package-lock.json
-    npm install
-    npm run build
-    ```
-    *(If this passes locally, it WILL pass on Vercel)*
-
-2.  **Commit everything:**
-    - `.nvmrc` (Crucial)
-    - `.vercelignore` (Speeds up build)
-    - `package.json` (Locked versions)
-
-3.  **Push to GitHub.**
+| Setting | Value | Notes |
+| :--- | :--- | :--- |
+| **Framework Preset** | `Vite` | |
+| **Root Directory** | `client` | |
+| **Build Command** | `vite build` | |
+| **Output Directory** | `dist` | |
+| **Install Command** | `npm install` | Do not use `yarn` or `pnpm` unless configured. |
+| **Node.js Version** | **24.x** | **CRITICAL:** Select 24 from dropdown. |
 
 ---
 
-## 3. Final Corrected Files
+## 2. Deployment Protocol
 
-### `package.json` (Strict Locked Versions)
+Execute these steps locally one last time to ensure cache is cleared:
+
+```bash
+cd client
+# Nuking node_modules to simulate Vercel Clean Install
+rm -rf node_modules package-lock.json
+npm install
+npm run build
+```
+
+**If this succeeds locally (it just did for me), you are green for launch.**
+
+---
+
+## 3. The Corrected Files (Already on Disk)
+
+### `client/package.json` (Node 24 + Pinned Deps)
 ```json
 {
   "name": "nyay-sathi-client",
@@ -48,7 +44,7 @@ Go to **Settings > General** and ensure:
   "private": true,
   "type": "module",
   "engines": {
-    "node": "18.x"
+    "node": "24.x"
   },
   "packageManager": "npm@10.2.4",
   "scripts": {
@@ -77,12 +73,20 @@ Go to **Settings > General** and ensure:
     "postcss": "8.4.38",
     "tailwindcss": "3.4.3",
     "vite": "5.2.11",
-    "node-releases": "2.0.14"
+    "node-releases": "2.0.14",
+    "caniuse-lite": "1.0.30001614",
+    "browserslist": "4.23.0",
+    "update-browserslist-db": "1.0.14"
   }
 }
 ```
 
-### `postcss.config.js` (Robust ESM)
+### `client/.nvmrc`
+```text
+24.0.0
+```
+
+### `client/postcss.config.js` (ESM Strict)
 ```javascript
 export default {
   plugins: {
@@ -92,43 +96,7 @@ export default {
 };
 ```
 
-### `vite.config.js` (Production Optimized)
-```javascript
-import { defineConfig } from 'vite';
-import react from '@vitejs/plugin-react';
+---
 
-export default defineConfig({
-  plugins: [react()],
-  server: {
-    proxy: {
-      "/api": "http://localhost:4002",
-    },
-  },
-  build: {
-    outDir: 'dist',
-    emptyOutDir: true,
-    sourcemap: false,
-    target: 'esnext',
-  }
-});
-```
-
-### `.nvmrc`
-```text
-18.20.4
-```
-
-### `.vercelignore`
-```text
-.vercel
-.output
-dist
-node_modules
-.env
-.env.local
-.git
-.github
-.DS_Store
-coverage
-README.md
-```
+**STATUS: READY TO DEPLOY**
+Push to GitHub to trigger Vercel.
