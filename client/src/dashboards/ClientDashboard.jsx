@@ -6,10 +6,13 @@ import DashboardLayout from "../components/dashboard/DashboardLayout";
 import { clientFeed } from "../components/dashboard/FeedMetadata";
 import LegalReels from "../components/dashboard/LegalReels";
 
+import BookingModal from "../components/dashboard/BookingModal";
+
 export default function ClientDashboard() {
   const { user, logout } = useAuth();
   const [activeCases, setActiveCases] = useState([]);
   const [suggestedLawyers, setSuggestedLawyers] = useState([]);
+  const [selectedLawyerForBooking, setSelectedLawyerForBooking] = useState(null);
 
   const [posts, setPosts] = useState([]);
   const [postContent, setPostContent] = useState("");
@@ -357,9 +360,15 @@ export default function ClientDashboard() {
                             alert(err.response?.data?.error || "Failed to connect");
                           }
                         }}
-                        className="mt-2 text-xs border border-blue-200 text-blue-600 px-3 py-1 rounded-full hover:bg-blue-50 transition font-medium"
+                        className="mt-2 text-xs border border-blue-200 text-blue-600 px-3 py-1 rounded-full hover:bg-blue-50 transition font-medium mr-2"
                       >
                         + Connect
+                      </button>
+                      <button
+                        onClick={() => setSelectedLawyerForBooking(l)}
+                        className="mt-2 text-xs bg-blue-600 text-white px-3 py-1 rounded-full hover:bg-blue-700 transition font-medium"
+                      >
+                        Book 📅
                       </button>
                     </div>
                   </li>
@@ -434,6 +443,15 @@ export default function ClientDashboard() {
             </div>
           </div>
         </div>
+      )}
+
+      {/* BOOKING MODAL */}
+      {selectedLawyerForBooking && (
+        <BookingModal
+          lawyer={selectedLawyerForBooking}
+          client={user}
+          onClose={() => setSelectedLawyerForBooking(null)}
+        />
       )}
     </>
   );

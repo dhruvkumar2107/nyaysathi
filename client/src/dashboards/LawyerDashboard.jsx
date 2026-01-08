@@ -8,26 +8,39 @@ import { lawyerFeed, suggestedLawyers /* repurpose for networking */ } from "../
 export default function LawyerDashboard() {
   const { user, logout } = useAuth();
   const [leads, setLeads] = useState([]);
+  const [appointments, setAppointments] = useState([]);
 
   useEffect(() => {
     if (user) {
       fetchLeads();
       fetchPosts();
+      fetchAppointments();
     }
   }, [user]);
 
   // Social Feed State
-  const [posts, setPosts] = useState([]);
-  const [postContent, setPostContent] = useState("");
-  const [postFile, setPostFile] = useState(null);
-  const [postType, setPostType] = useState("text");
+  // ... (existing code) ...
 
-  // Mock Topics
-  const topics = [
-    { _id: 1, name: "#SupremeCourt", count: 1240 },
-    { _id: 2, name: "Corporate Tax", count: 850 },
-    { _id: 3, name: "IPR Laws", count: 620 },
-  ];
+  const fetchAppointments = async () => {
+    try {
+      const res = await axios.get(`/api/appointments?userId=${user._id || user.id}&role=lawyer`);
+      // Filter for future appointments or relevant status
+      setAppointments(res.data.filter(a => a.status !== 'rejected'));
+    } catch (err) {
+      console.error("Failed to fetch appointments");
+    }
+  };
+
+  const updateAppointmentStatus = async (id, status) => {
+    try {
+      await axios.put(`/api/appointments/${id}`, { status });
+      // Optimistic update
+      setAppointments(prev => prev.map(a => a._id === id ? { ...a, status } : a));
+      alert(`Appointment ${status}`);
+    } catch (err) {
+      alert("Failed to update status");
+    }
+  };
 
   const fetchLeads = async () => {
     try {
@@ -349,12 +362,55 @@ export default function LawyerDashboard() {
       /* RIGHT SIDEBAR - LEADS & QUICK ACTIONS */
       rightSidebar={
         <>
-          {/* Quick Actions */}
+          {/* Upcoming Appointments (NEW WIDGET) */}
           <div className="bg-white border border-gray-200 rounded-lg p-4 mb-4 shadow-sm">
-            <h3 className="text-sm font-semibold text-gray-900 mb-3 block">Quick Actions</h3>
-            <div className="grid grid-cols-2 gap-2">
-              <Link to="/messages" className="bg-gray-50 p-2 text-center rounded text-xs font-semibold hover:bg-blue-50 text-gray-700">Client Msgs</Link>
-              <Link to="/pricing" className="bg-gray-50 p-2 text-center rounded text-xs font-semibold hover:bg-blue-50 text-gray-700">Boost Profile</Link>
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="font-bold text-sm text-gray-900">Appointments</h3>
+              <Link to="/calendar" className="text-xs text-blue-600 hover:underline">View All</Link>
+            </div>
+            {appointments.length === 0 && <p className="text-xs text-gray-500 italic">No upcoming appointments.</p>}
+
+            <div className="space-y-3">
+              {appointments.slice(0, 3).map(apt => (
+                <div key={apt._id} className="border border-gray-100 p-2 rounded bg-blue-50/50">
+                  <div className="flex justify-between items-start">
+                    <div>
+                      <p className="font-bold text-xs text-gray-900">{apt.clientId?.name || "Client"}</p>
+                      <p className="text-[10px] text-gray-500">{apt.date} @ {apt.slot}</p>
+                    </div>
+                    <span className={`text-[10px] items-center px-1.5 py-0.5 rounded font-bold uppercase ${apt.status === 'confirmed' ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700'}`}>
+                      {apt.status}
+                    </span>
+                  </div>
+                  {apt.status === 'pending' && (
+                    <div className="flex gap-2 mt-2">
+                      <button
+                        onClick={() => updateAppointmentStatus(apt._id, 'confirmed')}
+                        className="flex-1 bg-green-600 text-white text-[10px] py-1 rounded hover:bg-green-700"
+                      >
+                        Confirm
+                      </button>
+                      <button
+                        onClick={() => updateAppointmentStatus(apt._id, 'rejected')}
+                        className="flex-1 bg-gray-200 text-gray-600 text-[10px] py-1 rounded hover:bg-gray-300"
+                      >
+                        Reject
+                      </button>
+                    </div>
+                  )}
+                  {apt.status === 'confirmed' && (
+                    <button
+                      onClick={() => {
+                        const link = `${window.location.origin}/meet/${apt._id}`;
+                        window.open(link, "_blank");
+                      }}
+                      className="w-full mt-2 bg-purple-100 text-purple-700 text-[10px] py-1 rounded font-bold hover:bg-purple-200 flex items-center justify-center gap-1"
+                    >
+                      🎥 Start Call
+                    </button>
+                  )}
+                </div>
+              ))}
             </div>
           </div>
 
@@ -364,6 +420,8 @@ export default function LawyerDashboard() {
               <h3 className="font-bold text-sm text-gray-900">New Leads</h3>
               <span className="text-xs bg-red-100 text-red-600 px-2 py-0.5 rounded-full font-bold">{leads.length}</span>
             </div>
+
+            {/* ... leads content ... */}
 
             {leads.length === 0 && <p className="text-xs text-gray-500 italic">No new leads.</p>}
 

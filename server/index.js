@@ -137,6 +137,7 @@ loadRoute("/api/users", "./routes/users");
 loadRoute("/api/cases", "./routes/cases");
 loadRoute("/api/posts", "./routes/posts");
 loadRoute("/api/topics", "./routes/topics");
+loadRoute("/api/appointments", "./routes/appointments"); // NEW
 
 // Custom Sentry Error Handler (Compatible with all versions)
 app.use((err, req, res, next) => {

@@ -1,27 +1,44 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import axios from "axios";
+import { useAuth } from "../context/AuthContext";
 
 export default function Calendar() {
-    // Mock Events
-    const [events, setEvents] = useState([
-        { id: 1, title: "Client Meeting - Rahul", date: "2026-01-10", time: "10:00 AM" },
-        { id: 2, title: "High Court Hearing", date: "2026-01-12", time: "02:00 PM" },
-        { id: 3, title: "Consultation Call", date: "2026-01-15", time: "05:00 PM" },
-    ]);
+    const { user } = useAuth();
+    const [events, setEvents] = useState([]);
+
+    useEffect(() => {
+        if (user) fetchAppointments();
+    }, [user]);
+
+    const fetchAppointments = async () => {
+        try {
+            const roleKey = user.role === 'lawyer' ? 'lawyer' : 'client'; // though backend uses role param
+            const res = await axios.get(`/api/appointments?userId=${user._id || user.id}&role=${user.role}`);
+
+            // Transform to event format
+            const mapped = res.data.map(apt => ({
+                id: apt._id,
+                title: user.role === 'lawyer' ? `Meeting with ${apt.clientId?.name || 'Client'}` : `Consultation: ${apt.lawyerId?.name || 'Lawyer'}`,
+                date: apt.date,
+                time: apt.slot,
+                status: apt.status
+            }));
+            setEvents(mapped);
+        } catch (err) {
+            console.error("Failed to fetch appointments");
+        }
+    };
 
     return (
         <div className="min-h-screen bg-gray-50 pt-24 px-4 pb-12">
             <div className="max-w-4xl mx-auto">
-                <h1 className="text-2xl font-bold text-gray-900 mb-6">My Calendar</h1>
+                <h1 className="text-2xl font-bold text-gray-900 mb-6">My Calendar 📅</h1>
 
                 <div className="grid md:grid-cols-3 gap-6">
                     {/* Calendar View (Static Visualization) */}
                     <div className="md:col-span-2 bg-white rounded-2xl p-6 shadow-sm border border-gray-200">
                         <div className="flex justify-between items-center mb-6">
-                            <h2 className="font-bold text-lg">January 2026</h2>
-                            <div className="flex gap-2">
-                                <button className="p-1 hover:bg-gray-100 rounded">◀</button>
-                                <button className="p-1 hover:bg-gray-100 rounded">▶</button>
-                            </div>
+                            <h2 className="font-bold text-lg">Upcoming Schedule</h2>
                         </div>
 
                         {/* Simple Calendar Grid */}
@@ -32,9 +49,12 @@ export default function Calendar() {
                             {[...Array(5).keys()].map(i => <div key={`empty-${i}`}></div>)} {/* Padding */}
                             {[...Array(31).keys()].map(d => {
                                 const day = d + 1;
-                                const isEvent = [10, 12, 15].includes(day);
+                                // Simple check if any event falls on this day number (very rough approx for visualization)
+                                const dateStr = `2026-01-${day.toString().padStart(2, '0')}`;
+                                const hasEvent = events.some(e => e.date === dateStr);
+
                                 return (
-                                    <div key={day} className={`p-2 rounded-full cursor-pointer hover:bg-blue-50 transition ${isEvent ? "bg-blue-100 text-blue-700 font-bold" : "text-gray-700"}`}>
+                                    <div key={day} className={`p-2 rounded-full cursor-pointer hover:bg-blue-50 transition ${hasEvent ? "bg-blue-100 text-blue-700 font-bold" : "text-gray-700"}`}>
                                         {day}
                                     </div>
                                 )
@@ -44,17 +64,22 @@ export default function Calendar() {
 
                     {/* Upcoming Events List */}
                     <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-200">
-                        <h2 className="font-bold text-lg mb-4">Upcoming Events</h2>
-                        <div className="space-y-4">
+                        <h2 className="font-bold text-lg mb-4">Appointments</h2>
+                        <div className="space-y-4 max-h-[400px] overflow-y-auto">
+                            {events.length === 0 && <p className="text-gray-500 text-sm">No upcoming meetings.</p>}
                             {events.map(ev => (
-                                <div key={ev.id} className="border-l-4 border-blue-500 pl-3 py-1">
+                                <div key={ev.id} className={`border-l-4 pl-3 py-1 ${ev.status === 'confirmed' ? 'border-green-500' : 'border-blue-500'}`}>
                                     <h3 className="font-semibold text-gray-900">{ev.title}</h3>
                                     <p className="text-sm text-gray-500">{ev.date} at {ev.time}</p>
+                                    <span className="text-[10px] uppercase font-bold text-gray-400">{ev.status}</span>
                                 </div>
                             ))}
                         </div>
-                        <button className="w-full mt-6 py-2 border border-blue-600 text-blue-600 rounded-lg hover:bg-blue-50 transition font-medium">
-                            + Add Event
+                        <button
+                            onClick={fetchAppointments}
+                            className="w-full mt-6 py-2 border border-blue-600 text-blue-600 rounded-lg hover:bg-blue-50 transition font-medium"
+                        >
+                            Refresh
                         </button>
                     </div>
                 </div>

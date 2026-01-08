@@ -20,19 +20,26 @@ export default function Messages() {
   useEffect(() => {
     if (user) {
       fetchConnections();
+    } else {
+      // If user is not yet available, we might want to wait or stop loading if it takes too long
+      const timer = setTimeout(() => setLoading(false), 3000); // 3s fallback
+      return () => clearTimeout(timer);
     }
   }, [user]);
 
   const fetchConnections = async () => {
     try {
-      const res = await axios.get(`/api/connections?userId=${user._id || user.id}`);
+      const id = user._id || user.id;
+      if (!id) throw new Error("User ID missing");
+
+      const res = await axios.get(`/api/connections?userId=${id}`);
       setChatList(res.data);
       if (res.data.length > 0) {
         setActiveChat(res.data[0]);
       }
-      setLoading(false);
     } catch (err) {
       console.error("Failed to fetch connections", err);
+    } finally {
       setLoading(false);
     }
   };

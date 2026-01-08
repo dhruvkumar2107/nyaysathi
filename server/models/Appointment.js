@@ -1,0 +1,20 @@
+const mongoose = require("mongoose");
+
+const AppointmentSchema = new mongoose.Schema(
+    {
+        clientId: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
+        lawyerId: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
+        date: { type: String, required: true }, // YYYY-MM-DD
+        slot: { type: String, required: true }, // "10:00 AM"
+        status: {
+            type: String,
+            enum: ["pending", "confirmed", "rejected", "completed"],
+            default: "pending"
+        },
+        notes: { type: String },
+        meetingLink: { type: String } // For auto-generated video links
+    },
+    { timestamps: true }
+);
+
+module.exports = mongoose.model("Appointment", AppointmentSchema);
