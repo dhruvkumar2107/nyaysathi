@@ -21,6 +21,8 @@ export default function Register() {
   const [experience, setExperience] = useState("");
   const [location, setLocation] = useState("");
 
+  const [loading, setLoading] = useState(false);
+
   const handleRegister = async () => {
     if (!name || !email || !password) {
       toast.error("Please fill all required fields");
@@ -31,6 +33,8 @@ export default function Register() {
       toast.error("Please complete lawyer profile details");
       return;
     }
+
+    setLoading(true); // START LOADING
 
     // Prepare Payload for Backend
     const userData = {
@@ -47,6 +51,7 @@ export default function Register() {
     };
 
     const res = await register(userData);
+    setLoading(false); // END LOADING
 
     if (res.success) {
       toast.success("Registration Successful! Please login.");
@@ -166,9 +171,10 @@ export default function Register() {
         {/* REGISTER BUTTON */}
         <button
           onClick={handleRegister}
-          className="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-semibold transition shadow-md shadow-blue-200"
+          disabled={loading}
+          className={`w-full py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-semibold transition shadow-md shadow-blue-200 ${loading ? "opacity-70 cursor-not-allowed" : ""}`}
         >
-          Create Account
+          {loading ? "Creating Account..." : "Create Account"}
         </button>
 
         {/* FOOTER */}

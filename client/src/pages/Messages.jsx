@@ -4,9 +4,20 @@ import { CONTACTS } from "../components/dashboard/FeedMetadata";
 // Connect to Socket.io (Backend URL)
 const socket = io(import.meta.env.VITE_API_URL?.replace("/api", "") || "http://localhost:4000");
 
+// Mock Clients for Lawyers
+const CLIENT_CONTACTS = [
+  { id: 101, name: "Rahul Deshmukh", specialization: "Property Case", avatar: "R" },
+  { id: 102, name: "Sneha Patil", specialization: "Divorce Consultation", avatar: "S" },
+  { id: 103, name: "Amit Kumar", specialization: "Corporate Inquiry", avatar: "A" }
+];
+
 export default function Messages() {
   const { user } = useAuth();
-  const [activeChat, setActiveChat] = useState(CONTACTS[0]);
+
+  // Select contact list based on role
+  const chatList = user?.role === "lawyer" ? CLIENT_CONTACTS : CONTACTS;
+
+  const [activeChat, setActiveChat] = useState(chatList[0]);
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
@@ -23,6 +34,13 @@ export default function Messages() {
       console.error("Failed to fetch messages", err);
     }
   };
+
+  /* 2. REAL-TIME SOCKET CONNECTION */
+  useEffect(() => {
+    fetchMessages();
+    socket.emit("join_room", activeChat.name);
+    // ... socket listeners ...
+  }, [activeChat]);
 
   /* 2. REAL-TIME SOCKET CONNECTION */
   useEffect(() => {
@@ -87,7 +105,7 @@ export default function Messages() {
           </h2>
 
           <div className="space-y-2 overflow-y-auto">
-            {CONTACTS.map((chat) => (
+            {chatList.map((chat) => (
               <div
                 key={chat.id}
                 onClick={() => setActiveChat(chat)}

@@ -244,91 +244,13 @@ export default function LawyerDashboard() {
           </button>
         </div>
       }
-      /* CENTER FEED - LEADS */
+      /* CENTER FEED - SOCIAL POSTS (LINKEDIN STYLE) */
       mainFeed={
         <>
-          {/* Create Post / Quick Action */}
+          {/* Create Post */}
           <div className="bg-white border border-gray-200 rounded-lg p-6 mb-6 shadow-sm">
-            <h3 className="text-md font-semibold text-gray-900 mb-3">Quick Actions</h3>
-            <div className="flex gap-4">
-              <Link to="/messages" className="flex-1 bg-gray-50 hover:bg-gray-100 border border-gray-200 rounded-lg p-3 text-center transition">
-                <span className="block text-2xl mb-1">💬</span>
-                <span className="text-sm text-gray-600 font-medium">Client Messages</span>
-              </Link>
-              <button
-                onClick={() => alert("Calendar Integration Coming Soon!")}
-                className="flex-1 bg-gray-50 hover:bg-gray-100 border border-gray-200 rounded-lg p-3 text-center transition"
-              >
-                <span className="block text-2xl mb-1">📅</span>
-                <span className="text-sm text-gray-600 font-medium">My Calendar</span>
-              </button>
-              <Link to="/pricing" className="flex-1 bg-blue-50 border border-blue-100 hover:bg-blue-100 rounded-lg p-3 text-center transition">
-                <span className="block text-2xl mb-1">🚀</span>
-                <span className="text-sm text-blue-700 font-medium">Boost Profile</span>
-              </Link>
-            </div>
-          </div>
-
-          <div className="flex items-center justify-between mb-4 px-1">
-            <h3 className="font-semibold text-gray-700">New Client Leads</h3>
-            <span className="text-xs text-gray-500">Based on your specialization</span>
-          </div>
-
-          {leads.length === 0 && <p className="text-gray-500 italic p-4 text-center">No new leads available.</p>}
-
-          {leads.map((lead) => (
-            <div key={lead._id} className="bg-white border border-gray-200 rounded-lg p-5 mb-4 hover:shadow-md transition shadow-sm">
-              <div className="flex justify-between items-start mb-2">
-                <div>
-                  <h4 className="font-bold text-gray-900 text-md">{lead.title}</h4>
-                  <p className="text-sm text-gray-500">{lead.location || "Online"} • {new Date(lead.postedAt).toLocaleTimeString()}</p>
-                </div>
-                <span className="bg-green-100 text-green-700 text-xs px-3 py-1 rounded-full font-semibold border border-green-200">
-                  {lead.budget || "₹ Negotiable"}
-                </span>
-              </div>
-              <p className="text-sm text-gray-700 mt-2 mb-4 leading-relaxed">
-                {lead.desc}
-              </p>
-              <div className="flex gap-3">
-                <button
-                  onClick={() => acceptLead(lead._id, lead.tier, lead.category)}
-                  className="flex-1 bg-blue-600 hover:bg-blue-700 text-white rounded-lg py-2 text-sm font-semibold transition shadow-sm"
-                >
-                  Accept Lead
-                </button>
-                <button
-                  onClick={() => setLeads(leads.filter(l => l._id !== lead._id))}
-                  className="px-4 py-2 border border-gray-300 rounded-lg text-sm text-gray-600 hover:bg-gray-50 transition font-medium"
-                >
-                  Refuse
-                </button>
-              </div>
-            </div>
-          ))}
-        </>
-      }
-      /* RIGHT SIDEBAR */
-      rightSidebar={
-        <>
-          {/* Trending Topics */}
-          <div className="bg-white border border-gray-200 rounded-lg p-4 shadow-sm">
-            <h3 className="font-bold text-sm text-gray-900 mb-4">Trending in Law</h3>
-            <ul className="space-y-3">
-              {topics.map((t) => (
-                <li key={t._id} className="text-sm">
-                  <p className="font-medium text-blue-700">{t.name}</p>
-                  <p className="text-xs text-gray-500">{t.count} posts</p>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          {/* Social Feed Section (Lawyer's View) */}
-          <div className="bg-white border border-gray-200 rounded-lg p-6 mb-6 shadow-sm mt-8">
             <h3 className="font-bold text-gray-900 mb-4">📢 Legal Community Feed</h3>
 
-            {/* Create Post */}
             <div className="flex gap-4 mb-6">
               <div className="flex-1">
                 <textarea
@@ -420,6 +342,67 @@ export default function LawyerDashboard() {
                 </div>
               </div>
             ))}
+          </div>
+        </>
+      }
+
+      /* RIGHT SIDEBAR - LEADS & QUICK ACTIONS */
+      rightSidebar={
+        <>
+          {/* Quick Actions */}
+          <div className="bg-white border border-gray-200 rounded-lg p-4 mb-4 shadow-sm">
+            <h3 className="text-sm font-semibold text-gray-900 mb-3 block">Quick Actions</h3>
+            <div className="grid grid-cols-2 gap-2">
+              <Link to="/messages" className="bg-gray-50 p-2 text-center rounded text-xs font-semibold hover:bg-blue-50 text-gray-700">Client Msgs</Link>
+              <Link to="/pricing" className="bg-gray-50 p-2 text-center rounded text-xs font-semibold hover:bg-blue-50 text-gray-700">Boost Profile</Link>
+            </div>
+          </div>
+
+          {/* New Leads (Moved from Center) */}
+          <div className="bg-white border border-gray-200 rounded-lg p-4 shadow-sm">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="font-bold text-sm text-gray-900">New Leads</h3>
+              <span className="text-xs bg-red-100 text-red-600 px-2 py-0.5 rounded-full font-bold">{leads.length}</span>
+            </div>
+
+            {leads.length === 0 && <p className="text-xs text-gray-500 italic">No new leads.</p>}
+
+            <div className="space-y-3">
+              {leads.map((lead) => (
+                <div key={lead._id} className="border border-gray-100 p-3 rounded-lg hover:bg-gray-50 transition">
+                  <h4 className="font-bold text-gray-900 text-sm truncate">{lead.title}</h4>
+                  <p className="text-xs text-gray-500 mt-1 mb-2">{lead.location} • {lead.budget}</p>
+
+                  <div className="flex gap-2">
+                    <button
+                      onClick={() => acceptLead(lead._id, lead.tier, lead.category)}
+                      className="flex-1 bg-blue-600 text-white text-xs py-1.5 rounded font-semibold hover:bg-blue-700"
+                    >
+                      Accept
+                    </button>
+                    <button
+                      onClick={() => setLeads(leads.filter(l => l._id !== lead._id))}
+                      className="text-xs text-gray-400 hover:text-red-500 px-2"
+                    >
+                      ✕
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Trending Topics (Kept at bottom) */}
+          <div className="bg-white border border-gray-200 rounded-lg p-4 shadow-sm mt-4">
+            <h3 className="font-bold text-sm text-gray-900 mb-4">Trending</h3>
+            <ul className="space-y-3">
+              {topics.map((t) => (
+                <li key={t._id} className="text-sm">
+                  <p className="font-medium text-blue-700">{t.name}</p>
+                  <p className="text-xs text-gray-500">{t.count} posts</p>
+                </li>
+              ))}
+            </ul>
           </div>
         </>
       }
