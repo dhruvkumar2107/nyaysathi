@@ -1,7 +1,7 @@
+import { useState, useRef } from "react";
+import { useNavigate } from "react-router-dom";
 import SignatureCanvas from 'react-signature-canvas';
-import { useRef } from "react";
-
-// ... [Previous Imports]
+import Navbar from "../components/Navbar";
 
 export default function AgreementForm() {
     const navigate = useNavigate();
