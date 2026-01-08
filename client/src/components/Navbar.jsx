@@ -32,6 +32,8 @@ export default function Navbar() {
         {/* CENTER: NAV LINKS (Simple Text, No Icons) */}
         <div className="hidden md:flex items-center gap-8">
           <NavLink to="/marketplace" active={location.pathname === "/marketplace"}>Find Lawyers</NavLink>
+          <NavLink to="/nearby" active={location.pathname === "/nearby"}>Nearby</NavLink>
+          <NavLink to="/messages" active={location.pathname === "/messages"}>Messaging</NavLink>
           <NavLink to="/agreements" active={location.pathname === "/agreements"}>Agreements</NavLink>
           <NavLink to="/assistant" active={location.pathname === "/assistant"}>AI Assistant</NavLink>
           <NavLink to="/pricing" active={location.pathname === "/pricing"}>Pricing</NavLink>
@@ -103,6 +105,8 @@ export default function Navbar() {
       {mobileMenuOpen && (
         <div className="md:hidden absolute top-20 left-0 w-full bg-white border-b border-slate-100 shadow-xl p-6 flex flex-col gap-4 animate-in slide-in-from-top-4 z-40 text-center">
           <Link to="/marketplace" onClick={() => setMobileMenuOpen(false)} className="text-slate-600 font-bold py-2">Find Lawyers</Link>
+          <Link to="/nearby" onClick={() => setMobileMenuOpen(false)} className="text-slate-600 font-bold py-2">Nearby</Link>
+          <Link to="/messages" onClick={() => setMobileMenuOpen(false)} className="text-slate-600 font-bold py-2">Messaging</Link>
           <Link to="/agreements" onClick={() => setMobileMenuOpen(false)} className="text-slate-600 font-bold py-2">Agreements</Link>
           <Link to="/assistant" onClick={() => setMobileMenuOpen(false)} className="text-slate-600 font-bold py-2">AI Assistant</Link>
           <Link to="/pricing" onClick={() => setMobileMenuOpen(false)} className="text-slate-600 font-bold py-2">Pricing</Link>
