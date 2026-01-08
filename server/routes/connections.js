@@ -5,21 +5,38 @@ const User = require("../models/User");
 
 // GET /api/connections?userId=...
 // Fetch all active connections for a user
+// GET /api/connections?userId=...&status=...
+// Fetch connections (default: active)
 router.get("/", async (req, res) => {
-    const { userId } = req.query;
+    const { userId, status } = req.query;
     try {
-        const connections = await Connection.find({
-            $or: [{ clientId: userId }, { lawyerId: userId }],
-            status: "active"
-        })
+        const query = { $or: [{ clientId: userId }, { lawyerId: userId }] };
+
+        // If status is provided, use it. If 'all', don't filter by status. Default: 'active'
+        if (status && status !== 'all') {
+            query.status = status;
+        } else if (!status) {
+            query.status = "active";
+        }
+
+        const connections = await Connection.find(query)
             .populate("clientId", "name email phone role location plan")
             .populate("lawyerId", "name email phone role specialization location plan");
 
-        // return the *other* person's profile
+        // return the *other* person's profile mixed with connection metadata
         const profiles = connections.map(c => {
             const isClient = c.clientId._id.toString() === userId;
-            return isClient ? c.lawyerId : c.clientId;
-        });
+            const profile = isClient ? c.lawyerId : c.clientId;
+
+            if (!profile) return null; // Handle deleted users
+
+            return {
+                ...profile.toObject(),
+                connectionStatus: c.status,
+                connectionId: c._id,
+                initiatedBy: c.initiatedBy
+            };
+        }).filter(Boolean);
 
         res.json(profiles);
     } catch (err) {
@@ -39,19 +56,12 @@ router.post("/", async (req, res) => {
             if (existing.status === "pending") return res.status(400).json({ error: "Request already sending" });
         }
 
-        // Auto-accept for now to simplify (or "active" immediately for "Real" feel)
-        // In a strict world, this would be 'pending'. 
-        // Given user reuqest "this connect should work", let's make it auto-active for instant messaging gratification,
-        // OR we can make it pending if they want an approval flow.
-        // Let's stick to 'active' for immediate "Real" connection unless specified otherwise.
-        // actually, typically 'connect' implies a handshake. But 'leads' are accepted.
-        // Let's set to 'active' for simplicity based on "connect should work".
-
+        // Create "pending" request
         const newConn = new Connection({
             clientId,
             lawyerId,
             initiatedBy,
-            status: "active"
+            status: "pending"
         });
 
         await newConn.save();
@@ -59,6 +69,23 @@ router.post("/", async (req, res) => {
     } catch (err) {
         console.error(err);
         res.status(500).json({ error: "Failed to connect" });
+    }
+});
+
+// PUT /api/connections/:id
+// Update status (active/rejected)
+router.put("/:id", async (req, res) => {
+    try {
+        const { status } = req.body; // active, rejected
+        const connection = await Connection.findByIdAndUpdate(
+            req.params.id,
+            { status },
+            { new: true }
+        );
+        res.json(connection);
+    } catch (err) {
+        console.error("Update Connection Error:", err);
+        res.status(500).json({ error: "Failed to update connection" });
     }
 });
 

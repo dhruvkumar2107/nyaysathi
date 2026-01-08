@@ -9,12 +9,14 @@ export default function LawyerDashboard() {
   const { user, logout } = useAuth();
   const [leads, setLeads] = useState([]);
   const [appointments, setAppointments] = useState([]);
+  const [requests, setRequests] = useState([]);
 
   useEffect(() => {
     if (user) {
       fetchLeads();
       fetchPosts();
       fetchAppointments();
+      fetchRequests();
     }
   }, [user]);
 
@@ -28,6 +30,30 @@ export default function LawyerDashboard() {
       setAppointments(res.data.filter(a => a.status !== 'rejected'));
     } catch (err) {
       console.error("Failed to fetch appointments");
+    }
+  };
+
+  const fetchRequests = async () => {
+    try {
+      const res = await axios.get(`/api/connections?userId=${user._id || user.id}&status=pending`);
+      // connection objects are mixed into profile
+      // We only want requests initiated by OTHERS (clients), but typically if status is pending and I am the lawyer, it's an incoming request.
+      // Wait, if I initiated it (rare for lawyer), I shouldn't see accept button.
+      // Filter by `initiatedBy !== user._id`
+      const openRequests = res.data.filter(r => r.initiatedBy !== (user._id || user.id));
+      setRequests(openRequests);
+    } catch (err) {
+      console.error("Failed to fetch requests", err);
+    }
+  };
+
+  const handleConnectionAction = async (connId, action) => { // action: 'active' | 'rejected'
+    try {
+      await axios.put(`/api/connections/${connId}`, { status: action });
+      alert(action === 'active' ? "Request Accepted!" : "Request Rejected");
+      fetchRequests(); // Refresh
+    } catch (err) {
+      alert("Failed to update request");
     }
   };
 
@@ -362,6 +388,47 @@ export default function LawyerDashboard() {
       /* RIGHT SIDEBAR - LEADS & QUICK ACTIONS */
       rightSidebar={
         <>
+          {/* Connection Requests Widget (NEW) */}
+          {requests.length > 0 && (
+            <div className="bg-white border border-gray-200 rounded-lg p-4 mb-4 shadow-sm animate-in slide-in-from-right duration-300">
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="font-bold text-sm text-gray-900">Connection Requests</h3>
+                <span className="text-xs bg-blue-100 text-blue-600 px-2 py-0.5 rounded-full font-bold">{requests.length}</span>
+              </div>
+              <div className="space-y-3">
+                {requests.map(req => (
+                  <div key={req._id} className="border border-gray-100 p-2 rounded bg-blue-50/30">
+                    <div className="flex justify-between items-start">
+                      <div className="flex gap-2 items-center">
+                        <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center text-xs font-bold text-blue-600">
+                          {req.name ? req.name[0] : "U"}
+                        </div>
+                        <div>
+                          <p className="font-bold text-xs text-gray-900">{req.name}</p>
+                          <p className="text-[10px] text-gray-500">{req.location || "Client"}</p>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="flex gap-2 mt-2">
+                      <button
+                        onClick={() => handleConnectionAction(req.connectionId, 'active')}
+                        className="flex-1 bg-blue-600 text-white text-[10px] py-1 rounded hover:bg-blue-700 font-medium"
+                      >
+                        Accept
+                      </button>
+                      <button
+                        onClick={() => handleConnectionAction(req.connectionId, 'rejected')}
+                        className="flex-1 bg-white border border-gray-200 text-gray-500 text-[10px] py-1 rounded hover:bg-gray-50"
+                      >
+                        Decline
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
           {/* Upcoming Appointments (NEW WIDGET) */}
           <div className="bg-white border border-gray-200 rounded-lg p-4 mb-4 shadow-sm">
             <div className="flex items-center justify-between mb-4">

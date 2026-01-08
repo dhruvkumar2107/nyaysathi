@@ -12,6 +12,7 @@ export default function ClientDashboard() {
   const { user, logout } = useAuth();
   const [activeCases, setActiveCases] = useState([]);
   const [suggestedLawyers, setSuggestedLawyers] = useState([]);
+  const [connectionsMap, setConnectionsMap] = useState({}); // Stores { userId: status }
   const [selectedLawyerForBooking, setSelectedLawyerForBooking] = useState(null);
 
   const [posts, setPosts] = useState([]);
@@ -34,27 +35,29 @@ export default function ClientDashboard() {
   const fetchConnections = async () => {
     try {
       const uId = user._id || user.id;
-      // If no ID, just fetch lawyers without filtering
       if (!uId) {
-        fetchSuggestedLawyers([]);
+        fetchSuggestedLawyers({});
         return;
       }
 
-      const res = await axios.get(`/api/connections?userId=${uId}`);
+      // Fetch ALL connections to check status
+      const res = await axios.get(`/api/connections?userId=${uId}&status=all`);
 
-      // Store IDs of people I am already connected to
-      const connectedIds = Array.isArray(res.data)
-        ? res.data.map(p => p?._id).filter(Boolean)
-        : [];
+      // Create a map: { otherUserId: status }
+      const map = {};
+      res.data.forEach(p => {
+        map[p._id] = p.connectionStatus;
+      });
 
-      fetchSuggestedLawyers(connectedIds);
+      setConnectionsMap(map);
+      fetchSuggestedLawyers(map);
     } catch (err) {
       console.error("Failed to fetch connections", err);
-      fetchSuggestedLawyers([]); // Fallback
+      fetchSuggestedLawyers({});
     }
   };
 
-  const fetchSuggestedLawyers = async (connectedIds = []) => {
+  const fetchSuggestedLawyers = async (connMap = {}) => {
     try {
       const res = await axios.get("/api/users?role=lawyer");
       const uId = user._id || user.id;
@@ -64,7 +67,7 @@ export default function ClientDashboard() {
       if (Array.isArray(res.data)) {
         filtered = res.data.filter(u =>
           u._id !== uId &&
-          !connectedIds.includes(u._id)
+          connMap[u._id] !== 'active' // Only hide if ALREADY connected. Show if pending.
         );
       }
 
@@ -369,16 +372,17 @@ export default function ClientDashboard() {
                               lawyerId: l._id,
                               initiatedBy: user._id || user.id
                             });
-                            alert(`Connection established with ${l.name}! You can now message them.`);
+                            alert(`Request sent to ${l.name}!`);
                             // Refresh list
                             fetchConnections();
                           } catch (err) {
                             alert(err.response?.data?.error || "Failed to connect");
                           }
                         }}
-                        className="mt-2 text-xs border border-blue-200 text-blue-600 px-3 py-1 rounded-full hover:bg-blue-50 transition font-medium mr-2"
+                        disabled={connectionsMap[l._id] === 'pending'}
+                        className={`mt-2 text-xs border border-blue-200 px-3 py-1 rounded-full font-medium mr-2 transition ${connectionsMap[l._id] === 'pending' ? 'bg-gray-100 text-gray-400 cursor-not-allowed border-gray-100' : 'text-blue-600 hover:bg-blue-50'}`}
                       >
-                        + Connect
+                        {connectionsMap[l._id] === 'pending' ? '🕒 Request Sent' : '+ Connect'}
                       </button>
                       <button
                         onClick={() => setSelectedLawyerForBooking(l)}
