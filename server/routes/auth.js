@@ -38,7 +38,7 @@ router.post("/register", async (req, res) => {
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    const normalizedPlan = plan ? plan.toLowerCase() : "silver";
+    const normalizedPlan = plan ? plan.toLowerCase() : "free";
 
     const user = await User.create({
       role,
@@ -103,7 +103,7 @@ router.post("/verify-otp", async (req, res) => {
         email: `${phone}@mobile.user`,
         phone,
         password: await bcrypt.hash(Date.now().toString(), 10),
-        plan: "silver",
+        plan: "free",
         verified: false,
       });
 

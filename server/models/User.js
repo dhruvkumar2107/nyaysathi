@@ -43,8 +43,13 @@ const userSchema = new mongoose.Schema(
 
     plan: {
       type: String,
-      enum: ["silver", "gold", "diamond"],
-      default: "silver",
+      enum: ["free", "silver", "gold", "diamond"],
+      default: "free",
+    },
+
+    aiUsage: {
+      count: { type: Number, default: 0 },
+      firstUsedAt: { type: Date, default: null },
     },
 
     specialization: String,

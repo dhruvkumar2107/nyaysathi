@@ -150,25 +150,35 @@ import { useState } from "react";
 import axios from "axios";
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
+import PaywallModal from "../components/PaywallModal";
+import { Link } from "react-router-dom";
 
 export default function Assistant() {
   const [messages, setMessages] = useState([
     {
       role: "assistant",
-      content: "Hello 👋 I’m your AI Legal Assistant. Ask me any legal question.",
+      content: "Hello 👋 I’m your AI Legal Assistant. Ask me any legal question or draft a notice.",
     },
   ]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
+  const [showPaywall, setShowPaywall] = useState(false);
 
-  // Phase 1 Features
+  // Features
   const [language, setLanguage] = useState("English");
-  const [showFirModal, setShowFirModal] = useState(false);
   const [showNoticeModal, setShowNoticeModal] = useState(false);
   const [modalInput, setModalInput] = useState("");
   const [modalLoading, setModalLoading] = useState(false);
 
   const languages = ["English", "Hindi", "Marathi", "Kannada", "Tamil", "Telugu", "Bengali", "Gujarati", "Malayalam", "Punjabi"];
+
+  const handleError = (err) => {
+    if (err.response?.status === 403) {
+      setShowPaywall(true);
+      return "🔒 You have reached your free limit. Please upgrade to continue.";
+    }
+    return err.response?.data?.answer || "⚠️ Unable to reach AI service.";
+  };
 
   const sendMessage = async () => {
     if (!input.trim()) return;
@@ -179,7 +189,7 @@ export default function Assistant() {
     setLoading(true);
 
     try {
-      const history = messages.slice(-6); // Helper context (Last 6 messages)
+      const history = messages.slice(-6);
       const res = await axios.post("/api/ai/assistant", {
         question: userText,
         history: history,
@@ -192,46 +202,35 @@ export default function Assistant() {
         { role: "assistant", content: res.data.answer },
       ]);
     } catch (err) {
-      console.error(err);
-      setMessages((prev) => [
-        ...prev,
-        {
-          role: "assistant",
-          content: err.response?.data?.answer || `Error: ${err.message}` || "⚠️ Unable to reach AI service.",
-        },
-      ]);
+      const msg = handleError(err);
+      setMessages((prev) => [...prev, { role: "assistant", content: msg }]);
     } finally {
       setLoading(false);
     }
   };
 
-  const generateDocument = async (type) => {
+  const generateDocument = async () => {
     if (!modalInput.trim()) return;
     setModalLoading(true);
-    // Close modal immediately to show loading in chat
-    if (type === 'fir') setShowFirModal(false);
-    if (type === 'notice') setShowNoticeModal(false);
+    setShowNoticeModal(false);
 
-    setMessages((prev) => [...prev, { role: "user", content: `Drafting ${type === 'fir' ? 'FIR' : 'Legal Notice'}...` }]);
-    setLoading(true); // Show main chat loading
+    setMessages((prev) => [...prev, { role: "user", content: `Drafting Legal Notice...` }]);
+    setLoading(true);
 
     try {
-      let endpoint = type === 'fir' ? '/api/ai/draft-fir' : '/api/ai/draft-notice';
-      let payload = type === 'fir'
-        ? { incident_details: modalInput, language, location: "India" }
-        : { notice_details: modalInput, language, type: "Legal Notice" };
-
-      const res = await axios.post(endpoint, payload);
+      const res = await axios.post('/api/ai/draft-notice', {
+        notice_details: modalInput,
+        language,
+        type: "Legal Notice"
+      });
 
       setMessages((prev) => [
         ...prev,
         { role: "assistant", content: res.data.draft },
       ]);
     } catch (err) {
-      setMessages((prev) => [
-        ...prev,
-        { role: "assistant", content: "⚠️ Failed to generate document." },
-      ]);
+      const msg = handleError(err);
+      setMessages((prev) => [...prev, { role: "assistant", content: msg }]);
     } finally {
       setModalLoading(false);
       setLoading(false);
@@ -240,73 +239,82 @@ export default function Assistant() {
   };
 
   return (
-    <main className="min-h-screen bg-white text-gray-900 pb-32 pt-24">
-      <div className="max-w-[1128px] mx-auto px-6 space-y-6">
+    <main className="min-h-screen bg-[#0A1F44] text-white pb-32 pt-24">
+      <PaywallModal isOpen={showPaywall} onClose={() => setShowPaywall(false)} />
+
+      <div className="max-w-4xl mx-auto px-6 space-y-6">
 
         {/* TOP TOOLBAR */}
-        <div className="flex flex-wrap gap-3 justify-between items-center bg-white p-3 rounded-xl border border-gray-200 shadow-sm mt-4">
-          <select
-            value={language}
-            onChange={(e) => setLanguage(e.target.value)}
-            className="bg-gray-50 text-gray-700 text-sm px-3 py-2 rounded-lg border border-gray-200 focus:outline-none focus:border-blue-500 outline-none"
-          >
-            {languages.map(l => <option key={l} value={l}>{l}</option>)}
-          </select>
+        <div className="flex flex-wrap gap-3 justify-between items-center glass-panel p-3 rounded-xl shadow-lg mt-4">
+          <div className="flex items-center gap-2">
+            <span className="text-sm text-blue-200">Language:</span>
+            <select
+              value={language}
+              onChange={(e) => setLanguage(e.target.value)}
+              className="bg-[#0A1F44] text-white text-sm px-3 py-1.5 rounded-lg border border-blue-500/30 focus:outline-none focus:border-[#00D4FF]"
+            >
+              {languages.map(l => <option key={l} value={l}>{l}</option>)}
+            </select>
+          </div>
 
           <div className="flex gap-2">
             <button
-              onClick={() => setShowFirModal(true)}
-              className="text-xs md:text-sm px-3 py-2 bg-blue-50 hover:bg-blue-100 text-blue-700 border border-blue-100 rounded-lg transition-colors flex items-center gap-1 font-medium bg-gradient-to-r from-blue-50 to-indigo-50"
-            >
-              🚓 Draft FIR
-            </button>
-            <button
               onClick={() => setShowNoticeModal(true)}
-              className="text-xs md:text-sm px-3 py-2 bg-blue-50 hover:bg-blue-100 text-blue-700 border border-blue-100 rounded-lg transition-colors flex items-center gap-1 font-medium bg-gradient-to-r from-blue-50 to-indigo-50"
+              className="text-sm px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-lg transition shadow-lg flex items-center gap-2 font-semibold"
             >
-              ⚖️ Legal Notice
+              <span>⚖️</span> Draft Notice
             </button>
           </div>
         </div>
 
-        {messages.map((m, i) => (
-          <div
-            key={i}
-            className={`p-5 rounded-2xl max-w-[85%] shadow-sm ${m.role === "user"
-              ? "ml-auto bg-blue-600 text-white"
-              : "bg-white border border-gray-200 text-gray-800"
-              }`}
-          >
-            {m.role === 'assistant' && <div className="text-xs font-bold text-blue-600 mb-2 uppercase tracking-wide">AI Assistant</div>}
-            <div className={`prose max-w-none text-sm md:text-base leading-relaxed ${m.role === "user" ? "prose-invert" : "prose-slate"}`}>
-              <ReactMarkdown remarkPlugins={[remarkGfm]}>
-                {m.content}
-              </ReactMarkdown>
+        {/* CHAT AREA */}
+        <div className="space-y-6">
+          {messages.map((m, i) => (
+            <div
+              key={i}
+              className={`p-5 rounded-2xl max-w-[85%] shadow-md ${m.role === "user"
+                ? "ml-auto bg-blue-600 text-white"
+                : "glass-panel border-white/5 text-blue-50"
+                }`}
+            >
+              {m.role === 'assistant' && (
+                <div className="flex items-center gap-2 mb-2">
+                  <span className="text-xl">🤖</span>
+                  <span className="text-xs font-bold text-[#00D4FF] uppercase tracking-wide">NyaySathi AI</span>
+                </div>
+              )}
+              <div className={`prose max-w-none text-sm md:text-base leading-relaxed ${m.role === "user" ? "prose-invert" : "prose-invert"}`}>
+                <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                  {m.content}
+                </ReactMarkdown>
+              </div>
             </div>
-          </div>
-        ))}
-        {loading && (
-          <div className="bg-white border border-gray-200 p-4 rounded-2xl w-fit shadow-sm flex items-center gap-2">
-            <div className="w-2 h-2 bg-blue-600 rounded-full animate-bounce"></div>
-            <div className="w-2 h-2 bg-blue-600 rounded-full animate-bounce delay-75"></div>
-            <div className="w-2 h-2 bg-blue-600 rounded-full animate-bounce delay-150"></div>
-          </div>
-        )}
+          ))}
+
+          {loading && (
+            <div className="glass-panel p-4 rounded-2xl w-fit flex items-center gap-2">
+              <div className="w-2 h-2 bg-[#00D4FF] rounded-full animate-bounce"></div>
+              <div className="w-2 h-2 bg-[#00D4FF] rounded-full animate-bounce delay-75"></div>
+              <div className="w-2 h-2 bg-[#00D4FF] rounded-full animate-bounce delay-150"></div>
+            </div>
+          )}
+        </div>
       </div>
 
-      <div className="fixed bottom-0 left-0 w-full bg-white/80 backdrop-blur-md border-t border-gray-200 p-4">
-        <div className="max-w-[1128px] mx-auto flex gap-3">
+      {/* INPUT AREA */}
+      <div className="fixed bottom-0 left-0 w-full bg-[#0A1F44]/90 backdrop-blur-md border-t border-white/10 p-4 z-40">
+        <div className="max-w-4xl mx-auto flex gap-3">
           <input
             value={input}
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={(e) => e.key === "Enter" && sendMessage()}
             placeholder={`Ask a legal question in ${language}...`}
-            className="flex-1 p-3.5 rounded-xl bg-gray-50 border border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 focus:outline-none transition-all text-gray-900 placeholder:text-gray-400 shadow-inner"
+            className="flex-1 p-3.5 rounded-xl bg-[#0F2A5F] border border-blue-500/20 focus:border-[#00D4FF] focus:outline-none transition-all text-white placeholder:text-blue-300/50"
           />
           <button
             onClick={sendMessage}
             disabled={loading}
-            className="px-6 py-3 rounded-xl bg-blue-600 hover:bg-blue-700 text-white disabled:opacity-50 disabled:cursor-not-allowed font-bold transition-all shadow-md shadow-blue-200"
+            className="px-6 py-3 rounded-xl bg-[#00D4FF] hover:bg-[#00b4d8] text-[#0A1F44] font-bold shadow-[0_0_15px_rgba(0,212,255,0.3)] disabled:opacity-50 disabled:cursor-not-allowed transition"
           >
             Send
           </button>
@@ -314,50 +322,30 @@ export default function Assistant() {
       </div>
 
       {/* MODALS */}
-      {showFirModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4 animate-in fade-in duration-200">
-          <div className="bg-white border border-gray-200 rounded-2xl p-6 w-full max-w-lg space-y-4 shadow-2xl">
-            <h3 className="text-xl font-bold text-gray-900">Draft Police FIR</h3>
-            <p className="text-sm text-gray-500">Describe the incident chronologically. Include dates, times, and locations.</p>
-            <textarea
-              rows={6}
-              className="w-full bg-gray-50 border border-gray-200 rounded-xl p-3 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 text-gray-900"
-              placeholder="E.g. I was walking near Koramangala park at 8 PM when..."
-              value={modalInput}
-              onChange={(e) => setModalInput(e.target.value)}
-            />
-            <div className="flex gap-2 justify-end">
-              <button onClick={() => setShowFirModal(false)} className="px-4 py-2 text-gray-500 hover:bg-gray-100 rounded-lg transition font-medium">Cancel</button>
-              <button
-                onClick={() => generateDocument('fir')}
-                className="px-4 py-2 bg-blue-600 rounded-lg hover:bg-blue-700 text-white font-semibold shadow-md shadow-blue-200"
-                disabled={modalLoading}
-              >
-                {modalLoading ? "Generating..." : "Generate FIR"}
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
       {showNoticeModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4 animate-in fade-in duration-200">
-          <div className="bg-white border border-gray-200 rounded-2xl p-6 w-full max-w-lg space-y-4 shadow-2xl">
-            <h3 className="text-xl font-bold text-gray-900">Draft Legal Notice</h3>
-            <p className="text-sm text-gray-500">Who is this for? What are your grievances and demands?</p>
+        <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/80 backdrop-blur-sm p-4 animate-in fade-in zoom-in duration-200">
+          <div className="bg-[#0F2A5F] border border-white/10 rounded-2xl p-8 w-full max-w-lg space-y-6 shadow-2xl relative">
+            <button onClick={() => setShowNoticeModal(false)} className="absolute top-4 right-4 text-gray-400 hover:text-white">✕</button>
+
+            <div>
+              <h3 className="text-2xl font-bold text-white mb-2">Draft Legal Notice</h3>
+              <p className="text-blue-200">Who is this for? What are your grievances and demands?</p>
+            </div>
+
             <textarea
               rows={6}
-              className="w-full bg-gray-50 border border-gray-200 rounded-xl p-3 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 text-gray-900"
+              className="w-full bg-[#0A1F44] border border-blue-500/20 rounded-xl p-4 focus:outline-none focus:border-[#00D4FF] text-white resize-none"
               placeholder="E.g. Notice to tenant Mr. Sharma for unpaid rent of 3 months..."
               value={modalInput}
               onChange={(e) => setModalInput(e.target.value)}
             />
-            <div className="flex gap-2 justify-end">
-              <button onClick={() => setShowNoticeModal(false)} className="px-4 py-2 text-gray-500 hover:bg-gray-100 rounded-lg transition font-medium">Cancel</button>
+
+            <div className="flex gap-3 justify-end pt-2">
+              <button onClick={() => setShowNoticeModal(false)} className="px-5 py-2.5 text-blue-200 hover:text-white hover:bg-white/5 rounded-xl transition font-medium">Cancel</button>
               <button
-                onClick={() => generateDocument('notice')}
-                className="px-4 py-2 bg-blue-600 rounded-lg hover:bg-blue-700 text-white font-semibold shadow-md shadow-blue-200"
+                onClick={generateDocument}
                 disabled={modalLoading}
+                className="px-6 py-2.5 bg-[#00D4FF] hover:bg-[#00b4d8] text-[#0A1F44] rounded-xl font-bold shadow-[0_0_15px_rgba(0,212,255,0.3)] transition"
               >
                 {modalLoading ? "Generating..." : "Generate Notice"}
               </button>

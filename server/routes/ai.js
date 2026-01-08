@@ -1,16 +1,16 @@
 ﻿const express = require("express");
 const { GoogleGenerativeAI } = require("@google/generative-ai");
 const router = express.Router();
+const verifyToken = require("../middleware/authMiddleware");
+const checkAiLimit = require("../middleware/checkAiLimit");
 
 // Initialize Gemini
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
 
 /* ---------------- AI ASSISTANT (CHAT) ---------------- */
-const fs = require('fs');
-
-router.post("/assistant", async (req, res) => {
-  fs.appendFileSync('ai_debug.log', `In Request: ${JSON.stringify(req.body)}\n`);
+// Apply Auth & Limit Check
+router.post("/assistant", verifyToken, checkAiLimit, async (req, res) => {
   try {
     const { question, history, language, location } = req.body;
 
@@ -39,11 +39,6 @@ router.post("/assistant", async (req, res) => {
     const response = await result.response;
     const text = response.text();
 
-    // Parse JSON from the AI response (it might be wrapped in md code blocks)
-    // Log the raw text for debugging
-    fs.appendFileSync('ai_debug.log', `RAW AI RESPONSE:\n${text}\n----------------\n`);
-
-    // Robust JSON extraction
     let cleaned = text.replace(/```json/g, "").replace(/```/g, "").trim();
     const firstBrace = cleaned.indexOf('{');
     const lastBrace = cleaned.lastIndexOf('}');
@@ -53,10 +48,8 @@ router.post("/assistant", async (req, res) => {
     }
 
     const jsonResponse = JSON.parse(cleaned);
-
     res.json(jsonResponse);
   } catch (err) {
-    fs.appendFileSync('ai_debug.log', `ERROR: ${err.message}\n${err.stack}\n`);
     console.error("Gemini Assistant Error:", err.message);
     res.status(500).json({
       answer: `AI Error: ${err.message}`,
@@ -67,31 +60,45 @@ router.post("/assistant", async (req, res) => {
 });
 
 /* ---------------- AGREEMENT ANALYSIS ---------------- */
-// Matched to Agreements.jsx call: /api/ai/agreement
-router.post("/agreement", async (req, res) => {
+router.post("/agreement", verifyToken, checkAiLimit, async (req, res) => {
   try {
     const { text } = req.body;
     if (!text) return res.status(400).json({ error: "No text provided" });
 
+    // Determine user plan from request (set by verifyToken)
+    // If we want to hide data for free users, we can do it here or in frontend.
+    // The requirement says: "FREE users see: Limited preview, Estimated accuracy score".
+    // "SILVER unlocks: Full accuracy score, Clause-by-clause analysis".
+
     const prompt = `
       Analyze this legal agreement text:
-      "${text.substring(0, 10000)}"
+      "${text.substring(0, 15000)}"
       
-      Provide a comprehensive professional legal analysis in Markdown format.
-      Include sections for:
-      - Key Observations
-      - Potential Risks
-      - Notable Clauses
-      - Actionable Advice
+      Provide a specific JSON output with the following keys:
+      - "accuracyScore": Number (0-100) representing legal robustness.
+      - "riskLevel": String ("Low", "Medium", "High").
+      - "missingClauses": Array of strings (important clauses missing).
+      - "ambiguousClauses": Array of strings (clauses that are vague).
+      - "jurisdictionContext": String (which laws apply, e.g., "Indian Contract Act, 1872").
+      - "analysisText": String (Markdown formatted detailed analysis).
       
-      Do NOT return JSON. Return only the Markdown text.
+      Output ONLY valid JSON.
     `;
 
     const result = await model.generateContent(prompt);
     const response = await result.response;
-    const analysis = response.text();
+    const rawText = response.text();
 
-    res.json({ analysis });
+    let cleaned = rawText.replace(/```json/g, "").replace(/```/g, "").trim();
+    const firstBrace = cleaned.indexOf('{');
+    const lastBrace = cleaned.lastIndexOf('}');
+    if (firstBrace !== -1 && lastBrace !== -1) {
+      cleaned = cleaned.substring(firstBrace, lastBrace + 1);
+    }
+
+    const analysisData = JSON.parse(cleaned);
+    res.json(analysisData);
+
   } catch (err) {
     console.error("Gemini Agreement Error:", err.message);
     res.status(500).json({ error: "Failed to analyze agreement" });
@@ -99,8 +106,7 @@ router.post("/agreement", async (req, res) => {
 });
 
 /* ---------------- CASE ANALYSIS (Legal Issue) ---------------- */
-// Matched to Analyze.jsx call: /api/ai/case-analysis
-router.post("/case-analysis", async (req, res) => {
+router.post("/case-analysis", verifyToken, checkAiLimit, async (req, res) => {
   try {
     const { text } = req.body;
     if (!text) return res.status(400).json({ error: "No text provided" });
@@ -150,47 +156,8 @@ router.post("/case-analysis", async (req, res) => {
   }
 });
 
-/* ---------------- FIR GENERATOR ---------------- */
-router.post("/draft-fir", async (req, res) => {
-  try {
-    const { incident_details, language, location } = req.body;
-    if (!incident_details) return res.status(400).json({ error: "Incident details required" });
-
-    const lang = language || "English";
-    const loc = location || "India";
-
-    const prompt = `
-      You are an expert police complaint drafter in India.
-      Location: ${loc}
-      Language: ${lang}
-      
-      Draft a formal FIR (First Information Report) complaint based on these details:
-      "${incident_details}"
-      
-      Structure:
-      1. To the SHO (Station House Officer)
-      2. Subject Line
-      3. Complainant Details (Leave placeholders [Name], [Address])
-      4. Incident Validation (Date, Time, Place)
-      5. Body (Professional, chronological account)
-      6. Prayer/Request for Action
-      7. Signature Placeholder
-      
-      Output ONLY the draft text in Markdown. Do not wrap in JSON.
-    `;
-
-    const result = await model.generateContent(prompt);
-    const response = await result.response;
-    res.json({ draft: response.text() });
-
-  } catch (err) {
-    console.error("Gemini FIR Error:", err.message);
-    res.status(500).json({ error: "Failed to draft FIR" });
-  }
-});
-
 /* ---------------- LEGAL NOTICE GENERATOR ---------------- */
-router.post("/draft-notice", async (req, res) => {
+router.post("/draft-notice", verifyToken, checkAiLimit, async (req, res) => {
   try {
     const { notice_details, language, type } = req.body;
     if (!notice_details) return res.status(400).json({ error: "Notice details required" });

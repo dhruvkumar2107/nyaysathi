@@ -14,151 +14,114 @@ export default function Navbar() {
     setIsMenuOpen(false);
   };
 
-  const handleSearch = (e) => {
-    if (e.key === "Enter" && searchQuery.trim()) {
-      navigate(`/marketplace?search=${encodeURIComponent(searchQuery)}`);
-    }
-  };
-
-  const closeMenu = () => setIsMenuOpen(false);
+  const menuItems = [
+    { to: user ? (user.role === 'lawyer' ? "/lawyer/dashboard" : "/client/dashboard") : "/", icon: "🏠", label: "Home" },
+    { to: "/marketplace", icon: "⚖️", label: "Network" },
+    { to: "/assistant", icon: "🤖", label: "AI Assistant" },
+    { to: "/agreements", icon: "📄", label: "Agreements" },
+    { to: "/pricing", icon: "💎", label: "Plans" },
+  ];
 
   return (
     <>
-      <nav className="fixed top-0 left-0 right-0 z-50 bg-white shadow-sm border-b border-gray-200 h-[72px] flex items-center tablet:px-0">
-        <div className="max-w-[1128px] mx-auto w-full px-4 flex items-center justify-between gap-4">
+      <nav className="fixed top-0 left-0 right-0 z-50 bg-[#0A1F44]/90 backdrop-blur-md border-b border-white/10 h-[72px] flex items-center">
+        <div className="max-w-7xl mx-auto w-full px-6 flex items-center justify-between gap-6">
 
-          {/* LEFT: Logo & Search */}
-          <div className="flex items-center gap-4 flex-1 max-w-xl">
-            {/* HAMBURGER MENU (Mobile Only) */}
-            <button
-              onClick={() => setIsMenuOpen(true)}
-              className="md:hidden p-2 -ml-2 text-gray-600 hover:bg-gray-100 rounded-full"
-            >
-              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-              </svg>
-            </button>
-
-            <Link
-              to="/"
-              className="text-2xl font-bold text-blue-700 tracking-tight flex items-center gap-1 shrink-0"
-            >
-              <span className="text-3xl">⚖️</span>
-              <span className="hidden xs:inline">NYAY-SATHI</span>
-            </Link>
-
-            {/* Search Input (Enterprise Style) */}
-            <div className="hidden md:flex items-center w-full max-w-xs bg-[#EEF3F8] rounded-md px-3 py-2 transition hover:border-gray-300 border border-transparent focus-within:border-gray-400 focus-within:bg-white focus-within:w-full">
-              <span className="text-gray-500 mr-2">🔍</span>
-              <input
-                type="text"
-                placeholder="Search lawyers, services..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                onKeyDown={handleSearch}
-                className="bg-transparent border-none outline-none text-sm text-gray-700 w-full placeholder-gray-500 font-medium"
-              />
+          {/* LEFT: Logo */}
+          <Link
+            to="/"
+            className="flex items-center gap-2 text-2xl font-bold tracking-tight text-white shrink-0 group"
+          >
+            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-600 to-blue-900 flex items-center justify-center shadow-lg group-hover:shadow-blue-500/50 transition">
+              <span className="text-xl">⚖️</span>
             </div>
-          </div>
+            <div className="flex flex-col leading-none">
+              <span className="group-hover:text-[#00D4FF] transition">NYAY</span>
+              <span className="text-sm font-medium text-blue-300">SATHI</span>
+            </div>
+          </Link>
 
-          {/* CENTER/RIGHT: Navigation Links (Desktop) */}
-          <div className="hidden md:flex items-center gap-1 text-xs font-medium text-gray-500">
-            <NavLink to={user ? (user.role === 'lawyer' ? "/lawyer/dashboard" : "/client/dashboard") : "/"} icon="🏠" label="Home" active={false} />
-            <NavLink to="/marketplace" icon="👥" label="Network" />
-            <NavLink to="/nearby" icon="💼" label="Nearby" />
-            <NavLink to="/messages" icon="💬" label="Messaging" />
-            <NavLink to="/assistant" icon="🤖" label="Assistant" />
-            <NavLink to="/agreements" icon="📄" label="Agreements" />
-            <NavLink to="/pricing" icon="💎" label="Pricing" />
+          {/* CENTER: Navigation (Desktop) */}
+          <div className="hidden md:flex items-center gap-1 bg-white/5 p-1 rounded-full border border-white/5">
+            {menuItems.map((item) => (
+              <NavLink key={item.to} {...item} />
+            ))}
           </div>
 
           {/* RIGHT: Profile / Auth */}
-          <div className="pl-4 border-l border-gray-200 ml-2 flex items-center gap-3">
-            {user ? (
-              <div className="flex flex-col items-center cursor-pointer group relative">
-                <div className="w-8 h-8 rounded-full bg-blue-100 text-blue-700 flex items-center justify-center font-bold text-xs ring-1 ring-blue-50">
-                  {user.name?.[0]}
-                </div>
-                <span className="text-[10px] text-gray-600 mt-0.5 group-hover:text-gray-900 flex items-center">
-                  Me ▼
-                </span>
+          <div className="flex items-center gap-4">
+            {/* Search Trigger (Mobile/Desktop) */}
+            <button className="p-2 text-blue-200 hover:text-white hover:bg-white/10 rounded-full transition">
+              <span className="text-xl">🔍</span>
+            </button>
 
-                {/* Dropdown would go here */}
-                <button
-                  onClick={handleLogout}
-                  className="absolute top-10 right-0 w-24 bg-white shadow-lg border border-gray-100 rounded-lg py-2 text-center text-red-600 hover:bg-red-50 hidden group-hover:block"
-                >
-                  Logout
-                </button>
+            {user ? (
+              <div className="flex items-center gap-3 pl-4 border-l border-white/10">
+                <div className="text-right hidden sm:block">
+                  <p className="text-sm font-medium text-white">{user.name}</p>
+                  <p className="text-xs text-blue-300 capitalize">{user.plan || "Free"} Member</p>
+                </div>
+                <div className="relative group">
+                  <button className="w-10 h-10 rounded-full bg-blue-600 text-white flex items-center justify-center font-bold ring-2 ring-[#00D4FF]/50 hover:ring-[#00D4FF] transition">
+                    {user.name?.[0]}
+                  </button>
+                  {/* Dropdown */}
+                  <div className="absolute top-12 right-0 w-48 bg-[#0F2A5F] border border-white/10 rounded-xl shadow-xl overflow-hidden hidden group-hover:block animate-in fade-in slide-in-from-top-2">
+                    <Link to="/settings" className="block px-4 py-3 text-sm text-blue-100 hover:bg-white/5 hover:text-white transition">Settings</Link>
+                    <button onClick={handleLogout} className="block w-full text-left px-4 py-3 text-sm text-red-400 hover:bg-red-500/10 hover:text-red-300 transition">Logout</button>
+                  </div>
+                </div>
               </div>
             ) : (
-              <div className="flex gap-2">
-                <Link
-                  to="/register"
-                  className="hidden sm:inline-block px-4 py-1.5 rounded-full text-gray-600 font-semibold text-sm hover:bg-gray-100 transition"
-                >
-                  Join now
-                </Link>
+              <div className="flex gap-3">
                 <Link
                   to="/login"
-                  className="px-4 py-1.5 rounded-full text-blue-600 border border-blue-600 font-semibold text-sm hover:bg-blue-50 transition"
+                  className="px-5 py-2 rounded-full text-blue-200 font-medium text-sm hover:text-white hover:bg-white/5 transition"
                 >
-                  Sign in
+                  Log In
+                </Link>
+                <Link
+                  to="/register"
+                  className="px-5 py-2 rounded-full bg-[#00D4FF] text-[#0A1F44] font-bold text-sm hover:bg-[#33ddff] hover:shadow-[0_0_20px_rgba(0,212,255,0.4)] transition"
+                >
+                  Get Started
                 </Link>
               </div>
             )}
+
+            {/* Mobile Menu Toggle */}
+            <button
+              onClick={() => setIsMenuOpen(true)}
+              className="md:hidden p-2 text-blue-200 hover:bg-white/10 rounded-lg"
+            >
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" /></svg>
+            </button>
           </div>
         </div>
       </nav>
 
-      {/* MOBILE DRAWER (Slide from Left) */}
+      {/* Mobile Drawer */}
       {isMenuOpen && (
-        <div className="fixed inset-0 z-[60] md:hidden">
-          {/* Backdrop */}
-          <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" onClick={closeMenu}></div>
-
-          {/* Drawer Content */}
-          <div className="absolute top-0 left-0 bottom-0 w-[280px] bg-white shadow-2xl p-6 animate-in slide-in-from-left duration-300">
+        <div className="fixed inset-0 z-50 md:hidden">
+          <div className="absolute inset-0 bg-black/80 backdrop-blur-sm" onClick={() => setIsMenuOpen(false)}></div>
+          <div className="absolute right-0 top-0 bottom-0 w-[280px] bg-[#0A1F44] border-l border-white/10 p-6 shadow-2xl">
             <div className="flex justify-between items-center mb-8">
-              <div className="text-xl font-bold text-blue-700 flex items-center gap-2">
-                <span className="text-2xl">⚖️</span> NYAY-SATHI
-              </div>
-              <button onClick={closeMenu} className="p-2 -mr-2 text-gray-500 hover:bg-gray-100 rounded-full">
-                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                </svg>
-              </button>
+              <span className="text-xl font-bold text-white">Menu</span>
+              <button onClick={() => setIsMenuOpen(false)} className="text-gray-400 hover:text-white">✕</button>
             </div>
-
             <div className="space-y-2">
-              <MobileLink to={user ? (user.role === 'lawyer' ? "/lawyer/dashboard" : "/client/dashboard") : "/"} icon="🏠" label="Home" onClick={closeMenu} />
-              <MobileLink to="/marketplace" icon="👥" label="My Network" onClick={closeMenu} />
-              <MobileLink to="/nearby" icon="💼" label="Nearby" onClick={closeMenu} />
-              <MobileLink to="/messages" icon="💬" label="Messaging" onClick={closeMenu} />
-              <MobileLink to="/assistant" icon="🤖" label="AI Assistant" onClick={closeMenu} />
-              <MobileLink to="/agreements" icon="📄" label="Agreements" onClick={closeMenu} />
-              <MobileLink to="/pricing" icon="💎" label="Premium Plans" onClick={closeMenu} />
-            </div>
-
-            {user && (
-              <div className="mt-8 pt-8 border-t border-gray-200">
-                <div className="flex items-center gap-3 mb-6">
-                  <div className="w-10 h-10 rounded-full bg-blue-100 text-blue-700 flex items-center justify-center font-bold text-sm">
-                    {user.name?.[0]}
-                  </div>
-                  <div>
-                    <p className="font-semibold text-gray-900">{user.name}</p>
-                    <p className="text-xs text-gray-500 capitalize">{user.role}</p>
-                  </div>
-                </div>
-                <button
-                  onClick={handleLogout}
-                  className="w-full py-2.5 rounded-lg border border-red-200 text-red-600 hover:bg-red-50 font-medium transition"
+              {menuItems.map((item) => (
+                <Link
+                  key={item.to}
+                  to={item.to}
+                  onClick={() => setIsMenuOpen(false)}
+                  className="flex items-center gap-3 px-4 py-3 rounded-xl text-blue-100 hover:bg-white/10 hover:text-[#00D4FF] transition"
                 >
-                  Log Out
-                </button>
-              </div>
-            )}
+                  <span className="text-lg">{item.icon}</span>
+                  <span className="font-medium">{item.label}</span>
+                </Link>
+              ))}
+            </div>
           </div>
         </div>
       )}
@@ -166,24 +129,14 @@ export default function Navbar() {
   );
 }
 
-function NavLink({ to, icon, label, active }) {
-  return (
-    <Link to={to} className={`flex flex-col items-center justify-center w-20 py-1 hover:text-gray-900 transition group ${active ? "text-gray-900 border-b-2 border-gray-900" : ""}`}>
-      <span className="text-xl mb-0.5 group-hover:scale-110 transition">{icon}</span>
-      <span className="tracking-wide hidden xl:block">{label}</span>
-    </Link>
-  )
-}
-
-function MobileLink({ to, icon, label, onClick }) {
+function NavLink({ to, icon, label }) {
   return (
     <Link
       to={to}
-      onClick={onClick}
-      className="flex items-center gap-4 px-4 py-3 text-gray-700 hover:bg-blue-50 hover:text-blue-700 rounded-xl transition font-medium"
+      className="flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium text-blue-200 hover:text-white hover:bg-white/10 transition"
     >
-      <span className="text-xl w-6 text-center">{icon}</span>
+      <span>{icon}</span>
       <span>{label}</span>
     </Link>
-  );
+  )
 }

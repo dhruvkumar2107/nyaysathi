@@ -14,14 +14,26 @@ export default function Pricing() {
   const plans = {
     client: [
       {
+        title: "Free",
+        price: "0",
+        features: [
+          "3 Free AI Usages (Shared)",
+          "Basic Lawyer Search",
+          "6-Hour Trial Window"
+        ],
+        benefit: "For Verification",
+        highlight: false,
+        limitations: "Limited AI Tools"
+      },
+      {
         title: "Silver",
-        price: "200",
+        price: "499",
         features: [
           "1 User (Individual)",
+          "Full Agreement Analysis",
           "District Courts & Local Tribunals",
-          "Civil, Property, Matrimonial, Consumer cases",
-          "5 Basic Legal Templates",
-          "Standard Email Support"
+          "Standard Email Support",
+          "Unlimited Drafting (No FIRs)"
         ],
         benefit: "Essential Legal Access",
         highlight: false,
@@ -29,12 +41,12 @@ export default function Pricing() {
       },
       {
         title: "Gold",
-        price: "500",
+        price: "999",
         features: [
           "State/High Courts + District Courts",
           "All cases (Criminal & Cybercrime included)",
-          "Unlimited Document Drafting",
-          "2 Free 15-min discovery calls/month",
+          "Priority AI Processing",
+          "Comparative Agreement Analysis",
           "Priority Chat Support"
         ],
         benefit: "Complete Protection",
@@ -42,14 +54,13 @@ export default function Pricing() {
       },
       {
         title: "Diamond",
-        price: "1500",
+        price: "2499",
         features: [
-          "Family Coverage (User + Spouse + Parents + Children)",
-          "Supreme Court, High Court, All Tribunals",
-          "Full-spectrum Legal Protection",
-          "Custom Drafting (Wills/Trusts)",
-          "Unlimited Discovery Calls",
-          "24/7 Concierge Account Manager"
+          "Family Coverage (User + Spouse)",
+          "Supreme Court + All Tribunals",
+          "Concierge Legal Review",
+          "Drafting + Human Verification",
+          "24/7 Priority Manager"
         ],
         benefit: "Elite Family Coverage",
         highlight: false
@@ -160,7 +171,7 @@ export default function Pricing() {
         },
 
         theme: {
-          color: "#2563eb"
+          color: "#00D4FF"
         }
       };
 
@@ -177,63 +188,63 @@ export default function Pricing() {
 
   /* ===================== UI ===================== */
   return (
-    <main className="min-h-screen bg-white text-gray-900 py-24 px-6">
+    <main className="min-h-screen bg-[#0A1F44] text-white py-24 px-6">
       <div className="max-w-[1128px] mx-auto">
         <div className="text-center mb-10">
           <h1 className="text-4xl md:text-5xl font-bold mb-4">
             Plans that scale with you
           </h1>
-          <p className="text-gray-500 text-lg">
-            Choose the plan that fits your needs
+          <p className="text-blue-200 text-lg">
+            Choose the plan that fits your legal needs
           </p>
         </div>
 
         {/* ROLE TABS */}
         <div className="flex justify-center mb-12">
-          <div className="bg-gray-100 p-1 rounded-xl flex gap-1">
+          <div className="bg-white/10 p-1 rounded-xl flex gap-1 border border-white/5">
             <button
               onClick={() => setActiveTab("client")}
-              className={`px-8 py-3 rounded-lg font-semibold transition ${activeTab === "client" ? "bg-white shadow-sm text-blue-600" : "text-gray-500 hover:text-gray-900"}`}
+              className={`px-8 py-3 rounded-lg font-semibold transition ${activeTab === "client" ? "bg-[#00D4FF] text-[#0A1F44]" : "text-blue-200 hover:text-white"}`}
             >
               For Clients
             </button>
             <button
               onClick={() => setActiveTab("lawyer")}
-              className={`px-8 py-3 rounded-lg font-semibold transition ${activeTab === "lawyer" ? "bg-white shadow-sm text-blue-600" : "text-gray-500 hover:text-gray-900"}`}
+              className={`px-8 py-3 rounded-lg font-semibold transition ${activeTab === "lawyer" ? "bg-[#00D4FF] text-[#0A1F44]" : "text-blue-200 hover:text-white"}`}
             >
               For Lawyers
             </button>
           </div>
         </div>
 
-        <div className="grid md:grid-cols-3 gap-8">
+        <div className="grid md:grid-cols-4 gap-6">
           {plans[activeTab].map((p, i) => (
             <div
               key={i}
-              className={`relative p-8 rounded-2xl border transition-all duration-300 shadow-sm flex flex-col
+              className={`relative p-8 rounded-2xl border transition-all duration-300 shadow-xl flex flex-col glass-panel
                 ${p.highlight
-                  ? "border-blue-500 ring-4 ring-blue-500/10"
-                  : "border-gray-200"}`}
+                  ? "border-[#00D4FF] ring-2 ring-[#00D4FF]/20 transform scale-105 z-10"
+                  : "border-white/10 hover:border-white/20"}`}
             >
               {p.highlight && (
-                <span className="absolute -top-4 left-1/2 -translate-x-1/2 bg-blue-600 text-white px-4 py-1 rounded-full text-sm font-bold">
+                <span className="absolute -top-4 left-1/2 -translate-x-1/2 bg-[#00D4FF] text-[#0A1F44] px-4 py-1 rounded-full text-sm font-bold">
                   Recommended
                 </span>
               )}
 
-              <h3 className="text-xl font-bold mb-2">{p.title}</h3>
+              <h3 className="text-xl font-bold mb-2 text-white">{p.title}</h3>
               <div className="flex items-end gap-1 mb-2">
-                <span className="text-5xl font-bold">₹{p.price}</span>
-                <span className="text-gray-400 mb-1">/month</span>
+                <span className="text-4xl font-bold text-white">₹{p.price}</span>
+                <span className="text-blue-300 mb-1">/mo</span>
               </div>
-              <p className="text-sm text-blue-600 font-semibold mb-6">
+              <p className="text-sm text-[#00D4FF] font-semibold mb-6">
                 {p.benefit}
               </p>
 
               <ul className="space-y-4 flex-1 mb-8">
                 {p.features.map((f, idx) => (
-                  <li key={idx} className="flex items-start gap-3 text-gray-600">
-                    <span className="text-green-500 font-bold">✓</span>
+                  <li key={idx} className="flex items-start gap-3 text-blue-100/80 text-sm">
+                    <span className="text-[#00D4FF] font-bold">✓</span>
                     {f}
                   </li>
                 ))}
@@ -242,12 +253,12 @@ export default function Pricing() {
               <button
                 onClick={() => handleBuy(p.title, p.price)}
                 disabled={loading || p.price === "0" || user?.plan?.toLowerCase() === p.title.toLowerCase()}
-                className={`w-full py-4 rounded-xl font-bold transition
+                className={`w-full py-3 rounded-xl font-bold transition
                   ${user?.plan?.toLowerCase() === p.title.toLowerCase()
-                    ? "bg-green-600 text-white cursor-default"
+                    ? "bg-green-600/20 text-green-400 cursor-default border border-green-500/50"
                     : p.highlight
-                      ? "bg-blue-600 hover:bg-blue-700 text-white"
-                      : "bg-gray-900 hover:bg-gray-800 text-white"
+                      ? "bg-[#00D4FF] hover:bg-[#00b4d8] text-[#0A1F44]"
+                      : "bg-white/10 hover:bg-white/20 text-white"
                   }
                   ${loading ? "opacity-70 cursor-not-allowed" : ""}`}
               >
