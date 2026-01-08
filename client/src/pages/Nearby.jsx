@@ -115,8 +115,8 @@ export default function Nearby() {
       const raw = res.data;
 
       const structured = {
-        police_stations: raw.filter(i => i.type === 'police'),
-        courts: raw.filter(i => i.type === 'court'),
+        police_stations: raw.filter(i => i.type && i.type.toLowerCase().includes('police')),
+        courts: raw.filter(i => i.type && i.type.toLowerCase().includes('court')),
         lawyers: raw.filter(i => i.type === 'legal_aid' || i.type === 'lawyer').map((l, idx) => ({
           id: idx,
           name: l.name,
