@@ -29,6 +29,8 @@ router.get("/", async (req, res) => {
       Step 1: If coordinates are provided, IDENTIFY the specific locality/area name (e.g. Koramangala, Indiranagar, Whitefield).
       Step 2: Generate a JSON list of 5 REAL legal service locations (Courts, Police Stations, Legal Aid) strictly within 5-10km of that specific area.
       
+      CRITICAL: You MUST include at least one "Police Station" and one "Court".
+
       Return JSON array of objects with keys: 
       "name", "rating" (4.0-5.0), "address" (Must include specific locality name), "type" (court|police|legal_aid).
       
@@ -95,11 +97,19 @@ router.get("/", async (req, res) => {
         address: l.location?.city || "Bengaluru",
         type: "lawyer"
       }));
-      res.json(fallback.length ? fallback : [
-        { name: "District Court (Offline Fallback)", rating: 4.5, address: "City Center", type: "court" }
-      ]);
+
+      // Always return at least one Court and one Police Station in fallback
+      const staticServices = [
+        { name: "District Court (Offline Fallback)", rating: 4.5, address: "City Center", type: "court" },
+        { name: "City Police Station (HQ)", rating: 4.2, address: "Main Road", type: "police" }
+      ];
+
+      res.json([...fallback, ...staticServices]);
     } catch (e) {
-      res.json([{ name: "District Court", rating: 4.5, address: "City Center", type: "court" }]);
+      res.json([
+        { name: "District Court", rating: 4.5, address: "City Center", type: "court" },
+        { name: "Central Police Station", rating: 4.0, address: "City Center", type: "police" }
+      ]);
     }
   }
 });
