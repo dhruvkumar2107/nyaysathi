@@ -41,7 +41,7 @@ export default function ClientDashboard() {
         if (data.role === 'client') {
           const confirmed = window.confirm(`Lawyer ${data.lawyerName} accepted! Start video call?`);
           if (confirmed) {
-            navigate(`/meet/${data.meetingId}`);
+            navigate(`/video-call/${data.meetingId}`);
           }
         }
       });

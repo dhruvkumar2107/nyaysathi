@@ -12,10 +12,25 @@ const socket = io(import.meta.env.VITE_API_URL?.replace(/\/api$/, "") || "http:/
 export default function LawyerDashboard() {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
+  const [activeTab, setActiveTab] = useState("leads"); // leads, invoices, clients
   const [leads, setLeads] = useState([]);
   const [appointments, setAppointments] = useState([]);
   const [requests, setRequests] = useState([]);
+  const [invoices, setInvoices] = useState([]); // NEW
+  const [clients, setClients] = useState([]); // NEW
   const [instantCall, setInstantCall] = useState(null); // { clientId, clientName, category }
+
+  // Social Feed State
+  const [posts, setPosts] = useState([]);
+  const [postContent, setPostContent] = useState("");
+  const [postFile, setPostFile] = useState(null);
+  const [postType, setPostType] = useState("text");
+  const [topics, setTopics] = useState([
+    { _id: "1", name: "Family Law", count: 120 },
+    { _id: "2", name: "Corporate Law", count: 90 },
+    { _id: "3", name: "Criminal Defense", count: 75 },
+    { _id: "4", name: "Real Estate", count: 60 },
+  ]);
 
 
   useEffect(() => {
@@ -24,6 +39,8 @@ export default function LawyerDashboard() {
       fetchPosts();
       fetchAppointments();
       fetchRequests();
+      fetchInvoices(); // NEW
+      fetchClients(); // NEW
 
       // JOIN INSTANT POOL
       socket.emit("join_lawyer_pool");
@@ -37,7 +54,7 @@ export default function LawyerDashboard() {
       // Listen for consult start (if I won the race)
       socket.on("consult_start", (data) => {
         if (data.role === 'lawyer') {
-          navigate(`/meet/${data.meetingId}`);
+          navigate(`/video-call/${data.meetingId}`);
         }
       });
     }
@@ -187,6 +204,51 @@ export default function LawyerDashboard() {
     }
   };
 
+  const fetchInvoices = async () => {
+    try {
+      const res = await axios.get(`/api/invoices?lawyerId=${user._id || user.id}`);
+      setInvoices(res.data);
+    } catch (err) { console.error(err); }
+  };
+
+  const fetchClients = async () => {
+    try {
+      const res = await axios.get(`/api/crm?lawyerId=${user._id || user.id}`);
+      setClients(res.data);
+    } catch (err) { console.error(err); }
+  };
+
+  const createInvoice = async () => {
+    const amount = prompt("Enter Amount (INR):");
+    const desc = prompt("Description:");
+    const clientName = prompt("Client Name:");
+    if (!amount || !desc || !clientName) return;
+
+    try {
+      await axios.post("/api/invoices", {
+        lawyerId: user._id || user.id,
+        clientName, amount, description: desc, status: "pending"
+      });
+      alert("Invoice Created!");
+      fetchInvoices();
+    } catch (err) { alert("Failed"); }
+  };
+
+  const addClient = async () => {
+    const name = prompt("Client Name:");
+    const phone = prompt("Phone:");
+    if (!name) return;
+
+    try {
+      await axios.post("/api/crm", {
+        lawyerId: user._id || user.id,
+        name, phone, notes: "Added from Dashboard"
+      });
+      alert("Client Added!");
+      fetchClients();
+    } catch (err) { alert("Failed"); }
+  };
+
   if (!user) return <div className="text-white p-10">Loading...</div>;
 
   return (
@@ -321,105 +383,120 @@ export default function LawyerDashboard() {
             </button>
           </div>
         }
-        /* CENTER FEED - SOCIAL POSTS (LINKEDIN STYLE) */
+        /* CENTER FEED */
         mainFeed={
           <>
-            {/* Create Post */}
-            <div className="bg-white border border-gray-200 rounded-lg p-6 mb-6 shadow-sm">
-              <h3 className="font-bold text-gray-900 mb-4">📢 Legal Community Feed</h3>
-
-              <div className="flex gap-4 mb-6">
-                <div className="flex-1">
-                  <textarea
-                    placeholder="Share a legal update or case study..."
-                    className="w-full bg-gray-50 border border-gray-200 rounded-lg p-3 text-gray-900 focus:border-blue-500 outline-none resize-none"
-                    rows={2}
-                    value={postContent}
-                    onChange={(e) => setPostContent(e.target.value)}
-                  />
-
-                  {postFile && (
-                    <div className="mt-2 text-xs text-green-600 font-medium flex items-center gap-1">
-                      <span>📎 Attached: {postFile.name}</span>
-                      <button onClick={() => setPostFile(null)} className="text-red-500 hover:text-red-700">✕</button>
-                    </div>
-                  )}
-
-                  <div className="flex justify-between items-center mt-3">
-                    <div className="flex gap-2">
-                      <label className="cursor-pointer flex items-center gap-1 text-gray-500 hover:text-blue-600 text-sm font-medium px-2 py-1 rounded hover:bg-gray-100 transition">
-                        <span>📷</span> Image
-                        <input type="file" className="hidden" accept="image/*" onChange={(e) => setPostFile(e.target.files[0])} />
-                      </label>
-
-                      <label className="cursor-pointer flex items-center gap-1 text-gray-500 hover:text-purple-600 text-sm font-medium px-2 py-1 rounded hover:bg-gray-100 transition">
-                        <span>🎥</span> Reel
-                        <input type="file" className="hidden" accept="video/mp4" onChange={(e) => {
-                          setPostType("reel");
-                          setPostFile(e.target.files[0]);
-                        }} />
-                      </label>
-                    </div>
-
-                    <button
-                      onClick={handleCreatePost}
-                      disabled={!postContent && !postFile}
-                      className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-full font-bold text-sm transition disabled:opacity-50 disabled:cursor-not-allowed"
-                    >
-                      Post Update
-                    </button>
-                  </div>
-                </div>
-              </div>
-
-              {/* Feed List */}
-              {posts.map((post) => (
-                <div key={post._id} className="border-t border-gray-100 py-5">
-                  <div className="flex justify-between items-start mb-3">
-                    <div className="flex gap-3">
-                      <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-bold uppercase">
-                        {post.author?.name ? post.author.name[0] : "L"}
-                      </div>
-                      <div>
-                        <h4 className="font-semibold text-sm text-gray-900">{post.author?.name || "Lawyer"}</h4>
-                        <p className="text-xs text-gray-500">
-                          {post.author?.role} • {new Date(post.createdAt).toLocaleDateString()}
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-
-                  <p className="text-sm text-gray-800 mb-3 whitespace-pre-wrap">{post.content}</p>
-
-                  {post.mediaUrl && (
-                    <div className="mb-4 rounded-lg overflow-hidden border border-gray-100 bg-black">
-                      {post.type === "reel" || (post.mediaUrl && post.mediaUrl.endsWith(".mp4")) ? (
-                        <video
-                          src={post.mediaUrl?.startsWith("http") ? post.mediaUrl : `${import.meta.env.VITE_API_URL?.replace(/\/api$/, "") || "http://localhost:4000"}${post.mediaUrl}`}
-                          controls
-                          className="w-full max-h-[400px]"
-                        />
-                      ) : (
-                        <img
-                          src={post.mediaUrl?.startsWith("http") ? post.mediaUrl : `${import.meta.env.VITE_API_URL?.replace(/\/api$/, "") || "http://localhost:4000"}${post.mediaUrl}`}
-                          alt="Post attachment"
-                          className="w-full object-cover"
-                        />
-                      )}
-                    </div>
-                  )}
-
-                  <div className="flex gap-6 text-sm text-gray-500">
-                    <button
-                      onClick={() => handleLike(post._id)}
-                      className={`hover:text-blue-600 transition flex items-center gap-1 ${post.likes?.includes(user._id) ? "text-blue-600 font-bold" : ""}`}
-                    >
-                      👍 {post.likes?.length || 0} Likes
-                    </button>
-                  </div>
-                </div>
+            {/* TABS */}
+            <div className="flex bg-white border border-gray-200 rounded-lg p-1 mb-4">
+              {['leads', 'invoices', 'clients'].map(tab => (
+                <button
+                  key={tab}
+                  onClick={() => setActiveTab(tab)}
+                  className={`flex-1 py-2 rounded-md text-sm font-bold capitalize transition ${activeTab === tab ? 'bg-blue-600 text-white shadow-sm' : 'text-gray-500 hover:bg-gray-50'}`}
+                >
+                  {tab}
+                </button>
               ))}
             </div>
+
+            {/* CONTENT BASED ON TAB */}
+            {activeTab === 'leads' && (
+              <>
+                <h3 className="font-bold text-gray-800 mb-4">Marketplace Leads ({leads.length})</h3>
+                {/* ... Existing Leads Map ... */}
+                {leads.length === 0 ? (
+                  <p className="text-center text-gray-500 py-10">No new cases in the marketplace.</p>
+                ) : (
+                  leads.map((lead) => (
+                    <div key={lead._id} className="bg-white border border-gray-200 rounded-lg p-5 mb-4 shadow-sm relative overflow-hidden group hover:border-blue-300 transition">
+                      {/* ... Lead Card Content ... */}
+                      <div className="flex justify-between items-start mb-2">
+                        <div>
+                          <div className="flex items-center gap-2 mb-1">
+                            <span className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider ${lead.tier === 'diamond' ? 'bg-purple-100 text-purple-700 border border-purple-200' :
+                                lead.tier === 'gold' ? 'bg-yellow-100 text-yellow-700 border border-yellow-200' :
+                                  'bg-gray-100 text-gray-600 border border-gray-200'
+                              }`}>
+                              {lead.tier || "Standard"} Lead
+                            </span>
+                            <span className="text-xs text-gray-400">• {new Date(lead.createdAt).toLocaleDateString()}</span>
+                          </div>
+                          <h4 className="font-bold text-lg text-gray-900 leading-tight">{lead.title}</h4>
+                        </div>
+                        <div className="text-right">
+                          <span className="block text-xl font-bold text-blue-600">₹{lead.budget || "N/A"}</span>
+                          <span className="text-xs text-gray-400">Budget</span>
+                        </div>
+                      </div>
+
+                      <p className="text-sm text-gray-600 mb-4 line-clamp-2">{lead.desc}</p>
+
+                      <div className="flex items-center gap-4 text-xs text-gray-500 mb-4">
+                        <span className="flex items-center gap-1">📍 {lead.location}</span>
+                        <span className="flex items-center gap-1">⚖️ {lead.category || "General"}</span>
+                      </div>
+
+                      {/* Action Area */}
+                      <div className="pt-3 border-t border-gray-100 flex justify-end gap-3">
+                        <button className="text-gray-400 hover:text-gray-600 font-medium text-sm">Ignore</button>
+                        <button
+                          onClick={() => acceptLead(lead._id, lead.tier, lead.category)}
+                          className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg font-bold text-sm shadow-md shadow-blue-200 transition"
+                        >
+                          Accept Case
+                        </button>
+                      </div>
+                    </div>
+                  ))
+                )}
+              </>
+            )}
+
+            {activeTab === 'invoices' && (
+              <div className="bg-white border border-gray-200 rounded-lg p-6 shadow-sm">
+                <div className="flex justify-between items-center mb-6">
+                  <h3 className="font-bold text-xl text-gray-900">Invoices</h3>
+                  <button onClick={createInvoice} className="bg-green-600 text-white px-4 py-2 rounded-lg font-bold text-sm hover:bg-green-700">+ Create Invoice</button>
+                </div>
+                {invoices.length === 0 ? <p className="text-gray-500 text-center">No invoices yet.</p> : (
+                  <div className="space-y-3">
+                    {invoices.map(inv => (
+                      <div key={inv._id} className="flex justify-between items-center p-3 border border-gray-100 rounded bg-gray-50">
+                        <div>
+                          <p className="font-bold text-gray-900">{inv.clientName}</p>
+                          <p className="text-xs text-gray-500">{inv.description}</p>
+                        </div>
+                        <div className="text-right">
+                          <p className="font-bold text-blue-600">₹{inv.amount}</p>
+                          <span className={`text-[10px] px-2 py-0.5 rounded-full uppercase font-bold ${inv.status === 'paid' ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700'}`}>{inv.status}</span>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            )}
+
+            {activeTab === 'clients' && (
+              <div className="bg-white border border-gray-200 rounded-lg p-6 shadow-sm">
+                <div className="flex justify-between items-center mb-6">
+                  <h3 className="font-bold text-xl text-gray-900">My Clients</h3>
+                  <button onClick={addClient} className="bg-purple-600 text-white px-4 py-2 rounded-lg font-bold text-sm hover:bg-purple-700">+ Add Client</button>
+                </div>
+                {clients.length === 0 ? <p className="text-gray-500 text-center">No clients added.</p> : (
+                  <div className="grid grid-cols-2 gap-4">
+                    {clients.map(cl => (
+                      <div key={cl._id} className="p-4 border border-gray-200 rounded-lg hover:border-purple-300 transition">
+                        <div className="w-10 h-10 bg-purple-100 text-purple-600 rounded-full flex items-center justify-center font-bold mb-3">{cl.name[0]}</div>
+                        <h4 className="font-bold text-gray-900">{cl.name}</h4>
+                        <p className="text-xs text-gray-500">{cl.phone || "No Phone"}</p>
+                        <button className="mt-3 w-full border border-gray-300 text-gray-600 text-xs font-bold py-1.5 rounded hover:bg-gray-50">View Details</button>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            )}
           </>
         }
 

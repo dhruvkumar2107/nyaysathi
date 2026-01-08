@@ -59,6 +59,7 @@ export default function App() {
               <Route path="/login" element={<Login />} />
               <Route path="/register" element={<Register />} />
               <Route path="/pricing" element={<Pricing />} />
+              <Route path="/video-call/:id" element={<ProtectedRoute><VideoCall /></ProtectedRoute>} />
 
               {/* CLIENT DASHBOARD */}
               <Route
@@ -66,14 +67,6 @@ export default function App() {
                 element={
                   <ProtectedRoute role="client">
                     <ClientDashboard />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/meet/:id"
-                element={
-                  <ProtectedRoute>
-                    <VideoCall />
                   </ProtectedRoute>
                 }
               />
