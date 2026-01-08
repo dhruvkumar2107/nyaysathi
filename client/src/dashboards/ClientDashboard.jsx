@@ -33,9 +33,20 @@ export default function ClientDashboard() {
 
   const fetchConnections = async () => {
     try {
-      const res = await axios.get(`/api/connections?userId=${user._id || user.id}`);
+      const uId = user._id || user.id;
+      // If no ID, just fetch lawyers without filtering
+      if (!uId) {
+        fetchSuggestedLawyers([]);
+        return;
+      }
+
+      const res = await axios.get(`/api/connections?userId=${uId}`);
+
       // Store IDs of people I am already connected to
-      const connectedIds = res.data.map(p => p._id);
+      const connectedIds = Array.isArray(res.data)
+        ? res.data.map(p => p?._id).filter(Boolean)
+        : [];
+
       fetchSuggestedLawyers(connectedIds);
     } catch (err) {
       console.error("Failed to fetch connections", err);
@@ -46,16 +57,20 @@ export default function ClientDashboard() {
   const fetchSuggestedLawyers = async (connectedIds = []) => {
     try {
       const res = await axios.get("/api/users?role=lawyer");
+      const uId = user._id || user.id;
 
-      // Filter out: yourself AND people you are already connected to
-      const filtered = res.data.filter(u =>
-        u._id !== user._id &&
-        !connectedIds.includes(u._id)
-      );
+      let filtered = res.data;
+
+      if (Array.isArray(res.data)) {
+        filtered = res.data.filter(u =>
+          u._id !== uId &&
+          !connectedIds.includes(u._id)
+        );
+      }
 
       setSuggestedLawyers(filtered.slice(0, 5));
     } catch (err) {
-      console.error("Failed to fetch lawyers");
+      console.error("Failed to fetch lawyers", err);
     }
   };
 
@@ -331,6 +346,7 @@ export default function ClientDashboard() {
             <div className="bg-white border border-gray-200 rounded-lg p-4 shadow-sm">
               <h3 className="font-bold text-sm text-gray-900 mb-4">Suggested for you</h3>
               <ul className="space-y-4">
+                {suggestedLawyers.length === 0 && <p className="text-xs text-center text-gray-500 py-4">No lawyers found nearby.</p>}
                 {suggestedLawyers.map((l) => (
                   <li key={l._id} className="flex gap-3 items-center">
                     <div className="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center font-bold text-gray-500">

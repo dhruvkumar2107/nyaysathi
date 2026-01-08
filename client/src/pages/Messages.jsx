@@ -30,12 +30,20 @@ export default function Messages() {
   const fetchConnections = async () => {
     try {
       const id = user._id || user.id;
-      if (!id) throw new Error("User ID missing");
+
+      // Safety check: if ID is somehow still missing, stop loading
+      if (!id) {
+        setLoading(false);
+        return;
+      }
 
       const res = await axios.get(`/api/connections?userId=${id}`);
-      setChatList(res.data);
-      if (res.data.length > 0) {
-        setActiveChat(res.data[0]);
+
+      const list = Array.isArray(res.data) ? res.data : [];
+      setChatList(list);
+
+      if (list.length > 0) {
+        setActiveChat(list[0]);
       }
     } catch (err) {
       console.error("Failed to fetch connections", err);
