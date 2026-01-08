@@ -16,7 +16,11 @@ const Nearby = lazy(() => import("./pages/Nearby"));
 const Messages = lazy(() => import("./pages/Messages"));
 const Pricing = lazy(() => import("./pages/Pricing"));
 const AgreementForm = lazy(() => import("./pages/AgreementForm"));
+const AgreementForm = lazy(() => import("./pages/AgreementForm"));
 const PaymentSuccess = lazy(() => import("./pages/PaymentSuccess"));
+const Settings = lazy(() => import("./pages/Settings"));
+const Calendar = lazy(() => import("./pages/Calendar"));
+const Analytics = lazy(() => import("./pages/Analytics"));
 
 /* Lazy Load Auth */
 const Login = lazy(() => import("./auth/Login"));
@@ -90,6 +94,9 @@ export default function App() {
               <Route path="/meet/:id" element={<VideoCall />} />
               <Route path="/rent-agreement" element={<AgreementForm />} />
               <Route path="/payment/success" element={<PaymentSuccess />} />
+              <Route path="/settings" element={<Settings />} />
+              <Route path="/calendar" element={<Calendar />} />
+              <Route path="/analytics" element={<Analytics />} />
             </Routes>
           </Suspense>
         </main>

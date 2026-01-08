@@ -138,18 +138,19 @@ export default function ClientDashboard() {
             <div className="p-4 bg-white border-t border-gray-100">
               <div className="text-xs font-bold text-gray-500 mb-2 uppercase tracking-wider">My Navigation</div>
               <ul className="space-y-1">
-                <SidebarItem icon="📌" label="My Active Cases" count={activeCases.length} />
-                <SidebarItem icon="💾" label="Saved Agreements" />
-                <SidebarItem icon="⚙️" label="Settings" />
+                <SidebarItem icon="📌" label="My Active Cases" count={activeCases.length} to="/agreements" />
+                <SidebarItem icon="💾" label="Saved Agreements" to="/agreements" />
+                <SidebarItem icon="⚙️" label="Settings" to="/settings" />
               </ul>
             </div>
 
-            <div
-              onClick={() => alert("Profile View Coming Soon!")}
-              className="p-4 border-t border-gray-100 bg-gray-50 hover:bg-gray-100 cursor-pointer transition text-sm font-semibold text-gray-600 text-center"
-            >
-              View My Profile
-            </div>
+            <Link to="/settings" className="block">
+              <div
+                className="p-4 border-t border-gray-100 bg-gray-50 hover:bg-gray-100 cursor-pointer transition text-sm font-semibold text-gray-600 text-center"
+              >
+                View My Profile
+              </div>
+            </Link>
             <button
               onClick={logout}
               className="w-full p-4 border-t border-gray-100 bg-red-50 hover:bg-red-100 cursor-pointer transition text-sm font-semibold text-red-600 text-center"
@@ -408,10 +409,23 @@ export default function ClientDashboard() {
   );
 }
 
-function SidebarItem({ icon, label, count }) {
+// UPDATE SIDEBAR ITEM
+function SidebarItem({ icon, label, count, to }) {
+  if (to) {
+    return (
+      <Link to={to}>
+        <li className="flex items-center justify-between p-2 rounded hover:bg-gray-100 cursor-pointer transition group">
+          <div className="flex items-center gap-3 text-sm font-medium text-gray-600 group-hover:text-gray-900">
+            <span className="text-gray-400 group-hover:text-blue-600">{icon}</span>
+            {label}
+          </div>
+          {count !== undefined && <span className="text-xs font-semibold text-gray-500">{count}</span>}
+        </li>
+      </Link>
+    );
+  }
   return (
     <li
-      onClick={() => alert(`Navigating to ${label}... (Coming Soon)`)}
       className="flex items-center justify-between p-2 rounded hover:bg-gray-100 cursor-pointer transition group"
     >
       <div className="flex items-center gap-3 text-sm font-medium text-gray-600 group-hover:text-gray-900">

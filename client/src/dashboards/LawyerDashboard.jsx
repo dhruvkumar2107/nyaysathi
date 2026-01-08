@@ -150,9 +150,9 @@ export default function LawyerDashboard() {
               <div className="text-xs font-bold text-gray-500 mb-2 uppercase tracking-wider">My Workspace</div>
               <ul className="space-y-1">
                 <SidebarItem icon="⚡" label="Lead Manager" count={leads.length} />
-                <SidebarItem icon="📅" label="Calendar & Events" />
-                <SidebarItem icon="📈" label="Analytics" />
-                <SidebarItem icon="⚙️" label="Account Settings" />
+                <SidebarItem icon="📅" label="Calendar & Events" to="/calendar" />
+                <SidebarItem icon="📈" label="Analytics" to="/analytics" />
+                <SidebarItem icon="⚙️" label="Account Settings" to="/settings" />
               </ul>
             </div>
           </div>
@@ -410,10 +410,23 @@ export default function LawyerDashboard() {
   );
 }
 
-function SidebarItem({ icon, label, count }) {
+// 1. UPDATE SIDEBAR ITEM COMPONENT AT THE BOTTOM
+function SidebarItem({ icon, label, count, to }) {
+  if (to) {
+    return (
+      <Link to={to}>
+        <li className="flex items-center justify-between p-2 rounded hover:bg-gray-100 cursor-pointer transition group">
+          <div className="flex items-center gap-3 text-sm font-medium text-gray-600 group-hover:text-gray-900">
+            <span className="text-gray-400 group-hover:text-blue-600">{icon}</span>
+            {label}
+          </div>
+          {count !== undefined && <span className="text-xs font-semibold text-gray-500">{count}</span>}
+        </li>
+      </Link>
+    );
+  }
   return (
     <li
-      onClick={() => alert(`Navigating to ${label}... (Coming Soon)`)}
       className="flex items-center justify-between p-2 rounded hover:bg-gray-100 cursor-pointer transition group"
     >
       <div className="flex items-center gap-3 text-sm font-medium text-gray-600 group-hover:text-gray-900">
