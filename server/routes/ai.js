@@ -6,7 +6,13 @@ const verifyTokenOptional = require("../middleware/verifyTokenOptional");
 const checkAiLimit = require("../middleware/checkAiLimit");
 
 // Initialize Gemini
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+if (!process.env.GEMINI_API_KEY) {
+  console.error("❌ CRITICAL ERROR: GEMINI_API_KEY is missing in environment variables!");
+} else {
+  console.log("✅ GEMINI_API_KEY is present (Length: " + process.env.GEMINI_API_KEY.length + ")");
+}
+
+const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || "missing_key");
 const model = genAI.getGenerativeModel({ model: "gemini-pro" });
 
 /* ---------------- AI ASSISTANT (CHAT) ---------------- */
