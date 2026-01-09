@@ -337,122 +337,123 @@ export default function ClientDashboard() {
 
             {/* ONLY SHOW POST WIDGET & FEED IF TAB IS FEED */}
             {activeTab === 'feed' && (
-              <div className="bg-white border border-gray-200 rounded-lg p-6 mb-6 shadow-sm">
+              <>
+                <div className="bg-white border border-gray-200 rounded-lg p-6 mb-6 shadow-sm">
 
-                <div className="flex gap-4">
-                  <div className="w-12 h-12 rounded-full bg-gray-200 flex-shrink-0 flex items-center justify-center font-bold text-gray-500">
-                    {user.name ? user.name[0] : "U"}
-                  </div>
-                  <div className="flex-1">
-                    <textarea
-                      placeholder="Start a post or ask a legal question..."
-                      className="w-full bg-gray-50 border border-gray-200 rounded-lg p-3 text-gray-900 focus:border-blue-500 outline-none resize-none"
-                      rows={2}
-                      value={postContent}
-                      onChange={(e) => setPostContent(e.target.value)}
-                    />
-
-                    {postFile && (
-                      <div className="mt-2 text-xs text-green-600 font-medium flex items-center gap-1">
-                        <span>📎 Attached: {postFile.name}</span>
-                        <button onClick={() => setPostFile(null)} className="text-red-500 hover:text-red-700">✕</button>
-                      </div>
-                    )}
-
-                    <div className="flex justify-between items-center mt-3">
-                      <div className="flex gap-2">
-                        <label className="cursor-pointer flex items-center gap-1 text-gray-500 hover:text-blue-600 text-sm font-medium px-2 py-1 rounded hover:bg-gray-100 transition">
-                          <span>📷</span> Media
-                          <input type="file" className="hidden" accept="image/*,video/*" onChange={(e) => setPostFile(e.target.files[0])} />
-                        </label>
-
-                        <label className="cursor-pointer flex items-center gap-1 text-gray-500 hover:text-purple-600 text-sm font-medium px-2 py-1 rounded hover:bg-gray-100 transition">
-                          <span>🎥</span> Reel
-                          <input type="file" className="hidden" accept="video/mp4" onChange={(e) => {
-                            setPostType("reel");
-                            setPostFile(e.target.files[0]);
-                          }} />
-                        </label>
-                      </div>
-
-                      <button
-                        onClick={handleCreatePost}
-                        disabled={!postContent && !postFile}
-                        className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-full font-bold text-sm transition disabled:opacity-50 disabled:cursor-not-allowed"
-                      >
-                        Post
-                      </button>
+                  <div className="flex gap-4">
+                    <div className="w-12 h-12 rounded-full bg-gray-200 flex-shrink-0 flex items-center justify-center font-bold text-gray-500">
+                      {user.name ? user.name[0] : "U"}
                     </div>
-                  </div>
-                </div>
-              </div> 
-              {/* END CREATE POST WIDGET / START FEED ITEMS */}
+                    <div className="flex-1">
+                      <textarea
+                        placeholder="Start a post or ask a legal question..."
+                        className="w-full bg-gray-50 border border-gray-200 rounded-lg p-3 text-gray-900 focus:border-blue-500 outline-none resize-none"
+                        rows={2}
+                        value={postContent}
+                        onChange={(e) => setPostContent(e.target.value)}
+                      />
 
-            {/* Feed Items */}
-            {posts.length === 0 ? (
-              <p className="text-center text-gray-500 py-10">No posts yet. Be the first to share something!</p>
-            ) : (
-              posts.map((post) => (
-                <div key={post._id} className="bg-white border border-gray-200 rounded-lg p-5 mb-6 shadow-sm">
-                  <div className="flex justify-between items-start mb-3">
-                    <div className="flex gap-3">
-                      <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-bold uppercase">
-                        {post.author?.name ? post.author.name[0] : "U"}
-                      </div>
-                      <div>
-                        <h4 className="font-semibold text-sm text-gray-900">{post.author?.name || "Unknown User"}</h4>
-                        <p className="text-xs text-gray-500">
-                          {post.author?.role} • {new Date(post.createdAt).toLocaleDateString()}
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-
-                  <p className="text-sm text-gray-800 mb-3 whitespace-pre-wrap">{post.content}</p>
-
-                  {post.mediaUrl && (
-                    <div className="mb-4 rounded-lg overflow-hidden border border-gray-100 bg-black">
-                      {post.type === "reel" || post.mediaUrl.endsWith(".mp4") ? (
-                        <video src={`${import.meta.env.VITE_API_URL?.replace(/\/api$/, "") || "http://localhost:4000"}${post.mediaUrl}`} controls className="w-full max-h-[400px]" />
-                      ) : (
-                        <img src={`${import.meta.env.VITE_API_URL?.replace(/\/api$/, "") || "http://localhost:4000"}${post.mediaUrl}`} alt="Post attachment" className="w-full object-cover" />
+                      {postFile && (
+                        <div className="mt-2 text-xs text-green-600 font-medium flex items-center gap-1">
+                          <span>📎 Attached: {postFile.name}</span>
+                          <button onClick={() => setPostFile(null)} className="text-red-500 hover:text-red-700">✕</button>
+                        </div>
                       )}
-                    </div>
-                  )
-                  }
 
-                  <div className="mt-4 pt-3 border-t border-gray-100 flex gap-6 text-sm text-gray-500">
-                    <button
-                      onClick={() => handleLike(post._id)}
-                      className={`hover:text-blue-600 transition flex items-center gap-1 ${post.likes?.includes(user._id) ? "text-blue-600 font-bold" : ""}`}
-                    >
-                      👍 {post.likes?.length || 0} Likes
-                    </button>
-                    <button
-                      onClick={() => alert("Comments section coming soon!")}
-                      className="hover:text-gray-900 transition flex items-center gap-1"
-                    >
-                      💬 {post.comments?.length || 0} Comments
-                    </button>
-                    <button
-                      onClick={() => alert("Post link copied to clipboard! (Simulated)")}
-                      className="hover:text-gray-900 transition"
-                    >
-                      Share
-                    </button>
+                      <div className="flex justify-between items-center mt-3">
+                        <div className="flex gap-2">
+                          <label className="cursor-pointer flex items-center gap-1 text-gray-500 hover:text-blue-600 text-sm font-medium px-2 py-1 rounded hover:bg-gray-100 transition">
+                            <span>📷</span> Media
+                            <input type="file" className="hidden" accept="image/*,video/*" onChange={(e) => setPostFile(e.target.files[0])} />
+                          </label>
+
+                          <label className="cursor-pointer flex items-center gap-1 text-gray-500 hover:text-purple-600 text-sm font-medium px-2 py-1 rounded hover:bg-gray-100 transition">
+                            <span>🎥</span> Reel
+                            <input type="file" className="hidden" accept="video/mp4" onChange={(e) => {
+                              setPostType("reel");
+                              setPostFile(e.target.files[0]);
+                            }} />
+                          </label>
+                        </div>
+
+                        <button
+                          onClick={handleCreatePost}
+                          disabled={!postContent && !postFile}
+                          className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-full font-bold text-sm transition disabled:opacity-50 disabled:cursor-not-allowed"
+                        >
+                          Post
+                        </button>
+                      </div>
+                    </div>
                   </div>
                 </div>
-              ))
+                {/* END CREATE POST WIDGET / START FEED ITEMS */}
+
+                {/* Feed Items */}
+                {posts.length === 0 ? (
+                  <p className="text-center text-gray-500 py-10">No posts yet. Be the first to share something!</p>
+                ) : (
+                  posts.map((post) => (
+                    <div key={post._id} className="bg-white border border-gray-200 rounded-lg p-5 mb-6 shadow-sm">
+                      <div className="flex justify-between items-start mb-3">
+                        <div className="flex gap-3">
+                          <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-bold uppercase">
+                            {post.author?.name ? post.author.name[0] : "U"}
+                          </div>
+                          <div>
+                            <h4 className="font-semibold text-sm text-gray-900">{post.author?.name || "Unknown User"}</h4>
+                            <p className="text-xs text-gray-500">
+                              {post.author?.role} • {new Date(post.createdAt).toLocaleDateString()}
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+
+                      <p className="text-sm text-gray-800 mb-3 whitespace-pre-wrap">{post.content}</p>
+
+                      {post.mediaUrl && (
+                        <div className="mb-4 rounded-lg overflow-hidden border border-gray-100 bg-black">
+                          {post.type === "reel" || post.mediaUrl.endsWith(".mp4") ? (
+                            <video src={`${import.meta.env.VITE_API_URL?.replace(/\/api$/, "") || "http://localhost:4000"}${post.mediaUrl}`} controls className="w-full max-h-[400px]" />
+                          ) : (
+                            <img src={`${import.meta.env.VITE_API_URL?.replace(/\/api$/, "") || "http://localhost:4000"}${post.mediaUrl}`} alt="Post attachment" className="w-full object-cover" />
+                          )}
+                        </div>
+                      )
+                      }
+
+                      <div className="mt-4 pt-3 border-t border-gray-100 flex gap-6 text-sm text-gray-500">
+                        <button
+                          onClick={() => handleLike(post._id)}
+                          className={`hover:text-blue-600 transition flex items-center gap-1 ${post.likes?.includes(user._id) ? "text-blue-600 font-bold" : ""}`}
+                        >
+                          👍 {post.likes?.length || 0} Likes
+                        </button>
+                        <button
+                          onClick={() => alert("Comments section coming soon!")}
+                          className="hover:text-gray-900 transition flex items-center gap-1"
+                        >
+                          💬 {post.comments?.length || 0} Comments
+                        </button>
+                        <button
+                          onClick={() => alert("Post link copied to clipboard! (Simulated)")}
+                          className="hover:text-gray-900 transition"
+                        >
+                          Share
+                        </button>
+                      </div>
+                    </div>
+                  ))
+                )}
+              </>
             )}
           </>
-            )}
-    </>
         }
-/* RIGHT SIDEBAR */
-rightSidebar = {
+        /* RIGHT SIDEBAR */
+        rightSidebar={
           <>
-  {/* Active Cases Widget */ }
-  < div className = "bg-white border border-gray-200 rounded-lg p-4 shadow-sm" >
+            {/* Active Cases Widget */}
+            < div className="bg-white border border-gray-200 rounded-lg p-4 shadow-sm" >
               <h3 className="font-bold text-sm text-gray-900 mb-4">Your Active Cases</h3>
               <ul className="space-y-3">
                 {activeCases.length === 0 && <li className="text-xs text-gray-500">No active cases. Post one above!</li>}
@@ -468,8 +469,8 @@ rightSidebar = {
               </Link>
             </div >
 
-  {/* Suggested Lawyers */ }
-  < div className = "bg-white border border-gray-200 rounded-lg p-4 shadow-sm" >
+            {/* Suggested Lawyers */}
+            < div className="bg-white border border-gray-200 rounded-lg p-4 shadow-sm" >
               <h3 className="font-bold text-sm text-gray-900 mb-4">Suggested for you</h3>
               <ul className="space-y-4">
                 {suggestedLawyers.length === 0 && <p className="text-xs text-center text-gray-500 py-4">No lawyers found nearby.</p>}
@@ -537,99 +538,99 @@ rightSidebar = {
         }
       />
 
-{/* INSTANT CONSULT FLOATING BUTTON */ }
-<div className="fixed bottom-6 right-6 z-50">
-  {isSearching ? (
-    <div className="bg-[#0B1120] text-white px-6 py-4 rounded-full shadow-2xl flex items-center gap-3 animate-pulse border-2 border-blue-500">
-      <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-      <div>
-        <p className="font-bold text-sm">Searching for Lawyer...</p>
-        <p className="text-[10px] text-gray-400">Please wait</p>
-      </div>
-      <button
-        onClick={() => setIsSearching(false)}
-        className="ml-2 text-gray-400 hover:text-white"
-      >✕</button>
-    </div>
-  ) : (
-    <button
-      onClick={requestInstantConsult}
-      className="group relative flex items-center gap-3 bg-[#0B1120] hover:bg-blue-900 text-white px-6 py-4 rounded-full shadow-2xl shadow-blue-900/40 transition-all hover:scale-105 active:scale-95"
-    >
-      <span className="absolute -top-1 -right-1 flex h-3 w-3">
-        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
-        <span className="relative inline-flex rounded-full h-3 w-3 bg-red-500"></span>
-      </span>
-      <span className="text-2xl">⚡</span>
-      <div className="text-left">
-        <p className="font-bold text-sm leading-tight">Talk to Lawyer</p>
-        <p className="text-[10px] text-blue-200 uppercase tracking-wider font-bold">Instant Connect</p>
-      </div>
-    </button>
-  )}
-</div>
-
-{/* POST CASE MODAL */ }
-{
-  showPostModal && (
-    <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[100] flex items-center justify-center p-4">
-      <div className="bg-white border border-gray-200 rounded-2xl p-6 w-full max-w-lg shadow-2xl relative animate-in fade-in zoom-in duration-200">
-        <button onClick={() => setShowPostModal(false)} className="absolute top-4 right-4 text-gray-400 hover:text-gray-600">✕</button>
-
-        <h2 className="text-xl font-bold text-gray-900 mb-1">Post a Legal Requirement</h2>
-        <p className="text-sm text-gray-500 mb-6">Lawyers will review this and reach out.</p>
-
-        <div className="space-y-4">
-          <input
-            placeholder="Title (e.g. Property Dispute in Pune)"
-            className="w-full bg-gray-50 border border-gray-300 rounded-lg p-3 text-gray-900 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 outline-none"
-            value={newCase.title}
-            onChange={e => setNewCase({ ...newCase, title: e.target.value })}
-          />
-          <textarea
-            placeholder="Describe your issue in detail..."
-            rows={4}
-            className="w-full bg-gray-50 border border-gray-300 rounded-lg p-3 text-gray-900 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 outline-none resize-none"
-            value={newCase.desc}
-            onChange={e => setNewCase({ ...newCase, desc: e.target.value })}
-          />
-          <div className="grid grid-cols-2 gap-4">
-            <input
-              placeholder="Location (City)"
-              className="bg-gray-50 border border-gray-300 rounded-lg p-3 text-gray-900 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 outline-none"
-              value={newCase.location}
-              onChange={e => setNewCase({ ...newCase, location: e.target.value })}
-            />
-            <input
-              placeholder="Budget (Optional)"
-              className="bg-gray-50 border border-gray-300 rounded-lg p-3 text-gray-900 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 outline-none"
-              value={newCase.budget}
-              onChange={e => setNewCase({ ...newCase, budget: e.target.value })}
-            />
+      {/* INSTANT CONSULT FLOATING BUTTON */}
+      <div className="fixed bottom-6 right-6 z-50">
+        {isSearching ? (
+          <div className="bg-[#0B1120] text-white px-6 py-4 rounded-full shadow-2xl flex items-center gap-3 animate-pulse border-2 border-blue-500">
+            <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+            <div>
+              <p className="font-bold text-sm">Searching for Lawyer...</p>
+              <p className="text-[10px] text-gray-400">Please wait</p>
+            </div>
+            <button
+              onClick={() => setIsSearching(false)}
+              className="ml-2 text-gray-400 hover:text-white"
+            >✕</button>
           </div>
-
+        ) : (
           <button
-            onClick={handlePostCase}
-            className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-lg transition mt-2 shadow-md shadow-blue-200"
+            onClick={requestInstantConsult}
+            className="group relative flex items-center gap-3 bg-[#0B1120] hover:bg-blue-900 text-white px-6 py-4 rounded-full shadow-2xl shadow-blue-900/40 transition-all hover:scale-105 active:scale-95"
           >
-            Post Requirement
+            <span className="absolute -top-1 -right-1 flex h-3 w-3">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+              <span className="relative inline-flex rounded-full h-3 w-3 bg-red-500"></span>
+            </span>
+            <span className="text-2xl">⚡</span>
+            <div className="text-left">
+              <p className="font-bold text-sm leading-tight">Talk to Lawyer</p>
+              <p className="text-[10px] text-blue-200 uppercase tracking-wider font-bold">Instant Connect</p>
+            </div>
           </button>
-        </div>
+        )}
       </div>
-    </div>
-  )
-}
 
-{/* BOOKING MODAL */ }
-{
-  selectedLawyerForBooking && (
-    <BookingModal
-      lawyer={selectedLawyerForBooking}
-      client={user}
-      onClose={() => setSelectedLawyerForBooking(null)}
-    />
-  )
-}
+      {/* POST CASE MODAL */}
+      {
+        showPostModal && (
+          <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[100] flex items-center justify-center p-4">
+            <div className="bg-white border border-gray-200 rounded-2xl p-6 w-full max-w-lg shadow-2xl relative animate-in fade-in zoom-in duration-200">
+              <button onClick={() => setShowPostModal(false)} className="absolute top-4 right-4 text-gray-400 hover:text-gray-600">✕</button>
+
+              <h2 className="text-xl font-bold text-gray-900 mb-1">Post a Legal Requirement</h2>
+              <p className="text-sm text-gray-500 mb-6">Lawyers will review this and reach out.</p>
+
+              <div className="space-y-4">
+                <input
+                  placeholder="Title (e.g. Property Dispute in Pune)"
+                  className="w-full bg-gray-50 border border-gray-300 rounded-lg p-3 text-gray-900 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 outline-none"
+                  value={newCase.title}
+                  onChange={e => setNewCase({ ...newCase, title: e.target.value })}
+                />
+                <textarea
+                  placeholder="Describe your issue in detail..."
+                  rows={4}
+                  className="w-full bg-gray-50 border border-gray-300 rounded-lg p-3 text-gray-900 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 outline-none resize-none"
+                  value={newCase.desc}
+                  onChange={e => setNewCase({ ...newCase, desc: e.target.value })}
+                />
+                <div className="grid grid-cols-2 gap-4">
+                  <input
+                    placeholder="Location (City)"
+                    className="bg-gray-50 border border-gray-300 rounded-lg p-3 text-gray-900 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 outline-none"
+                    value={newCase.location}
+                    onChange={e => setNewCase({ ...newCase, location: e.target.value })}
+                  />
+                  <input
+                    placeholder="Budget (Optional)"
+                    className="bg-gray-50 border border-gray-300 rounded-lg p-3 text-gray-900 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 outline-none"
+                    value={newCase.budget}
+                    onChange={e => setNewCase({ ...newCase, budget: e.target.value })}
+                  />
+                </div>
+
+                <button
+                  onClick={handlePostCase}
+                  className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-lg transition mt-2 shadow-md shadow-blue-200"
+                >
+                  Post Requirement
+                </button>
+              </div>
+            </div>
+          </div>
+        )
+      }
+
+      {/* BOOKING MODAL */}
+      {
+        selectedLawyerForBooking && (
+          <BookingModal
+            lawyer={selectedLawyerForBooking}
+            client={user}
+            onClose={() => setSelectedLawyerForBooking(null)}
+          />
+        )
+      }
     </>
   );
 }
