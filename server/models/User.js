@@ -63,6 +63,40 @@ const userSchema = new mongoose.Schema(
 
     resume: String,
 
+    // --- NEW PROFILE FIELDS ---
+    bio: { type: String, default: "" }, // About Me
+    headline: { type: String, default: "" }, // e.g. "Ex-High Court Judge | Family Law Expert"
+
+    profileImage: { type: String, default: "" }, // URL from Uploads
+
+    languages: { type: [String], default: ["English", "Hindi"] },
+
+    courts: { type: [String], default: [] }, // Supreme Court, High Court, etc.
+
+    education: [{
+      degree: String,
+      college: String,
+      year: Number
+    }],
+
+    awards: [String], // "Best Lawyer 2024"
+
+    socials: {
+      linkedin: String,
+      website: String,
+      twitter: String
+    },
+
+    consultationFee: { type: Number, default: 0 }, // Per hour/session
+
+    availability: {
+      type: String,
+      default: "Mon-Fri, 9am - 6pm"
+    },
+
+    isProfileComplete: { type: Boolean, default: false }, // For gamification/prompting
+    // --------------------------
+
     stats: {
       profileViews: { type: Number, default: 0 },
       searchAppearances: { type: Number, default: 0 },

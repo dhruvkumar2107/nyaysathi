@@ -30,7 +30,30 @@ const VideoCall = lazy(() => import("./pages/VideoCall"));
 /* Lazy Load Dashboards */
 const ClientDashboard = lazy(() => import("./dashboards/ClientDashboard"));
 const LawyerDashboard = lazy(() => import("./dashboards/LawyerDashboard"));
+const EditProfile = lazy(() => import("./dashboards/EditProfile")); // NEW
+const LawyerProfile = lazy(() => import("./pages/LawyerProfile")); // NEW
 const AdminDashboard = lazy(() => import("./dashboards/AdminDashboard"));
+
+// ... inside Routes
+<Route path="/lawyer/:id" element={<LawyerProfile />} /> {/* Public Profile */ }
+
+{/* LAWYER ROUTES */ }
+          <Route
+            path="/lawyer/dashboard"
+            element={
+              <ProtectedRoute allowedRoles={["lawyer"]}>
+                <LawyerDashboard />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/lawyer/profile/edit"
+            element={
+              <ProtectedRoute allowedRoles={["lawyer"]}>
+                <EditProfile />
+              </ProtectedRoute>
+            }
+          />
 
 /* Loading Component */
 const LoadingFallback = () => (
