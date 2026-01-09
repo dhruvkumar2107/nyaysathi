@@ -3,6 +3,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { useAuth } from "../context/AuthContext";
 import toast from "react-hot-toast";
+import Navbar from "../components/Navbar";
 
 export default function LawyerProfile() {
     const { id } = useParams();
@@ -47,56 +48,76 @@ export default function LawyerProfile() {
         if (user) fetchData(); // Only fetch if user exists
     }, [id, user, navigate, loading]);
 
-    // ... (rest of component)
+    if (loading) return <div className="min-h-screen flex items-center justify-center">Loading...</div>;
+    if (!lawyer) return <div className="min-h-screen flex items-center justify-center">Lawyer not found</div>;
 
-    {/* DYNAMIC CONNECT BUTTON */ }
-    {
-        connection?.status === 'active' ? (
-            <button
-                onClick={handleMessage}
-                className="px-6 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-full transition flex items-center justify-center gap-2"
-            >
-                <span>💬</span> Message
-            </button>
-        ) : connection?.status === 'pending' ? (
-            <button
-                disabled
-                className="px-6 py-2.5 bg-gray-100 text-gray-500 font-bold rounded-full cursor-not-allowed flex items-center justify-center gap-2 border border-gray-200"
-            >
-                <span>🕒</span> Request Sent
-            </button>
-        ) : (
-        <button
-            onClick={handleConnect}
-            disabled={connecting}
-            className="px-6 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-full transition flex items-center justify-center gap-2 disabled:opacity-70 shadow-md shadow-blue-200"
-        >
-            {connecting ? "Processing..." : (user?.role === 'lawyer' ? "➕ Connect" : "🤝 Consult")}
-        </button>
-    )
-    }
+    return (
+        <main className="min-h-screen bg-slate-50 font-sans pb-12">
+            <Navbar />
+            <div className="max-w-6xl mx-auto px-4 pt-24">
+                {/* PROFILE HEADER CARD */}
+                <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6 md:p-8 flex flex-col md:flex-row items-center md:items-start gap-6 relative overflow-hidden">
+                    <div className="w-32 h-32 md:w-40 md:h-40 rounded-full border-4 border-white shadow-lg bg-gray-200 flex items-center justify-center text-4xl overflow-hidden shrink-0">
+                        {lawyer.image ? <img src={lawyer.image} className="w-full h-full object-cover" /> : <span>⚖️</span>}
+                    </div>
 
-    {/* CONSULTATION BOOKING (Only for Clients) */ }
-    {
-        user?.role !== 'lawyer' && (
-            <button
-                onClick={() => toast("Booking feature coming next!")}
-                className="px-6 py-2.5 bg-white border border-blue-600 text-blue-600 hover:bg-blue-50 font-bold rounded-full transition"
-            >
-                Book Appointment
-            </button>
-        )
-    }
-                    </div >
-                </div >
+                    <div className="flex-1 text-center md:text-left z-10">
+                        <h1 className="text-3xl font-bold text-gray-900 mb-1">{lawyer.name}</h1>
+                        <p className="text-blue-600 font-medium mb-4 flex items-center justify-center md:justify-start gap-2">
+                            {lawyer.specialization} • {lawyer.location}
+                        </p>
+                        <p className="text-gray-600 max-w-2xl mb-6">{lawyer.bio?.substring(0, 150)}...</p>
 
-        {/* GRID CONTENT */ }
-        < div className = "grid grid-cols-1 md:grid-cols-3 gap-6 mt-6" >
+                        <div className="flex flex-wrap gap-3 justify-center md:justify-start">
+                            {/* DYNAMIC CONNECT BUTTON */}
+                            {
+                                connection?.status === 'active' ? (
+                                    <button
+                                        onClick={handleMessage}
+                                        className="px-6 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-full transition flex items-center justify-center gap-2"
+                                    >
+                                        <span>💬</span> Message
+                                    </button>
+                                ) : connection?.status === 'pending' ? (
+                                    <button
+                                        disabled
+                                        className="px-6 py-2.5 bg-gray-100 text-gray-500 font-bold rounded-full cursor-not-allowed flex items-center justify-center gap-2 border border-gray-200"
+                                    >
+                                        <span>🕒</span> Request Sent
+                                    </button>
+                                ) : (
+                                    <button
+                                        onClick={handleConnect}
+                                        disabled={connecting}
+                                        className="px-6 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-full transition flex items-center justify-center gap-2 disabled:opacity-70 shadow-md shadow-blue-200"
+                                    >
+                                        {connecting ? "Processing..." : (user?.role === 'lawyer' ? "➕ Connect" : "🤝 Consult")}
+                                    </button>
+                                )
+                            }
 
-            {/* LEFT SIDEBAR (Skills, Languages) */ }
-            < div className = "space-y-6" >
-                {/* LANGUAGE CARD */ }
-                < div className = "bg-white rounded-xl shadow-sm border border-gray-200 p-5" >
+                            {/* CONSULTATION BOOKING (Only for Clients) */}
+                            {
+                                user?.role !== 'lawyer' && (
+                                    <button
+                                        onClick={() => toast("Booking feature coming next!")}
+                                        className="px-6 py-2.5 bg-white border border-blue-600 text-blue-600 hover:bg-blue-50 font-bold rounded-full transition"
+                                    >
+                                        Book Appointment
+                                    </button>
+                                )
+                            }
+                        </div >
+                    </div>
+                </div>
+
+                {/* GRID CONTENT */}
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6">
+
+                    {/* LEFT SIDEBAR (Skills, Languages) */}
+                    < div className="space-y-6" >
+                        {/* LANGUAGE CARD */}
+                        < div className="bg-white rounded-xl shadow-sm border border-gray-200 p-5" >
                             <h3 className="text-lg font-bold text-gray-900 mb-4">Languages</h3>
                             <div className="flex flex-wrap gap-2">
                                 {lawyer.languages?.length > 0 ? lawyer.languages.map((l, i) => (
@@ -105,8 +126,8 @@ export default function LawyerProfile() {
                             </div>
                         </div >
 
-        {/* CONTACT CARD */ }
-        < div className = "bg-white rounded-xl shadow-sm border border-gray-200 p-5" >
+                        {/* CONTACT CARD */}
+                        < div className="bg-white rounded-xl shadow-sm border border-gray-200 p-5" >
                             <h3 className="text-lg font-bold text-gray-900 mb-4">Contact Info</h3>
                             <ul className="space-y-3 text-sm">
                                 <li className="flex items-center gap-3 text-gray-600">
@@ -129,19 +150,19 @@ export default function LawyerProfile() {
                         </div >
                     </div >
 
-        {/* MAIN CONTENT (About, Experience) */ }
-        < div className = "md:col-span-2 space-y-6" >
+                    {/* MAIN CONTENT (About, Experience) */}
+                    < div className="md:col-span-2 space-y-6" >
 
-            {/* ABOUT */ }
-            < div className = "bg-white rounded-xl shadow-sm border border-gray-200 p-6" >
+                        {/* ABOUT */}
+                        < div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6" >
                             <h2 className="text-xl font-bold text-gray-900 mb-3">About</h2>
                             <p className="text-gray-600 leading-relaxed whitespace-pre-wrap">
                                 {lawyer.bio || "This user has not added a bio yet."}
                             </p>
                         </div >
 
-        {/* EXPERIENCE CARD */ }
-        < div className = "bg-white rounded-xl shadow-sm border border-gray-200 p-6" >
+                        {/* EXPERIENCE CARD */}
+                        < div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6" >
                             <h2 className="text-xl font-bold text-gray-900 mb-4">Experience & Courts</h2>
 
                             <div className="mb-6">
@@ -173,8 +194,8 @@ export default function LawyerProfile() {
                             </div>
                         </div >
 
-        {/* FEES CARD */ }
-        < div className = "bg-white rounded-xl shadow-sm border border-gray-200 p-6 flex justify-between items-center" >
+                        {/* FEES CARD */}
+                        < div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 flex justify-between items-center" >
                             <div>
                                 <h2 className="text-lg font-bold text-gray-900">Consultation Fee</h2>
                                 <p className="text-gray-500 text-sm">Standard hourly rate</p>
