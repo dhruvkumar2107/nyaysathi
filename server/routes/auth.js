@@ -24,17 +24,28 @@ router.post("/google", async (req, res) => {
     let user = await User.findOne({ email });
 
     if (!user) {
-      // 3. Create new user if not exists
+      // 3. If Role is NOT provided, it means they are coming from Login page for the first time.
+      // We must ask them to select a role.
+      if (!role) {
+        return res.status(202).json({
+          requiresSignup: true,
+          email,
+          name,
+          picture,
+          googleId // Send back so frontend can re-submit with role
+        });
+      }
+
+      // 4. Create new user (Role IS provided)
       user = await User.create({
         name,
         email,
-        role: role || "client", // Default to client if not specified
+        role: role, // Now strictly required for creation
         plan: "free",
         googleId,
-        // No password for google users
       });
     } else {
-      // 4. Link googleId if not linked
+      // 5. Link googleId if not linked
       if (!user.googleId) {
         user.googleId = googleId;
         await user.save();

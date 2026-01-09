@@ -76,7 +76,8 @@ export default function Register() {
               setLoading(true);
               try {
                 const res = await axios.post("/api/auth/google", {
-                  token: credentialResponse.credential
+                  token: credentialResponse.credential,
+                  role: role // Pass selected role (client/lawyer)
                 });
                 const { user, token } = res.data;
                 loginWithToken(user, token);
