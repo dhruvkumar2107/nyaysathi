@@ -2,10 +2,12 @@ import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import toast from "react-hot-toast";
+import { GoogleLogin } from '@react-oauth/google';
+import axios from 'axios'; // Added axios import
 
 export default function Register() {
   const navigate = useNavigate();
-  const { register } = useAuth(); // Destructure register
+  const { register, loginWithToken } = useAuth(); // Destructure register and loginWithToken
 
   const [role, setRole] = useState("client");
   const [plan, setPlan] = useState("silver"); // Default & Forced to Silver
@@ -64,12 +66,40 @@ export default function Register() {
   return (
     <main className="min-h-screen flex items-center justify-center bg-gray-100 px-4 py-10">
       <div className="w-full max-w-lg bg-white border border-gray-200 rounded-2xl p-8 shadow-xl">
-        <h1 className="text-2xl font-bold text-blue-600 mb-2">
-          Create Account
-        </h1>
-        <p className="text-sm text-gray-500 mb-6">
-          Join the professional legal network
-        </p>
+        <h1 className="text-2xl font-bold text-blue-600 mb-2">Create Account</h1>
+        <p className="text-sm text-gray-500 mb-6">Join the professional legal network</p>
+
+        {/* GOOGLE LOGIN */}
+        <div className="mb-6 flex justify-center">
+          <GoogleLogin
+            onSuccess={async (credentialResponse) => {
+              setLoading(true);
+              try {
+                const res = await axios.post("/api/auth/google", {
+                  token: credentialResponse.credential
+                });
+                const { user, token } = res.data;
+                loginWithToken(user, token);
+                toast.success("Signup Successful!");
+                navigate(user.role === 'lawyer' ? "/lawyer/dashboard" : "/client/dashboard");
+              } catch (err) {
+                toast.error("Google Signup Failed");
+              } finally {
+                setLoading(false);
+              }
+            }}
+            onError={() => toast.error("Google Signup Failed")}
+            useOneTap
+            theme="filled_blue"
+            shape="pill"
+            text="signup_with"
+          />
+        </div>
+
+        <div className="relative mb-6">
+          <div className="absolute inset-0 flex items-center"><div className="w-full border-t border-gray-200"></div></div>
+          <div className="relative flex justify-center text-sm"><span className="px-2 bg-white text-gray-500">Or register with email</span></div>
+        </div>
 
         {/* ROLE */}
         <label className="text-sm font-medium text-gray-700">Register as</label>

@@ -74,14 +74,50 @@ export default function Login() {
   };
 
   return (
+import { GoogleLogin } from '@react-oauth/google';
+
+  // ... (inside component)
+
+  const handleGoogleSuccess = async (credentialResponse) => {
+    setLoading(true);
+    try {
+      const res = await axios.post("/api/auth/google", {
+        token: credentialResponse.credential
+      });
+      const { user, token } = res.data;
+      loginWithToken(user, token);
+      toast.success("Login Successful!");
+      navigate(user.role === 'lawyer' ? "/lawyer/dashboard" : "/client/dashboard");
+    } catch (err) {
+      console.error(err);
+      toast.error("Google Login Failed");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
     <main className="min-h-screen flex items-center justify-center bg-gray-100 px-4">
       <div className="w-full max-w-md bg-white border border-gray-200 rounded-2xl p-8 shadow-xl">
-        <h1 className="text-2xl font-bold text-gray-900 mb-2">
-          Welcome back
-        </h1>
-        <p className="text-sm text-gray-500 mb-6">
-          Login to continue to Nyay-Sathi
-        </p>
+        <h1 className="text-2xl font-bold text-gray-900 mb-2">Welcome back</h1>
+        <p className="text-sm text-gray-500 mb-6">Login to continue to Nyay-Sathi</p>
+
+        {/* GOOGLE LOGIN */}
+        <div className="mb-6 flex justify-center">
+          <GoogleLogin
+            onSuccess={handleGoogleSuccess}
+            onError={() => toast.error("Google Login Error")}
+            useOneTap
+            theme="filled_blue"
+            shape="pill"
+            text="continue_with"
+          />
+        </div>
+
+        <div className="relative mb-6">
+          <div className="absolute inset-0 flex items-center"><div className="w-full border-t border-gray-200"></div></div>
+          <div className="relative flex justify-center text-sm"><span className="px-2 bg-white text-gray-500">Or continue with</span></div>
+        </div>
 
         {/* TABS */}
         <div className="flex bg-gray-100 p-1 rounded-xl mb-6 border border-gray-200">
@@ -99,11 +135,9 @@ export default function Login() {
           </button>
         </div>
 
-        {/* Local error state removed in favor of toast */}
-
+        {/* ... Rest of form ... */}
         {method === "email" ? (
           <>
-            {/* EMAIL FORM */}
             <label className="text-sm font-medium text-gray-700">Email</label>
             <input
               type="email"
@@ -112,7 +146,6 @@ export default function Login() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
             />
-
             <label className="text-sm font-medium text-gray-700">Password</label>
             <input
               type="password"
@@ -121,7 +154,6 @@ export default function Login() {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
             />
-
             <button
               onClick={handleEmailLogin}
               disabled={loading}
@@ -132,7 +164,6 @@ export default function Login() {
           </>
         ) : (
           <>
-            {/* MOBILE FORM */}
             <label className="text-sm font-medium text-gray-700">Mobile Number</label>
             <input
               type="tel"
@@ -184,12 +215,9 @@ export default function Login() {
           </>
         )}
 
-        {/* FOOTER */}
         <p className="text-sm text-gray-500 mt-6 text-center">
           Don’t have an account?{" "}
-          <Link to="/register" className="text-blue-600 hover:underline font-medium">
-            Create one
-          </Link>
+          <Link to="/register" className="text-blue-600 hover:underline font-medium">Create one</Link>
         </p>
       </div>
     </main>

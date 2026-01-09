@@ -14,6 +14,7 @@
     "lint": "eslint . --ext js,jsx --report-unused-disable-directives --max-warnings 0"
   },
   "dependencies": {
+    "@react-oauth/google": "^0.13.4",
     "@sentry/react": "8.26.0",
     "axios": "1.6.0",
     "posthog-js": "1.131.4",
@@ -30,12 +31,12 @@
   "devDependencies": {
     "@vitejs/plugin-react": "4.2.1",
     "autoprefixer": "10.4.19",
+    "browserslist": "4.23.0",
+    "caniuse-lite": "1.0.30001614",
+    "node-releases": "2.0.14",
     "postcss": "8.4.38",
     "tailwindcss": "3.4.3",
-    "vite": "5.2.11",
-    "node-releases": "2.0.14",
-    "caniuse-lite": "1.0.30001614",
-    "browserslist": "4.23.0",
-    "update-browserslist-db": "1.0.14"
+    "update-browserslist-db": "1.0.14",
+    "vite": "5.2.11"
   }
 }
