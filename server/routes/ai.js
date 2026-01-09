@@ -1,26 +1,42 @@
 ﻿const express = require("express");
 const { GoogleGenerativeAI } = require("@google/generative-ai");
 const router = express.Router();
-const multer = require("multer"); // NEW
-const pdf = require("pdf-parse"); // NEW
-const upload = multer({ storage: multer.memoryStorage() }); // NEW: Memory Storage for AI processing
+const multer = require("multer");
+const pdf = require("pdf-parse");
+const upload = multer({ storage: multer.memoryStorage() });
 const verifyToken = require("../middleware/authMiddleware");
 const verifyTokenOptional = require("../middleware/verifyTokenOptional");
 const checkAiLimit = require("../middleware/checkAiLimit");
 
 // Initialize Gemini
 if (!process.env.GEMINI_API_KEY) {
-  console.error("❌ CRITICAL ERROR: GEMINI_API_KEY is missing in environment variables!");
+  console.error("❌ CRITICAL ERROR: GEMINI_API_KEY is missing!");
 } else {
-  console.log("✅ GEMINI_API_KEY is present (Length: " + process.env.GEMINI_API_KEY.length + ")");
+  console.log("✅ GEMINI_API_KEY is present.");
 }
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || "missing_key");
-// Using gemini-2.5-flash (Confirmed availability)
-const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
+
+// Helper for Model Fallback
+async function generateWithFallback(prompt) {
+  const modelsToTry = ["gemini-2.5-flash", "gemini-1.5-flash", "gemini-pro"];
+  let lastError = null;
+
+  for (const modelName of modelsToTry) {
+    try {
+      // console.log(`Attempting AI with model: ${modelName}`);
+      const model = genAI.getGenerativeModel({ model: modelName });
+      const result = await model.generateContent(prompt);
+      return result; // Success
+    } catch (e) {
+      console.error(`Model ${modelName} failed:`, e.message);
+      lastError = e;
+    }
+  }
+  throw lastError || new Error("All AI models failed. Please try again later.");
+}
 
 /* ---------------- AI ASSISTANT (CHAT) ---------------- */
-// Apply Auth & Limit Check
 router.post("/assistant", verifyTokenOptional, checkAiLimit, async (req, res) => {
   try {
     const { question, history, language, location } = req.body;
@@ -53,25 +69,7 @@ router.post("/assistant", verifyTokenOptional, checkAiLimit, async (req, res) =>
       Format the output as JSON with keys: "answer" (markdown string), "related_questions" (array of strings), "intent" (string).
     `;
 
-    // Model Fallback Strategy
-    const modelsToTry = ["gemini-2.5-flash", "gemini-1.5-flash", "gemini-pro"];
-    let result = null;
-    let lastError = null;
-
-    for (const modelName of modelsToTry) {
-      try {
-        console.log(`Attempting with model: ${modelName}`);
-        const model = genAI.getGenerativeModel({ model: modelName });
-        result = await model.generateContent(prompt);
-        break; // Success!
-      } catch (e) {
-        console.error(`Model ${modelName} failed:`, e.message);
-        lastError = e;
-      }
-    }
-
-    if (!result) throw lastError || new Error("All AI models failed");
-
+    const result = await generateWithFallback(prompt);
     const response = await result.response;
     const text = response.text();
 
@@ -89,6 +87,7 @@ router.post("/assistant", verifyTokenOptional, checkAiLimit, async (req, res) =>
     console.error("Gemini Assistant Error:", err.message);
     res.status(500).json({
       answer: `AI Error: ${err.message}`,
+      error: err.message,
       related_questions: [],
       intent: "error"
     });
@@ -100,11 +99,6 @@ router.post("/agreement", verifyToken, checkAiLimit, async (req, res) => {
   try {
     const { text } = req.body;
     if (!text) return res.status(400).json({ error: "No text provided" });
-
-    // Determine user plan from request (set by verifyToken)
-    // If we want to hide data for free users, we can do it here or in frontend.
-    // The requirement says: "FREE users see: Limited preview, Estimated accuracy score".
-    // "SILVER unlocks: Full accuracy score, Clause-by-clause analysis".
 
     const prompt = `
       Analyze this legal agreement text:
@@ -122,7 +116,7 @@ router.post("/agreement", verifyToken, checkAiLimit, async (req, res) => {
       Output ONLY valid JSON.
     `;
 
-    const result = await model.generateContent(prompt);
+    const result = await generateWithFallback(prompt);
     const response = await result.response;
     const rawText = response.text();
 
@@ -135,12 +129,12 @@ router.post("/agreement", verifyToken, checkAiLimit, async (req, res) => {
 
     const analysisData = JSON.parse(cleaned);
 
-    // PAYWALL LOGIC: Free users get limited data
+    // PAYWALL LOGIC
     if (req.user.plan === 'free') {
       analysisData.riskLevel = "🔒 Upgrade to Unlock";
       analysisData.missingClauses = ["🔒 Upgrade to view missing clauses"];
       analysisData.ambiguousClauses = ["🔒 Upgrade to view ambiguous clauses"];
-      analysisData.accuracyScore = 0; // Or hidden
+      analysisData.accuracyScore = 0;
       analysisData.isLocked = true;
     } else {
       analysisData.isLocked = false;
@@ -177,7 +171,7 @@ router.post("/case-analysis", verifyToken, checkAiLimit, async (req, res) => {
       Strict JSON only.
     `;
 
-    const result = await model.generateContent(prompt);
+    const result = await generateWithFallback(prompt);
     const response = await result.response;
     const rawText = response.text();
 
@@ -235,7 +229,7 @@ router.post("/draft-notice", verifyToken, checkAiLimit, async (req, res) => {
       Output ONLY the draft text in Markdown. Do not wrap in JSON.
     `;
 
-    const result = await model.generateContent(prompt);
+    const result = await generateWithFallback(prompt);
     const response = await result.response;
     res.json({ draft: response.text() });
 
@@ -244,8 +238,6 @@ router.post("/draft-notice", verifyToken, checkAiLimit, async (req, res) => {
     res.status(500).json({ error: "Failed to draft notice" });
   }
 });
-
-
 
 /* ---------------- JUDGE AI (CASE PREDICTOR) ---------------- */
 router.post("/predict-outcome", verifyToken, checkAiLimit, async (req, res) => {
@@ -278,7 +270,7 @@ router.post("/predict-outcome", verifyToken, checkAiLimit, async (req, res) => {
       }
     `;
 
-    const result = await model.generateContent(prompt);
+    const result = await generateWithFallback(prompt);
     const response = await result.response;
     let text = response.text();
 
@@ -298,14 +290,11 @@ router.post("/predict-outcome", verifyToken, checkAiLimit, async (req, res) => {
   }
 });
 
-
-
 /* ---------------- CONTRACT DRAFTING (TurboAgreements) ---------------- */
 router.post("/draft-contract", verifyToken, checkAiLimit, async (req, res) => {
   try {
     const { type, parties, terms } = req.body;
 
-    // Construct Prompt
     const prompt = `
       You are an expert indian legal drafter.
       Draft a legally binding **${type}** under Indian Law.
@@ -325,7 +314,7 @@ router.post("/draft-contract", verifyToken, checkAiLimit, async (req, res) => {
       Output ONLY the Markdown contract.
     `;
 
-    const result = await model.generateContent(prompt);
+    const result = await generateWithFallback(prompt);
     const response = await result.response;
     const contractText = response.text();
 
@@ -350,8 +339,8 @@ router.post("/analyze-case-file", verifyToken, checkAiLimit, upload.single("file
       return res.status(400).json({ error: "PDF seems empty or unreadable." });
     }
 
-    // 2. Truncate if too huge (Gemini 1.5 Flash has 1M context, but let's be safe/efficient)
-    const truncatedText = caseText.substring(0, 100000); // 100k chars is plenty for a summary
+    // 2. Truncate if too huge
+    const truncatedText = caseText.substring(0, 100000);
 
     const prompt = `
       ACT AS A SENIOR HIGH COURT JUDGE & FORENSIC EXPERT.
@@ -381,7 +370,7 @@ router.post("/analyze-case-file", verifyToken, checkAiLimit, upload.single("file
     `;
 
     // 3. AI Analysis
-    const result = await model.generateContent(prompt);
+    const result = await generateWithFallback(prompt);
     const response = await result.response;
     let text = response.text();
 
