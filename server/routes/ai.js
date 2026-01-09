@@ -18,8 +18,16 @@ if (!process.env.GEMINI_API_KEY) {
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || "missing_key");
 
 // Helper for Model Fallback
+// Helper for Model Fallback
 async function generateWithFallback(prompt) {
-  const modelsToTry = ["gemini-2.5-flash", "gemini-1.5-flash", "gemini-pro"];
+  // Use official stable model names
+  const modelsToTry = [
+    "gemini-1.5-flash",
+    "gemini-1.5-pro",
+    "gemini-1.0-pro",
+    "gemini-pro"
+  ];
+
   let lastError = null;
 
   for (const modelName of modelsToTry) {
@@ -33,7 +41,7 @@ async function generateWithFallback(prompt) {
       lastError = e;
     }
   }
-  throw lastError || new Error("All AI models failed. Please try again later.");
+  throw lastError || new Error("All AI models failed. Please check your API Key and Google Cloud settings.");
 }
 
 /* ---------------- AI ASSISTANT (CHAT) ---------------- */
