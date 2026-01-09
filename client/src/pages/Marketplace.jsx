@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
-import { useSearchParams } from "react-router-dom";
+import { useSearchParams, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 
 /* ----------------------------------------
@@ -106,6 +106,11 @@ export default function Marketplace() {
    LAWYER CARD COMPONENT
 ---------------------------------------- */
 function LawyerCard({ lawyer }) {
+  const navigate = __useNavigateHook(); // We will inject the hook usage in the parent or pass it down, but easier to use hook here if we move component inside or just import hook if it's outside. 
+  // Wait, LawyerCard is defined outside the default export. It cannot use hooks if it's not a component proper.
+  // Actually, LawyerCard IS a functional component, so it CAN use hooks.
+  const navigate = useNavigate();
+
   return (
     <div className="bg-white border border-gray-200 rounded-2xl p-6 hover:shadow-lg hover:border-blue-300 transition flex flex-col justify-between shadow-sm group">
       <div>
@@ -149,7 +154,6 @@ function LawyerCard({ lawyer }) {
       </div>
 
       {/* ACTION */}
-      {/* ACTION */}
       <button
         onClick={() => {
           // 🔒 CLIENT PLAN ENFORCEMENT
@@ -160,7 +164,7 @@ function LawyerCard({ lawyer }) {
             return;
           }
 
-          alert("Opening Lawyer Profile...");
+          navigate(`/lawyer/${lawyer._id}`);
         }}
         className="w-full py-3 rounded-xl bg-gray-50 hover:bg-blue-600 hover:text-white text-gray-700 transition font-bold border border-gray-200 group-hover:border-blue-500/50"
       >

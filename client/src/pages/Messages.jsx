@@ -2,12 +2,15 @@ import { useState, useEffect, useRef } from "react";
 import axios from "axios";
 import { useAuth } from "../context/AuthContext";
 import { io } from "socket.io-client";
+import { useSearchParams } from "react-router-dom"; // IMPORT
 
 // Connect to Socket.io (Backend URL)
 const socket = io(import.meta.env.VITE_API_URL?.replace("/api", "") || "http://localhost:4000");
 
 export default function Messages() {
   const { user } = useAuth();
+  const [searchParams] = useSearchParams(); // HOOK
+  const chatIdParam = searchParams.get("chatId"); // GET PARAM
 
   const [chatList, setChatList] = useState([]);
   const [activeChat, setActiveChat] = useState(null);
@@ -38,13 +41,25 @@ export default function Messages() {
       }
 
       const res = await axios.get(`/api/connections?userId=${id}`);
-
       const list = Array.isArray(res.data) ? res.data : [];
       setChatList(list);
 
-      if (list.length > 0) {
+      // AUTO-SELECT LOGIC
+      if (chatIdParam) {
+        const target = list.find(c => c._id === chatIdParam);
+        if (target) {
+          setActiveChat(target);
+        } else {
+          // If not found in list (maybe new connection?), try to fetch explicitly or just default
+          // For now, if not in list, we can't easily message without a 'room' setup logic
+          // But normally 'Message' button is only enabled if status='active', so they SHOULD be in list.
+          // Fallback if not found:
+          if (list.length > 0) setActiveChat(list[0]);
+        }
+      } else if (list.length > 0) {
         setActiveChat(list[0]);
       }
+
     } catch (err) {
       console.error("Failed to fetch connections", err);
     } finally {
