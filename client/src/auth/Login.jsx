@@ -74,29 +74,96 @@ export default function Login() {
     }
   };
 
+  /* GOOGLE SIGNUP FLOW */
+  const [showRoleModal, setShowRoleModal] = useState(false);
+  const [googleData, setGoogleData] = useState(null); // To store token temporarily
+
   const handleGoogleSuccess = async (credentialResponse) => {
     setLoading(true);
     try {
+      // 1. Try to Login
       const res = await axios.post("/api/auth/google", {
         token: credentialResponse.credential
       });
+
+      // 2. Check if New User (Requires Role Selection)
+      if (res.status === 202 && res.data.requiresSignup) {
+        setGoogleData(credentialResponse.credential); // Save token
+        setShowRoleModal(true); // Open Modal
+        setLoading(false);
+        return;
+      }
+
+      // 3. Success (Existing User)
       const { user, token } = res.data;
       loginWithToken(user, token);
       toast.success("Login Successful!");
       navigate(user.role === 'lawyer' ? "/lawyer/dashboard" : "/client/dashboard");
+
     } catch (err) {
       console.error(err);
       toast.error("Google Login Failed");
     } finally {
+      if (!showRoleModal) setLoading(false);
+    }
+  };
+
+  const traverseWithRole = async (selectedRole) => {
+    setLoading(true);
+    try {
+      // Re-call API with Role
+      const res = await axios.post("/api/auth/google", {
+        token: googleData,
+        role: selectedRole
+      });
+      const { user, token } = res.data;
+      loginWithToken(user, token);
+      toast.success(`Welcome, ${user.name}!`);
+      navigate(user.role === 'lawyer' ? "/lawyer/dashboard" : "/client/dashboard");
+    } catch (err) {
+      toast.error("Registration Failed");
+    } finally {
       setLoading(false);
+      setShowRoleModal(false);
     }
   };
 
   return (
-    <main className="min-h-screen flex items-center justify-center bg-gray-100 px-4">
+    <main className="min-h-screen flex items-center justify-center bg-gray-100 px-4 py-10 relative">
+
+      {/* ROLE SELECTION MODAL */}
+      {showRoleModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
+          <div className="animate-fade-in bg-white rounded-2xl p-8 max-w-md w-full shadow-2xl text-center">
+            <h2 className="text-2xl font-bold text-gray-900 mb-2">Finish Account Setup</h2>
+            <p className="text-gray-500 mb-8">Are you joining us as a Client or a Lawyer?</p>
+
+            <div className="grid grid-cols-2 gap-4">
+              <button
+                onClick={() => traverseWithRole("client")}
+                className="flex flex-col items-center justify-center p-6 border-2 border-gray-100 rounded-2xl hover:border-blue-600 hover:bg-blue-50 transition group"
+              >
+                <span className="text-4xl mb-3">👤</span>
+                <span className="font-bold text-gray-700 group-hover:text-blue-700">Client</span>
+              </button>
+
+              <button
+                onClick={() => traverseWithRole("lawyer")}
+                className="flex flex-col items-center justify-center p-6 border-2 border-gray-100 rounded-2xl hover:border-blue-600 hover:bg-blue-50 transition group"
+              >
+                <span className="text-4xl mb-3">⚖️</span>
+                <span className="font-bold text-gray-700 group-hover:text-blue-700">Lawyer</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       <div className="w-full max-w-md bg-white border border-gray-200 rounded-2xl p-8 shadow-xl">
-        <h1 className="text-2xl font-bold text-gray-900 mb-2">Welcome back</h1>
-        <p className="text-sm text-gray-500 mb-6">Login to continue to Nyay-Sathi</p>
+        <div className="text-center mb-8">
+          <h1 className="text-3xl font-bold text-gray-900 mb-2">Welcome back</h1>
+          <p className="text-sm text-gray-500 mb-6">Login to continue to Nyay-Sathi</p>
+        </div>
 
         {/* GOOGLE LOGIN */}
         <div className="mb-6 flex justify-center">
