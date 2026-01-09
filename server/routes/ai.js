@@ -30,6 +30,13 @@ router.post("/assistant", verifyTokenOptional, checkAiLimit, async (req, res) =>
       User Location: ${location || "India"}
       Language: ${language || "English"}
       
+      CRITICAL INSTRUCTION:
+      You must respond in the SAME language as the "Language" field above. 
+      If Language is "Hindi", reply in Hindi (Devanagari). 
+      If Language is "Hinglish", reply in Hindi written in English script.
+      If Language is "Tamil", reply in Tamil.
+      Do NOT reply in English unless the Language is explicitly English.
+      
       CONVERSATION HISTORY:
       ${conversationHistory}
       

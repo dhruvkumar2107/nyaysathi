@@ -9,6 +9,7 @@ import { Toaster } from "react-hot-toast";
 /* Lazy Load Pages */
 const Home = lazy(() => import("./pages/Home"));
 const Assistant = lazy(() => import("./pages/Assistant"));
+const VoiceAssistant = lazy(() => import("./pages/VoiceAssistant")); // NEW
 const Analyze = lazy(() => import("./pages/Analyze"));
 const JudgeAI = lazy(() => import("./pages/JudgeAI"));
 const Agreements = lazy(() => import("./pages/Agreements"));
@@ -99,6 +100,7 @@ export default function App() {
 
               {/* SHARED FEATURES (PUBLIC ACCESS) */}
               <Route path="/assistant" element={<Assistant />} />
+              <Route path="/voice-assistant" element={<VoiceAssistant />} /> {/* NEW: NyayVoice */}
               <Route path="/judge-ai" element={<JudgeAI />} />
               <Route path="/analyze" element={<Analyze />} />
               <Route path="/agreements" element={<Agreements />} />
