@@ -121,11 +121,29 @@ export default function Nearby() {
     );
   }, []);
 
+  // Helper to calculate distance in km
+  const getDistance = (lat1, lon1, lat2, lon2) => {
+    const R = 6371; // Radius of the earth in km
+    const dLat = deg2rad(lat2 - lat1);
+    const dLon = deg2rad(lon2 - lon1);
+    const a =
+      Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+      Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) *
+      Math.sin(dLon / 2) * Math.sin(dLon / 2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    return R * c; // Distance in km
+  };
+
+  const deg2rad = (deg) => {
+    return deg * (Math.PI / 180);
+  };
+
   const fetchRealData = async (lat, lon) => {
     // Prepare promises for parallel execution
     const lawyersPromise = axios.get("/api/users?role=lawyer");
-    const policePromise = axios.get(`https://nominatim.openstreetmap.org/search?format=json&q=police+station&lat=${lat}&lon=${lon}&addressdetails=1&limit=10`);
-    const courtsPromise = axios.get(`https://nominatim.openstreetmap.org/search?format=json&q=court&lat=${lat}&lon=${lon}&addressdetails=1&limit=10`);
+    // Using 'viewbox' could handle bounding, but post-filtering is more reliable for "nearby"
+    const policePromise = axios.get(`https://nominatim.openstreetmap.org/search?format=json&q=police+station&lat=${lat}&lon=${lon}&addressdetails=1&limit=20`);
+    const courtsPromise = axios.get(`https://nominatim.openstreetmap.org/search?format=json&q=court&lat=${lat}&lon=${lon}&addressdetails=1&limit=20`);
 
     // Wait for all to settle (success or fail independent)
     const [lawyersResult, policeResult, courtsResult] = await Promise.allSettled([
@@ -153,22 +171,24 @@ export default function Nearby() {
         });
       } catch (err) { console.error("Error parsing lawyers", err); }
     } else {
-      console.warn("Lawyer API failed, using Mock");
-      // Generate mock lawyers around user location
-      newData.lawyers = MOCK_NEARBY.lawyers.map(l => ({
-        ...l, ...getRandomLocation(lat, lon, 2)
-      }));
+      // Mock fallback
+      newData.lawyers = MOCK_NEARBY.lawyers.map(l => ({ ...l, ...getRandomLocation(lat, lon, 2) }));
     }
 
     // 2. PROCESS POLICE
     if (policeResult.status === "fulfilled") {
       try {
         newData.police = policeResult.value.data
-          .filter(p => p.class === 'amenity' && p.type === 'police')
+          .filter(p => {
+            // Filter: Must be amenity/police and WITHIN 20km
+            const dist = getDistance(lat, lon, parseFloat(p.lat), parseFloat(p.lon));
+            return p.class === 'amenity' && p.type === 'police' && dist < 20;
+          })
           .map(p => {
             let placeName = p.name;
             const parts = p.display_name.split(', ');
-            if (!placeName || placeName.toLowerCase().includes('police')) {
+            // Smart Name: If generic "Police", use first part of address
+            if (!placeName || placeName.toLowerCase().trim() === 'police' || placeName.toLowerCase().trim() === 'police station') {
               placeName = parts[0];
             }
             return {
@@ -179,7 +199,7 @@ export default function Nearby() {
               lon: parseFloat(p.lon),
               rating: (3.8 + Math.random()).toFixed(1)
             };
-          });
+          }).slice(0, 5); // Take top 5 nearest
       } catch (err) { console.error("Error parsing police", err); }
     }
 
@@ -193,17 +213,28 @@ export default function Nearby() {
     // 3. PROCESS COURTS
     if (courtsResult.status === "fulfilled") {
       try {
-        newData.courts = courtsResult.value.data.map(c => {
-          const parts = c.display_name.split(', ');
-          return {
-            id: c.place_id,
-            name: c.name || parts[0],
-            address: parts.slice(1, 4).join(', '),
-            lat: parseFloat(c.lat),
-            lon: parseFloat(c.lon),
-            rating: (4.0 + Math.random()).toFixed(1)
-          };
-        });
+        newData.courts = courtsResult.value.data
+          .filter(c => {
+            // Filter: Must be court system and WITHIN 20km
+            const dist = getDistance(lat, lon, parseFloat(c.lat), parseFloat(c.lon));
+            return dist < 20;
+          })
+          .map(c => {
+            let placeName = c.name;
+            const parts = c.display_name.split(', ');
+            // Smart Name: If generic "Court", use first part of address
+            if (!placeName || placeName.toLowerCase().trim() === 'court' || placeName.toLowerCase().trim() === 'courthouse') {
+              placeName = parts[0];
+            }
+            return {
+              id: c.place_id,
+              name: c.name || parts[0],
+              address: parts.slice(1, 4).join(', '),
+              lat: parseFloat(c.lat),
+              lon: parseFloat(c.lon),
+              rating: (4.0 + Math.random()).toFixed(1)
+            };
+          }).slice(0, 5);
       } catch (err) { console.error("Error parsing courts", err); }
     }
 
