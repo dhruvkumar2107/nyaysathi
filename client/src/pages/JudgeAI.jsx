@@ -56,7 +56,7 @@ export default function JudgeAI() {
             <PaywallModal isOpen={showPaywall} onClose={() => setShowPaywall(false)} /> {/* NEW */}
             <Navbar />
 
-            <div className="pt-24 pb-12 px-4 max-w-6xl mx-auto">
+            <div className="py-8 px-4 max-w-6xl mx-auto">
                 <header className="mb-10 text-center">
                     <span className="bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider mb-2 inline-block">
                         BETA • JURIS PRUDENCE AI

@@ -5,7 +5,7 @@ export default function Home() {
   const { user } = useAuth();
 
   return (
-    <main className="min-h-screen bg-white pt-24 font-sans text-slate-900 selection:bg-blue-100">
+    <div className="min-h-screen bg-white font-sans text-slate-900 selection:bg-blue-100">
       {/* HERO SECTION */}
       <section className="bg-white pb-20 pt-16 relative overflow-hidden">
 
@@ -132,7 +132,7 @@ export default function Home() {
         </div>
       </section>
 
-    </main>
+    </div>
   );
 }
 

@@ -243,7 +243,7 @@ export default function Assistant() {
   };
 
   return (
-    <main className="min-h-screen bg-white pt-20 font-sans text-slate-900">
+    <main className="min-h-screen bg-white font-sans text-slate-900 py-6">
       <PaywallModal isOpen={showPaywall} onClose={() => setShowPaywall(false)} />
 
       <div className="max-w-4xl mx-auto h-[calc(100vh-80px)] flex flex-col p-4 md:p-6">

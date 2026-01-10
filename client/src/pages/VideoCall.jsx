@@ -58,7 +58,7 @@ export default function VideoCall() {
     };
 
     return (
-        <div className="h-screen w-full bg-gray-900 flex flex-col pt-20">
+        <div className="h-[calc(100vh-72px)] w-full bg-gray-900 flex flex-col">
             <div ref={jitsiContainer} className="flex-1 w-full h-full" />
         </div>
     );

@@ -54,7 +54,7 @@ export default function LawyerProfile() {
     return (
         <main className="min-h-screen bg-slate-50 font-sans pb-12">
             <Navbar />
-            <div className="max-w-6xl mx-auto px-4 pt-24">
+            <div className="max-w-6xl mx-auto px-4 py-8">
                 {/* PROFILE HEADER CARD */}
                 <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6 md:p-8 flex flex-col md:flex-row items-center md:items-start gap-6 relative overflow-hidden">
                     <div className="w-32 h-32 md:w-40 md:h-40 rounded-full border-4 border-white shadow-lg bg-gray-200 flex items-center justify-center text-4xl overflow-hidden shrink-0">

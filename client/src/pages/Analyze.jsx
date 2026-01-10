@@ -23,7 +23,7 @@ export default function Analyze() {
   };
 
   return (
-    <main className="min-h-screen bg-white text-gray-900 pb-20 pt-24">
+    <main className="min-h-screen bg-white text-gray-900 pb-20 py-8">
       <div className="max-w-[1128px] mx-auto px-6 py-10">
         <h1 className="text-3xl font-bold text-gray-900 mb-2">
           Legal Issue Analysis

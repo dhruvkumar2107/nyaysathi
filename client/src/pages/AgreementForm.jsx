@@ -76,7 +76,7 @@ export default function AgreementForm() {
             <Navbar />
             <PaywallModal isOpen={showPaywall} onClose={() => setShowPaywall(false)} />
 
-            <div className="pt-24 pb-12 px-4 max-w-4xl mx-auto">
+            <div className="py-8 px-4 max-w-4xl mx-auto">
                 <header className="text-center mb-10">
                     <span className="bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider mb-2 inline-block">
                         TurboAgreements

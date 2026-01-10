@@ -47,7 +47,7 @@ export default function Agreements() {
   };
 
   return (
-    <main className="min-h-screen bg-white text-slate-900 pb-20 pt-24 font-sans">
+    <main className="min-h-screen bg-white text-slate-900 pb-20 py-8 font-sans">
       <PaywallModal isOpen={showPaywall} onClose={() => setShowPaywall(false)} />
 
       <div className="max-w-5xl mx-auto px-6 py-10">

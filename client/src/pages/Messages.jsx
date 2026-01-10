@@ -145,7 +145,7 @@ export default function Messages() {
   if (loading) return <div className="p-10 text-center">Loading chats...</div>;
 
   return (
-    <main className="min-h-screen bg-white text-gray-900 flex pt-24 pb-4 px-4 h-screen">
+    <div className="min-h-[calc(100vh-72px)] bg-white text-gray-900 flex pb-4 px-4 h-[calc(100vh-72px)]">
       <div className="flex-1 max-w-[1128px] mx-auto flex bg-white border border-gray-200 rounded-lg overflow-hidden shadow-sm">
 
         {/* SIDEBAR */}
@@ -270,6 +270,6 @@ export default function Messages() {
           )}
         </section>
       </div>
-    </main>
+    </div>
   );
 }

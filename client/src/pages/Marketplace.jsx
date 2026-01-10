@@ -51,7 +51,7 @@ export default function Marketplace() {
   });
 
   return (
-    <main className="min-h-screen bg-white text-gray-900 px-6 py-10 pt-24">
+    <main className="min-h-screen bg-white text-gray-900 px-6 py-6">
       {/* HEADER */}
       <header className="mb-10 text-center md:text-left max-w-[1128px] mx-auto">
         <h1 className="text-3xl font-bold text-gray-900">
