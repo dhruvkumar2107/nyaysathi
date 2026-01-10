@@ -1,0 +1,8 @@
+--- DIAGNOSTIC LOG STARTED ---
+Checking Environment...
+API Key found. Length: 39
+API Key starts with: AIza
+
+Attempting to connect to model: gemini-1.5-flash
+❌ FAILED with error: [GoogleGenerativeAI Error]: Error fetching from https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent: [400 Bad Request] API key expired. Please renew the API key. [{"@type":"type.googleapis.com/google.rpc.ErrorInfo","reason":"API_KEY_INVALID","domain":"googleapis.com","metadata":{"service":"generativelanguage.googleapis.com"}},{"@type":"type.googleapis.com/google.rpc.LocalizedMessage","locale":"en-US","message":"API key expired. Please renew the API key."}]
+--- DIAGNOSTIC LOG ENDED ---

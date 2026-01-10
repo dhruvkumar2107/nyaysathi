@@ -14,19 +14,15 @@ const checkAiLimit = async (req, res, next) => {
             return res.status(404).json({ error: "User not found" });
         }
 
-        // Pass through for paid users
-        if (user.plan && user.plan !== "free") {
-            return next();
-        }
-
-        // Free User Logic
-        const LIMIT = 3;
-        const TIME_LIMIT_HOURS = 6;
+        // Defined Limits
+        let LIMIT = 3; // Free default
+        if (user.plan === 'silver') LIMIT = 10;
+        else if (['gold', 'diamond'].includes(user.plan)) LIMIT = Infinity;
 
         // Check if locked
         if (user.aiUsage.count >= LIMIT) {
             return res.status(403).json({
-                error: "AI Limit Reached. Please upgrade to continue.",
+                error: `Plan Limit Reached (${user.aiUsage.count}/${LIMIT}). Upgrade for more!`,
                 code: "LIMIT_REACHED"
             });
         }

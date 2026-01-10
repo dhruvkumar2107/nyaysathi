@@ -12,6 +12,7 @@ const Assistant = lazy(() => import("./pages/Assistant"));
 const VoiceAssistant = lazy(() => import("./pages/VoiceAssistant")); // NEW
 const Analyze = lazy(() => import("./pages/Analyze"));
 const JudgeAI = lazy(() => import("./pages/JudgeAI"));
+const CaseFileAnalyzer = lazy(() => import("./pages/CaseFileAnalyzer")); // NEW
 const Agreements = lazy(() => import("./pages/Agreements"));
 const Marketplace = lazy(() => import("./pages/Marketplace"));
 const Nearby = lazy(() => import("./pages/Nearby"));
@@ -102,6 +103,7 @@ export default function App() {
               <Route path="/assistant" element={<Assistant />} />
               <Route path="/voice-assistant" element={<VoiceAssistant />} /> {/* NEW: NyayVoice */}
               <Route path="/judge-ai" element={<JudgeAI />} />
+              <Route path="/judge-pro" element={<CaseFileAnalyzer />} /> {/* NEW: JudgeAI Pro */}
               <Route path="/analyze" element={<Analyze />} />
               <Route path="/agreements" element={<Agreements />} />
               <Route path="/marketplace" element={<Marketplace />} />
