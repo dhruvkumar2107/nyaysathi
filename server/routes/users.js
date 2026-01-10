@@ -19,6 +19,21 @@ router.get('/', async (req, res) => {
   const users = await User.find(filter).limit(200);
   res.json(users);
 });
+// GET /api/users/public/:id - Get Public Profile of any user (usually lawyer)
+router.get("/public/:id", async (req, res) => {
+  try {
+    const user = await User.findById(req.params.id)
+      .select("-password -__v -otp -otpExpires"); // Exclude sensitive hidden fields
+
+    if (!user) return res.status(404).json({ message: "User not found" });
+
+    res.json(user);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Server Error" });
+  }
+});
+
 // Get one user by ID, Phone, or Email
 router.get('/:id', async (req, res) => {
   let query = {};

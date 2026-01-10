@@ -17,7 +17,7 @@ export default function LawyerProfile() {
 
     useEffect(() => {
         // 🔒 ACCESS CONTROL: Only logged-in users can view profiles
-        if (!user && !loading) {
+        if (!user) {
             toast.error("Please login to view lawyer profiles");
             navigate("/login");
             return;
