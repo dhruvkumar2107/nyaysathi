@@ -20,31 +20,28 @@ const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || "missing_key"
 // Helper for Model Fallback
 // Helper for Model Fallback
 async function generateWithFallback(prompt) {
-  // Use official stable model names (Exhaustive List)
+  // USER REQUEST: STRICTLY GEMINI FLASH
+  // Note: "gemini-1.5-flash" is the current latest stable Flash model.
   const modelsToTry = [
-    "gemini-1.5-flash",
-    "gemini-1.5-flash-latest",
-    "gemini-1.5-flash-001",
-    "gemini-1.5-pro",
-    "gemini-1.5-pro-latest",
-    "gemini-1.5-pro-001",
-    "gemini-1.0-pro"
+    "gemini-1.5-flash"
   ];
 
-  let lastError = null;
+  const errors = [];
 
   for (const modelName of modelsToTry) {
     try {
-      // console.log(`Attempting AI with model: ${modelName}`);
+      console.log(`Attempting AI with model: ${modelName}`);
       const model = genAI.getGenerativeModel({ model: modelName });
       const result = await model.generateContent(prompt);
       return result; // Success
     } catch (e) {
       console.error(`Model ${modelName} failed:`, e.message);
-      lastError = e;
+      errors.push(`${modelName}: ${e.message}`);
     }
   }
-  throw lastError || new Error("All AI models failed. Please check your API Key and Google Cloud settings.");
+
+  // Throw explicit error for the catch block below
+  throw new Error(errors.join(" | ") || "AI Service Unavailable");
 }
 
 /* ---------------- AI ASSISTANT (CHAT) ---------------- */
