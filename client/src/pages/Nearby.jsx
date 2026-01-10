@@ -119,32 +119,52 @@ export default function Nearby() {
           lat: coords.lat,
           lon: coords.lon,
           rating: l.stats?.rating || 4.5,
-          image: l.profileImage || "https://ui-avatars.com/api/?name=" + l.name
+          image: l.profileImage || `https://ui-avatars.com/api/?name=${encodeURIComponent(l.name)}&background=0D8ABC&color=fff`
         };
       });
 
       // 2. Fetch Real Police Stations (OpenStreetMap Nominatim)
-      // Note: Nominatim has usage limits, but for MVP it's fine.
-      const policeRes = await axios.get(`https://nominatim.openstreetmap.org/search?format=json&q=police&lat=${lat}&lon=${lon}&addressdetails=1&limit=5`);
-      const realPolice = policeRes.data.map(p => ({
-        id: p.place_id,
-        name: p.name || "Police Station",
-        address: p.display_name.split(',')[0],
-        lat: parseFloat(p.lat),
-        lon: parseFloat(p.lon),
-        rating: 4.0
-      }));
+      // Using a bounding box context or just a specialized query
+      const policeRes = await axios.get(`https://nominatim.openstreetmap.org/search?format=json&q=police+station&lat=${lat}&lon=${lon}&addressdetails=1&limit=10`);
+
+      const realPolice = policeRes.data
+        .filter(p => p.class === 'amenity' && p.type === 'police') // Strict filter
+        .map(p => {
+          // Smart Name Extraction
+          let placeName = p.name;
+          const parts = p.display_name.split(', ');
+
+          // If name is generic "Police", try to find a better one from address components
+          if (!placeName || placeName.toLowerCase() === 'police' || placeName.toLowerCase() === 'police station') {
+            placeName = parts[0]; // Usually "Andheri Police Station" is the first part of display_name
+          }
+
+          // Address Construction (skipping the name part)
+          const address = parts.slice(1, 4).join(', ');
+
+          return {
+            id: p.place_id,
+            name: placeName,
+            address: address || p.display_name,
+            lat: parseFloat(p.lat),
+            lon: parseFloat(p.lon),
+            rating: (3.8 + Math.random()).toFixed(1) // Mock rating for now
+          };
+        });
 
       // 3. Fetch Real Courts
-      const courtsRes = await axios.get(`https://nominatim.openstreetmap.org/search?format=json&q=court&lat=${lat}&lon=${lon}&addressdetails=1&limit=5`);
-      const realCourts = courtsRes.data.map(c => ({
-        id: c.place_id,
-        name: c.name || "District Court",
-        address: c.display_name.split(',')[0],
-        lat: parseFloat(c.lat),
-        lon: parseFloat(c.lon),
-        rating: 4.5
-      }));
+      const courtsRes = await axios.get(`https://nominatim.openstreetmap.org/search?format=json&q=court&lat=${lat}&lon=${lon}&addressdetails=1&limit=10`);
+      const realCourts = courtsRes.data.map(c => {
+        const parts = c.display_name.split(', ');
+        return {
+          id: c.place_id,
+          name: c.name || parts[0],
+          address: parts.slice(1, 4).join(', '),
+          lat: parseFloat(c.lat),
+          lon: parseFloat(c.lon),
+          rating: (4.0 + Math.random()).toFixed(1)
+        };
+      });
 
       setData({
         police: realPolice,
@@ -154,7 +174,7 @@ export default function Nearby() {
 
     } catch (error) {
       console.error("Failed to fetch nearby data", error);
-      // Fallback content if API fails
+      toast.error("Network error: Could not fetch nearby places.");
     }
   };
 
