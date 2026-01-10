@@ -1,118 +1,103 @@
-import { useState } from "react";
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { Link, useLocation } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 
-
-// Force mobile redeploy check
 export default function Navbar() {
   const { user, logout } = useAuth();
-  const navigate = useNavigate();
+  const [isOpen, setIsOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
   const location = useLocation();
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
-  const handleLogout = () => {
-    logout();
-    navigate("/");
-  };
+  useEffect(() => {
+    const handleScroll = () => setScrolled(window.scrollY > 20);
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  // Close mobile menu on route change
+  useEffect(() => {
+    setIsOpen(false);
+  }, [location.pathname]);
+
+  const navLinks = [
+    { name: "Find Lawyers", path: "/lawyers" },
+    { name: "Legal AI Tools", path: "/ai-tools" },
+    { name: "NyayVoice 🎙️", path: "/voice-assistant" },
+    { name: "Resources", path: "/resources" },
+    { name: "About", path: "/about" },
+  ];
+
+  const isActive = (path) => location.pathname === path;
 
   return (
-    <nav className="fixed top-0 w-full z-50 bg-white/95 backdrop-blur-md border-b border-slate-200/60 shadow-sm transition-all duration-300 font-sans">
-      <div className="max-w-[1280px] mx-auto px-6 h-20 flex items-center justify-between">
+    <nav
+      className={`fixed w-full z-50 transition-all duration-300 border-b ${scrolled
+          ? "bg-white/90 backdrop-blur-md border-gray-200 shadow-sm py-3"
+          : "bg-white border-transparent py-5"
+        }`}
+    >
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex justify-between items-center h-10">
+          {/* Logo Section */}
+          <Link to="/" className="flex-shrink-0 flex items-center gap-2 group">
+            <div className="w-9 h-9 bg-gradient-to-br from-slate-900 to-slate-700 text-white rounded-lg flex items-center justify-center text-xl font-bold shadow-md transform group-hover:scale-105 transition-transform duration-300">
+              ⚖️
+            </div>
+            <span className="text-2xl font-bold tracking-tight text-slate-900 group-hover:text-slate-700 transition-colors">
+              Nyay<span className="text-blue-600">Sathi</span>
+            </span>
+          </Link>
 
-        {/* LEFT: LOGO */}
-        <Link to="/" className="flex items-center gap-2.5 group shrink-0">
-          <div className="w-10 h-10 bg-[#0B1120] rounded-xl flex items-center justify-center text-white font-bold text-lg shadow-lg shadow-slate-200 transition-transform group-hover:scale-105">
-            ⚖️
-          </div>
-          <span className="text-2xl font-bold text-[#0B1120] tracking-tight font-display">
-            Nyay<span className="text-blue-600">Sathi</span>
-          </span>
-        </Link>
-
-        {/* CENTER: NAV LINKS (Simple Text, No Icons) */}
-        <div className="hidden md:flex items-center gap-8">
-          <NavLink to="/marketplace" active={location.pathname === "/marketplace"}>Find Lawyers</NavLink>
-          <NavLink to="/nearby" active={location.pathname === "/nearby"}>Nearby</NavLink>
-          <NavLink to="/messages" active={location.pathname === "/messages"}>Messaging</NavLink>
-          <NavLink to="/agreements" active={location.pathname === "/agreements"}>Agreements</NavLink>
-          <NavLink to="/judge-ai" active={location.pathname === "/judge-ai"}>Judge AI</NavLink>
-          <NavLink to="/judge-pro" active={location.pathname === "/judge-pro"}>
-            <span className="flex items-center gap-1">Judge Pro <span className="text-[10px] bg-gradient-to-r from-yellow-400 to-amber-600 text-white px-1.5 py-0.5 rounded uppercase font-black tracking-wider">PRO</span></span>
-          </NavLink>
-          <NavLink to="/voice-assistant" active={location.pathname === "/voice-assistant"}>NyayVoice 🎙️</NavLink>
-          <NavLink to="/assistant" active={location.pathname === "/assistant"}>AI Assistant</NavLink>
-          <NavLink to="/pricing" active={location.pathname === "/pricing"}>Pricing</NavLink>
-        </div>
-
-        {/* RIGHT: AUTH BUTTONS */}
-        <div className="flex items-center gap-2 shrink-0">
-          {!user ? (
-            <>
+          {/* Desktop Navigation */}
+          <div className="hidden md:flex items-center space-x-1">
+            {navLinks.map((link) => (
               <Link
-                to="/login"
-                className="hidden sm:block text-slate-600 font-bold hover:text-[#0B1120] transition px-4 py-2"
+                key={link.name}
+                to={link.path}
+                className={`px-4 py-2 rounded-md text-sm font-medium transition-all duration-200 ${isActive(link.path)
+                    ? "text-blue-600 bg-blue-50"
+                    : "text-slate-600 hover:text-slate-900 hover:bg-slate-50"
+                  }`}
               >
-                Log in
+                {link.name}
               </Link>
-              <Link
-                to="/register"
-                className="px-6 py-2.5 bg-[#0B1120] hover:bg-blue-700 text-white font-bold rounded-xl shadow-lg shadow-blue-900/10 transition transform active:scale-95"
-              >
-                Get Started
-              </Link>
-            </>
-          ) : (
-            <div className="flex items-center gap-4 pl-4">
-              <span className="hidden lg:block text-sm font-bold text-slate-700">
-                Hi, {user.name.split(" ")[0]}
+            ))}
+
+            {/* Judge Pro Badge Link */}
+            <Link
+              to="/judge-pro"
+              className={`ml-2 px-4 py-2 rounded-md text-sm font-medium transition-all duration-200 flex items-center gap-1.5 ${isActive("/judge-pro")
+                  ? "text-amber-700 bg-amber-50"
+                  : "text-slate-600 hover:text-amber-700 hover:bg-amber-50"
+                }`}
+            >
+              <span>Judge Pro</span>
+              <span className="text-[10px] bg-gradient-to-r from-amber-400 to-amber-600 text-white px-1.5 py-0.5 rounded shadow-sm font-bold uppercase tracking-wider">
+                PRO
               </span>
+            </Link>
+          </div>
 
-              <div className="relative group">
-                <button className="flex items-center gap-2 p-0.5 rounded-full transition outline-none">
-                  <div className="w-11 h-11 rounded-full bg-blue-50 text-blue-700 flex items-center justify-center font-bold border border-blue-100 text-lg shadow-sm">
-                    {user.name[0].toUpperCase()}
-                  </div>
+          {/* Auth Buttons */}
+          <div className="hidden md:flex items-center gap-3">
+            {user ? (
+              <div className="flex items-center gap-4">
+                <Link
+                  to={user.role === "lawyer" ? "/lawyer/dashboard" : "/client/dashboard"}
+                  className="text-sm font-medium text-slate-700 hover:text-blue-600 transition-colors"
+                >
+                  Dashboard
+                </Link>
+                <button
+                  onClick={logout}
+                  className="text-sm font-medium text-slate-500 hover:text-red-600 transition-colors"
+                >
+                  Sign Out
                 </button>
-
-                {/* DROPDOWN */}
-                <div className="absolute right-0 top-full mt-2 w-52 bg-white rounded-xl shadow-xl border border-slate-100 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 flex flex-col p-2 z-50">
-                  <div className="px-4 py-2 border-b border-slate-50 md:hidden">
-                    <p className="text-sm font-bold text-slate-900">Hi, {user.name.split(" ")[0]}</p>
-                  </div>
-                  <Link
-                    to={user.role === "lawyer" ? "/lawyer/dashboard" : "/client/dashboard"}
-                    className="px-4 py-3 text-slate-700 hover:bg-slate-50 hover:text-blue-700 font-bold rounded-lg flex items-center gap-3 transition"
-                  >
-                    <span>📊</span> Dashboard
-                  </Link>
-                  <button
-                    onClick={handleLogout}
-                    className="px-4 py-3 text-red-600 hover:bg-red-50 font-bold rounded-lg text-left flex items-center gap-3 transition"
-                  >
-                    <span>🚪</span> Sign Out
-                  </button>
+                <div className="w-9 h-9 rounded-full bg-slate-100 border border-slate-200 flex items-center justify-center text-sm font-bold text-blue-700 shadow-sm">
+                  {user.name?.[0].toUpperCase()}
                 </div>
               </div>
-            </div>
-          )}
-
-          {/* MOBILE TOGGLE */}
-          <button
-            className="md:hidden text-slate-900 p-2 text-2xl ml-2"
-            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-          >
-            ☰
-          </button>
-        </div>
-      </div>
-
-      {/* MOBILE MENU */}
-      {mobileMenuOpen && (
-        <div className="md:hidden fixed inset-0 top-20 bg-white/95 backdrop-blur-xl z-40 flex flex-col p-6 overflow-y-auto animate-in slide-in-from-top-10 duration-300">
-          <div className="flex flex-col gap-4 text-center">
-            <Link to="/marketplace" onClick={() => setMobileMenuOpen(false)} className="mx-auto w-full max-w-xs py-3 rounded-xl hover:bg-slate-50 text-slate-700 font-bold text-lg transition">Find Lawyers</Link>
-            <Link to="/nearby" onClick={() => setMobileMenuOpen(false)} className="mx-auto w-full max-w-xs py-3 rounded-xl hover:bg-slate-50 text-slate-700 font-bold text-lg transition">Nearby</Link>
-            <Link to="/messages" onClick={() => setMobileMenuOpen(false)} className="mx-auto w-full max-w-xs py-3 rounded-xl hover:bg-slate-50 text-slate-700 font-bold text-lg transition">Messaging</Link>
             <Link to="/agreements" onClick={() => setMobileMenuOpen(false)} className="mx-auto w-full max-w-xs py-3 rounded-xl hover:bg-slate-50 text-slate-700 font-bold text-lg transition">Agreements</Link>
             <Link to="/judge-ai" onClick={() => setMobileMenuOpen(false)} className="mx-auto w-full max-w-xs py-3 rounded-xl hover:bg-slate-50 text-slate-700 font-bold text-lg transition">Judge AI</Link>
             <Link to="/assistant" onClick={() => setMobileMenuOpen(false)} className="mx-auto w-full max-w-xs py-3 rounded-xl hover:bg-slate-50 text-slate-700 font-bold text-lg transition">AI Assistant</Link>
