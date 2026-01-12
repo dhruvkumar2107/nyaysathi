@@ -101,8 +101,27 @@ const userSchema = new mongoose.Schema(
       profileViews: { type: Number, default: 0 },
       searchAppearances: { type: Number, default: 0 },
       rating: { type: Number, default: 0 },
-      reviews: { type: Number, default: 0 }
+      reviews: { type: Number, default: 0 },
+      casesSolved: { type: Number, default: 0 },
+      successRate: { type: Number, default: 95 }, // Percentage
+      yearsExperience: { type: Number, default: 0 }
     },
+
+    // Enterprise Profile 2.0
+    videoIntro: { type: String, default: "" }, // Youtube/Vimeo URL
+    awards: [{
+      title: String,
+      year: Number,
+      issuer: String
+    }],
+    faqs: [{
+      question: String,
+      answer: String
+    }],
+    mediaMentions: [{
+      outlet: String, // e.g. "Times of India"
+      url: String
+    }],
 
     verified: {
       type: Boolean,

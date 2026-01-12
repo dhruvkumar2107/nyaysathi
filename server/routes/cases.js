@@ -25,12 +25,40 @@ router.get("/", async (req, res) => {
 // LAWYER ACCEPTS CASE
 router.post("/:id/accept", async (req, res) => {
   const { id } = req.params;
-  const { lawyerPhone } = req.body;
+  const { lawyerPhone, lawyerId } = req.body; // Added lawyerId support
+  const updates = { acceptedBy: lawyerPhone, stage: 'Discovery' };
+  if (lawyerId) updates.lawyer = lawyerId;
+
   const c = await Case.findByIdAndUpdate(
     id,
-    { acceptedBy: lawyerPhone },
+    updates,
     { new: true }
   );
   res.json(c);
 });
+
+// KANBAN STAGE UPDATE
+router.patch("/:id/stage", async (req, res) => {
+  try {
+    const { stage } = req.body;
+    const c = await Case.findByIdAndUpdate(req.params.id, { stage }, { new: true });
+    res.json(c);
+  } catch (err) {
+    res.status(500).json({ error: "Failed to update stage" });
+  }
+});
+
+// TIMELINE UPDATE
+router.post("/:id/timeline", async (req, res) => {
+  try {
+    const { title, status, desc } = req.body;
+    const c = await Case.findById(req.params.id);
+    c.timeline.push({ title, status, desc, date: new Date() });
+    await c.save();
+    res.json(c);
+  } catch (err) {
+    res.status(500).json({ error: "Failed to add timeline event" });
+  }
+});
+
 module.exports = router;

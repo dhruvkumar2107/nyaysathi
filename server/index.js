@@ -177,6 +177,7 @@ loadRoute("/api/invoices", "./routes/invoices"); // NEW
 loadRoute("/api/crm", "./routes/crm"); // NEW
 loadRoute("/api/notifications", "./routes/notifications"); // NEW
 loadRoute("/api/agreements", "./routes/agreements"); // NEW
+loadRoute("/api/events", "./routes/events"); // NEW CALENDAR ROUTE
 
 // Custom Sentry Error Handler (Compatible with all versions)
 app.use((err, req, res, next) => {

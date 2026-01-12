@@ -5,7 +5,8 @@ import { useAuth } from "../context/AuthContext";
 import DashboardLayout from "../components/dashboard/DashboardLayout";
 import { clientFeed } from "../components/dashboard/FeedMetadata";
 import LegalReels from "../components/dashboard/LegalReels";
-
+import CaseTimeline from "../components/dashboard/CaseTimeline"; // NEW
+import CalendarWidget from "../components/dashboard/CalendarWidget"; // NEW
 import BookingModal from "../components/dashboard/BookingModal";
 import io from "socket.io-client"; // NEW
 import { useNavigate } from "react-router-dom"; // NEW
@@ -402,6 +403,10 @@ export default function ClientDashboard() {
                       <h4 className="font-bold text-lg text-slate-900">{c.title}</h4>
                       <span className={`px-2.5 py-1 rounded-md text-[10px] font-black uppercase tracking-wider ${c.acceptedBy ? 'bg-emerald-100 text-emerald-700' : 'bg-amber-100 text-amber-700'}`}>{c.acceptedBy ? "In Progress" : "Open"}</span>
                     </div>
+                    {/* VISUAL TIMELINE (NEW) */}
+                    <div className="mb-4 bg-slate-50 p-3 rounded-lg border border-slate-100">
+                      <CaseTimeline stage={c.stage || 'New Lead'} />
+                    </div>
                     <p className="text-sm text-slate-600 mb-4">{c.desc}</p>
                     <div className="flex items-center gap-4 text-xs font-medium text-slate-400">
                       <span>📍 {c.location}</span>
@@ -461,6 +466,11 @@ export default function ClientDashboard() {
         /* RIGHT SIDEBAR */
         rightSidebar={
           <>
+            {/* CALENDAR WIDGET (NEW) */}
+            <div className="mb-6 h-[400px]">
+              <CalendarWidget user={user} />
+            </div>
+
             {/* Active Cases Widget - REMOVED (Moved to My Cases Tab) */}
             {/* Suggested Lawyers */}
             <div className="bg-white border border-gray-200 rounded-lg p-4 shadow-sm">
