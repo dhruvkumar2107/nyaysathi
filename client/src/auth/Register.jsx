@@ -173,12 +173,16 @@ export default function Register() {
         {role === "lawyer" && (
           <>
             <label className="text-sm font-medium text-gray-700">Specialization</label>
-            <input
+            <select
               className="w-full mt-1 mb-4 p-3 rounded-xl bg-gray-50 border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 text-gray-900"
-              placeholder="Criminal, Corporate, Family Law..."
               value={specialization}
               onChange={(e) => setSpecialization(e.target.value)}
-            />
+            >
+              <option value="">Select Specialization</option>
+              {["Criminal Law", "Corporate Law", "Family Law", "Civil Law", "IP Law", "Real Estate", "Labor Law", "Tax Law", "Cyber Law", "Immigration", "General Practice"].map(opt => (
+                <option key={opt} value={opt}>{opt}</option>
+              ))}
+            </select>
 
             <label className="text-sm font-medium text-gray-700">Experience (years)</label>
             <input
@@ -190,12 +194,16 @@ export default function Register() {
             />
 
             <label className="text-sm font-medium text-gray-700">City / Location</label>
-            <input
+            <select
               className="w-full mt-1 mb-4 p-3 rounded-xl bg-gray-50 border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 text-gray-900"
-              placeholder="Mumbai, Delhi, Bengaluru"
               value={location}
               onChange={(e) => setLocation(e.target.value)}
-            />
+            >
+              <option value="">Select City</option>
+              {["Mumbai", "Delhi", "Bengaluru", "Hyderabad", "Ahmedabad", "Chennai", "Kolkata", "Pune", "Jaipur", "Surat", "Lucknow", "Kanpur", "Nagpur", "Indore", "Thane", "Bhopal", "Visakhapatnam", "Pimpri-Chinchwad", "Patna", "Vadodara"].map(city => (
+                <option key={city} value={city}>{city}</option>
+              ))}
+            </select>
           </>
         )}
 
