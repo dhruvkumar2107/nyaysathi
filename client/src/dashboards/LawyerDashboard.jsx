@@ -6,6 +6,9 @@ import DashboardLayout from "../components/dashboard/DashboardLayout";
 import { lawyerFeed, suggestedLawyers } from "../components/dashboard/FeedMetadata";
 import KanbanBoard from "../components/dashboard/KanbanBoard"; // NEW
 import CalendarWidget from "../components/dashboard/CalendarWidget"; // NEW
+import WorkloadMonitor from "../components/dashboard/lawyer/WorkloadMonitor"; // NEW
+import CaseIntelligencePanel from "../components/dashboard/lawyer/CaseIntelligencePanel"; // NEW
+import UnifiedActivityFeed from "../components/dashboard/lawyer/UnifiedActivityFeed"; // NEW
 import io from "socket.io-client"; // NEW
 import { useNavigate } from "react-router-dom"; // NEW
 
@@ -32,16 +35,28 @@ export default function LawyerDashboard() {
 
 
 
+  const [loading, setLoading] = useState(true);
+  const [crmData, setCrmData] = useState(null); // NEW
+
   useEffect(() => {
     if (user) {
+      const uId = user._id || user.id;
+      // 1. Fetch Basic Dashboard Data
       fetchLeads();
       fetchPosts();
-      fetchAppointments();
-      fetchRequests();
-      fetchInvoices(); // NEW
+      fetchAppointments(uId);
+      fetchRequests(uId);
+      fetchInvoices(uId);
       fetchClients(); // NEW
       fetchUnread(); // NEW
 
+      // 2. Fetch Enterprise Intelligence (NEW)
+      axios.get(`/api/crm/insights?userId=${uId}`)
+        .then(res => setCrmData(res.data))
+        .catch(err => console.error("CRM Error", err));
+
+      setLoading(false);
+      socket.emit("join_room", uId);
       // JOIN INSTANT POOL
       socket.emit("join_lawyer_pool");
 
@@ -489,6 +504,22 @@ export default function LawyerDashboard() {
                 <div className="text-xs text-orange-600 font-bold mt-1">{user.stats?.rating ? `${user.stats.rating} ★ Rating` : "Top 5% in City"}</div>
               </div>
             </div>
+
+            {/* ENTERPRISE INTELLIGENCE SECTION (NEW) */}
+            {crmData && (
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8 animate-in slide-in-from-bottom-6 duration-500">
+                {/* 1. Workload & Health */}
+                <div className="space-y-6">
+                  <WorkloadMonitor workload={crmData.workload} />
+                  <CaseIntelligencePanel insights={crmData.caseInsights} />
+                </div>
+
+                {/* 2. Unified Feed (Takes 2 cols) */}
+                <div className="md:col-span-2">
+                  <UnifiedActivityFeed feed={crmData.activityFeed} />
+                </div>
+              </div>
+            )}
 
             {/* TABS */}
             <div className="flex bg-slate-100/50 p-1 mb-6 rounded-xl border border-slate-200">

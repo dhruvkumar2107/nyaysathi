@@ -5,8 +5,10 @@ import { useAuth } from "../context/AuthContext";
 import DashboardLayout from "../components/dashboard/DashboardLayout";
 import { clientFeed } from "../components/dashboard/FeedMetadata";
 import LegalReels from "../components/dashboard/LegalReels";
-import CaseTimeline from "../components/dashboard/CaseTimeline"; // NEW
-import CalendarWidget from "../components/dashboard/CalendarWidget"; // NEW
+import CaseTimeline from "../components/dashboard/CaseTimeline";
+import CalendarWidget from "../components/dashboard/CalendarWidget";
+import TrustTimeline from "../components/dashboard/client/TrustTimeline"; // NEW
+import FeeTransparency from "../components/dashboard/client/FeeTransparency"; // NEW
 import BookingModal from "../components/dashboard/BookingModal";
 import io from "socket.io-client"; // NEW
 import { useNavigate } from "react-router-dom"; // NEW
@@ -482,6 +484,19 @@ export default function ClientDashboard() {
             <div className="mb-6 h-[400px]">
               <CalendarWidget user={user} />
             </div>
+
+            {/* TRUST FEATURES (NEW) */}
+            {activeCase && (
+              <div className="animate-in slide-in-from-right duration-500">
+                <TrustTimeline stage={activeCase.stage || 'New Lead'} />
+              </div>
+            )}
+
+            {invoices.length > 0 && (
+              <div className="animate-in slide-in-from-right duration-700">
+                <FeeTransparency invoices={invoices} />
+              </div>
+            )}
 
             {/* Active Cases Widget - REMOVED (Moved to My Cases Tab) */}
             {/* Suggested Lawyers */}
