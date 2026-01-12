@@ -354,7 +354,9 @@ export default function LawyerDashboard() {
                 <span className="text-xs bg-blue-100 text-blue-700 px-2 py-0.5 rounded-full font-medium" title="Verified Advocate">✓ Verified</span>
               </div>
               <p className="text-sm text-gray-500">{user.specialization || "Legal Consultant"}</p>
-              <p className="text-xs text-gray-400 mt-1">{user.location}</p>
+              <p className="text-xs text-gray-400 mt-1">
+                {typeof user.location === 'object' ? user.location?.city || "India" : user.location}
+              </p>
 
               <div className="my-4 border-t border-gray-100"></div>
 
@@ -780,7 +782,9 @@ export default function LawyerDashboard() {
                 {leads.map((lead) => (
                   <div key={lead._id} className="border border-gray-100 p-3 rounded-lg hover:bg-gray-50 transition">
                     <h4 className="font-bold text-gray-900 text-sm truncate">{lead.title}</h4>
-                    <p className="text-xs text-gray-500 mt-1 mb-2">{lead.location} • {lead.budget}</p>
+                    <p className="text-xs text-slate-500 mt-1 mb-2">
+                      {typeof lead.location === 'object' ? lead.location?.city || "Remote" : lead.location} • {lead.budget}
+                    </p>
 
                     <div className="flex gap-2">
                       <button
