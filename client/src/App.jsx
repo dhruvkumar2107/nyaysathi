@@ -3,6 +3,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 
 /* Components */
 import Navbar from "./components/Navbar";
+import Footer from "./components/Footer";
 import ProtectedRoute from "./components/ProtectedRoute";
 import { Toaster } from "react-hot-toast";
 
@@ -122,8 +123,10 @@ export default function App() {
               <Route path="/analytics" element={<Analytics />} />
             </Routes>
           </Suspense>
-        </main>
-      </div>
-    </BrowserRouter>
+        </Suspense>
+      </main>
+      <Footer />
+    </div>
+    </BrowserRouter >
   );
 }
