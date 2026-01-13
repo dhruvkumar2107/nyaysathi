@@ -123,10 +123,9 @@ export default function App() {
               <Route path="/analytics" element={<Analytics />} />
             </Routes>
           </Suspense>
-        </Suspense>
-      </main>
-      <Footer />
-    </div>
-    </BrowserRouter >
+        </main>
+        <Footer />
+      </div>
+    </BrowserRouter>
   );
 }
