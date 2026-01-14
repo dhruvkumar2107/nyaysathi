@@ -30,7 +30,10 @@ export default function Login() {
     if (res.success) {
       toast.success("Login Successful!");
       // Smart Redirect based on Role
-      if (res.user.role === "lawyer") {
+      // Smart Redirect based on Role
+      if (res.user.role === "admin") {
+        navigate("/admin");
+      } else if (res.user.role === "lawyer") {
         navigate("/lawyer/dashboard");
       } else {
         navigate("/client/dashboard");
