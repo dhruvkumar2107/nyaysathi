@@ -123,6 +123,16 @@ const userSchema = new mongoose.Schema(
       url: String
     }],
 
+    // VERIFICATION SYSTEM
+    barCouncilId: { type: String, default: "" }, // e.g. MAH/2345/2020
+    idCardImage: { type: String, default: "" },  // URL of uploaded ID
+    verificationStatus: {
+      type: String,
+      enum: ["unverified", "pending", "verified", "rejected"],
+      default: "unverified"
+    },
+    rejectionReason: { type: String, default: "" },
+
     verified: {
       type: Boolean,
       default: false,

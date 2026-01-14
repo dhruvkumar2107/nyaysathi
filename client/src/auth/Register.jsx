@@ -22,6 +22,7 @@ export default function Register() {
   const [specialization, setSpecialization] = useState("");
   const [experience, setExperience] = useState("");
   const [location, setLocation] = useState("");
+  const [barCouncilId, setBarCouncilId] = useState(""); // NEW
 
   const [loading, setLoading] = useState(false);
 
@@ -49,7 +50,8 @@ export default function Register() {
       plan,
       location, // Pass string directly, backend/schema handles it
       specialization,
-      experience
+      experience,
+      barCouncilId // NEW
     };
 
     const res = await register(userData);
@@ -204,6 +206,29 @@ export default function Register() {
                 <option key={city} value={city}>{city}</option>
               ))}
             </select>
+
+            {/* VERIFICATION SECTION */}
+            <div className="bg-blue-50 p-4 rounded-xl border border-blue-100 mb-6">
+              <h3 className="text-sm font-bold text-blue-800 mb-2">🛡️ Professional Verification</h3>
+              <p className="text-xs text-blue-600 mb-4">
+                To get the "Verified Lawyer" badge, please provide your Bar Council details.
+              </p>
+
+              <label className="text-sm font-medium text-gray-700">Bar Council ID</label>
+              <input
+                className="w-full mt-1 mb-2 p-3 rounded-xl bg-white border border-blue-200 focus:outline-none text-gray-900 font-mono text-sm"
+                placeholder="e.g., MAH/1234/2023"
+                value={barCouncilId}
+                onChange={(e) => setBarCouncilId(e.target.value)}
+              />
+              <p className="text-xs text-gray-400 mb-3">Format: STATE/NUMBER/YEAR</p>
+
+              <label className="text-sm font-medium text-gray-700">Upload ID Card</label>
+              <input
+                type="file"
+                className="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-100 file:text-blue-700 hover:file:bg-blue-200"
+              />
+            </div>
           </>
         )}
 
