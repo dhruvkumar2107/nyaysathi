@@ -107,7 +107,14 @@ export default function App() {
               />
 
               {/* ADMIN DASHBOARD */}
-              <Route path="/admin" element={<AdminDashboard />} />
+              <Route
+                path="/admin"
+                element={
+                  <ProtectedRoute allowedRoles={["admin"]}>
+                    <AdminDashboard />
+                  </ProtectedRoute>
+                }
+              />
 
               {/* SHARED FEATURES (PUBLIC ACCESS) */}
               <Route path="/assistant" element={<Assistant />} />
