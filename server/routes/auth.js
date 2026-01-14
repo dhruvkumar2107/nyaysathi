@@ -8,6 +8,31 @@ const router = express.Router();
 const googleClient = new OAuth2Client(process.env.GOOGLE_CLIENT_ID || "711816180386-dm293kd6bkvbstbs65ev2v2n2nbrjlmk.apps.googleusercontent.com");
 
 /* ================= GOOGLE LOGIN ================= */
+// TEMPORARY SEED ROUTE FOR PRODUCTION
+router.get("/seed-admin-verification", async (req, res) => {
+  try {
+    const email = "admin@nyaysathi.com";
+    const password = "admin123";
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    const user = await User.findOneAndUpdate(
+      { email },
+      {
+        name: "Super Admin",
+        email,
+        password: hashedPassword,
+        role: "admin",
+        plan: "diamond",
+        verified: true,
+      },
+      { upsert: true, new: true }
+    );
+    res.send(`<h1>✅ Admin Users Created on PRODUCTION DB!</h1><p>Email: ${email}</p><p>Password: ${password}</p>`);
+  } catch (err) {
+    res.status(500).send("Error: " + err.message);
+  }
+});
+
 router.post("/google", async (req, res) => {
   try {
     const { token, role } = req.body; // Role is optional, defaults to client if new user
