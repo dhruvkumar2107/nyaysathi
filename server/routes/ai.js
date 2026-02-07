@@ -22,7 +22,8 @@ const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || "missing_key"
 async function generateWithFallback(prompt) {
   // USER REQUEST: STRICTLY GEMINI 2.5 FLASH ONLY
   const modelsToTry = [
-    "gemini-2.5-flash"
+    "gemini-1.5-flash",
+    "gemini-pro"
   ];
 
   const errors = [];
