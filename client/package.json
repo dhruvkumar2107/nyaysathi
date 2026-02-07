@@ -11,8 +11,7 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
-    "lint": "eslint . --ext js,jsx --report-unused-disable-directives --max-warnings 0",
-    "postinstall": "chmod +x node_modules/.bin/vite"
+    "lint": "eslint . --ext js,jsx --report-unused-disable-directives --max-warnings 0"
   },
   "dependencies": {
     "@react-oauth/google": "^0.13.4",
@@ -33,7 +32,7 @@
     "socket.io-client": "^4.7.5"
   },
   "devDependencies": {
-    "@vitejs/plugin-react": "4.2.1",
+    "@vitejs/plugin-react": "^4.3.2",
     "autoprefixer": "10.4.19",
     "browserslist": "4.23.0",
     "caniuse-lite": "1.0.30001614",
@@ -41,6 +40,6 @@
     "postcss": "8.4.38",
     "tailwindcss": "3.4.3",
     "update-browserslist-db": "1.0.14",
-    "vite": "5.2.11"
+    "vite": "^5.4.8"
   }
 }
