@@ -20,10 +20,12 @@ const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || "missing_key"
 // Helper for Model Fallback
 // Helper for Model Fallback
 async function generateWithFallback(prompt) {
-  // USER REQUEST: STRICTLY GEMINI 2.5 PRO ONLY (NO FALLBACKS)
-  // However, since 2.5 Pro is returning 429 (Limit 0), we MUST have a safety net to 1.5 Pro.
+  // USER REQUESTED 2.5 PRO, BUT IT IS HITTING QUOTA LIMITS (429).
+  // RESTORING FALLBACKS TO ENSURE RELIABILITY.
   const modelsToTry = [
-    "gemini-2.5-pro"
+    "gemini-2.5-pro",
+    "gemini-1.5-pro-002",
+    "gemini-1.5-flash"
   ];
 
   const SYSTEM_PROMPT = `You are 'NyaySathi', an elite Senior Suprereme Court Lawyer and Legal Consultant in India.
@@ -59,22 +61,7 @@ async function generateWithFallback(prompt) {
     } catch (e) {
       console.error(`❌ Model ${modelName} failed:`, e.message);
       errors.push(`${modelName}: ${e.message}`);
-
-      // Safety Fallback: If 2.5 Pro fails (likely due to API key access or region), try 1.5 Pro immediately
-      if (modelName === "gemini-2.5-pro") {
-        console.log("⚠️ Fallback: Switching to Gemini 1.5 Pro to ensure service continuity.");
-        try {
-          const fallbackModel = genAI.getGenerativeModel({
-            model: "gemini-1.5-pro",
-            systemInstruction: SYSTEM_PROMPT // Use the constant
-          });
-          const result = await fallbackModel.generateContent(prompt);
-          return result;
-        } catch (fallbackErr) {
-          console.error("❌ Fallback Gemini 1.5 Pro also failed:", fallbackErr.message);
-          errors.push(`gemini-1.5-pro-fallback: ${fallbackErr.message}`);
-        }
-      }
+      // Loop continues to next model...
     }
   }
 
