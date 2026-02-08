@@ -2,234 +2,155 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import { useSearchParams, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
+import VerifiedBadge from "../components/VerifiedBadge";
+import { motion } from "framer-motion";
 
-/* ----------------------------------------
-   SORT LAWYERS BY MEMBERSHIP
----------------------------------------- */
-const planPriority = {
-  diamond: 3,
-  gold: 2,
-  silver: 1,
-};
+const planPriority = { diamond: 3, gold: 2, silver: 1 };
 
 export default function Marketplace() {
   const { user } = useAuth();
   const [lawyers, setLawyers] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [selectedCategory, setSelectedCategory] = useState(""); // NEW
-  const [selectedCity, setSelectedCity] = useState(""); // NEW
-
+  const [selectedCategory, setSelectedCategory] = useState("");
+  const [selectedCity, setSelectedCity] = useState("");
   const [searchParams] = useSearchParams();
   const query = searchParams.get("search") || "";
 
-  useEffect(() => {
-    fetchLawyers();
-  }, []);
+  useEffect(() => { fetchLawyers(); }, []);
 
   const fetchLawyers = async () => {
     try {
       const res = await axios.get("/api/lawyers");
-      // Sort by plan priority
-      const sorted = res.data.sort(
-        (a, b) => (planPriority[b.plan] || 0) - (planPriority[a.plan] || 0)
-      );
+      const sorted = res.data.sort((a, b) => (planPriority[b.plan] || 0) - (planPriority[a.plan] || 0));
       setLawyers(sorted);
-    } catch (err) {
-      console.error("Error loading marketplace:", err);
-    } finally {
-      setLoading(false);
-    }
+    } catch (err) { console.error(err); }
+    finally { setLoading(false); }
   };
 
-  // Filter based on search query AND dropdowns
-  // Filter based on search query AND dropdowns
   const filteredLawyers = lawyers.filter(lawyer => {
-    // 1. Safe Accessors
     const lawyerCity = !lawyer.location ? "" : (typeof lawyer.location === 'string' ? lawyer.location : lawyer.location.city || "");
     const lawyerSpec = lawyer.specialization || "";
-
-    // 2. Normalization
     const lowerQ = query.toLowerCase();
-    const cityMatchVal = lawyerCity.toLowerCase();
-    const specMatchVal = lawyerSpec.toLowerCase();
-    const selectedCityLower = selectedCity.toLowerCase();
-    const selectedCategoryLower = selectedCategory.toLowerCase();
 
-    // 3. Matching Logic
-    const matchQuery = !query ||
-      lawyer.name?.toLowerCase().includes(lowerQ) ||
-      specMatchVal.includes(lowerQ) ||
-      cityMatchVal.includes(lowerQ);
-
-    const matchCategory = !selectedCategory || specMatchVal.includes(selectedCategoryLower);
-    const matchCity = !selectedCity || cityMatchVal === selectedCityLower;
-
-    return matchQuery && matchCategory && matchCity;
+    return (!query || lawyer.name?.toLowerCase().includes(lowerQ) || lawyerSpec.toLowerCase().includes(lowerQ) || lawyerCity.toLowerCase().includes(lowerQ)) &&
+      (!selectedCategory || lawyerSpec.toLowerCase().includes(selectedCategory.toLowerCase())) &&
+      (!selectedCity || lawyerCity.toLowerCase() === selectedCity.toLowerCase());
   });
 
   return (
-    <main className="min-h-screen bg-white text-gray-900 px-6 py-6 font-sans">
-      {/* HEADER */}
-      <header className="mb-8 text-center md:text-left max-w-[1128px] mx-auto">
-        <h1 className="text-3xl font-bold text-gray-900">
-          Lawyer Marketplace
-        </h1>
-        <p className="text-gray-500 mt-2 text-lg">
-          Find verified lawyers based on expertise and location
-        </p>
+    <main className="min-h-screen bg-slate-50 pt-24 pb-12 px-6 font-sans">
+      <div className="max-w-[1280px] mx-auto grid lg:grid-cols-[280px_1fr] gap-8">
 
-        {/* FILTERS */}
-        <div className="mt-6 flex flex-wrap gap-4">
-          <select
-            className="bg-gray-50 border border-gray-200 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 outline-none"
-            value={selectedCategory}
-            onChange={(e) => setSelectedCategory(e.target.value)}
-          >
-            <option value="">All Specializations</option>
-            <option value="Criminal Law">Criminal Law</option>
-            <option value="Family Law">Family Law</option>
-            <option value="Corporate Law">Corporate Law</option>
-            <option value="Civil Law">Civil Law</option>
-            <option value="Property Law">Property Law</option>
-            <option value="Cyber Law">Cyber Law</option>
-          </select>
+        {/* --- LEFT: FILTERS (Glass Panel) --- */}
+        <aside className="h-fit sticky top-24 space-y-8">
+          <div className="glass p-6 rounded-2xl border border-white/50 space-y-6">
+            <div>
+              <h3 className="text-lg font-bold text-slate-900 mb-4 font-display">Filter Lawyers</h3>
+              <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Practice Area</p>
+              <select
+                className="w-full bg-white border border-slate-200 text-slate-700 text-sm rounded-xl focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 block p-3 outline-none transition"
+                value={selectedCategory}
+                onChange={(e) => setSelectedCategory(e.target.value)}
+              >
+                <option value="">All Specializations</option>
+                {["Criminal Law", "Family Law", "Corporate Law", "Civil Law", "Property Law", "Cyber Law"].map(s => <option key={s} value={s}>{s}</option>)}
+              </select>
+            </div>
 
-          <select
-            className="bg-gray-50 border border-gray-200 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 outline-none"
-            value={selectedCity}
-            onChange={(e) => setSelectedCity(e.target.value)}
-          >
-            <option value="">All Cities</option>
-            <option value="Mumbai">Mumbai</option>
-            <option value="Delhi">Delhi</option>
-            <option value="Bengaluru">Bengaluru</option>
-            <option value="Hyderabad">Hyderabad</option>
-            <option value="Chennai">Chennai</option>
-            <option value="Kolkata">Kolkata</option>
-            <option value="Ahmedabad">Ahmedabad</option>
-            <option value="Pune">Pune</option>
-            <option value="Jaipur">Jaipur</option>
-          </select>
+            <div>
+              <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Location</p>
+              <select
+                className="w-full bg-white border border-slate-200 text-slate-700 text-sm rounded-xl focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 block p-3 outline-none transition"
+                value={selectedCity}
+                onChange={(e) => setSelectedCity(e.target.value)}
+              >
+                <option value="">All Cities</option>
+                {["Mumbai", "Delhi", "Bengaluru", "Hyderabad", "Chennai", "Kolkata", "Ahmedabad", "Pune", "Jaipur"].map(c => <option key={c} value={c}>{c}</option>)}
+              </select>
+            </div>
+          </div>
+
+          {/* PROMO CARD */}
+          {user?.role === "lawyer" && user.plan === "silver" && (
+            <div className="bg-gradient-to-br from-[#0B1120] to-slate-900 rounded-2xl p-6 text-white text-center shadow-xl shadow-slate-900/10">
+              <h3 className="font-bold text-lg mb-2">Go Diamond 💎</h3>
+              <p className="text-slate-400 text-sm mb-4">Get 10x more visibility and exclusive leads.</p>
+              <a href="/pricing" className="block w-full py-2 bg-indigo-600 hover:bg-indigo-500 rounded-lg font-bold text-sm transition">Upgrade Now</a>
+            </div>
+          )}
+        </aside>
+
+        {/* --- RIGHT: GRID --- */}
+        <div className="space-y-6">
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <div>
+              <h1 className="text-3xl font-bold text-slate-900 font-display">Top Legal Experts</h1>
+              <p className="text-slate-500">Showing {filteredLawyers.length} verified advocates</p>
+            </div>
+          </div>
+
+          {loading ? (
+            <div className="grid md:grid-cols-2 gap-6">
+              {[1, 2, 3, 4].map(n => <div key={n} className="h-64 bg-white/50 animate-pulse rounded-2xl border border-slate-200"></div>)}
+            </div>
+          ) : filteredLawyers.length === 0 ? (
+            <div className="text-center py-20 bg-white rounded-3xl border border-dashed border-slate-200">
+              <span className="text-4xl">🔍</span>
+              <p className="text-slate-500 mt-2 font-medium">No lawyers found.</p>
+            </div>
+          ) : (
+            <div className="grid md:grid-cols-2 gap-6">
+              {filteredLawyers.map((lawyer) => <LawyerCard key={lawyer._id} lawyer={lawyer} />)}
+            </div>
+          )}
         </div>
-      </header>
-
-      {/* LAWYER GRID */}
-      <div className="max-w-[1128px] mx-auto">
-        {loading ? (
-          <div className="text-center py-20 text-gray-500">
-            Finding legal experts...
-          </div>
-        ) : filteredLawyers.length === 0 ? (
-          <div className="text-center py-20 text-gray-500 bg-white rounded-2xl border border-dashed border-gray-300">
-            <p className="text-lg">No lawyers found matching "{query}".</p>
-            <p className="text-sm mt-2">Try different keywords.</p>
-          </div>
-        ) : (
-          <section className="grid md:grid-cols-3 gap-6">
-            {filteredLawyers.map((lawyer) => (
-              <LawyerCard key={lawyer._id} lawyer={lawyer} />
-            ))}
-          </section>
-        )}
-
-        {/* CTA FOR LAWYERS */}
-        {user?.role === "lawyer" && user.plan === "silver" && (
-          <section className="mt-14 bg-blue-50 border border-blue-100 rounded-2xl p-8 text-center shadow-sm">
-            <h2 className="text-xl font-bold text-blue-800">
-              Increase Your Visibility
-            </h2>
-            <p className="text-blue-600 mt-2 mb-6">
-              Upgrade to Gold or Diamond to appear higher in search
-              results and get more clients.
-            </p>
-
-            <a href="/pricing" className="inline-block px-6 py-3 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold transition shadow-md shadow-blue-200">
-              Upgrade Membership
-            </a>
-          </section>
-        )}
       </div>
     </main>
   );
 }
 
-import VerifiedBadge from "../components/VerifiedBadge"; // NEW
-
-/* ----------------------------------------
-   LAWYER CARD COMPONENT
----------------------------------------- */
 function LawyerCard({ lawyer }) {
   const navigate = useNavigate();
-
   return (
-    <div className="bg-white border border-gray-200 rounded-2xl p-6 hover:shadow-lg hover:border-blue-300 transition flex flex-col justify-between shadow-sm group">
-      <div>
-        {/* NAME + BADGE */}
-        <div className="flex items-center justify-between mb-3">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-bold border border-blue-50">
-              {lawyer.name?.[0]}
-            </div>
-            <div>
-              <h3 className="text-lg font-bold text-gray-900 group-hover:text-blue-600 transition">
-                {lawyer.name}
-              </h3>
-              <VerifiedBadge plan={lawyer.plan} />
-            </div>
-          </div>
-          <span
-            className={`px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider ${lawyer.plan === "diamond"
-              ? "bg-purple-100 text-purple-700 border border-purple-200"
-              : lawyer.plan === "gold"
-                ? "bg-amber-100 text-amber-700 border border-amber-200"
-                : "bg-gray-100 text-gray-600 border border-gray-200"
-              }`}
-          >
-            {lawyer.plan || "SILVER"}
-          </span>
-        </div>
+    <motion.div
+      initial={{ opacity: 0, y: 10 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true }}
+      className="glass-card p-6 rounded-2xl flex flex-col justify-between group hover:border-indigo-200 transition-all duration-300 relative overflow-hidden"
+    >
+      <div className="absolute top-0 right-0 p-4">
+        <span className={`px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wide border ${lawyer.plan === "diamond" ? "bg-indigo-50 text-indigo-600 border-indigo-100" :
+            lawyer.plan === "gold" ? "bg-amber-50 text-amber-600 border-amber-100" :
+              "bg-slate-50 text-slate-500 border-slate-100"
+          }`}>
+          {lawyer.plan || "SILVER"}
+        </span>
+      </div>
 
-        {/* DETAILS */}
-        <div className="space-y-3 mb-6">
-          <p className="text-gray-700 text-sm flex items-center gap-3">
-            <span className="text-blue-500 bg-blue-50 p-1.5 rounded-lg">⚖️</span>
-            <span className="font-medium">{lawyer.specialization || "General Practice"}</span>
-          </p>
-          <p className="text-gray-500 text-sm flex items-center gap-3">
-            <span className="text-blue-500 bg-blue-50 p-1.5 rounded-lg">⏳</span>
-            <span>{lawyer.experience ? `${lawyer.experience} years experience` : "New to platform"}</span>
-          </p>
-          <p className="text-gray-500 text-sm flex items-center gap-3">
-            <span className="text-blue-500 bg-blue-50 p-1.5 rounded-lg">📍</span>
-            <span>{lawyer.location?.city || "India"}</span>
-          </p>
+      <div className="flex items-start gap-4 mb-6">
+        <div className="w-14 h-14 rounded-full bg-slate-100 flex items-center justify-center text-xl font-bold text-slate-600 border border-slate-200">
+          {lawyer.name?.[0]}
+        </div>
+        <div>
+          <h3 className="text-lg font-bold text-slate-900 group-hover:text-indigo-600 transition flex items-center gap-1">
+            {lawyer.name}
+            <VerifiedBadge plan={lawyer.plan} />
+          </h3>
+          <p className="text-sm text-slate-500 font-medium">{lawyer.specialization || "General Practice"}</p>
+          <div className="flex items-center gap-2 mt-1.5 text-xs text-slate-400 font-medium">
+            <span>📍 {lawyer.location?.city || "India"}</span>
+            <span>•</span>
+            <span>{lawyer.experience ? `${lawyer.experience} Years Exp.` : "New"}</span>
+          </div>
         </div>
       </div>
 
-      {/* ACTION */}
       <button
-        onClick={() => {
-          // 🔒 PLAN ENFORCEMENT
-          const currentUser = JSON.parse(localStorage.getItem("user"));
-          const userPlan = currentUser?.plan?.toLowerCase() || "silver";
-          const userRole = currentUser?.role;
-
-          // If looking at a Diamond Lawyer
-          if (lawyer.plan === "diamond") {
-            // If I am a client and only Silver -> Block
-            if (userRole === 'client' && userPlan === 'silver') {
-              alert("UPGRADE REQUIRED 💎\n\nTop 1% Elite Partners (Diamond) are only accessible to Gold/Diamond clients.\n\nPlease upgrade your plan to connect.");
-              return;
-            }
-            // Lawyers can view other lawyers freely for networking (or maybe restrict silver lawyers from seeing diamond lawyers? No, networking should be open)
-          }
-
-          navigate(`/lawyer/${lawyer._id}`);
-        }}
-        className="w-full py-3 rounded-xl bg-gray-50 hover:bg-blue-600 hover:text-white text-gray-700 transition font-bold border border-gray-200 group-hover:border-blue-500/50"
+        onClick={() => navigate(`/lawyer/${lawyer._id}`)}
+        className="w-full py-3 rounded-xl bg-slate-900 text-white font-bold text-sm hover:bg-indigo-600 transition shadow-lg shadow-slate-900/10 active:scale-95"
       >
         View Profile
       </button>
-    </div>
+    </motion.div>
   );
 }
