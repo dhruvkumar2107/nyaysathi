@@ -1,141 +1,228 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import Navbar from '../components/Navbar';
 import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
+import { motion, AnimatePresence } from 'framer-motion';
 
 const MootCourt = () => {
     const { user } = useAuth();
     const navigate = useNavigate();
-    const [step, setStep] = useState(1); // 1: Lobby, 2: Setup, 3: "VR" Mode
+    const [step, setStep] = useState(1);
     const [micPermission, setMicPermission] = useState(false);
+    const [audioLevel, setAudioLevel] = useState(0);
 
+    // Audio Visualizer Simulation
     useEffect(() => {
         if (step === 3) {
-            // Simulate "Connecting to VR Server"
-            const timer = setTimeout(() => {
-                // Maybe play a sound?
-            }, 1000);
-            return () => clearTimeout(timer);
+            const interval = setInterval(() => {
+                setAudioLevel(Math.random() * 100);
+            }, 100);
+            return () => clearInterval(interval);
         }
     }, [step]);
 
     const handleStart = () => {
         if (user?.plan === 'free' || user?.plan === 'silver') {
-            alert("Upgrade to Gold/Diamond to access MootCourt VR.");
-            navigate("/pricing");
+            if (window.confirm("Upgrade to Gold/Diamond to access MootCourt VR.")) navigate("/pricing");
             return;
         }
         setStep(2);
     };
 
     const handleConnectMic = () => {
-        // Fake permission check
         navigator.mediaDevices.getUserMedia({ audio: true }).then(() => {
             setMicPermission(true);
-            setTimeout(() => setStep(3), 1500);
+            setTimeout(() => setStep(3), 2000);
         }).catch(() => {
             alert("Microphone access needed for Oral Arguments.");
         });
     };
 
     return (
-        <div className="min-h-screen bg-[#050510] font-sans text-white overflow-hidden relative">
-            <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1589829085413-56de8ae18c73?q=80&w=2000&auto=format&fit=crop')] bg-cover bg-center opacity-20"></div>
-
-            {/* HEADER */}
-            <div className="relative z-10 p-6 flex justify-between items-center bg-gradient-to-b from-black/80 to-transparent">
-                <div className="flex items-center gap-2">
-                    <span className="w-3 h-3 rounded-full bg-red-500 animate-pulse"></span>
-                    <span className="font-mono text-xs text-red-400">LIVE SESSION</span>
-                </div>
-                <h1 className="text-xl font-bold tracking-widest uppercase">Moot VR Experience</h1>
-                <button onClick={() => navigate("/dashboard")} className="text-sm text-slate-400 hover:text-white border px-4 py-1 rounded border-slate-600">EXIT</button>
+        <div className="min-h-screen bg-black font-sans text-white overflow-hidden relative selection:bg-purple-500/30">
+            {/* Background */}
+            <div className="absolute inset-0 z-0">
+                <div className="absolute inset-0 bg-gradient-to-t from-black via-black/80 to-transparent z-10"></div>
+                <img
+                    src="https://images.unsplash.com/photo-1589829085413-56de8ae18c73?q=80&w=2000&auto=format&fit=crop"
+                    className="w-full h-full object-cover opacity-40 scale-105 animate-pan-slow"
+                />
             </div>
 
-            <div className="relative z-10 flex flex-col items-center justify-center h-[80vh]">
-
-                {/* STEP 1: LOBBY */}
-                {step === 1 && (
-                    <div className="text-center animate-in fade-in zoom-in duration-500">
-                        <div className="w-24 h-24 rounded-full bg-purple-600/20 border border-purple-500/50 flex items-center justify-center mx-auto mb-8 shadow-[0_0_50px_rgba(168,85,247,0.4)]">
-                            <span className="text-4xl">👓</span>
-                        </div>
-                        <h2 className="text-4xl font-extrabold mb-4">Welcome to Virtual Court No. 1</h2>
-                        <p className="text-slate-400 mb-8 max-w-md mx-auto">
-                            Practice your arguments in a hyper-realistic AI environment.
-                            The Judge is waiting.
-                        </p>
-                        <button
-                            onClick={handleStart}
-                            className="bg-purple-600 hover:bg-purple-700 text-white px-8 py-4 rounded-xl font-bold text-lg shadow-lg hover:shadow-purple-600/40 transition-all transform hover:scale-105"
-                        >
-                            Enter Courtroom
-                        </button>
+            <div className="relative z-20 flex flex-col min-h-screen">
+                <div className="flex justify-between items-center p-6 border-b border-white/10 backdrop-blur-md">
+                    <div className="flex items-center gap-3">
+                        <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse shadow-[0_0_10px_red]"></div>
+                        <span className="font-mono text-xs text-red-400 tracking-widest">LIVE SIMULATION // SESSION ID: {Date.now().toString().slice(-6)}</span>
                     </div>
-                )}
+                    <button onClick={() => navigate("/dashboard")} className="text-xs font-bold text-slate-400 hover:text-white transition uppercase tracking-widest border border-white/20 px-4 py-2 rounded-full hover:bg-white/10">
+                        Exit Session
+                    </button>
+                </div>
 
-                {/* STEP 2: SETUP */}
-                {step === 2 && (
-                    <div className="bg-black/50 backdrop-blur-xl p-12 rounded-3xl border border-white/10 text-center max-w-lg w-full">
-                        <h3 className="text-2xl font-bold mb-8">System Check</h3>
+                <div className="flex-1 flex flex-col items-center justify-center p-6">
+                    <AnimatePresence mode="wait">
 
-                        <div className="space-y-4 mb-8">
-                            <div className="flex justify-between items-center p-4 bg-white/5 rounded-xl border border-white/5">
-                                <span className="flex items-center gap-3">
-                                    🎤 <span>Microphone</span>
-                                </span>
-                                {micPermission ? <span className="text-green-400">Connected</span> : <span className="text-yellow-400">Waiting...</span>}
-                            </div>
-                        </div>
-
-                        <button
-                            onClick={handleConnectMic}
-                            disabled={micPermission}
-                            className={`w-full py-4 rounded-xl font-bold flex items-center justify-center gap-2 transition-all ${micPermission ? 'bg-green-600' : 'bg-blue-600 hover:bg-blue-500'}`}
-                        >
-                            {micPermission ? 'Entering Session...' : 'Connect Audio Device'}
-                        </button>
-                    </div>
-                )}
-
-                {/* STEP 3: "VR" SIMULATION */}
-                {step === 3 && (
-                    <div className="w-full max-w-4xl h-[60vh] bg-black rounded-2xl border border-slate-800 relative overflow-hidden shadow-2xl">
-                        {/* 3D PLACEHOLDER IMAGE */}
-                        <img
-                            src="https://images.unsplash.com/photo-1505664194779-8beaceb93744?q=80&w=2000"
-                            className="w-full h-full object-cover opacity-60"
-                            alt="Courtroom"
-                        />
-
-                        {/* OVERLAYS */}
-                        <div className="absolute top-8 left-1/2 -translate-x-1/2 bg-black/60 backdrop-blur px-6 py-2 rounded-full border border-white/10 text-center">
-                            <p className="text-xs text-slate-400 uppercase tracking-widest">Presiding Judge</p>
-                            <p className="font-bold text-white">Hon. Justice AI</p>
-                        </div>
-
-                        <div className="absolute bottom-8 left-8 right-8 flex gap-4">
-                            <div className="flex-grow bg-black/80 backdrop-blur rounded-xl p-4 border border-white/10">
-                                <p className="text-cyan-400 text-xs font-mono mb-2">TRANSCRIPT [LIVE]</p>
-                                <div className="h-20 overflow-hidden relative">
-                                    <p className="text-slate-300 text-sm animate-pulse">Listening to your argument...</p>
+                        {/* STEP 1: LOBBY */}
+                        {step === 1 && (
+                            <motion.div
+                                key="lobby"
+                                initial={{ opacity: 0, scale: 0.9 }}
+                                animate={{ opacity: 1, scale: 1 }}
+                                exit={{ opacity: 0, scale: 1.1, filter: "blur(10px)" }}
+                                className="text-center max-w-2xl"
+                            >
+                                <div className="mb-8 relative inline-block">
+                                    <div className="absolute inset-0 bg-purple-500 blur-[60px] opacity-40 rounded-full"></div>
+                                    <div className="relative w-32 h-32 rounded-3xl bg-gradient-to-br from-purple-900/50 to-black border border-purple-500/50 flex items-center justify-center backdrop-blur-xl shadow-2xl">
+                                        <span className="text-5xl">⚖️</span>
+                                    </div>
                                 </div>
-                            </div>
-                            <div className="w-1/3 bg-black/80 backdrop-blur rounded-xl p-4 border border-white/10 flex flex-col justify-between">
-                                <p className="text-xs text-slate-400">ARGUMENT SCORE</p>
-                                <div className="text-3xl font-bold text-green-400">85/100</div>
-                            </div>
-                        </div>
+                                <h1 className="text-6xl font-black mb-6 tracking-tight bg-clip-text text-transparent bg-gradient-to-b from-white to-slate-500">
+                                    Moot Court VR
+                                </h1>
+                                <p className="text-xl text-slate-400 mb-10 leading-relaxed font-light">
+                                    Step into the <span className="text-white font-bold">Virtual High Court</span>.
+                                    Practice your arguments against an AI Judge trained on 50 years of case law.
+                                </p>
+                                <button
+                                    onClick={handleStart}
+                                    className="group relative px-10 py-5 bg-white text-black font-bold text-lg rounded-full overflow-hidden transition-all hover:scale-105 hover:shadow-[0_0_40px_rgba(255,255,255,0.3)]"
+                                >
+                                    <span className="relative z-10 flex items-center gap-2">
+                                        Initialize Session <span className="group-hover:translate-x-1 transition-transform">→</span>
+                                    </span>
+                                </button>
+                            </motion.div>
+                        )}
 
-                        {/* SPEECH WAVEFORM SIMULATION */}
-                        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 flex gap-1 h-12 items-end">
-                            {[1, 2, 3, 4, 5, 6, 7].map(i => (
-                                <div key={i} className="w-2 bg-purple-500 rounded-full animate-bounce" style={{ height: Math.random() * 40 + 'px', animationDelay: i * 0.1 + 's' }}></div>
-                            ))}
-                        </div>
-                    </div>
-                )}
+                        {/* STEP 2: SETUP */}
+                        {step === 2 && (
+                            <motion.div
+                                key="setup"
+                                initial={{ opacity: 0, y: 50 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                exit={{ opacity: 0, y: -50 }}
+                                className="w-full max-w-md bg-black/50 backdrop-blur-2xl border border-white/10 p-8 rounded-3xl shadow-2xl"
+                            >
+                                <h2 className="text-2xl font-bold mb-8 flex items-center gap-3">
+                                    <span className="w-1 h-8 bg-purple-500 rounded-full"></span>
+                                    System Check
+                                </h2>
 
+                                <div className="space-y-4 mb-8">
+                                    <div className="flex justify-between items-center p-4 bg-white/5 rounded-xl border border-white/5">
+                                        <div className="flex items-center gap-4">
+                                            <div className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center">🎤</div>
+                                            <div>
+                                                <p className="font-bold text-sm">Audio Input</p>
+                                                <p className="text-xs text-slate-400">Required for Oral Arguments</p>
+                                            </div>
+                                        </div>
+                                        <div className={`w-3 h-3 rounded-full ${micPermission ? 'bg-green-500 shadow-[0_0_10px_lime]' : 'bg-yellow-500 animate-pulse'}`}></div>
+                                    </div>
+                                    <div className="flex justify-between items-center p-4 bg-white/5 rounded-xl border border-white/5 opacity-50">
+                                        <div className="flex items-center gap-4">
+                                            <div className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center">📷</div>
+                                            <div>
+                                                <p className="font-bold text-sm">Video Feed</p>
+                                                <p className="text-xs text-slate-400">Optional for Body Language Analysis</p>
+                                            </div>
+                                        </div>
+                                        <div className="w-3 h-3 rounded-full bg-slate-500"></div>
+                                    </div>
+                                </div>
+
+                                <button
+                                    onClick={handleConnectMic}
+                                    disabled={micPermission}
+                                    className={`w-full py-4 rounded-xl font-bold transition-all flex items-center justify-center gap-2
+                                    ${micPermission
+                                            ? 'bg-green-500 text-black shadow-[0_0_20px_rgba(34,197,94,0.4)]'
+                                            : 'bg-purple-600 hover:bg-purple-500 text-white shadow-lg'}`}
+                                >
+                                    {micPermission ? (
+                                        <><span>✓</span> Connected</>
+                                    ) : (
+                                        "Connect Microphone"
+                                    )}
+                                </button>
+                                {micPermission && <p className="text-center text-xs text-slate-500 mt-4 animate-pulse">Establishing Secure Uplink...</p>}
+                            </motion.div>
+                        )}
+
+                        {/* STEP 3: SIMULATION */}
+                        {step === 3 && (
+                            <motion.div
+                                key="simulation"
+                                initial={{ opacity: 0 }}
+                                animate={{ opacity: 1 }}
+                                className="w-full max-w-6xl h-[75vh] relative rounded-3xl overflow-hidden border border-white/10 shadow-2xl bg-black"
+                            >
+                                {/* Environment */}
+                                <img
+                                    src="https://images.unsplash.com/photo-1505664194779-8beaceb93744?q=80&w=2000"
+                                    className="absolute inset-0 w-full h-full object-cover opacity-50 scale-105"
+                                />
+                                <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-black/80"></div>
+
+                                {/* HUD Overlay */}
+                                <div className="absolute top-8 left-8 p-4 bg-black/60 backdrop-blur-md rounded-2xl border border-white/10">
+                                    <p className="text-[10px] text-purple-400 font-mono mb-1">PRESIDING JUDGE</p>
+                                    <p className="font-bold text-lg">Hon. Justice AI System v2.4</p>
+                                    <div className="flex gap-1 mt-2">
+                                        <div className="h-1 w-8 bg-purple-500 rounded-full"></div>
+                                        <div className="h-1 w-2 bg-slate-700 rounded-full"></div>
+                                        <div className="h-1 w-2 bg-slate-700 rounded-full"></div>
+                                    </div>
+                                </div>
+
+                                <div className="absolute top-8 right-8 p-4 bg-black/60 backdrop-blur-md rounded-2xl border border-white/10 text-right">
+                                    <p className="text-[10px] text-green-400 font-mono mb-1">ARGUMENT STRENGTH</p>
+                                    <p className="font-black text-3xl">87<span className="text-sm font-normal text-slate-400">/100</span></p>
+                                </div>
+
+                                {/* Center Focus */}
+                                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 flex flex-col items-center">
+                                    <div className="w-32 h-32 rounded-full border-4 border-purple-500/30 flex items-center justify-center relative">
+                                        <div className="absolute inset-0 rounded-full border-t-4 border-purple-500 animate-spin-slow"></div>
+                                        <span className="text-4xl">👨‍⚖️</span>
+                                    </div>
+                                    <p className="mt-6 text-xl font-light text-purple-200 bg-black/50 px-6 py-2 rounded-full backdrop-blur-sm">
+                                        "Counsel, please proceed with your opening statement."
+                                    </p>
+                                </div>
+
+                                {/* Bottom Controls & Waveform */}
+                                <div className="absolute bottom-0 left-0 w-full p-8 bg-gradient-to-t from-black to-transparent flex items-end justify-between">
+                                    <div className="flex-1 max-w-xl">
+                                        <p className="text-[10px] text-slate-500 font-mono mb-2">LIVE TRANSCRIPT</p>
+                                        <div className="h-16 flex items-end gap-1 opacity-80">
+                                            {[...Array(20)].map((_, i) => (
+                                                <div
+                                                    key={i}
+                                                    className="w-2 bg-purple-500 rounded-full transition-all duration-75"
+                                                    style={{ height: `${Math.random() * audioLevel}%`, opacity: Math.random() }}
+                                                ></div>
+                                            ))}
+                                        </div>
+                                        <p className="mt-2 text-slate-400 text-sm animate-pulse">Listening...</p>
+                                    </div>
+
+                                    <div className="flex gap-4">
+                                        <button className="w-12 h-12 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center border border-white/10">
+                                            ⏸
+                                        </button>
+                                        <button className="w-12 h-12 rounded-full bg-red-500 hover:bg-red-600 flex items-center justify-center shadow-[0_0_20px_red]">
+                                            ⏹
+                                        </button>
+                                    </div>
+                                </div>
+                            </motion.div>
+                        )}
+
+                    </AnimatePresence>
+                </div>
             </div>
         </div>
     );
