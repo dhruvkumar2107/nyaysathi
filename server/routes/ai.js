@@ -21,11 +21,12 @@ const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || "missing_key"
 // Helper for Model Fallback
 async function generateWithFallback(prompt) {
   // USER REQUESTED 2.5 PRO, BUT IT IS HITTING QUOTA LIMITS (429).
-  // RESTORING FALLBACKS TO ENSURE RELIABILITY.
+  // 404 errors on 1.5-flash indicate alias issues. Using standard stable versions.
   const modelsToTry = [
-    "gemini-2.5-pro",
-    "gemini-1.5-pro-002",
-    "gemini-1.5-flash"
+    "gemini-2.5-pro",      // Primary (User Request)
+    "gemini-1.5-pro",      // Standard Stable Alias
+    "gemini-1.5-flash-001", // Explicit Version
+    "gemini-pro"           // Legacy Stable (1.0) - Ultimate Fallback
   ];
 
   const SYSTEM_PROMPT = `You are 'NyaySathi', an elite Senior Suprereme Court Lawyer and Legal Consultant in India.
