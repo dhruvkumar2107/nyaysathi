@@ -1,9 +1,10 @@
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { useAuth } from "../context/AuthContext";
 import toast from "react-hot-toast";
 import Navbar from "../components/Navbar";
+import { motion } from "framer-motion";
 
 export default function LawyerProfile() {
     const { id } = useParams();
@@ -11,12 +12,11 @@ export default function LawyerProfile() {
     const { user } = useAuth();
 
     const [lawyer, setLawyer] = useState(null);
-    const [connection, setConnection] = useState(null); // { status: 'active' | 'pending', _id: ... }
+    const [connection, setConnection] = useState(null);
     const [loading, setLoading] = useState(true);
     const [connecting, setConnecting] = useState(false);
 
     useEffect(() => {
-        // 🔒 ACCESS CONTROL: Only logged-in users can view profiles
         if (!user) {
             toast.error("Please login to view lawyer profiles");
             navigate("/login");
@@ -25,7 +25,6 @@ export default function LawyerProfile() {
 
         const fetchData = async () => {
             try {
-                // ... (existing fetch logic)
                 const profileRes = await axios.get(`/api/users/public/${id}`);
                 setLawyer(profileRes.data);
 
@@ -40,25 +39,18 @@ export default function LawyerProfile() {
                     }
                 }
             } catch (err) {
-                // ... (existing error handling)
+                console.error(err);
+                toast.error("Failed to load profile");
             } finally {
                 setLoading(false);
             }
         };
-        if (user) fetchData(); // Only fetch if user exists
-    }, [id, user, navigate, loading]);
+        fetchData();
+    }, [id, user, navigate]);
 
     const handleConnect = async () => {
-        if (!user) {
-            toast.error("Please login to connect");
-            navigate("/login");
-            return;
-        }
         try {
             setConnecting(true);
-            // Assuming standard Client -> Lawyer connection
-            // If User is lawyer connecting to lawyer, this might need adjustment in backend Schema
-            // For now, we assume user is Client
             await axios.post("/api/connections", {
                 clientId: user._id || user.id,
                 lawyerId: id,
@@ -67,178 +59,195 @@ export default function LawyerProfile() {
             toast.success("Request sent successfully!");
             setConnection({ status: 'pending' });
         } catch (err) {
-            console.error(err);
             toast.error(err.response?.data?.error || "Failed to send request");
         } finally {
             setConnecting(false);
         }
     };
 
-    const handleMessage = () => {
-        navigate(`/messages?chatId=${id}`);
-    };
+    if (loading) return (
+        <div className="min-h-screen bg-slate-50 flex items-center justify-center">
+            <div className="w-16 h-16 border-4 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
+        </div>
+    );
 
-    if (loading) return <div className="min-h-screen flex items-center justify-center">Loading...</div>;
-    if (!lawyer) return <div className="min-h-screen flex items-center justify-center">Lawyer not found</div>;
+    if (!lawyer) return <div className="min-h-screen flex items-center justify-center font-bold text-xl">Lawyer not found</div>;
 
     return (
-        <main className="min-h-screen bg-slate-50 font-sans pb-12">
+        <main className="min-h-screen bg-[#FDFDFC] font-sans">
             <Navbar />
-            <div className="max-w-6xl mx-auto px-4 py-8">
-                {/* PROFILE HEADER CARD */}
-                <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6 md:p-8 flex flex-col md:flex-row items-center md:items-start gap-6 relative overflow-hidden">
-                    <div className="w-32 h-32 md:w-40 md:h-40 rounded-full border-4 border-white shadow-lg bg-gray-200 flex items-center justify-center text-4xl overflow-hidden shrink-0">
-                        {lawyer.image ? <img src={lawyer.image} className="w-full h-full object-cover" /> : <span>⚖️</span>}
-                    </div>
 
-                    <div className="flex-1 text-center md:text-left z-10">
-                        <h1 className="text-3xl font-bold text-gray-900 mb-1">{lawyer.name}</h1>
-                        <p className="text-blue-600 font-medium mb-4 flex items-center justify-center md:justify-start gap-2">
-                            {lawyer.specialization} • {lawyer.location}
-                        </p>
-                        <p className="text-gray-600 max-w-2xl mb-6">{lawyer.bio?.substring(0, 150)}...</p>
+            {/* HERMIT-STYLE HERO */}
+            <div className="relative pt-32 pb-20 px-4 max-w-7xl mx-auto">
+                {/* Background Blobs */}
+                <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-blue-100 rounded-full blur-3xl opacity-50 -z-10 animate-pulse"></div>
+                <div className="absolute top-20 left-0 w-[400px] h-[400px] bg-indigo-100 rounded-full blur-3xl opacity-50 -z-10"></div>
 
-                        <div className="flex flex-wrap gap-3 justify-center md:justify-start">
-                            {/* DYNAMIC CONNECT BUTTON */}
-                            {
-                                connection?.status === 'active' ? (
-                                    <button
-                                        onClick={handleMessage}
-                                        className="px-6 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-full transition flex items-center justify-center gap-2"
-                                    >
-                                        <span>💬</span> Message
-                                    </button>
-                                ) : connection?.status === 'pending' ? (
-                                    <button
-                                        disabled
-                                        className="px-6 py-2.5 bg-gray-100 text-gray-500 font-bold rounded-full cursor-not-allowed flex items-center justify-center gap-2 border border-gray-200"
-                                    >
-                                        <span>🕒</span> Request Sent
-                                    </button>
+                <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+
+                    {/* LEFT: PROFILE INFO (Sticky) */}
+                    <div className="lg:col-span-4 lg:sticky lg:top-24">
+                        <motion.div
+                            initial={{ y: 20, opacity: 0 }}
+                            animate={{ y: 0, opacity: 1 }}
+                            className="bg-white p-8 rounded-3xl border border-slate-100 shadow-xl shadow-slate-200/50 text-center relative overflow-hidden"
+                        >
+                            <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-blue-500 via-indigo-500 to-purple-500"></div>
+
+                            <div className="w-40 h-40 mx-auto rounded-full p-1 bg-gradient-to-br from-blue-100 to-white shadow-inner mb-6">
+                                {lawyer.image ? (
+                                    <img src={lawyer.image} className="w-full h-full object-cover rounded-full" />
                                 ) : (
-                                    <button
-                                        onClick={handleConnect}
-                                        disabled={connecting}
-                                        className="px-6 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-full transition flex items-center justify-center gap-2 disabled:opacity-70 shadow-md shadow-blue-200"
-                                    >
-                                        {connecting ? "Processing..." : (user?.role === 'lawyer' ? "➕ Connect" : "🤝 Consult")}
-                                    </button>
-                                )
-                            }
-
-                            {/* CONSULTATION BOOKING (Only for Clients) */}
-                            {
-                                user?.role !== 'lawyer' && (
-                                    <button
-                                        onClick={() => toast("Booking feature coming next!")}
-                                        className="px-6 py-2.5 bg-white border border-blue-600 text-blue-600 hover:bg-blue-50 font-bold rounded-full transition"
-                                    >
-                                        Book Appointment
-                                    </button>
-                                )
-                            }
-                        </div >
-                    </div>
-                </div>
-
-                {/* GRID CONTENT */}
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6">
-
-                    {/* LEFT SIDEBAR (Skills, Languages) */}
-                    < div className="space-y-6" >
-                        {/* LANGUAGE CARD */}
-                        < div className="bg-white rounded-xl shadow-sm border border-gray-200 p-5" >
-                            <h3 className="text-lg font-bold text-gray-900 mb-4">Languages</h3>
-                            <div className="flex flex-wrap gap-2">
-                                {lawyer.languages?.length > 0 ? lawyer.languages.map((l, i) => (
-                                    <span key={i} className="px-3 py-1 bg-gray-100 text-gray-700 rounded-lg text-sm font-medium">{l}</span>
-                                )) : <span className="text-gray-400">English</span>}
+                                    <div className="w-full h-full rounded-full bg-slate-50 flex items-center justify-center text-5xl">⚖️</div>
+                                )}
                             </div>
-                        </div >
 
-                        {/* CONTACT CARD */}
-                        < div className="bg-white rounded-xl shadow-sm border border-gray-200 p-5" >
-                            <h3 className="text-lg font-bold text-gray-900 mb-4">Contact Info</h3>
-                            <ul className="space-y-3 text-sm">
-                                <li className="flex items-center gap-3 text-gray-600">
-                                    <span className="w-8 h-8 rounded-full bg-blue-50 flex items-center justify-center text-blue-600">📧</span>
-                                    {lawyer.email}
-                                </li>
-                                {lawyer.socials?.website && (
-                                    <li className="flex items-center gap-3">
-                                        <span className="w-8 h-8 rounded-full bg-blue-50 flex items-center justify-center text-blue-600">🌐</span>
-                                        <a href={lawyer.socials.website} target="_blank" className="text-blue-600 hover:underline truncate">{lawyer.socials.website}</a>
-                                    </li>
-                                )}
-                                {lawyer.socials?.linkedin && (
-                                    <li className="flex items-center gap-3">
-                                        <span className="w-8 h-8 rounded-full bg-blue-50 flex items-center justify-center text-blue-600">🔗</span>
-                                        <a href={lawyer.socials.linkedin} target="_blank" className="text-blue-600 hover:underline truncate">LinkedIn</a>
-                                    </li>
-                                )}
-                            </ul>
-                        </div >
-                    </div >
+                            <h1 className="text-3xl font-bold text-slate-900 mb-2 tracking-tight">{lawyer.name}</h1>
+                            <div className="inline-flex items-center gap-2 px-3 py-1 bg-blue-50 text-blue-700 rounded-full text-sm font-bold mb-6">
+                                <span>🛡️</span> {lawyer.specialization}
+                            </div>
 
-                    {/* MAIN CONTENT (About, Experience) */}
-                    < div className="md:col-span-2 space-y-6" >
-
-                        {/* ABOUT */}
-                        < div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6" >
-                            <h2 className="text-xl font-bold text-gray-900 mb-3">About</h2>
-                            <p className="text-gray-600 leading-relaxed whitespace-pre-wrap">
-                                {lawyer.bio || "This user has not added a bio yet."}
-                            </p>
-                        </div >
-
-                        {/* EXPERIENCE CARD */}
-                        < div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6" >
-                            <h2 className="text-xl font-bold text-gray-900 mb-4">Experience & Courts</h2>
-
-                            <div className="mb-6">
-                                <h4 className="text-sm font-bold text-gray-500 uppercase tracking-wider mb-3">Courts Practicing In</h4>
-                                <div className="flex flex-wrap gap-2">
-                                    {lawyer.courts?.length > 0 ? lawyer.courts.map((court, i) => (
-                                        <div key={i} className="flex items-center gap-2 bg-slate-50 border border-slate-100 px-4 py-2 rounded-lg">
-                                            <span>🏛️</span>
-                                            <span className="font-medium text-gray-700">{court}</span>
-                                        </div>
-                                    )) : <p className="text-gray-400">Not specified</p>}
+                            <div className="flex justify-center gap-10 border-t border-slate-50 pt-6 mb-6">
+                                <div className="text-center">
+                                    <div className="text-2xl font-black text-slate-900">{lawyer.experience || 1}+</div>
+                                    <div className="text-xs font-bold text-slate-400 uppercase tracking-wider">Years Exp</div>
+                                </div>
+                                <div className="text-center">
+                                    <div className="text-2xl font-black text-slate-900">4.9</div>
+                                    <div className="text-xs font-bold text-slate-400 uppercase tracking-wider">Rating ★</div>
+                                </div>
+                                <div className="text-center">
+                                    <div className="text-2xl font-black text-slate-900">{lawyer.casesWon || 24}</div>
+                                    <div className="text-xs font-bold text-slate-400 uppercase tracking-wider">Cases Won</div>
                                 </div>
                             </div>
 
-                            <div>
-                                <h4 className="text-sm font-bold text-gray-500 uppercase tracking-wider mb-3">Highlights</h4>
+                            {/* ACTION BUTTONS */}
+                            <div className="space-y-3">
+                                {connection?.status === 'active' ? (
+                                    <button onClick={() => navigate(`/messages?chatId=${id}`)} className="w-full py-4 bg-slate-900 text-white rounded-xl font-bold shadow-lg shadow-slate-900/20 hover:scale-[1.02] transition">
+                                        💬 Message
+                                    </button>
+                                ) : connection?.status === 'pending' ? (
+                                    <button disabled className="w-full py-4 bg-slate-100 text-slate-400 rounded-xl font-bold cursor-not-allowed">
+                                        🕒 Request Sent
+                                    </button>
+                                ) : (
+                                    <button onClick={handleConnect} disabled={connecting} className="w-full py-4 bg-blue-600 text-white rounded-xl font-bold shadow-lg shadow-blue-600/30 hover:bg-blue-700 hover:scale-[1.02] transition">
+                                        {connecting ? "Sending..." : "⚡ Connect Now"}
+                                    </button>
+                                )}
+
+                                {user?.role !== 'lawyer' && (
+                                    <button onClick={() => toast("Booking Calendar coming next update!")} className="w-full py-4 bg-white border border-slate-200 text-slate-900 rounded-xl font-bold hover:bg-slate-50 transition">
+                                        📅 Book Consultation
+                                    </button>
+                                )}
+                            </div>
+                        </motion.div>
+                    </div>
+
+                    {/* RIGHT: BENTO GRID CONTENT */}
+                    <div className="lg:col-span-8 space-y-6">
+                        {/* ABOUT CARD */}
+                        <motion.div
+                            initial={{ y: 20, opacity: 0 }}
+                            animate={{ y: 0, opacity: 1 }}
+                            transition={{ delay: 0.1 }}
+                            className="bg-white p-8 rounded-3xl border border-slate-100 shadow-sm"
+                        >
+                            <h3 className="text-lg font-bold text-slate-900 mb-4 flex items-center gap-2">
+                                <span className="w-8 h-8 rounded-lg bg-yellow-100 text-yellow-600 flex items-center justify-center text-sm">📜</span>
+                                About Me
+                            </h3>
+                            <p className="text-slate-600 leading-relaxed text-lg">
+                                {lawyer.bio || "This advocate is a dedicated legal professional with a strong track record of success in various courts. They specialize in providing strategic legal counsel and representation."}
+                            </p>
+                        </motion.div>
+
+                        <div className="grid md:grid-cols-2 gap-6">
+                            {/* SKILLS / AREAS */}
+                            <motion.div
+                                initial={{ y: 20, opacity: 0 }}
+                                animate={{ y: 0, opacity: 1 }}
+                                transition={{ delay: 0.2 }}
+                                className="bg-white p-8 rounded-3xl border border-slate-100 shadow-sm"
+                            >
+                                <h3 className="text-lg font-bold text-slate-900 mb-6 flex items-center gap-2">
+                                    <span className="w-8 h-8 rounded-lg bg-pink-100 text-pink-600 flex items-center justify-center text-sm">🎯</span>
+                                    Expertise
+                                </h3>
+                                <div className="flex flex-wrap gap-2">
+                                    {(lawyer.specialization?.split(',') || ["Corporate Law", "Civil Rights", "Family Law"]).map((s, i) => (
+                                        <span key={i} className="px-4 py-2 bg-slate-50 border border-slate-100 rounded-xl font-bold text-slate-600 text-sm hover:bg-slate-100 transition cursor-default">
+                                            {s}
+                                        </span>
+                                    ))}
+                                </div>
+                            </motion.div>
+
+                            {/* COURTS */}
+                            <motion.div
+                                initial={{ y: 20, opacity: 0 }}
+                                animate={{ y: 0, opacity: 1 }}
+                                transition={{ delay: 0.3 }}
+                                className="bg-white p-8 rounded-3xl border border-slate-100 shadow-sm"
+                            >
+                                <h3 className="text-lg font-bold text-slate-900 mb-6 flex items-center gap-2">
+                                    <span className="w-8 h-8 rounded-lg bg-emerald-100 text-emerald-600 flex items-center justify-center text-sm">🏛️</span>
+                                    Admitted Courts
+                                </h3>
                                 <ul className="space-y-3">
-                                    <li className="flex items-start gap-3">
-                                        <div className="mt-1 w-2 h-2 rounded-full bg-blue-500 flex-shrink-0"></div>
-                                        <span className="text-gray-700"><span className="font-bold">{lawyer.experience || 0} Years</span> of legal practice experience.</span>
-                                    </li>
-                                    {lawyer.awards?.map((award, i) => (
-                                        <li key={i} className="flex items-start gap-3">
-                                            <div className="mt-1 w-2 h-2 rounded-full bg-yellow-400 flex-shrink-0"></div>
-                                            <span className="text-gray-700">{award}</span>
+                                    {(lawyer.courts || ["Supreme Court of India", "Delhi High Court"]).map((c, i) => (
+                                        <li key={i} className="flex items-center gap-3 text-slate-700 font-medium">
+                                            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                                            {c}
                                         </li>
                                     ))}
                                 </ul>
-                            </div>
-                        </div >
+                            </motion.div>
+                        </div>
 
-                        {/* FEES CARD */}
-                        < div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 flex justify-between items-center" >
+                        {/* FEES & CONTACT */}
+                        <motion.div
+                            initial={{ y: 20, opacity: 0 }}
+                            animate={{ y: 0, opacity: 1 }}
+                            transition={{ delay: 0.4 }}
+                            className="bg-gradient-to-r from-slate-900 to-slate-800 p-8 rounded-3xl text-white shadow-xl flex flex-col md:flex-row justify-between items-center"
+                        >
                             <div>
-                                <h2 className="text-lg font-bold text-gray-900">Consultation Fee</h2>
-                                <p className="text-gray-500 text-sm">Standard hourly rate</p>
+                                <h3 className="text-xl font-bold mb-1">Fee Structure</h3>
+                                <p className="text-slate-400 text-sm">Transparent pricing for peace of mind.</p>
                             </div>
-                            <div className="text-2xl font-bold text-green-700">
-                                ₹{lawyer.consultationFee || 500}<span className="text-sm text-gray-500 font-normal">/hr</span>
+                            <div className="mt-4 md:mt-0 text-center md:text-right">
+                                <div className="text-4xl font-black text-white">₹{lawyer.consultationFee || 2000}</div>
+                                <div className="text-slate-400 text-sm font-bold uppercase tracking-wider">Per Hour / Consultation</div>
                             </div>
-                        </div >
+                        </motion.div>
 
-                    </div >
+                        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+                            {/* SOCIALS */}
+                            <a href={`mailto:${lawyer.email}`} className="bg-white p-4 rounded-2xl border border-slate-100 shadow-sm hover:border-blue-300 transition flex flex-col items-center justify-center gap-2 group cursor-pointer">
+                                <div className="w-10 h-10 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center text-xl group-hover:scale-110 transition">📧</div>
+                                <span className="font-bold text-slate-900 text-sm">Email</span>
+                            </a>
+                            <a href={lawyer.socials?.linkedin || "#"} className="bg-white p-4 rounded-2xl border border-slate-100 shadow-sm hover:border-blue-300 transition flex flex-col items-center justify-center gap-2 group cursor-pointer">
+                                <div className="w-10 h-10 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center text-xl group-hover:scale-110 transition">🔗</div>
+                                <span className="font-bold text-slate-900 text-sm">LinkedIn</span>
+                            </a>
+                            <div className="bg-white p-4 rounded-2xl border border-slate-100 shadow-sm flex flex-col items-center justify-center gap-2 text-center">
+                                <div className="w-10 h-10 rounded-full bg-purple-50 text-purple-600 flex items-center justify-center text-xl">🗣️</div>
+                                <span className="font-bold text-slate-900 text-sm">{lawyer.languages?.[0] || 'English'}</span>
+                            </div>
+                            <div className="bg-white p-4 rounded-2xl border border-slate-100 shadow-sm flex flex-col items-center justify-center gap-2 text-center">
+                                <div className="w-10 h-10 rounded-full bg-orange-50 text-orange-600 flex items-center justify-center text-xl">📍</div>
+                                <span className="font-bold text-slate-900 text-sm truncate w-full">{lawyer.location}</span>
+                            </div>
+                        </div>
 
-                </div >
-            </div >
-        </main >
+                    </div>
+                </div>
+            </div>
+        </main>
     );
 }
