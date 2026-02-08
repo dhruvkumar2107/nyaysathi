@@ -21,7 +21,7 @@ export default function Navbar() {
   };
 
   return (
-    <nav className={`fixed top-0 w-full z-50 transition-all duration-300 font-sans h-[72px] flex items-center ${scrolled ? "bg-white/95 backdrop-blur-md border-b border-slate-200/60 shadow-sm" : "bg-white border-b border-transparent"}`}>
+    <nav className={`fixed top-0 w-full z-50 transition-all duration-300 h-[72px] flex items-center ${scrolled ? "glass shadow-sm" : "bg-white/50 backdrop-blur-sm border-b border-transparent"}`}>
       <div className="max-w-[1280px] w-full mx-auto px-6 h-full flex items-center justify-between">
 
         {/* LEFT: LOGO */}
@@ -29,8 +29,8 @@ export default function Navbar() {
           <div className="w-9 h-9 bg-[#0B1120] rounded-lg flex items-center justify-center text-white font-bold text-lg shadow-lg shadow-slate-200 transition-transform group-hover:scale-105">
             ⚖️
           </div>
-          <span className="text-xl font-bold text-[#0B1120] tracking-tight font-display">
-            Nyay<span className="text-blue-600">Sathi</span>
+          <span className="text-xl font-bold text-slate-900 tracking-tight font-display">
+            Nyay<span className="text-indigo-600">Sathi</span>
           </span>
         </Link>
 
