@@ -21,18 +21,12 @@ const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || "missing_key"
 // Helper for Model Fallback
 async function generateWithFallback(prompt) {
   // USER REQUEST: STRICTLY GEMINI 2.5 PRO ONLY (NO FALLBACKS)
+  // However, since 2.5 Pro is returning 429 (Limit 0), we MUST have a safety net to 1.5 Pro.
   const modelsToTry = [
     "gemini-2.5-pro"
   ];
 
-  const errors = [];
-
-  for (const modelName of modelsToTry) {
-    try {
-      console.log(`Attempting AI with model: ${modelName}`);
-      const model = genAI.getGenerativeModel({
-        model: modelName,
-        systemInstruction: `You are 'NyaySathi', an elite Senior Suprereme Court Lawyer and Legal Consultant in India.
+  const SYSTEM_PROMPT = `You are 'NyaySathi', an elite Senior Suprereme Court Lawyer and Legal Consultant in India.
 
             CORE IDENTITY:
             - You are NOT a generic AI. You are a **specialized legal expert**.
@@ -49,7 +43,16 @@ async function generateWithFallback(prompt) {
                - **Risk Assessment**: What could go wrong?
             5. **JURISDICTION**: Assume Indian jurisdiction unless specified otherwise.
             
-            TONE: Professional, Direct, and legally sound.`
+            TONE: Professional, Direct, and legally sound.`;
+
+  const errors = [];
+
+  for (const modelName of modelsToTry) {
+    try {
+      console.log(`Attempting AI with model: ${modelName}`);
+      const model = genAI.getGenerativeModel({
+        model: modelName,
+        systemInstruction: SYSTEM_PROMPT
       });
       const result = await model.generateContent(prompt);
       return result; // Success
@@ -63,12 +66,13 @@ async function generateWithFallback(prompt) {
         try {
           const fallbackModel = genAI.getGenerativeModel({
             model: "gemini-1.5-pro",
-            systemInstruction: model.systemInstruction // Reuse the same strict persona
+            systemInstruction: SYSTEM_PROMPT // Use the constant
           });
           const result = await fallbackModel.generateContent(prompt);
           return result;
         } catch (fallbackErr) {
           console.error("❌ Fallback Gemini 1.5 Pro also failed:", fallbackErr.message);
+          errors.push(`gemini-1.5-pro-fallback: ${fallbackErr.message}`);
         }
       }
     }
