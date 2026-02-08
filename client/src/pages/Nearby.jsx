@@ -5,8 +5,10 @@ import "leaflet/dist/leaflet.css";
 import L from "leaflet";
 import axios from "axios";
 import toast from "react-hot-toast";
+import Navbar from "../components/Navbar";
+import { motion, AnimatePresence } from "framer-motion";
 
-// FIX LEAFLET ICONS
+// ICONS
 import icon from "leaflet/dist/images/marker-icon.png";
 import iconShadow from "leaflet/dist/images/marker-shadow.png";
 
@@ -16,12 +18,8 @@ let DefaultIcon = L.icon({
   iconSize: [25, 41],
   iconAnchor: [12, 41]
 });
-
 L.Marker.prototype.options.icon = DefaultIcon;
 
-/* -----------------------------------------
-   MOCK FALLBACK DATA (In case of API Failure)
------------------------------------------ */
 const MOCK_NEARBY = {
   police: [
     { id: 'm-p1', name: "Andheri Police Station (Mock)", address: "Andheri East, Mumbai", rating: "4.5", lat: 19.1197, lon: 72.8464 },
@@ -36,54 +34,34 @@ const MOCK_NEARBY = {
   ],
 };
 
-// Custom Icons
-const policeIcon = L.divIcon({
-  html: '<div class="text-3xl filter drop-shadow-md">🚓</div>',
+const createCustomIcon = (emoji) => L.divIcon({
+  html: `<div class="w-10 h-10 bg-white rounded-full flex items-center justify-center text-2xl shadow-lg border-2 border-slate-900 border-b-4 transform hover:scale-110 transition-all">${emoji}</div>`,
   className: 'bg-transparent',
   iconSize: [40, 40],
-  iconAnchor: [20, 20]
+  iconAnchor: [20, 40]
 });
 
-const courtIcon = L.divIcon({
-  html: '<div class="text-3xl filter drop-shadow-md">⚖️</div>',
-  className: 'bg-transparent',
-  iconSize: [40, 40],
-  iconAnchor: [20, 20]
-});
+const policeIcon = createCustomIcon('🚓');
+const courtIcon = createCustomIcon('⚖️');
+const lawyerIcon = createCustomIcon('👨‍⚖️');
 
-const lawyerIcon = L.divIcon({
-  html: '<div class="text-3xl filter drop-shadow-md">👨‍⚖️</div>',
-  className: 'bg-transparent',
-  iconSize: [40, 40],
-  iconAnchor: [20, 20]
-});
-
-// Helper to randomize location around a center (for lawyers without specific lat/lon)
 const getRandomLocation = (lat, lon, radiusKm = 3) => {
   const y0 = lat;
   const x0 = lon;
   const rd = radiusKm / 111.3;
-
   const u = Math.random();
   const v = Math.random();
-
   const w = rd * Math.sqrt(u);
   const t = 2 * Math.PI * v;
   const x = w * Math.cos(t);
   const y = w * Math.sin(t);
-
-  const newLat = y + y0;
-  const newLon = x / Math.cos(y0) + x0;
-
-  return { lat: newLat, lon: newLon };
+  return { lat: y + y0, lon: x / Math.cos(y0) + x0 };
 };
 
 function MapUpdater({ center }) {
   const map = useMap();
   useEffect(() => {
-    if (center) {
-      map.flyTo(center, 13, { animate: true });
-    }
+    if (center) map.flyTo(center, 13, { animate: true });
   }, [center, map]);
   return null;
 }
@@ -121,26 +99,8 @@ export default function Nearby() {
     );
   }, []);
 
-  // Helper to calculate distance in km
-  const getDistance = (lat1, lon1, lat2, lon2) => {
-    const R = 6371; // Radius of the earth in km
-    const dLat = deg2rad(lat2 - lat1);
-    const dLon = deg2rad(lon2 - lon1);
-    const a =
-      Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-      Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) *
-      Math.sin(dLon / 2) * Math.sin(dLon / 2);
-    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-    return R * c; // Distance in km
-  };
-
-  const deg2rad = (deg) => {
-    return deg * (Math.PI / 180);
-  };
-
-  // Fetch using Overpass API (More reliable for "nearby" than Nominatim)
   const fetchOverpass = async (lat, lon, amenities) => {
-    const radius = 10000; // 10km
+    const radius = 10000;
     const query = `
       [out:json][timeout:25];
       (
@@ -155,248 +115,197 @@ export default function Nearby() {
   };
 
   const fetchRealData = async (lat, lon) => {
-    // Prepare promises
     const lawyersPromise = axios.get("/api/users?role=lawyer");
     const policePromise = fetchOverpass(lat, lon, "police");
     const courtsPromise = fetchOverpass(lat, lon, "courthouse");
 
-    // Wait for all
     const [lawyersResult, policeResult, courtsResult] = await Promise.allSettled([
       lawyersPromise, policePromise, courtsPromise
     ]);
 
     const newData = { police: [], courts: [], lawyers: [] };
 
-    // 1. PROCESS LAWYERS (Existing logic)
     if (lawyersResult.status === "fulfilled") {
       try {
         newData.lawyers = lawyersResult.value.data.map(l => {
-          // Use real location if available, else vary slightly
-          const coords = (l.location && l.location.lat)
-            ? { lat: l.location.lat, lon: l.location.long }
-            : getRandomLocation(lat, lon, 5);
-
+          const coords = (l.location && l.location.lat) ? { lat: l.location.lat, lon: l.location.long } : getRandomLocation(lat, lon, 5);
           return {
-            id: l._id,
-            name: l.name,
-            specialization: l.specialization || "Legal Consultant",
-            plan: l.plan,
-            address: l.location?.city || "Nearby",
-            lat: coords.lat,
-            lon: coords.lon,
-            rating: l.stats?.rating || 4.5,
+            id: l._id, name: l.name, specialization: l.specialization || "Legal Consultant", plan: l.plan,
+            address: l.location?.city || "Nearby", lat: coords.lat, lon: coords.lon, rating: l.stats?.rating || 4.5,
             image: l.profileImage || `https://ui-avatars.com/api/?name=${encodeURIComponent(l.name)}&background=0D8ABC&color=fff`
           };
         });
-      } catch (err) { console.error("Error parsing lawyers", err); }
+      } catch (e) { }
     } else {
-      // Fallback lawyers if API fails
       newData.lawyers = MOCK_NEARBY.lawyers.map(l => ({ ...l, ...getRandomLocation(lat, lon, 2) }));
     }
 
-    // 2. PROCESS POLICE (Overpass)
     if (policeResult.status === "fulfilled") {
       try {
         newData.police = policeResult.value.data.elements.map(p => ({
-          id: p.id,
-          name: p.tags?.name || p.tags?.name_en || "Police Station",
-          address: p.tags?.['addr:street'] || p.tags?.['addr:city'] || "Local Station",
-          lat: p.lat || p.center?.lat,
-          lon: p.lon || p.center?.lon,
-          rating: 4.0
-        })).filter(p => p.name !== "Police Station"); // remove generic ones if possible
-
-        // If empty, keep empty (better than mock usually, or use fallback if purely critical)
-      } catch (err) { console.error("Error parsing police", err); }
+          id: p.id, name: p.tags?.name || "Police Station", address: p.tags?.['addr:street'] || "Local Station",
+          lat: p.lat || p.center?.lat, lon: p.lon || p.center?.lon, rating: 4.0
+        })).filter(p => p.name !== "Police Station");
+      } catch (e) { }
     }
+    if (newData.police.length === 0) newData.police = [{ id: 'fallback-p', name: "Nearby Police Station", address: "Locating...", lat: lat + 0.002, lon: lon + 0.002, rating: 4.0 }];
 
-    // Fallback?
-    if (newData.police.length === 0) {
-      // Only use generic fallback if absolutely nothing found
-      newData.police = [{ id: 'fallback-p', name: "Nearby Police Station", address: "Locating...", lat: lat + 0.002, lon: lon + 0.002, rating: 4.0 }];
-    }
-
-    // 3. PROCESS COURTS (Overpass)
     if (courtsResult.status === "fulfilled") {
       try {
         newData.courts = courtsResult.value.data.elements.map(c => ({
-          id: c.id,
-          name: c.tags?.name || c.tags?.name_en || "District Court",
-          address: c.tags?.['addr:street'] || c.tags?.['addr:city'] || "Local Court",
-          lat: c.lat || c.center?.lat,
-          lon: c.lon || c.center?.lon,
-          rating: 4.5
+          id: c.id, name: c.tags?.name || "District Court", address: c.tags?.['addr:street'] || "Local Court",
+          lat: c.lat || c.center?.lat, lon: c.lon || c.center?.lon, rating: 4.5
         })).slice(0, 10);
-      } catch (err) { console.error("Error parsing courts", err); }
+      } catch (e) { }
     }
-
-    if (newData.courts.length === 0) {
-      newData.courts = [{ id: 'fallback-c', name: "District Court", address: "Locating...", lat: lat - 0.002, lon: lon - 0.002, rating: 4.5 }];
-    }
+    if (newData.courts.length === 0) newData.courts = [{ id: 'fallback-c', name: "District Court", address: "Locating...", lat: lat - 0.002, lon: lon - 0.002, rating: 4.5 }];
 
     setData(newData);
   };
 
   const categories = [
-    { id: "all", label: "All Services", icon: "🗺️" },
+    { id: "all", label: "All", icon: "🗺️" },
     { id: "police", label: "Police", icon: "🚓" },
     { id: "courts", label: "Courts", icon: "⚖️" },
     { id: "lawyers", label: "Lawyers", icon: "👨‍⚖️" },
   ];
 
-  if (loading) {
-    return (
-      <div className="h-screen flex items-center justify-center bg-white">
-        <div className="flex flex-col items-center gap-4">
-          <div className="w-12 h-12 border-4 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
-          <p className="text-gray-500 font-medium animate-pulse">Scanning satellites for legal aid...</p>
-        </div>
+  if (loading) return (
+    <div className="h-screen w-full flex items-center justify-center bg-slate-900 text-white">
+      <div className="flex flex-col items-center">
+        <span className="text-6xl animate-bounce mb-4">🛰️</span>
+        <h2 className="text-2xl font-bold">Scanning Your Area...</h2>
+        <p className="text-slate-400">Triangulating legal aid, courts, and stations.</p>
       </div>
-    );
-  }
+    </div>
+  );
 
   return (
-    <div className="flex h-[calc(100vh-72px)] bg-slate-50 overflow-hidden">
-      {/* SIDEBAR */}
-      <aside className="w-full md:w-[400px] lg:w-[450px] bg-white border-r border-slate-200 flex flex-col z-20 shadow-xl relative">
-        <div className="p-6 border-b border-slate-100 bg-white z-10 sticky top-0">
-          <h1 className="text-2xl font-bold text-slate-900 mb-1">Nearby Support</h1>
-          <p className="text-sm text-slate-500 mb-4">Real-time legal services around you</p>
+    <div className="h-screen w-full relative overflow-hidden font-sans">
+      <div className="absolute top-0 left-0 w-full z-50">
+        <Navbar />
+      </div>
 
-          <div className="flex gap-2 mt-4 overflow-x-auto no-scrollbar pb-1">
-            {categories.map(cat => (
-              <button
-                key={cat.id}
-                onClick={() => setSelectedCategory(cat.id)}
-                className={`flex-shrink-0 px-3 py-1.5 rounded-lg text-xs font-bold transition-all border ${selectedCategory === cat.id
-                  ? "bg-slate-900 text-white border-slate-900 shadow-md"
-                  : "bg-white text-slate-600 border-slate-200 hover:bg-slate-50"
-                  }`}
-              >
-                {cat.icon} {cat.label}
-              </button>
-            ))}
+      {/* FLOATING SIDEBAR */}
+      <motion.div
+        initial={{ x: -100, opacity: 0 }}
+        animate={{ x: 0, opacity: 1 }}
+        className="absolute top-24 left-6 z-40 w-full max-w-sm h-[calc(100vh-120px)] pointer-events-none"
+      >
+        <div className="w-full h-full bg-white/90 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/20 flex flex-col overflow-hidden pointer-events-auto">
+          <div className="p-6 border-b border-slate-200/50">
+            <h1 className="text-2xl font-black text-slate-900">Nearby Finder</h1>
+            <p className="text-sm text-slate-500 font-medium">Real-time Legal Assistance Map</p>
+
+            <div className="flex gap-2 mt-4 overflow-x-auto no-scrollbar pb-1">
+              {categories.map(cat => (
+                <button
+                  key={cat.id}
+                  onClick={() => setSelectedCategory(cat.id)}
+                  className={`px-4 py-2 rounded-xl text-sm font-bold transition whitespace-nowrap ${selectedCategory === cat.id ? 'bg-slate-900 text-white shadow-lg' : 'bg-white border border-slate-200 text-slate-600 hover:bg-slate-50'
+                    }`}
+                >
+                  {cat.icon} {cat.label}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <div className="flex-1 overflow-y-auto p-4 space-y-4 custom-scrollbar">
+            {(selectedCategory === 'all' || selectedCategory === 'police') && (
+              <div className="space-y-2">
+                <h3 className="text-xs font-bold text-slate-400 uppercase">Police Stations</h3>
+                {data.police.map(p => <Card key={p.id} data={p} type="police" />)}
+              </div>
+            )}
+            {(selectedCategory === 'all' || selectedCategory === 'courts') && (
+              <div className="space-y-2">
+                <h3 className="text-xs font-bold text-slate-400 uppercase">Courts</h3>
+                {data.courts.map(c => <Card key={c.id} data={c} type="court" />)}
+              </div>
+            )}
+            {(selectedCategory === 'all' || selectedCategory === 'lawyers') && (
+              <div className="space-y-2">
+                <h3 className="text-xs font-bold text-slate-400 uppercase">Lawyers</h3>
+                {data.lawyers.map(l => <LawyerCard key={l.id} data={l} />)}
+              </div>
+            )}
           </div>
         </div>
-
-        <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-slate-50/50 scroll-smooth">
-          {(selectedCategory === 'all' || selectedCategory === 'police') && (
-            <Section title="Nearby Police Stations">
-              {data.police.length > 0 ? data.police.map(p => <PlaceCard key={p.id} data={p} type="police" />) : <p className="text-sm text-gray-400 italic px-2">No police stations found nearby.</p>}
-            </Section>
-          )}
-
-          {(selectedCategory === 'all' || selectedCategory === 'courts') && (
-            <Section title="Nearby Courts">
-              {data.courts.length > 0 ? data.courts.map(c => <PlaceCard key={c.id} data={c} type="court" />) : <p className="text-sm text-gray-400 italic px-2">No courts found nearby.</p>}
-            </Section>
-          )}
-
-          {(selectedCategory === 'all' || selectedCategory === 'lawyers') && (
-            <Section title="Registered Lawyers">
-              {data.lawyers.length > 0 ? data.lawyers.map(l => <LawyerCard key={l.id} data={l} />) : <p className="text-sm text-gray-400 italic px-2">No lawyers registered yet.</p>}
-            </Section>
-          )}
-        </div>
-      </aside>
+      </motion.div>
 
       {/* MAP */}
-      <main className="flex-1 relative z-10 w-full h-full">
+      <div className="w-full h-full z-0">
         {userLocation && (
-          <MapContainer center={userLocation} zoom={13} scrollWheelZoom={true} className="h-full w-full">
+          <MapContainer center={userLocation} zoom={13} scrollWheelZoom={true} className="h-full w-full outline-none">
             <TileLayer
               attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-              url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+              url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png"
             />
             <MapUpdater center={userLocation} />
 
-            {/* ME */}
             <Marker position={userLocation}>
-              <Popup>You are here 📍</Popup>
+              <Popup><div className="font-bold text-center">📍 You Are Here</div></Popup>
             </Marker>
 
-            {/* PINS */}
             {(selectedCategory === 'all' || selectedCategory === 'police') && data.police.map(p => (
-              <Marker key={p.id} position={[p.lat, p.lon]} icon={policeIcon}>
-                <Popup><b>{p.name}</b><br />{p.address}</Popup>
-              </Marker>
+              <Marker key={p.id} position={[p.lat, p.lon]} icon={policeIcon}><Popup><b>{p.name}</b><br />{p.address}</Popup></Marker>
             ))}
             {(selectedCategory === 'all' || selectedCategory === 'courts') && data.courts.map(c => (
-              <Marker key={c.id} position={[c.lat, c.lon]} icon={courtIcon}>
-                <Popup><b>{c.name}</b><br />{c.address}</Popup>
-              </Marker>
+              <Marker key={c.id} position={[c.lat, c.lon]} icon={courtIcon}><Popup><b>{c.name}</b><br />{c.address}</Popup></Marker>
             ))}
             {(selectedCategory === 'all' || selectedCategory === 'lawyers') && data.lawyers.map(l => (
               <Marker key={l.id} position={[l.lat, l.lon]} icon={lawyerIcon}>
                 <Popup>
-                  <div className="text-center">
-                    <b className="text-blue-600">{l.name}</b><br />
-                    {l.specialization}<br />
-                    <Link to={`/lawyer/${l.id}`} className="text-xs underline text-blue-500">View Profile</Link>
+                  <div className="text-center p-2">
+                    <img src={l.image} className="w-10 h-10 rounded-full mx-auto mb-2 border-2 border-slate-900" />
+                    <b className="text-slate-900">{l.name}</b><br />
+                    <span className="text-xs text-slate-500">{l.specialization}</span><br />
+                    <Link to={`/lawyer/${l.id}`} className="block mt-2 bg-slate-900 text-white text-xs px-2 py-1 rounded">Profile</Link>
                   </div>
                 </Popup>
               </Marker>
             ))}
           </MapContainer>
         )}
-
-        <div className="absolute bottom-8 right-8 z-[1000]">
-          <button
-            onClick={() => {
-              navigator.geolocation.getCurrentPosition(pos => {
-                setUserLocation([pos.coords.latitude, pos.coords.longitude]);
-                toast.success("Recentered!");
-              })
-            }}
-            className="bg-slate-900 text-white px-6 py-3 rounded-full font-bold shadow-2xl hover:bg-slate-800 transition transform hover:-translate-y-1 flex items-center gap-2"
-          >
-            <span>🎯</span> My Location
-          </button>
-        </div>
-      </main>
-    </div>
-  );
-}
-
-function Section({ title, children }) {
-  return (
-    <div className="mb-6">
-      <h3 className="text-xs font-black text-slate-400 uppercase tracking-widest mb-3 px-1">{title}</h3>
-      <div className="space-y-3">{children}</div>
-    </div>
-  );
-}
-
-function PlaceCard({ data, type }) {
-  return (
-    <div className="bg-white p-4 rounded-xl border border-slate-200 shadow-sm hover:border-blue-300 transition cursor-pointer group">
-      <div className="flex justify-between items-start">
-        <div className="flex gap-3">
-          <div className={`w-10 h-10 rounded-lg flex items-center justify-center text-xl shrink-0 ${type === 'police' ? 'bg-blue-50 text-blue-600' : 'bg-amber-50 text-amber-600'}`}>
-            {type === 'police' ? '🚓' : '⚖️'}
-          </div>
-          <div>
-            <h4 className="font-bold text-slate-900 group-hover:text-blue-700 transition line-clamp-1">{data.name}</h4>
-            <p className="text-xs text-slate-500 mt-1 line-clamp-1">{data.address}</p>
-          </div>
-        </div>
       </div>
+
+      {/* LOCATE BUTTON */}
+      <button
+        onClick={() => {
+          navigator.geolocation.getCurrentPosition(pos => {
+            setUserLocation([pos.coords.latitude, pos.coords.longitude]);
+            toast.success("Recentered!");
+          })
+        }}
+        className="absolute bottom-10 right-10 z-50 bg-slate-900 text-white p-4 rounded-full shadow-2xl hover:scale-110 transition active:scale-95"
+      >
+        🎯
+      </button>
+
     </div>
   );
 }
 
-function LawyerCard({ data }) {
-  return (
-    <div className="bg-white p-4 rounded-xl border border-slate-200 shadow-sm hover:border-blue-400 transition cursor-pointer group">
-      <div className="flex gap-4">
-        <img src={data.image} alt={data.name} className="w-12 h-12 rounded-full object-cover border border-slate-100" />
-        <div className="flex-1">
-          <h4 className="font-bold text-slate-900 text-sm group-hover:text-blue-700 transition">{data.name}</h4>
-          <p className="text-xs text-blue-600 font-medium">{data.specialization}</p>
-          <Link to={`/lawyer/${data.id}`} className="block mt-2 text-xs font-bold text-slate-500 hover:text-blue-600">View Profile →</Link>
-        </div>
-        {data.plan === 'diamond' && <span className="text-xs">💎</span>}
-      </div>
+const Card = ({ data, type }) => (
+  <div className="bg-white hover:bg-slate-50 p-4 rounded-2xl border border-slate-100 shadow-sm transition flex gap-3 cursor-pointer group">
+    <div className={`w-10 h-10 rounded-xl flex items-center justify-center text-lg shadow-sm ${type === 'police' ? 'bg-blue-100 text-blue-600' : 'bg-amber-100 text-amber-600'}`}>
+      {type === 'police' ? '🚓' : '⚖️'}
     </div>
-  );
-}
+    <div>
+      <h4 className="font-bold text-slate-900 text-sm group-hover:text-blue-600 transition">{data.name}</h4>
+      <p className="text-xs text-slate-500 truncate max-w-[180px]">{data.address}</p>
+    </div>
+  </div>
+);
+
+const LawyerCard = ({ data }) => (
+  <div className="bg-white hover:bg-slate-50 p-3 rounded-2xl border border-slate-100 shadow-sm transition flex gap-3 cursor-pointer group">
+    <img src={data.image} className="w-10 h-10 rounded-full border border-slate-200" />
+    <div className="flex-1 min-w-0">
+      <h4 className="font-bold text-slate-900 text-sm truncate group-hover:text-blue-600 transition">{data.name} {data.plan === 'diamond' && '💎'}</h4>
+      <p className="text-xs text-slate-500">{data.specialization}</p>
+      <Link to={`/lawyer/${data.id}`} className="text-[10px] font-bold text-blue-600 hover:underline">View Profile</Link>
+    </div>
+  </div>
+);
