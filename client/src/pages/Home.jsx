@@ -26,7 +26,11 @@ export default function Home() {
       {/* --- HERO SECTION --- */}
       <section className="relative pt-32 pb-20 lg:pt-48 lg:pb-32 overflow-hidden">
         {/* Abstract Backgrounds */}
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-[800px] bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-indigo-100/50 via-white to-transparent pointer-events-none" />
+        <motion.div
+          animate={{ scale: [1, 1.1, 1], opacity: [0.5, 0.8, 0.5] }}
+          transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
+          className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-[800px] bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-indigo-100/50 via-white to-transparent pointer-events-none"
+        />
         <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-slate-200 to-transparent" />
 
         <div className="max-w-[1200px] mx-auto px-6 relative z-10 text-center">

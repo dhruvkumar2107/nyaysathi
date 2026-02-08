@@ -6,6 +6,7 @@ import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import ProtectedRoute from "./components/ProtectedRoute";
 import { Toaster } from "react-hot-toast";
+import SmoothScroll from "./components/SmoothScroll";
 
 /* Lazy Load Pages */
 const Home = lazy(() => import("./pages/Home"));
@@ -57,6 +58,7 @@ const LoadingFallback = () => (
 export default function App() {
   return (
     <BrowserRouter>
+      <SmoothScroll />
       {/* ROOT APP WRAPPER */}
       <div className="min-h-screen bg-slate-50 text-slate-900 font-sans">
         <Toaster position="top-right" reverseOrder={false} />
