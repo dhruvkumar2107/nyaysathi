@@ -9,7 +9,7 @@ const Footer = () => {
                     {/* BRAND COLUMN (2 Spans) */}
                     <div className="lg:col-span-2">
                         <Link to="/" className="inline-block mb-6 group">
-                            <span className="text-3xl font-black text-white tracking-tight">Nyay<span className="text-blue-500">Now</span></span>
+                            <img src="/logo.png" alt="NyayNow" className="h-12 w-auto bg-white rounded-lg p-1.5 shadow-lg" />
                         </Link>
                         <p className="text-slate-400 text-lg leading-relaxed mb-8 max-w-sm">
                             Democratizing justice with AI intelligence. The modern operating system for legal professionals and everyday citizens.

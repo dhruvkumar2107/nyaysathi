@@ -26,12 +26,7 @@ export default function Navbar() {
 
         {/* LEFT: LOGO */}
         <Link to="/" className="flex items-center gap-2.5 group shrink-0">
-          <div className="w-9 h-9 bg-[#0B1120] rounded-lg flex items-center justify-center text-white font-bold text-lg shadow-lg shadow-slate-200 transition-transform group-hover:scale-105">
-            ⚖️
-          </div>
-          <span className="text-xl font-bold text-slate-900 tracking-tight font-display">
-            Nyay<span className="text-indigo-600">Now</span>
-          </span>
+          <img src="/logo.png" alt="NyayNow" className="h-12 w-auto object-contain" />
         </Link>
 
         {/* CENTER: NAV LINKS (Simple Text, No Icons) */}
