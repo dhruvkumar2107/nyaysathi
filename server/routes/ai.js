@@ -153,7 +153,8 @@ router.post("/assistant", verifyTokenOptional, checkAiLimit, async (req, res) =>
 });
 
 /* ---------------- AGREEMENT ANALYSIS ---------------- */
-router.post("/agreement", verifyToken, checkAiLimit, async (req, res) => {
+/* ---------------- AGREEMENT ANALYSIS ---------------- */
+router.post("/agreement", verifyTokenOptional, checkAiLimit, async (req, res) => {
   try {
     const { text } = req.body;
     if (!text) return res.status(400).json({ error: "No text provided" });
@@ -207,7 +208,8 @@ router.post("/agreement", verifyToken, checkAiLimit, async (req, res) => {
 });
 
 /* ---------------- CASE ANALYSIS (Legal Issue) ---------------- */
-router.post("/case-analysis", verifyToken, checkAiLimit, async (req, res) => {
+/* ---------------- CASE ANALYSIS (Legal Issue) ---------------- */
+router.post("/case-analysis", verifyTokenOptional, checkAiLimit, async (req, res) => {
   try {
     const { text } = req.body;
     if (!text) return res.status(400).json({ error: "No text provided" });
@@ -258,7 +260,8 @@ router.post("/case-analysis", verifyToken, checkAiLimit, async (req, res) => {
 });
 
 /* ---------------- LEGAL NOTICE GENERATOR ---------------- */
-router.post("/draft-notice", verifyToken, checkAiLimit, async (req, res) => {
+/* ---------------- LEGAL NOTICE GENERATOR ---------------- */
+router.post("/draft-notice", verifyTokenOptional, checkAiLimit, async (req, res) => {
   try {
     const { notice_details, language, type } = req.body;
     if (!notice_details) return res.status(400).json({ error: "Notice details required" });
@@ -298,7 +301,8 @@ router.post("/draft-notice", verifyToken, checkAiLimit, async (req, res) => {
 });
 
 /* ---------------- JUDGE AI (CASE PREDICTOR) ---------------- */
-router.post("/predict-outcome", verifyToken, checkAiLimit, async (req, res) => {
+/* ---------------- JUDGE AI (CASE PREDICTOR) ---------------- */
+router.post("/predict-outcome", verifyTokenOptional, checkAiLimit, async (req, res) => {
   try {
     const { caseTitle, caseDescription, caseType, oppositionDetails } = req.body;
 

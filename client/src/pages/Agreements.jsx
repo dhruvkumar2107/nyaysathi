@@ -24,8 +24,7 @@ export default function Agreements() {
       setResult(res.data);
       if (res.data.isLocked) setShowPaywall(true);
     } catch (err) {
-      if (err.response?.status === 403) setShowPaywall(true);
-      else if (err.response?.status === 401) navigate("/login");
+      if (err.response?.status === 403 || err.response?.status === 401) setShowPaywall(true);
       else alert("Analysis failed. Please try again.");
     } finally {
       setLoading(false);
