@@ -146,7 +146,7 @@ export default function Navbar() {
 
   return (
     <>
-      <nav className={`fixed top-0 w-full z-50 transition-all duration-300 h-[72px] flex items-center ${scrolled ? "bg-white/80 backdrop-blur-md shadow-sm border-b border-white/20" : "bg-white/50 backdrop-blur-sm border-b border-transparent"}`}>
+      <nav className={`fixed top-0 w-full z-[9999] transition-all duration-300 h-[72px] flex items-center ${scrolled ? "bg-white/80 backdrop-blur-md shadow-sm border-b border-white/20" : "bg-white/50 backdrop-blur-sm border-b border-transparent"}`}>
         <div className="max-w-7xl w-full mx-auto px-6 h-full flex items-center justify-between">
 
           {/* LOGO */}

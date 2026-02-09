@@ -119,26 +119,26 @@ export default function App() {
                 }
               />
 
-              {/* SHARED FEATURES (PUBLIC ACCESS) */}
-              <Route path="/assistant" element={<Assistant />} />
-              <Route path="/voice-assistant" element={<VoiceAssistant />} /> {/* NEW: NyayVoice */}
-              <Route path="/judge-ai" element={<JudgeAI />} />
-              <Route path="/judge-pro" element={<CaseFileAnalyzer />} /> {/* NEW: JudgeAI Pro */}
-              <Route path="/analyze" element={<Analyze />} />
-              <Route path="/agreements" element={<Agreements />} />
-              <Route path="/marketplace" element={<Marketplace />} />
-              <Route path="/nearby" element={<Nearby />} />
-              <Route path="/messages" element={<Messages />} />
-              <Route path="/meet/:id" element={<VideoCall />} />
-              <Route path="/rent-agreement" element={<AgreementForm />} />
-              <Route path="/payment/success" element={<PaymentSuccess />} />
-              <Route path="/settings" element={<Settings />} />
-              <Route path="/calendar" element={<Calendar />} />
-              <Route path="/ecourts" element={<CourtStatus />} />
-              <Route path="/moot-court" element={<MootCourt />} />
-              <Route path="/devils-advocate" element={<DevilsAdvocate />} />
-              <Route path="/judge-profile" element={<JudgeProfile />} />
-              <Route path="/analytics" element={<Analytics />} />
+              {/* SHARED FEATURES (PROTECTED) */}
+              <Route path="/assistant" element={<ProtectedRoute><Assistant /></ProtectedRoute>} />
+              <Route path="/voice-assistant" element={<ProtectedRoute><VoiceAssistant /></ProtectedRoute>} />
+              <Route path="/judge-ai" element={<ProtectedRoute><JudgeAI /></ProtectedRoute>} />
+              <Route path="/judge-pro" element={<ProtectedRoute><CaseFileAnalyzer /></ProtectedRoute>} />
+              <Route path="/analyze" element={<ProtectedRoute><Analyze /></ProtectedRoute>} />
+              <Route path="/agreements" element={<ProtectedRoute><Agreements /></ProtectedRoute>} />
+              <Route path="/marketplace" element={<ProtectedRoute><Marketplace /></ProtectedRoute>} />
+              <Route path="/nearby" element={<ProtectedRoute><Nearby /></ProtectedRoute>} />
+              <Route path="/messages" element={<ProtectedRoute><Messages /></ProtectedRoute>} />
+              <Route path="/meet/:id" element={<ProtectedRoute><VideoCall /></ProtectedRoute>} />
+              <Route path="/rent-agreement" element={<ProtectedRoute><AgreementForm /></ProtectedRoute>} />
+              <Route path="/payment/success" element={<ProtectedRoute><PaymentSuccess /></ProtectedRoute>} />
+              <Route path="/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
+              <Route path="/calendar" element={<ProtectedRoute><Calendar /></ProtectedRoute>} />
+              <Route path="/ecourts" element={<ProtectedRoute><CourtStatus /></ProtectedRoute>} />
+              <Route path="/moot-court" element={<ProtectedRoute><MootCourt /></ProtectedRoute>} />
+              <Route path="/devils-advocate" element={<ProtectedRoute><DevilsAdvocate /></ProtectedRoute>} />
+              <Route path="/judge-profile" element={<ProtectedRoute><JudgeProfile /></ProtectedRoute>} />
+              <Route path="/analytics" element={<ProtectedRoute><Analytics /></ProtectedRoute>} />
               <Route path="/setup-profile" element={<ProtectedRoute><SetupProfile /></ProtectedRoute>} /> {/* NEW */}
             </Routes>
           </Suspense>

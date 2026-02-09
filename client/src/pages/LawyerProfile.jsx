@@ -241,7 +241,9 @@ export default function LawyerProfile() {
                             </div>
                             <div className="bg-white p-4 rounded-2xl border border-slate-100 shadow-sm flex flex-col items-center justify-center gap-2 text-center">
                                 <div className="w-10 h-10 rounded-full bg-orange-50 text-orange-600 flex items-center justify-center text-xl">📍</div>
-                                <span className="font-bold text-slate-900 text-sm truncate w-full">{lawyer.location}</span>
+                                <span className="font-bold text-slate-900 text-sm truncate w-full">
+                                    {typeof lawyer.location === 'object' ? lawyer.location.city || lawyer.location.address : lawyer.location}
+                                </span>
                             </div>
                         </div>
 

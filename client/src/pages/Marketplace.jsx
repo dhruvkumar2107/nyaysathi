@@ -131,7 +131,13 @@ export default function Marketplace() {
                 onChange={(e) => setSelectedCategory(e.target.value)}
               >
                 <option value="">All Specializations</option>
-                {["Criminal Law", "Family Law", "Corporate Law", "Civil Law", "Property Law", "Cyber Law"].map(s => <option key={s} value={s}>{s}</option>)}
+                <option value="Criminal">Criminal Law</option>
+                <option value="Family">Family Law</option>
+                <option value="Corporate">Corporate Law</option>
+                <option value="Civil">Civil Law</option>
+                <option value="Property">Property Law</option>
+                <option value="Cyber">Cyber Law</option>
+                <option value="Intellectual">IPR / Patent</option>
               </select>
             </div>
 

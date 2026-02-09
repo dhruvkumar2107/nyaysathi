@@ -133,10 +133,17 @@ router.post("/assistant", verifyTokenOptional, checkAiLimit, async (req, res) =>
     };
 
     res.json(jsonResponse);
+
   } catch (err) {
-    console.error("Gemini Assistant Error:", err.message);
+    console.error("❌ CRITICAL AI ERROR (/assistant):", err);
+
+    // Check for specific Gemini errors
+    let errorMessage = "Our legal AI is currently overwhelmed. Please try again in 10 seconds.";
+    if (err.message.includes("400")) errorMessage = "Invalid request format.";
+    if (err.message.includes("429")) errorMessage = "AI Rate limit exceeded. Please wait a moment.";
+
     res.status(500).json({
-      answer: `AI Error: ${err.message}`,
+      answer: `**System Error**: ${errorMessage}\n\n*Technical Details: ${err.message}*`,
       error: err.message,
       related_questions: [],
       intent: "error"
