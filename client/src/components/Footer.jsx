@@ -4,7 +4,7 @@ import { motion } from 'framer-motion';
 
 const Footer = () => {
     return (
-        <footer className="bg-[#050511] border-t border-slate-900 text-slate-400 font-sans pt-24 pb-12 relative overflow-hidden">
+        <footer className="bg-[#0f172a] border-t border-slate-900 text-slate-400 font-sans pt-24 pb-12 relative overflow-hidden">
 
             {/* Background Glow */}
             <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[800px] h-[300px] bg-indigo-600/10 blur-[120px] rounded-full pointer-events-none"></div>
@@ -105,11 +105,6 @@ const Footer = () => {
                         <span className="hover:text-white cursor-pointer transition">Twitter</span>
                         <span className="hover:text-white cursor-pointer transition">Github</span>
                     </div>
-                </div>
-
-                {/* BIG TEXT WATERMARK */}
-                <div className="mt-20 pt-1 border-t border-white/5 opacity-20 pointer-events-none select-none">
-                    <h1 className="text-[12vw] font-black text-center text-white leading-none tracking-tighter mix-blend-overlay">NYAYNOW</h1>
                 </div>
 
             </div>
