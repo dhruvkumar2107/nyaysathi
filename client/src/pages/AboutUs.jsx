@@ -22,10 +22,10 @@ export default function AboutUs() {
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: 0.1 }}
-                        className="text-5xl md:text-7xl font-serif font-bold text-white mb-8 leading-tight"
+                        className="text-5xl md:text-7xl font-serif font-bold text-slate-900 mb-8 leading-tight"
                     >
                         Democratizing Justice on <br />
-                        <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-cyan-400">Internet Scale.</span>
+                        <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-cyan-600">Internet Scale.</span>
                     </motion.h1>
                     <motion.p
                         initial={{ opacity: 0, y: 20 }}

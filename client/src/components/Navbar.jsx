@@ -70,7 +70,7 @@ export default function Navbar() {
   return (
     <>
       <nav
-        className={`fixed top-0 w-full z-[9999] transition-all duration-500 border-b ${scrolled ? "bg-midnight-900/90 backdrop-blur-xl border-white/10 h-[72px] shadow-lg" : "bg-transparent border-transparent h-[88px]"}`}
+        className="fixed top-0 w-full z-[9999] bg-[#0f172a] border-b border-white/10 h-[72px] shadow-lg transition-all duration-300"
       >
         <div className="max-w-7xl mx-auto px-6 h-full flex items-center justify-between">
 

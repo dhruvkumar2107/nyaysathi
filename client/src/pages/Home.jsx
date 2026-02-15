@@ -21,17 +21,17 @@ export default function Home() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
-            className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/5 border border-white/10 shadow-[0_0_15px_rgba(255,255,255,0.05)] mb-8"
+            className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white border border-slate-200 shadow-sm mb-8"
           >
-            <span className="flex h-2 w-2 rounded-full bg-gold-500 animate-pulse shadow-[0_0_10px_rgba(250,204,21,0.5)]"></span>
-            <span className="text-xs font-bold text-gold-200 tracking-[0.1em] uppercase">The Future of Legal Practice</span>
+            <span className="flex h-2 w-2 rounded-full bg-indigo-600 animate-pulse"></span>
+            <span className="text-xs font-bold text-slate-600 tracking-[0.1em] uppercase">The Future of Legal Practice</span>
           </motion.div>
 
           <motion.h1
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.1 }}
-            className="text-6xl md:text-8xl font-serif font-bold tracking-tight text-white mb-8 leading-[1.1]"
+            className="text-6xl md:text-8xl font-serif font-bold tracking-tight text-slate-900 mb-8 leading-[1.1]"
           >
             Your Personal <br />
             <span className="text-transparent bg-clip-text bg-gradient-to-b from-indigo-300 to-indigo-600">Legal Supermind.</span>
@@ -41,7 +41,7 @@ export default function Home() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.2 }}
-            className="text-lg md:text-xl text-slate-400 max-w-2xl mx-auto mb-12 leading-relaxed font-light"
+            className="text-lg md:text-xl text-slate-600 max-w-2xl mx-auto mb-12 leading-relaxed font-light"
           >
             Navigate the complexities of Indian Law with elite precision. <br className="hidden md:block" />
             Designed for the top 1% of legal professionals and visionary firms.
@@ -63,7 +63,7 @@ export default function Home() {
                 </Link>
                 <Link
                   to="/login"
-                  className="w-full sm:w-auto px-10 py-5 rounded-xl bg-white/5 text-white border border-white/10 font-bold text-sm hover:bg-white/10 transition active:scale-95 duration-200 uppercase tracking-wider backdrop-blur-sm"
+                  className="w-full sm:w-auto px-10 py-5 rounded-xl bg-white text-slate-900 border border-slate-200 font-bold text-sm hover:bg-slate-50 transition active:scale-95 duration-200 uppercase tracking-wider shadow-sm"
                 >
                   Member Login
                 </Link>
@@ -81,7 +81,7 @@ export default function Home() {
       </section>
 
       {/* --- LEGAL SUPERMIND SHOWCASE --- */}
-      <section className="py-24 bg-midnight-950 relative overflow-hidden border-t border-white/5">
+      <section className="py-24 bg-white relative overflow-hidden border-t border-slate-200">
         <div className="max-w-[1400px] mx-auto px-6 relative z-10">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 perspective-1000">
 
@@ -191,29 +191,29 @@ function UnicornCard({ title, desc, icon, color, href, badge, delay }) {
       <div className={`absolute -inset-0.5 bg-gradient-to-r ${color} rounded-2xl blur opacity-20 group-hover:opacity-80 transition duration-500 group-hover:blur-md`}></div>
 
       {/* CARD CONTENT */}
-      <div className="relative h-full bg-[#0B1120] border border-white/10 rounded-2xl p-8 flex flex-col items-start overflow-hidden hover:border-white/20 transition-all shadow-2xl">
+      <div className="relative h-full bg-slate-50 border border-slate-200 rounded-2xl p-8 flex flex-col items-start overflow-hidden hover:border-indigo-300 transition-all shadow-lg hover:shadow-xl">
 
         {badge && (
-          <span className="absolute top-4 right-4 px-3 py-1 bg-gradient-to-r from-indigo-500 to-purple-600 text-white text-[10px] font-bold uppercase rounded-full shadow-[0_0_10px_rgba(99,102,241,0.5)] tracking-wider">
+          <span className="absolute top-4 right-4 px-3 py-1 bg-gradient-to-r from-indigo-500 to-purple-600 text-white text-[10px] font-bold uppercase rounded-full shadow-sm tracking-wider">
             {badge}
           </span>
         )}
 
-        <div className={`w-16 h-16 rounded-2xl bg-gradient-to-br ${color} flex items-center justify-center text-3xl shadow-lg mb-8 group-hover:scale-110 group-hover:rotate-6 transition-all duration-300 relative z-10`}>
+        <div className={`w-16 h-16 rounded-2xl bg-gradient-to-br ${color} flex items-center justify-center text-3xl shadow-lg mb-8 group-hover:scale-110 group-hover:rotate-6 transition-all duration-300 relative z-10 text-white`}>
           {icon}
         </div>
 
-        <h3 className="text-2xl font-bold text-white mb-4 group-hover:bg-clip-text group-hover:text-transparent group-hover:bg-gradient-to-r group-hover:from-white group-hover:to-slate-300 transition-colors">
+        <h3 className="text-2xl font-bold text-slate-900 mb-4 group-hover:text-indigo-600 transition-colors">
           {title}
         </h3>
 
-        <p className="text-slate-400 text-sm leading-relaxed mb-8 flex-grow border-l-2 border-white/5 pl-4 group-hover:border-white/20 transition-colors font-light">
+        <p className="text-slate-600 text-sm leading-relaxed mb-8 flex-grow border-l-2 border-slate-200 pl-4 group-hover:border-indigo-300 transition-colors font-normal">
           {desc}
         </p>
 
-        <div className="mt-auto w-full pt-4 border-t border-white/5 flex items-center justify-between text-sm font-bold text-white opacity-80 group-hover:opacity-100 transition-opacity uppercase tracking-wider text-xs">
+        <div className="mt-auto w-full pt-4 border-t border-slate-200 flex items-center justify-between text-sm font-bold text-slate-700 opacity-80 group-hover:opacity-100 transition-opacity uppercase tracking-wider text-xs">
           <span>Explore Module</span>
-          <span className="group-hover:translate-x-2 transition-transform bg-white/10 rounded-full w-8 h-8 flex items-center justify-center">→</span>
+          <span className="group-hover:translate-x-2 transition-transform bg-white rounded-full w-8 h-8 flex items-center justify-center border border-slate-200">→</span>
         </div>
       </div>
     </motion.div>
