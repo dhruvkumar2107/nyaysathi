@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import axios from 'axios';
 import { Search, BookOpen, Scale, FileText, ArrowRight, Filter } from 'lucide-react';
+import Navbar from '../components/Navbar';
 
 const LegalResearch = () => {
     const [query, setQuery] = useState('');
@@ -53,10 +54,11 @@ const LegalResearch = () => {
     };
 
     return (
-        <div className="min-h-screen bg-midnight-900 text-slate-200 font-sans selection:bg-cyan-500/30">
+        <div className="min-h-screen bg-slate-100 text-slate-900 font-sans selection:bg-cyan-500/30">
+            <Navbar />
 
             {/* HERO / SEARCH SECTION */}
-            <div className={`transition-all duration-700 ease-in-out ${searched ? 'pt-24 pb-12' : 'min-h-screen flex flex-col justify-center items-center -mt-20'}`}>
+            <div className={`transition-all duration-700 ease-in-out ${searched ? 'pt-32 pb-12' : 'min-h-screen flex flex-col justify-center items-center -mt-20'}`}>
 
                 <div className={`w-full max-w-4xl px-6 relative z-10 ${searched ? '' : 'text-center'}`}>
 

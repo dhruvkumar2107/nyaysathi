@@ -6,12 +6,12 @@ import { Briefcase, MapPin, Clock, ArrowRight, Sparkles } from 'lucide-react';
 
 export default function Careers() {
     return (
-        <div className="min-h-screen bg-midnight-900 font-sans text-slate-200 selection:bg-indigo-500/30">
+        <div className="min-h-screen bg-slate-100 font-sans text-slate-900 selection:bg-indigo-500/30">
             <Navbar />
 
             {/* HERO */}
             <div className="pt-32 pb-20 px-6 text-center relative overflow-hidden">
-                <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[500px] bg-indigo-600/10 rounded-full blur-[120px] pointer-events-none"></div>
+                <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[500px] bg-indigo-200/40 rounded-full blur-[120px] pointer-events-none mix-blend-multiply"></div>
                 <div className="relative z-10 max-w-4xl mx-auto">
                     <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="inline-flex items-center gap-2 px-4 py-1.5 bg-white/5 border border-white/10 rounded-full text-indigo-300 text-xs font-bold uppercase tracking-widest mb-6 shadow-[0_0_15px_rgba(99,102,241,0.2)]">
                         <Sparkles size={14} /> We Are Hiring

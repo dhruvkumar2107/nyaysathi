@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { toast } from 'react-hot-toast';
 import { Mail, MapPin, Clock, Send, ArrowRight } from 'lucide-react';
+import Navbar from '../components/Navbar';
 
 
 export default function Contact() {
@@ -19,7 +20,8 @@ export default function Contact() {
     };
 
     return (
-        <div className="min-h-screen bg-midnight-900 font-sans text-slate-200 selection:bg-indigo-500/30">
+        <div className="min-h-screen bg-slate-100 font-sans text-slate-900 selection:bg-indigo-500/30">
+            <Navbar />
 
             <div className="max-w-7xl mx-auto px-6 pt-32 pb-20 grid lg:grid-cols-2 gap-16 items-center">
 

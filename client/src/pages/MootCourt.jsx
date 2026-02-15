@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import io from "socket.io-client";
 import { useAuth } from "../context/AuthContext";
+import Navbar from "../components/Navbar";
 import { Mic, MicOff, Video, VideoOff, MessageSquare, Gavel, Users, User, ArrowRight } from "lucide-react";
 
 // Connect to backend
@@ -17,11 +18,11 @@ const MootCourt = () => {
     const startSession = () => setSessionActive(true);
 
     return (
-        <div className="min-h-screen bg-midnight-900 text-slate-200 font-sans selection:bg-indigo-900 overflow-hidden relative">
+        <div className="min-h-screen bg-slate-100 text-slate-900 font-sans selection:bg-indigo-500/30 overflow-hidden relative">
+            <Navbar />
 
             {/* AMBIENT BACKGROUND */}
-            <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1589829085413-56de8ae18c73?q=80&w=2072&auto=format&fit=crop')] bg-cover bg-center opacity-20 pointer-events-none"></div>
-            <div className="absolute inset-0 bg-gradient-to-b from-black via-black/80 to-black pointer-events-none"></div>
+            <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1589829085413-56de8ae18c73?q=80&w=2072&auto=format&fit=crop')] bg-cover bg-center opacity-5 pointer-events-none mix-blend-multiply"></div>
 
             {!sessionActive ? (
                 <div className="relative z-10 flex flex-col items-center justify-center min-h-screen text-center px-6">

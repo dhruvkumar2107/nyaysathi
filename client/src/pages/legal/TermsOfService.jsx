@@ -4,12 +4,12 @@ import Navbar from '../../components/Navbar';
 
 const TermsOfService = () => {
     return (
-        <div className="min-h-screen bg-midnight-950 flex flex-col font-sans text-slate-300 selection:bg-amber-500/30">
+        <div className="min-h-screen bg-slate-100 flex flex-col font-sans text-slate-700 selection:bg-amber-500/30">
             <Navbar />
 
             <div className="relative pt-32 pb-20 px-6">
                 {/* Background FX */}
-                <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-indigo-900/20 rounded-full blur-[120px] pointer-events-none"></div>
+                <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-indigo-200/40 rounded-full blur-[120px] pointer-events-none mix-blend-multiply"></div>
 
                 <div className="container mx-auto max-w-4xl relative z-10">
                     <div className="text-center mb-16">

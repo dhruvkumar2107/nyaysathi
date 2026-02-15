@@ -23,7 +23,7 @@ const DevilsAdvocate = () => {
             // Artificial delay for dramatic effect
             setTimeout(() => {
                 setAnalysis(res.data);
-                toast.error("Objection Overruled!", { icon: "🔨", style: { background: '#333', color: '#fff' } });
+                toast.error("Objection Overruled!", { icon: "🔨", style: { background: '#fff', color: '#B91C1C', border: '1px solid #FECACA' } });
                 setLoading(false);
             }, 2000);
         } catch (err) {

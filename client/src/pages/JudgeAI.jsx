@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { motion } from "framer-motion";
 import CountUp from "react-countup";
 import { UploadCloud, FileText, CheckCircle, AlertTriangle, Scale } from "lucide-react";
+import Navbar from '../components/Navbar';
 
 const JudgeAI = () => {
     const [analyzing, setAnalyzing] = useState(false);
@@ -22,11 +23,12 @@ const JudgeAI = () => {
     };
 
     return (
-        <div className="min-h-screen bg-midnight-900 text-white font-sans selection:bg-indigo-500/30">
+        <div className="min-h-screen bg-slate-100 text-slate-900 font-sans selection:bg-indigo-500/30">
+            <Navbar />
 
             {/* HERO SECTION */}
             <section className="relative pt-32 pb-20 overflow-hidden">
-                <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[1000px] h-[500px] bg-indigo-600/20 blur-[150px] rounded-full pointer-events-none"></div>
+                <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[1000px] h-[500px] bg-indigo-200/40 blur-[150px] rounded-full pointer-events-none mix-blend-multiply"></div>
 
                 <div className="container mx-auto px-6 relative z-10 text-center">
                     <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }}>

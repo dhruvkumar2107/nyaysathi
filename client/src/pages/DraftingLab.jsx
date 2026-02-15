@@ -5,6 +5,7 @@ import toast from 'react-hot-toast';
 import ReactMarkdown from 'react-markdown';
 import SubscriptionModal from '../components/SubscriptionModal';
 import { FileText, Search, Zap, AlertTriangle, CheckCircle, Download } from 'lucide-react';
+import Navbar from '../components/Navbar';
 
 const DraftingLab = () => {
     const [activeTab, setActiveTab] = useState('draft'); // 'draft' or 'analyze'
@@ -87,7 +88,8 @@ const DraftingLab = () => {
     };
 
     return (
-        <div className="min-h-screen bg-midnight-900 text-slate-200 font-sans pb-20 pt-28 px-6 selection:bg-indigo-500/30">
+        <div className="min-h-screen bg-slate-100 text-slate-900 font-sans pb-20 pt-28 px-6 selection:bg-indigo-500/30">
+            <Navbar />
             <SubscriptionModal
                 isOpen={showModal}
                 onClose={() => setShowModal(false)}

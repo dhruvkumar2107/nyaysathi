@@ -45,8 +45,8 @@ export default function VideoCall() {
                         warning: '#F59E0B',
                         error: '#EF4444',
                         success: '#10B981',
-                        surface: '#0f172a', // Midnight 900
-                        background: '#020617' // Midnight 950
+                        surface: '#ffffff',
+                        background: '#f8fafc'
                     }
                 }
             },

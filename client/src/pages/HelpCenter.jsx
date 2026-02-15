@@ -1,14 +1,16 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Search, ChevronRight, MessageCircle, FileText, Shield, Zap } from 'lucide-react';
+import Navbar from '../components/Navbar';
 
 
 export default function HelpCenter() {
     return (
-        <div className="min-h-screen bg-midnight-900 font-sans text-slate-200 selection:bg-indigo-500/30">
+        <div className="min-h-screen bg-slate-100 font-sans text-slate-900 selection:bg-indigo-500/30">
+            <Navbar />
 
             {/* HERO SEARCH */}
-            <section className="relative pt-32 pb-20 px-6 text-center border-b border-white/5 bg-gradient-to-b from-midnight-950 to-midnight-900">
+            <section className="relative pt-32 pb-20 px-6 text-center border-b border-slate-200 bg-white">
                 <motion.div
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
