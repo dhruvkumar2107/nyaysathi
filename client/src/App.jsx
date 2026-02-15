@@ -43,7 +43,7 @@ const PrivacyPolicy = lazy(() => import("./pages/legal/PrivacyPolicy"));
 const CourtStatus = lazy(() => import("./pages/CourtStatus"));
 const MootCourt = lazy(() => import("./pages/MootCourt"));
 const DevilsAdvocate = lazy(() => import("./pages/DevilsAdvocate"));
-const DevilsAdvocate = lazy(() => import("./pages/DevilsAdvocate"));
+
 const JudgeProfile = lazy(() => import("./pages/JudgeProfile"));
 const LegalResearch = lazy(() => import("./pages/LegalResearch")); // NEW
 const DraftingLab = lazy(() => import("./pages/DraftingLab")); // NEW
