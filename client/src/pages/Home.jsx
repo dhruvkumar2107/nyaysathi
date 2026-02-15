@@ -97,7 +97,7 @@ export default function Home() {
       </section>
 
       {/* --- LEGAL SUPERMIND SHOWCASE (UNICORN STYLE) --- */}
-      <section className="py-32 bg-[#050511] relative overflow-hidden">
+      <section className="py-24 bg-[#0B1120] relative overflow-hidden">
         {/* Animated Background Orbs */}
         <div className="absolute top-0 left-1/4 w-96 h-96 bg-indigo-600/20 rounded-full blur-[128px] animate-pulse"></div>
         <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-purple-600/20 rounded-full blur-[128px] animate-pulse delay-1000"></div>
@@ -106,7 +106,7 @@ export default function Home() {
         <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20 contrast-150 brightness-100"></div>
 
         <div className="max-w-[1400px] mx-auto px-6 relative z-10">
-          <div className="text-center mb-20 space-y-4">
+          <div className="text-center mb-16 space-y-4">
             <motion.span
               initial={{ opacity: 0, y: 10 }}
               whileInView={{ opacity: 1, y: 0 }}
@@ -135,34 +135,76 @@ export default function Home() {
               delay={0}
             />
 
-            {/* CARD 2: RESEARCH */}
+            {/* CARD 2: JUDGE AI (VIRAL) */}
+            <UnicornCard
+              title="Judge AI Predictor"
+              desc="Predict case outcomes with 94% accuracy. Analyze millions of judgments to forecast your winning probability."
+              icon="⚖️"
+              color="from-rose-500 via-red-500 to-orange-500"
+              href="/judge-ai"
+              badge="Viral"
+              delay={0.1}
+            />
+
+            {/* CARD 3: RESEARCH */}
             <UnicornCard
               title="Deep Research"
               desc="Semantic search that finds precedents based on legal context, not just keyword matching."
               icon="🔍"
               color="from-blue-500 via-cyan-500 to-teal-500"
               href="/research"
-              delay={0.1}
+              delay={0.2}
             />
 
-            {/* CARD 3: DRAFTING */}
+            {/* CARD 4: DRAFTING */}
             <UnicornCard
               title="Drafting Lab"
               desc="Auto-generate ironclad contracts, clauses, and notices while detecting hidden risks instantly."
               icon="📝"
               color="from-emerald-500 via-green-500 to-lime-500"
               href="/drafting"
-              delay={0.2}
+              delay={0.3}
             />
 
-            {/* CARD 4: CAREER */}
+            {/* CARD 5: NYAY VOICE (VIRAL) */}
+            <UnicornCard
+              title="NyayVoice"
+              desc="Your multilingual AI Legal Companion. Speak naturally in Hindi, Tamil, or 10+ languages."
+              icon="🎙️"
+              color="from-violet-500 via-purple-500 to-fuchsia-500"
+              href="/voice-assistant"
+              delay={0.4}
+            />
+
+            {/* CARD 6: CAREER */}
             <UnicornCard
               title="Career Hub"
               desc="Virtual internships, task grading, and mentorship from avatars of top Supreme Court advocates."
               icon="💼"
               color="from-orange-500 via-pink-500 to-rose-500"
               href="/career"
-              delay={0.3}
+              delay={0.5}
+            />
+
+            {/* CARD 7: AI ASSISTANT */}
+            <UnicornCard
+              title="AI Legal Assistant"
+              desc="Your 24/7 legal genius. Ask complex queries and get citations, case laws, and strategy in seconds."
+              icon="🤖"
+              color="from-cyan-500 via-blue-500 to-indigo-500"
+              href="/assistant"
+              delay={0.6}
+            />
+
+            {/* CARD 8: MARKETPLACE */}
+            <UnicornCard
+              title="Elite Legal Network"
+              desc="Connect with the top 1% of legal minds in the country. Validated lawyers, arbitrators, and experts."
+              icon="💎"
+              color="from-amber-400 via-orange-500 to-red-500"
+              href="/marketplace"
+              badge="Exclusive"
+              delay={0.7}
             />
 
           </div>
