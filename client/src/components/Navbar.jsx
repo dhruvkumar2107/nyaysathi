@@ -70,7 +70,7 @@ export default function Navbar() {
   return (
     <>
       <nav
-        className={`fixed top-0 w-full z-[9999] transition-all duration-500 border-b ${scrolled ? "bg-midnight-900/90 backdrop-blur-xl border-white/5 h-[72px] shadow-2xl" : "bg-transparent border-transparent h-[88px]"}`}
+        className={`fixed top-0 w-full z-[9999] transition-all duration-500 border-b ${scrolled ? "bg-white/80 backdrop-blur-xl border-slate-200 h-[72px] shadow-sm" : "bg-transparent border-transparent h-[88px]"}`}
       >
         <div className="max-w-7xl mx-auto px-6 h-full flex items-center justify-between">
 
@@ -79,7 +79,7 @@ export default function Navbar() {
             <div className="w-10 h-10 bg-gradient-to-br from-indigo-600 to-purple-600 rounded-xl flex items-center justify-center text-white font-bold text-xl shadow-lg shadow-indigo-500/20 group-hover:scale-105 transition duration-300">
               N
             </div>
-            <span className="text-xl font-bold text-white tracking-tight group-hover:text-indigo-200 transition">NyayNow</span>
+            <span className="text-xl font-bold text-slate-900 tracking-tight group-hover:text-indigo-600 transition">NyayNow</span>
           </Link>
 
           {/* DESKTOP NAV */}
@@ -91,7 +91,7 @@ export default function Navbar() {
                 onMouseEnter={() => handleMouseEnter(idx)}
                 onMouseLeave={handleMouseLeave}
               >
-                <button className={`flex items-center gap-1.5 text-sm font-bold transition-colors ${hoveredIndex === idx ? "text-indigo-400" : "text-slate-400 hover:text-white"}`}>
+                <button className={`flex items-center gap-1.5 text-sm font-bold transition-colors ${hoveredIndex === idx ? "text-indigo-600" : "text-slate-600 hover:text-indigo-600"}`}>
                   {category.label}
                   <ChevronDown size={14} className={`transition-transform duration-300 ${hoveredIndex === idx ? "rotate-180" : ""}`} />
                 </button>
@@ -136,8 +136,8 @@ export default function Navbar() {
           <div className="flex items-center gap-4 relative z-50">
             {!user ? (
               <>
-                <Link to="/login" className="hidden sm:block text-slate-400 hover:text-white font-bold text-sm transition">Log in</Link>
-                <Link to="/register" className="px-6 py-2.5 bg-white text-black font-bold text-sm rounded-xl hover:bg-slate-200 transition shadow-[0_0_20px_rgba(255,255,255,0.2)]">
+                <Link to="/login" className="hidden sm:block text-slate-600 hover:text-indigo-600 font-bold text-sm transition">Log in</Link>
+                <Link to="/register" className="px-6 py-2.5 bg-slate-900 text-white font-bold text-sm rounded-xl hover:bg-slate-800 transition shadow-lg shadow-slate-900/20">
                   Get Started
                 </Link>
               </>

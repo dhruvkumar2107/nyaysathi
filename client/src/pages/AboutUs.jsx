@@ -1,20 +1,20 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { Scale, Shield, Users, Globe, Award, Zap } from 'lucide-react';
-import Footer from '../components/Footer';
+
 
 export default function AboutUs() {
     return (
-        <div className="min-h-screen bg-midnight-900 font-sans text-slate-200 selection:bg-indigo-500/30">
+        <div className="min-h-screen bg-slate-50 font-sans text-slate-900 selection:bg-indigo-500/30">
 
             {/* HERO SECTION */}
             <section className="relative pt-32 pb-24 overflow-hidden">
-                <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[1000px] h-[600px] bg-indigo-600/10 rounded-full blur-[120px] pointer-events-none"></div>
+                <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[1000px] h-[600px] bg-indigo-500/10 rounded-full blur-[120px] pointer-events-none"></div>
                 <div className="max-w-5xl mx-auto px-6 text-center relative z-10">
                     <motion.span
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
-                        className="inline-block px-4 py-1.5 rounded-full bg-white/5 border border-white/10 text-gold-400 text-xs font-bold uppercase tracking-[0.2em] mb-8"
+                        className="inline-block px-4 py-1.5 rounded-full bg-white border border-slate-200 text-amber-600 text-xs font-bold uppercase tracking-[0.2em] mb-8 shadow-sm"
                     >
                         Our Mission
                     </motion.span>
@@ -68,7 +68,7 @@ export default function AboutUs() {
 
 
 
-            <Footer />
+
         </div>
     );
 }

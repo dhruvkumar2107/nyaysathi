@@ -7,9 +7,9 @@ export default function Home() {
   const { user } = useAuth();
 
   return (
-    <div className="min-h-screen bg-midnight-900 font-sans text-slate-200 selection:bg-indigo-500/30">
+    <div className="min-h-screen bg-slate-50 font-sans text-slate-900 selection:bg-indigo-500/30">
 
-      {/* --- HERO SECTION (PREMIUM DARK) --- */}
+      {/* --- HERO SECTION (PREMIUM LIGHT) --- */}
       <section className="relative pt-32 pb-32 lg:pt-48 lg:pb-40 overflow-hidden">
         {/* Abstract Backgrounds */}
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[1000px] h-[600px] bg-indigo-600/20 rounded-full blur-[120px] pointer-events-none opacity-50"></div>

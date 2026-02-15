@@ -12,14 +12,14 @@ export default {
       },
       colors: {
         midnight: {
-          900: '#0f172a', // Slate 900 (Lighter Background)
-          800: '#151e32', // Panel Backgrounds
-          700: '#2a3b55', // Borders/Separators
+          900: '#f8fafc', // Slate 50 (Light Background)
+          800: '#ffffff', // White (Panel Backgrounds)
+          700: '#e2e8f0', // Slate 200 (Borders)
         },
         charcoal: {
-          900: '#0f172a', // Primary Text
-          800: '#1e293b', // Secondary Text
-          600: '#475569', // Muted Text
+          900: '#0f172a', // Slate 900 (Primary Text)
+          800: '#334155', // Slate 700 (Secondary Text)
+          600: '#64748b', // Slate 500 (Muted Text)
         },
         gold: {
           400: '#fbbf24', // Amber 400 (Brightest)

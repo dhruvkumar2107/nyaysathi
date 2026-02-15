@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import Navbar from '../components/Navbar';
-import Footer from '../components/Footer';
+
 import { motion } from 'framer-motion';
 import { Check, Star, Zap, Shield } from 'lucide-react';
 import axios from 'axios';
@@ -81,12 +81,12 @@ const Pricing = () => {
   const plans = userType === 'client' ? clientPlans : lawyerPlans;
 
   return (
-    <div className="min-h-screen bg-[#0f172a] text-white font-sans selection:bg-indigo-500/30">
+    <div className="min-h-screen bg-slate-50 text-slate-900 font-sans selection:bg-indigo-500/30">
       <Navbar />
 
       {/* HERO */}
       <div className="pt-32 pb-20 text-center relative overflow-hidden">
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[600px] bg-indigo-600/20 blur-[120px] rounded-full pointer-events-none"></div>
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[600px] bg-indigo-500/10 blur-[120px] rounded-full pointer-events-none"></div>
         <div className="relative z-10 px-6">
           <h1 className="text-5xl md:text-6xl font-serif font-bold mb-6">Invest in Your Legal Security.</h1>
           <p className="text-xl text-slate-400 max-w-2xl mx-auto mb-10">
@@ -142,7 +142,7 @@ const Pricing = () => {
         </div>
       </div>
 
-      <Footer />
+
     </div>
   );
 };

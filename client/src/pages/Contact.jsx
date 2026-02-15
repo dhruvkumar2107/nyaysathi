@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { toast } from 'react-hot-toast';
 import { Mail, MapPin, Clock, Send, ArrowRight } from 'lucide-react';
-import Footer from '../components/Footer';
+
 
 export default function Contact() {
     const [formData, setFormData] = useState({ name: '', email: '', message: '' });
@@ -122,7 +122,7 @@ export default function Contact() {
                 </motion.div>
 
             </div>
-            <Footer />
+
         </div>
     );
 }

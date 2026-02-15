@@ -1,7 +1,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { ArrowRight, Sparkles } from 'lucide-react';
-import Footer from '../components/Footer';
+
 
 export default function Blog() {
     return (
@@ -86,7 +86,7 @@ export default function Blog() {
                 </div>
             </section>
 
-            <Footer />
+
         </div>
     );
 }

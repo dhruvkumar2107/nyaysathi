@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Search, ChevronRight, MessageCircle, FileText, Shield, Zap } from 'lucide-react';
-import Footer from '../components/Footer';
+
 
 export default function HelpCenter() {
     return (
@@ -69,7 +69,7 @@ export default function HelpCenter() {
                 </div>
             </section>
 
-            <Footer />
+
         </div>
     );
 }

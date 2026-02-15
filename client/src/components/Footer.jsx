@@ -4,10 +4,10 @@ import { motion } from 'framer-motion';
 
 const Footer = () => {
     return (
-        <footer className="bg-[#0f172a] border-t border-slate-900 text-slate-400 font-sans pt-24 pb-12 relative overflow-hidden">
+        <footer className="bg-white border-t border-slate-200 text-slate-500 font-sans pt-24 pb-12 relative overflow-hidden">
 
             {/* Background Glow */}
-            <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[800px] h-[300px] bg-indigo-600/10 blur-[120px] rounded-full pointer-events-none"></div>
+            <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[800px] h-[300px] bg-indigo-500/5 blur-[120px] rounded-full pointer-events-none"></div>
 
             <div className="container mx-auto px-6 max-w-[1400px] relative z-10">
 

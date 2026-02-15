@@ -1,6 +1,6 @@
 import React from 'react';
 import Navbar from '../../components/Navbar';
-import Footer from '../../components/Footer';
+
 
 const TermsOfService = () => {
     return (
@@ -82,7 +82,7 @@ const TermsOfService = () => {
                     </div>
                 </div>
             </div>
-            <Footer />
+
         </div>
     );
 };

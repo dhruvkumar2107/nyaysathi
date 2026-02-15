@@ -1,7 +1,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import Navbar from '../components/Navbar';
-import Footer from '../components/Footer';
+
 import { Briefcase, MapPin, Clock, ArrowRight, Sparkles } from 'lucide-react';
 
 export default function Careers() {
@@ -71,7 +71,7 @@ export default function Careers() {
                 </motion.div>
             </div>
 
-            <Footer />
+
         </div>
     );
 }
