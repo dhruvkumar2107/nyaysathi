@@ -11,37 +11,38 @@ export default function Home() {
 
       {/* --- HERO SECTION (PREMIUM LIGHT) --- */}
       <section className="relative pt-32 pb-32 lg:pt-48 lg:pb-40 overflow-hidden">
-        {/* Abstract Backgrounds */}
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[1000px] h-[600px] bg-indigo-600/20 rounded-full blur-[120px] pointer-events-none opacity-50"></div>
-        <div className="absolute bottom-0 right-0 w-[800px] h-[600px] bg-purple-600/10 rounded-full blur-[120px] pointer-events-none opacity-30"></div>
-        <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20 contrast-150 brightness-100 mix-blend-overlay"></div>
+        {/* Abstract Backgrounds with New Gradients */}
+        <div className="absolute top-0 left-0 right-0 h-[800px] bg-gradient-to-b from-indigo-50/50 via-white to-white pointer-events-none"></div>
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[1000px] h-[600px] bg-indigo-200/20 rounded-full blur-[120px] pointer-events-none mix-blend-multiply"></div>
+        <div className="absolute bottom-0 right-0 w-[800px] h-[600px] bg-purple-200/20 rounded-full blur-[120px] pointer-events-none mix-blend-multiply"></div>
+        <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-10 mix-blend-overlay"></div>
 
         <div className="max-w-[1200px] mx-auto px-6 relative z-10 text-center">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
-            className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white border border-slate-200 shadow-sm mb-8"
+            className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white border border-indigo-100 shadow-sm mb-6"
           >
             <span className="flex h-2 w-2 rounded-full bg-indigo-600 animate-pulse"></span>
-            <span className="text-xs font-bold text-slate-600 tracking-[0.1em] uppercase">The Future of Legal Practice</span>
+            <span className="text-xs font-bold text-indigo-900 tracking-[0.15em] uppercase">The Future of Legal Practice</span>
           </motion.div>
 
           <motion.h1
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.1 }}
-            className="text-6xl md:text-8xl font-serif font-bold tracking-tight text-slate-900 mb-8 leading-[1.1]"
+            className="text-6xl md:text-8xl font-serif font-bold tracking-tight text-slate-900 mb-6 leading-[1.05]"
           >
             Your Personal <br />
-            <span className="text-transparent bg-clip-text bg-gradient-to-b from-indigo-300 to-indigo-600">Legal Supermind.</span>
+            <span className="text-transparent bg-clip-text bg-gradient-to-br from-indigo-600 to-violet-600">Legal Supermind.</span>
           </motion.h1>
 
           <motion.p
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.2 }}
-            className="text-lg md:text-xl text-slate-600 max-w-2xl mx-auto mb-12 leading-relaxed font-light"
+            className="text-lg md:text-xl text-slate-600 max-w-2xl mx-auto mb-10 leading-relaxed font-medium"
           >
             Navigate the complexities of Indian Law with elite precision. <br className="hidden md:block" />
             Designed for the top 1% of legal professionals and visionary firms.
