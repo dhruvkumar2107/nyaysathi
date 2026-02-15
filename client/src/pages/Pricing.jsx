@@ -81,7 +81,7 @@ const Pricing = () => {
   const plans = userType === 'client' ? clientPlans : lawyerPlans;
 
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-900 font-sans selection:bg-indigo-500/30">
+    <div className="min-h-screen bg-slate-100 text-slate-900 font-sans selection:bg-indigo-500/30">
       <Navbar />
 
       {/* HERO */}

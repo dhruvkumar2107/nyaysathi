@@ -7,7 +7,7 @@ export default function Home() {
   const { user } = useAuth();
 
   return (
-    <div className="min-h-screen bg-slate-50 font-sans text-slate-900 selection:bg-indigo-500/30">
+    <div className="min-h-screen bg-slate-100 font-sans text-slate-900 selection:bg-indigo-500/30">
 
       {/* --- HERO SECTION (PREMIUM LIGHT) --- */}
       <section className="relative pt-32 pb-32 lg:pt-48 lg:pb-40 overflow-hidden">
