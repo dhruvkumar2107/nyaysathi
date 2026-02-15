@@ -49,6 +49,13 @@ const LegalResearch = lazy(() => import("./pages/LegalResearch")); // NEW
 const DraftingLab = lazy(() => import("./pages/DraftingLab")); // NEW
 const CareerHub = lazy(() => import("./pages/CareerHub")); // NEW
 
+/* Company Pages */
+const AboutUs = lazy(() => import("./pages/AboutUs"));
+const Careers = lazy(() => import("./pages/Careers"));
+const Blog = lazy(() => import("./pages/Blog"));
+const Contact = lazy(() => import("./pages/Contact"));
+const HelpCenter = lazy(() => import("./pages/HelpCenter"));
+
 /* Loading Component */
 const LoadingFallback = () => (
   <div className="flex items-center justify-center min-h-screen bg-gray-50">
@@ -148,6 +155,14 @@ export default function App() {
               <Route path="/research" element={<LegalResearch />} /> {/* NEW */}
               <Route path="/drafting" element={<DraftingLab />} /> {/* NEW */}
               <Route path="/career" element={<CareerHub />} /> {/* NEW */}
+
+              {/* COMPANY PAGES */}
+              <Route path="/about" element={<AboutUs />} />
+              <Route path="/careers" element={<Careers />} />
+              <Route path="/blog" element={<Blog />} />
+              <Route path="/contact" element={<Contact />} />
+              <Route path="/help" element={<HelpCenter />} />
+
             </Routes>
           </Suspense>
         </main>

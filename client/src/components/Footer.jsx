@@ -1,18 +1,27 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { motion } from 'framer-motion';
 
 const Footer = () => {
     return (
-        <footer className="bg-[#0B1120] border-t border-slate-800 text-slate-300 font-sans pt-20 pb-12 mt-auto">
-            <div className="container mx-auto px-6 max-w-7xl">
-                <div className="grid lg:grid-cols-5 md:grid-cols-2 gap-12 mb-16">
-                    {/* BRAND COLUMN (2 Spans) */}
-                    <div className="lg:col-span-2">
-                        <Link to="/" className="inline-block mb-6 group">
-                            <img src="/logo.png" alt="NyayNow" className="h-12 w-auto bg-white rounded-lg p-1.5 shadow-lg" />
+        <footer className="bg-[#050511] border-t border-slate-900 text-slate-400 font-sans pt-24 pb-12 relative overflow-hidden">
+
+            {/* Background Glow */}
+            <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[800px] h-[300px] bg-indigo-600/10 blur-[120px] rounded-full pointer-events-none"></div>
+
+            <div className="container mx-auto px-6 max-w-[1400px] relative z-10">
+
+                {/* TOP SECTION: BRAND & NEWSLETTER */}
+                <div className="flex flex-col lg:flex-row justify-between items-start gap-12 mb-20">
+                    <div className="max-w-md">
+                        <Link to="/" className="inline-flex items-center gap-3 mb-6 group">
+                            <div className="h-10 w-10 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-xl flex items-center justify-center text-white font-bold text-xl shadow-lg shadow-indigo-500/20">
+                                N
+                            </div>
+                            <span className="text-2xl font-bold text-white tracking-tight">NyayNow</span>
                         </Link>
-                        <p className="text-slate-400 text-lg leading-relaxed mb-8 max-w-sm">
-                            Democratizing justice with AI intelligence. The modern operating system for legal professionals and everyday citizens.
+                        <p className="text-slate-400 text-lg leading-relaxed mb-8">
+                            The operating system for the Indian Justice System. We are democratizing legal intelligence for 1.4 billion people with AI.
                         </p>
                         <div className="flex gap-4">
                             <SocialIcon path="M24 4.557c-.883.392-1.832.656-2.828.775 1.017-.609 1.798-1.574 2.165-2.724-.951.564-2.005.974-3.127 1.195-.897-.957-2.178-1.555-3.594-1.555-3.179 0-5.515 2.966-4.797 6.045-4.091-.205-7.719-2.165-10.148-5.144-1.29 2.213-.669 5.108 1.523 6.574-.806-.026-1.566-.247-2.229-.616-.054 2.281 1.581 4.415 3.949 4.89-.693.188-1.452.232-2.224.084.626 1.956 2.444 3.379 4.6 3.419-2.07 1.623-4.678 2.348-7.29 2.04 2.179 1.397 4.768 2.212 7.548 2.212 9.142 0 14.307-7.721 13.995-14.646.962-.695 1.797-1.562 2.457-2.549z" />
@@ -21,57 +30,112 @@ const Footer = () => {
                         </div>
                     </div>
 
-                    {/* PRODUCT */}
-                    <div>
-                        <h3 className="font-bold text-white mb-6 uppercase tracking-wider text-sm">Product</h3>
-                        <ul className="space-y-4">
-                            <li><Link to="/marketplace" className="hover:text-blue-400 transition-colors duration-200">Find Lawyers</Link></li>
-                            <li><Link to="/agreements" className="hover:text-blue-400 transition-colors duration-200">Agreement Analyzer</Link></li>
-                            <li><Link to="/judge-ai" className="hover:text-blue-400 transition-colors duration-200">Judge AI</Link></li>
-                            <li><span className="text-slate-500 cursor-not-allowed">Pricing</span></li>
-                        </ul>
+                    <div className="w-full lg:w-auto bg-white/5 border border-white/10 rounded-2xl p-8 backdrop-blur-sm">
+                        <h4 className="text-lg font-bold text-white mb-2">Stay ahead of the curve.</h4>
+                        <p className="text-sm text-slate-400 mb-6 max-w-xs">
+                            Get the latest updates on Supreme Court judgments and new AI features.
+                        </p>
+                        <form className="flex gap-2">
+                            <input
+                                type="email"
+                                placeholder="Enter your email"
+                                className="bg-white/10 border border-white/10 rounded-lg px-4 py-3 text-white placeholder:text-slate-500 text-sm focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 w-full"
+                            />
+                            <button className="bg-indigo-600 hover:bg-indigo-500 text-white font-bold px-6 py-3 rounded-lg text-sm transition shadow-lg shadow-indigo-600/20">
+                                Subscribe
+                            </button>
+                        </form>
                     </div>
+                </div>
 
-                    {/* COMPANY */}
-                    <div>
-                        <h3 className="font-bold text-white mb-6 uppercase tracking-wider text-sm">Company</h3>
-                        <ul className="space-y-4">
-                            <li><span className="text-slate-500 cursor-not-allowed">About Us</span></li>
-                            <li><span className="text-slate-500 cursor-not-allowed">Careers</span></li>
-                            <li><span className="text-slate-500 cursor-not-allowed">Blog</span></li>
-                            <li><span className="text-slate-500 cursor-not-allowed">Contact</span></li>
-                        </ul>
-                    </div>
+                {/* LINKS GRID */}
+                <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-10 mb-24">
+                    <FooterColumn title="Product">
+                        <FooterLink to="/assistant">AI Assistant</FooterLink>
+                        <FooterLink to="/judge-ai">Judge AI <span className="text-[10px] text-indigo-400 bg-indigo-500/10 px-1.5 py-0.5 rounded ml-2">New</span></FooterLink>
+                        <FooterLink to="/voice-assistant">NyayVoice</FooterLink>
+                        <FooterLink to="/moot-court">Moot Court VR</FooterLink>
+                        <FooterLink to="/marketplace">Find Lawyers</FooterLink>
+                    </FooterColumn>
 
-                    {/* LEGAL */}
-                    <div>
-                        <h3 className="font-bold text-white mb-6 uppercase tracking-wider text-sm">Legal</h3>
-                        <ul className="space-y-4">
-                            <li><Link to="/terms" className="hover:text-blue-400 transition-colors duration-200">Terms of Service</Link></li>
-                            <li><Link to="/privacy" className="hover:text-blue-400 transition-colors duration-200">Privacy Policy</Link></li>
-                            <li><span className="text-slate-500 cursor-not-allowed">Help Center</span></li>
-                            <li><span className="text-yellow-500 text-xs font-bold border border-yellow-500 px-2 py-1 rounded-full uppercase">Startup</span></li>
-                        </ul>
-                    </div>
+                    <FooterColumn title="Resources">
+                        <FooterLink to="/research">Legal Research</FooterLink>
+                        <FooterLink to="/drafting">Drafting Lab</FooterLink>
+                        <FooterLink to="/agreements">Agreement Analyzer</FooterLink>
+                        <FooterLink to="/ecourts">E-Courts Status</FooterLink>
+                        <FooterLink to="/blog">Blog & Insights</FooterLink>
+                    </FooterColumn>
+
+                    <FooterColumn title="Company">
+                        <FooterLink to="/about">About Us</FooterLink>
+                        <FooterLink to="/careers">Careers <span className="text-[10px] text-emerald-400 bg-emerald-500/10 px-1.5 py-0.5 rounded ml-2">Hiring</span></FooterLink>
+                        <FooterLink to="/contact">Contact Support</FooterLink>
+                        <FooterLink to="/partners">Partners</FooterLink>
+                        <FooterLink to="/press">Press Kit</FooterLink>
+                    </FooterColumn>
+
+                    <FooterColumn title="Use Cases">
+                        <FooterLink to="/laywer/dashboard">For Law Firms</FooterLink>
+                        <FooterLink to="/client/dashboard">For Individuals</FooterLink>
+                        <FooterLink to="/career">For Students</FooterLink>
+                        <FooterLink to="/enterprises">For Enterprises</FooterLink>
+                        <FooterLink to="/judiciary">For Judiciary</FooterLink>
+                    </FooterColumn>
+
+                    <FooterColumn title="Legal">
+                        <FooterLink to="/terms">Terms of Service</FooterLink>
+                        <FooterLink to="/privacy">Privacy Policy</FooterLink>
+                        <FooterLink to="/security">Security</FooterLink>
+                        <FooterLink to="/help">Help Center</FooterLink>
+                        <span className="text-yellow-500 text-xs font-bold border border-yellow-500/30 bg-yellow-500/10 px-3 py-1 rounded-full uppercase inline-block mt-2">Startup India</span>
+                    </FooterColumn>
                 </div>
 
                 {/* BOTTOM BAR */}
-                <div className="pt-8 border-t border-slate-800 flex flex-col md:flex-row justify-between items-center gap-6">
-                    <p className="text-slate-500 text-sm">
-                        © {new Date().getFullYear()} NyayNow Legal Tech. All rights reserved.
+                <div className="pt-8 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-6">
+                    <p className="text-slate-500 text-sm font-medium">
+                        © {new Date().getFullYear()} NyayNow Legal Tech Pvt Ltd. All rights reserved.
                     </p>
-                    <div className="flex gap-8 text-sm font-medium">
-                        <span className="text-slate-600 cursor-not-allowed">System Status</span>
-                        <span className="text-slate-600 cursor-not-allowed">Security</span>
+                    <div className="flex gap-8 text-xs font-bold uppercase tracking-wider text-slate-500">
+                        <span className="flex items-center gap-2 hover:text-emerald-400 cursor-pointer transition">
+                            <span className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></span>
+                            All Systems Operational
+                        </span>
+                        <span className="hover:text-white cursor-pointer transition">Status</span>
+                        <span className="hover:text-white cursor-pointer transition">Twitter</span>
+                        <span className="hover:text-white cursor-pointer transition">Github</span>
                     </div>
                 </div>
+
+                {/* BIG TEXT WATERMARK */}
+                <div className="mt-20 pt-1 border-t border-white/5 opacity-20 pointer-events-none select-none">
+                    <h1 className="text-[12vw] font-black text-center text-white leading-none tracking-tighter mix-blend-overlay">NYAYNOW</h1>
+                </div>
+
             </div>
         </footer>
     );
 };
 
+const FooterColumn = ({ title, children }) => (
+    <div className="flex flex-col gap-4">
+        <h3 className="font-bold text-white uppercase tracking-wider text-sm">{title}</h3>
+        <ul className="flex flex-col gap-3">
+            {children}
+        </ul>
+    </div>
+);
+
+const FooterLink = ({ to, children }) => (
+    <li>
+        <Link to={to} className="text-sm hover:text-indigo-400 transition-colors duration-200 flex items-center">
+            {children}
+        </Link>
+    </li>
+);
+
 const SocialIcon = ({ path }) => (
-    <a href="#" className="w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center text-slate-400 hover:bg-blue-600 hover:text-white transition-all duration-300">
+    <a href="#" className="w-10 h-10 rounded-full bg-slate-800/50 border border-white/5 flex items-center justify-center text-slate-400 hover:bg-indigo-600 hover:text-white hover:border-indigo-500 transition-all duration-300">
         <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">{path}</svg>
     </a>
 );
