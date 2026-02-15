@@ -4,6 +4,52 @@ import { useAuth } from "../context/AuthContext";
 
 const NAVIGATION_ITEMS = [
   {
+    label: "Legal Supermind",
+    href: "#",
+    dropdown: [
+      {
+        name: "Moot Court",
+        href: "/moot-court",
+        desc: "Practice arguments in VR",
+        icon: (
+          <svg className="w-5 h-5 text-purple-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 6l3 1m0 0l-3 9a5.002 5.002 0 006.001 0M6 7l3 9M6 7l6-2m6 2l3-1m-3 1l-3 9a5.002 5.002 0 006.001 0M18 7l3 9m-3-9l-6-2m0-2v2m0 16V5m0 16H9m3 0h3" />
+          </svg>
+        )
+      },
+      {
+        name: "Legal Research",
+        href: "/research",
+        desc: "Semantic case search",
+        icon: (
+          <svg className="w-5 h-5 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+          </svg>
+        )
+      },
+      {
+        name: "Drafting Lab",
+        href: "/drafting",
+        desc: "AI Contract Generator",
+        icon: (
+          <svg className="w-5 h-5 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+          </svg>
+        )
+      },
+      {
+        name: "Career Hub",
+        href: "/career",
+        desc: "Internships & Mentorship",
+        icon: (
+          <svg className="w-5 h-5 text-pink-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+          </svg>
+        )
+      },
+    ]
+  },
+  {
     label: "Products",
     href: "#",
     dropdown: [
