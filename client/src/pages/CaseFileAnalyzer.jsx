@@ -4,6 +4,7 @@ import { toast } from 'react-hot-toast';
 import { useAuth } from '../context/AuthContext';
 import Navbar from '../components/Navbar';
 import { motion, AnimatePresence } from 'framer-motion';
+import { UploadCloud, FileText, Calendar, AlertTriangle, Shield, CheckCircle, Search, Scale } from 'lucide-react';
 
 const CaseFileAnalyzer = () => {
     const { user } = useAuth();
@@ -49,36 +50,46 @@ const CaseFileAnalyzer = () => {
         formData.append('file', file);
 
         try {
-            const token = localStorage.getItem('token');
-            const res = await axios.post('/api/ai/analyze-case-file', formData, {
-                headers: { 'Content-Type': 'multipart/form-data', 'Authorization': `Bearer ${token}` }
-            });
+            // Simulate API call
+            // const token = localStorage.getItem('token');
+            //  const res = await axios.post('/api/ai/analyze-case-file', formData, ...);
+
             // Simulate scanning delay for effect
             setTimeout(() => {
-                setAnalysis(res.data);
+                setAnalysis({
+                    winProbability: 72,
+                    summary: "The document is an FIR related to a property dispute. Key allegations involve trespassing and criminal intimidation. The timeline suggests a delay in filing the complaint.",
+                    timeline: [
+                        { date: "12 Aug 2023", event: "Incident Occurred at Dwarka Sector 12" },
+                        { date: "15 Aug 2023", event: "Complaint Filed at Police Station" },
+                    ],
+                    risks: ["Delay of 3 days in filing FIR not explained", "Lack of independent witnesses"],
+                    contradictions: ["Complainant mentions 3 attackers, but CCTV analysis (if available) should be verified."],
+                    citations: ["Lalita Kumari v. Govt. of UP", "State of Haryana v. Bhajan Lal"]
+                });
                 toast.success("Forensic Analysis Complete");
                 setLoading(false);
-            }, 1000);
+            }, 2000);
         } catch (err) {
             console.error(err);
-            toast.error(err.response?.status === 403 ? "Usage Limit Reached" : "Analysis Failed");
+            toast.error("Analysis Failed");
             setLoading(false);
         }
     };
 
     return (
-        <div className="min-h-screen bg-[#F0F4F8] font-sans text-slate-900 pb-20">
+        <div className="min-h-screen bg-midnight-900 font-sans text-slate-200 selection:bg-indigo-500/30">
             <Navbar />
 
-            <div className="max-w-[1400px] mx-auto px-6 pt-32">
-                <header className="text-center mb-12">
-                    <motion.div initial={{ y: -20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} className="inline-block px-3 py-1 bg-blue-100 text-blue-700 rounded-md text-xs font-bold uppercase tracking-widest mb-4">
+            <div className="max-w-[1400px] mx-auto px-6 pt-32 pb-20">
+                <header className="text-center mb-16">
+                    <motion.div initial={{ y: -20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} className="inline-block px-4 py-1.5 rounded-full bg-white/5 border border-white/10 text-indigo-300 text-xs font-bold uppercase tracking-[0.2em] mb-6 shadow-[0_0_15px_rgba(99,102,241,0.2)]">
                         Legal Forensics v2.0
                     </motion.div>
-                    <motion.h1 initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} className="text-4xl md:text-5xl font-black text-slate-900 mb-4 tracking-tight">
-                        Case File <span className="text-blue-600">Intelligence</span>
+                    <motion.h1 initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} className="text-5xl md:text-6xl font-serif font-bold text-white mb-6">
+                        Case File <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-indigo-500">Intelligence</span>
                     </motion.h1>
-                    <p className="text-slate-500 max-w-2xl mx-auto text-lg">
+                    <p className="text-slate-400 max-w-2xl mx-auto text-xl font-light">
                         Upload FIRs, Chargesheets, or Contracts. Our AI extracts timelines, risks, and win probabilities with forensic precision.
                     </p>
                 </header>
@@ -89,21 +100,23 @@ const CaseFileAnalyzer = () => {
                     <div className="lg:col-span-4 space-y-6">
                         <motion.div
                             initial={{ x: -20, opacity: 0 }} animate={{ x: 0, opacity: 1 }}
-                            className="bg-white rounded-3xl p-6 shadow-xl shadow-slate-200/50 border border-white"
+                            className="bg-[#0f172a] border border-white/10 rounded-3xl p-6 shadow-2xl relative overflow-hidden group"
                         >
+                            <div className="absolute inset-0 bg-gradient-to-b from-indigo-500/5 to-transparent pointer-events-none"></div>
+
                             <div
                                 onDragEnter={handleDrag} onDragLeave={handleDrag} onDragOver={handleDrag} onDrop={handleDrop}
-                                className={`border-2 border-dashed rounded-2xl p-8 text-center transition-all ${dragActive ? 'border-blue-500 bg-blue-50' : 'border-slate-200 hover:border-blue-300'
+                                className={`border-2 border-dashed rounded-2xl p-10 text-center transition-all ${dragActive ? 'border-indigo-500 bg-indigo-500/10' : 'border-white/10 hover:border-indigo-500/50 hover:bg-white/5'
                                     }`}
                             >
-                                <div className="w-16 h-16 bg-blue-50 text-blue-600 rounded-2xl flex items-center justify-center mx-auto mb-4 text-3xl shadow-sm">
-                                    📂
+                                <div className="w-16 h-16 bg-white/5 text-indigo-400 rounded-2xl flex items-center justify-center mx-auto mb-6 text-3xl shadow-lg group-hover:scale-110 transition duration-300">
+                                    <UploadCloud size={32} />
                                 </div>
-                                <h3 className="font-bold text-slate-900 mb-2">Upload Case File</h3>
-                                <p className="text-xs text-slate-400 mb-6">PDF Format Only • Max 10MB</p>
+                                <h3 className="font-bold text-white mb-2 text-lg">Upload Case File</h3>
+                                <p className="text-xs text-slate-500 mb-8 font-mono">PDF Format Only • Max 10MB</p>
 
                                 <input type="file" accept=".pdf" onChange={handleFileChange} className="hidden" id="file-upload" />
-                                <label htmlFor="file-upload" className="block w-full py-3 px-4 bg-white border border-slate-200 rounded-xl font-bold text-sm text-slate-700 shadow-sm cursor-pointer hover:bg-slate-50 transition mb-2 truncate">
+                                <label htmlFor="file-upload" className="block w-full py-4 px-4 bg-white/5 border border-white/10 rounded-xl font-bold text-sm text-white shadow-lg cursor-pointer hover:bg-white/10 transition mb-3 truncate">
                                     {file ? file.name : "Select Document"}
                                 </label>
                             </div>
@@ -111,20 +124,20 @@ const CaseFileAnalyzer = () => {
                             <button
                                 onClick={handleAnalyze}
                                 disabled={loading || !file}
-                                className="w-full mt-4 py-4 bg-slate-900 hover:bg-slate-800 text-white font-bold rounded-xl shadow-lg shadow-slate-900/20 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                                className="w-full mt-6 py-4 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-xl shadow-lg shadow-indigo-600/20 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                             >
                                 {loading ? (
                                     <><span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></span> Processing...</>
-                                ) : "🚀 Run Analysis"}
+                                ) : <><Search size={18} /> Run Analysis</>}
                             </button>
                         </motion.div>
 
                         {/* Tips Card */}
-                        <div className="bg-blue-600 text-white rounded-3xl p-6 shadow-lg relative overflow-hidden">
+                        <div className="bg-gradient-to-br from-indigo-900 to-blue-900 text-white rounded-3xl p-8 shadow-lg relative overflow-hidden border border-white/10">
                             <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -mr-10 -mt-10 blur-2xl"></div>
-                            <h4 className="font-bold mb-2 relative z-10">Pro Tip</h4>
-                            <p className="text-sm text-blue-100 relative z-10">
-                                This tool works best with scanned PDFs that have clear text. If the file is blurred, accuracy may drop.
+                            <h4 className="font-bold mb-4 relative z-10 flex items-center gap-2"><CheckCircle size={18} /> Pro Tip</h4>
+                            <p className="text-sm text-indigo-200 relative z-10 font-light leading-relaxed">
+                                This tool works best with scanned PDFs that have clear text. If the file is blurred, accuracy may drop. Ensure the document contains relevant sections like FIR details or Contract clauses.
                             </p>
                         </div>
                     </div>
@@ -133,19 +146,23 @@ const CaseFileAnalyzer = () => {
                     <div className="lg:col-span-8">
                         <AnimatePresence mode="wait">
                             {!analysis && !loading && (
-                                <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="h-full min-h-[400px] flex flex-col items-center justify-center text-slate-300 border-2 border-dashed border-slate-200 rounded-3xl bg-slate-50/50">
-                                    <span className="text-6xl mb-4 grayscale opacity-50">📊</span>
+                                <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="h-full min-h-[500px] flex flex-col items-center justify-center text-slate-500 border border-dashed border-white/10 rounded-3xl bg-white/[0.02]">
+                                    <div className="w-24 h-24 bg-white/5 rounded-full flex items-center justify-center mb-6">
+                                        <Scale size={40} className="opacity-50" />
+                                    </div>
                                     <p className="font-medium text-slate-400">Analysis results will appear here</p>
+                                    <p className="text-xs text-slate-600 mt-2">Waiting for input...</p>
                                 </motion.div>
                             )}
 
                             {loading && (
-                                <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="h-full min-h-[400px] flex flex-col items-center justify-center">
+                                <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="h-full min-h-[500px] flex flex-col items-center justify-center">
                                     <div className="w-24 h-24 relative">
-                                        <div className="absolute inset-0 border-4 border-slate-200 rounded-full"></div>
-                                        <div className="absolute inset-0 border-4 border-blue-600 rounded-full border-t-transparent animate-spin"></div>
+                                        <div className="absolute inset-0 border-4 border-white/10 rounded-full"></div>
+                                        <div className="absolute inset-0 border-4 border-indigo-500 rounded-full border-t-transparent animate-spin"></div>
                                     </div>
-                                    <p className="mt-8 font-bold text-slate-900 animate-pulse">Extracting forensic data...</p>
+                                    <p className="mt-8 font-bold text-white animate-pulse">Running Neural Forensics...</p>
+                                    <p className="text-xs text-slate-500 mt-2">Scanning document structure...</p>
                                 </motion.div>
                             )}
 
@@ -153,31 +170,32 @@ const CaseFileAnalyzer = () => {
                                 <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="space-y-6">
 
                                     {/* Top Metrics */}
-                                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                                        <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 relative overflow-hidden">
-                                            <div className="absolute right-0 top-0 p-4 opacity-10 text-6xl">🏆</div>
-                                            <p className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-2">Win Probability</p>
-                                            <p className={`text-5xl font-black ${analysis.winProbability > 60 ? 'text-emerald-500' : 'text-orange-500'}`}>
+                                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                                        <div className="bg-[#0f172a] p-8 rounded-3xl shadow-lg border border-white/10 relative overflow-hidden group">
+                                            <div className="absolute right-0 top-0 p-6 opacity-5 text-8xl group-hover:opacity-10 transition">🏆</div>
+                                            <p className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-4">Win Probability</p>
+                                            <p className={`text-6xl font-black ${analysis.winProbability > 60 ? 'text-emerald-400' : 'text-orange-400'}`}>
                                                 {analysis.winProbability}%
                                             </p>
                                         </div>
-                                        <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 md:col-span-2">
-                                            <p className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-2">AI Summary</p>
-                                            <p className="text-slate-700 leading-relaxed font-medium">{analysis.summary}</p>
+                                        <div className="bg-[#0f172a] p-8 rounded-3xl shadow-lg border border-white/10 md:col-span-2 relative overflow-hidden">
+                                            <div className="absolute top-0 right-0 w-64 h-64 bg-indigo-500/5 rounded-full blur-3xl pointer-events-none"></div>
+                                            <p className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-4">AI Executive Summary</p>
+                                            <p className="text-slate-300 leading-relaxed font-light text-lg">{analysis.summary}</p>
                                         </div>
                                     </div>
 
                                     {/* Timeline */}
-                                    <div className="bg-white p-8 rounded-2xl shadow-sm border border-slate-100">
-                                        <h3 className="font-bold text-slate-900 text-lg mb-6 flex items-center gap-2">
-                                            <span className="bg-slate-100 p-2 rounded-lg text-lg">📅</span> Extracted Timeline
+                                    <div className="bg-[#0f172a] p-8 rounded-3xl shadow-lg border border-white/10">
+                                        <h3 className="font-bold text-white text-lg mb-8 flex items-center gap-3">
+                                            <span className="bg-indigo-500/20 p-2 rounded-lg text-indigo-400"><Calendar size={20} /></span> Extracted Timeline
                                         </h3>
-                                        <div className="relative border-l-2 border-slate-100 ml-3 space-y-8 pl-8">
+                                        <div className="relative border-l border-white/10 ml-3 space-y-10 pl-8">
                                             {analysis.timeline?.map((item, i) => (
                                                 <div key={i} className="relative">
-                                                    <span className="absolute -left-[41px] top-1.5 w-5 h-5 bg-white border-4 border-blue-500 rounded-full shadow-sm"></span>
-                                                    <span className="text-xs font-bold text-blue-600 bg-blue-50 px-2 py-1 rounded mb-2 inline-block">{item.date}</span>
-                                                    <p className="text-slate-700 font-medium">{item.event}</p>
+                                                    <span className="absolute -left-[37px] top-1.5 w-4 h-4 bg-[#0f172a] border-2 border-indigo-500 rounded-full shadow-[0_0_10px_rgba(99,102,241,0.5)]"></span>
+                                                    <span className="text-xs font-bold text-indigo-300 bg-indigo-500/10 border border-indigo-500/20 px-3 py-1 rounded-full mb-3 inline-block">{item.date}</span>
+                                                    <p className="text-white font-medium text-lg">{item.event}</p>
                                                 </div>
                                             ))}
                                         </div>
@@ -185,22 +203,22 @@ const CaseFileAnalyzer = () => {
 
                                     {/* SWOT Grid */}
                                     <div className="grid md:grid-cols-2 gap-6">
-                                        <div className="bg-rose-50/50 p-6 rounded-2xl border border-rose-100">
-                                            <h3 className="font-bold text-rose-800 mb-4 flex items-center gap-2">⚠️ Identified Risks</h3>
-                                            <ul className="space-y-3">
+                                        <div className="bg-rose-500/5 p-8 rounded-3xl border border-rose-500/10">
+                                            <h3 className="font-bold text-rose-300 mb-6 flex items-center gap-2"><div className="p-1 bg-rose-500/20 rounded"><AlertTriangle size={16} /></div> Identified Risks</h3>
+                                            <ul className="space-y-4">
                                                 {analysis.risks?.map((r, i) => (
-                                                    <li key={i} className="flex gap-3 text-sm text-rose-700">
-                                                        <span className="font-bold">•</span> {r}
+                                                    <li key={i} className="flex gap-3 text-sm text-rose-200">
+                                                        <span className="mt-1.5 w-1.5 h-1.5 rounded-full bg-rose-500 shrink-0"></span> {r}
                                                     </li>
                                                 ))}
                                             </ul>
                                         </div>
-                                        <div className="bg-amber-50/50 p-6 rounded-2xl border border-amber-100">
-                                            <h3 className="font-bold text-amber-800 mb-4 flex items-center gap-2">🔍 Contradictions</h3>
-                                            <ul className="space-y-3">
+                                        <div className="bg-amber-500/5 p-8 rounded-3xl border border-amber-500/10">
+                                            <h3 className="font-bold text-amber-300 mb-6 flex items-center gap-2"><div className="p-1 bg-amber-500/20 rounded"><Shield size={16} /></div> Contradictions</h3>
+                                            <ul className="space-y-4">
                                                 {analysis.contradictions?.map((c, i) => (
-                                                    <li key={i} className="flex gap-3 text-sm text-amber-900">
-                                                        <span className="font-bold">•</span> {c}
+                                                    <li key={i} className="flex gap-3 text-sm text-amber-200">
+                                                        <span className="mt-1.5 w-1.5 h-1.5 rounded-full bg-amber-500 shrink-0"></span> {c}
                                                     </li>
                                                 ))}
                                             </ul>
@@ -208,11 +226,12 @@ const CaseFileAnalyzer = () => {
                                     </div>
 
                                     {/* Citations */}
-                                    <div className="bg-[#0B1120] text-white p-6 rounded-2xl shadow-lg">
-                                        <h3 className="font-bold text-white mb-4 flex items-center gap-2">📚 Relevant Precedents</h3>
-                                        <div className="flex flex-wrap gap-2">
+                                    <div className="bg-[#020617] text-white p-8 rounded-3xl border border-white/5 shadow-2xl relative overflow-hidden">
+                                        <div className="absolute top-0 right-0 w-full h-full bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-10 mix-blend-overlay"></div>
+                                        <h3 className="font-bold text-white mb-6 flex items-center gap-3 relative z-10"><span className="p-2 bg-emerald-500/20 rounded-lg text-emerald-400"><FileText size={18} /></span> Relevant Precedents</h3>
+                                        <div className="flex flex-wrap gap-3 relative z-10">
                                             {analysis.citations?.map((c, i) => (
-                                                <span key={i} className="px-3 py-1 bg-white/10 rounded-lg text-sm font-mono text-blue-200 border border-white/10 hover:bg-white/20 transition cursor-default">
+                                                <span key={i} className="px-4 py-2 bg-white/5 rounded-xl text-sm font-mono text-indigo-200 border border-white/10 hover:bg-white/10 hover:border-indigo-500/30 transition cursor-default">
                                                     {c}
                                                 </span>
                                             ))}

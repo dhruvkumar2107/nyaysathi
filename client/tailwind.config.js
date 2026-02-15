@@ -6,16 +6,34 @@ export default {
   ],
   theme: {
     extend: {
+      fontFamily: {
+        sans: ['Inter', 'sans-serif'],
+        serif: ['"Playfair Display"', 'serif'],
+      },
       colors: {
-        colors: {
-          primary: "#0B1120",   // Deep Navy / Almost Black (Pro Text)
-          secondary: "#1E293B", // Slate 800 (Secondary Text)
-          accent: "#2563EB",    // Electric Blue (Buttons/Highlights)
-          "legal-blue": "#172554", // Deepest Blue (Backgrounds if needed)
+        midnight: {
+          900: '#0B1120', // Deepest Navy (Backgrounds)
+          800: '#151e32', // Panel Backgrounds
+          700: '#2a3b55', // Borders/Separators
         },
+        charcoal: {
+          900: '#0f172a', // Primary Text
+          800: '#1e293b', // Secondary Text
+          600: '#475569', // Muted Text
+        },
+        gold: {
+          400: '#fbbf24', // Amber 400 (Brightest)
+          500: '#f59e0b', // Amber 500 (Primary Gold)
+          600: '#d97706', // Amber 600 (Darker Gold)
+          dim: 'rgba(245, 158, 11, 0.1)', // Gold Tint
+        },
+        bronze: {
+          500: '#78350f', // Deep Bronze
+        }
       },
       backgroundImage: {
         "gradient-radial": "radial-gradient(var(--tw-gradient-stops))",
+        "mesh": "radial-gradient(at 0% 0%, hsla(253,16%,7%,1) 0, transparent 50%), radial-gradient(at 50% 0%, hsla(225,39%,30%,1) 0, transparent 50%), radial-gradient(at 100% 0%, hsla(339,49%,30%,1) 0, transparent 50%)",
       }
     }
   },

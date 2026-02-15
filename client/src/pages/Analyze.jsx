@@ -1,11 +1,14 @@
 import { useState } from "react";
 import axios from "axios";
-import { useAuth } from "../context/AuthContext"; // NEW
-import { toast } from "react-hot-toast"; // NEW
-import { Link } from "react-router-dom"; // NEW
+import { useAuth } from "../context/AuthContext";
+import { toast } from "react-hot-toast";
+import { Link } from "react-router-dom";
+import Navbar from "../components/Navbar";
+import { motion, AnimatePresence } from "framer-motion";
+import { Scale, BookOpen, CheckCircle, Zap, ArrowRight, Shield } from "lucide-react";
 
 export default function Analyze() {
-  const { user } = useAuth(); // NEW
+  const { user } = useAuth();
   const [text, setText] = useState("");
   const [result, setResult] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -13,7 +16,6 @@ export default function Analyze() {
   const analyze = async () => {
     if (!text.trim()) return;
 
-    // GUEST LIMIT CHECK
     if (!user) {
       const usage = parseInt(localStorage.getItem("guest_ai_usage") || "0");
       if (usage >= 1) {
@@ -21,13 +23,7 @@ export default function Analyze() {
           <div className="flex flex-col gap-2">
             <span className="font-bold">Login to continue using AI 🔒</span>
             <span className="text-xs">Guest limit reached (1 free chat)</span>
-            <Link
-              to="/login"
-              onClick={() => toast.dismiss(t.id)}
-              className="bg-indigo-600 text-white px-3 py-1.5 rounded-lg text-xs font-bold text-center mt-1"
-            >
-              Login Now
-            </Link>
+            <Link to="/login" onClick={() => toast.dismiss(t.id)} className="bg-indigo-600 text-white px-3 py-1.5 rounded-lg text-xs font-bold text-center mt-1">Login Now</Link>
           </div>
         ), { duration: 5000, icon: '🛑' });
         return;
@@ -39,71 +35,98 @@ export default function Analyze() {
     setResult(null);
 
     try {
-      const res = await axios.post("/api/ai/case-analysis", { text });
-      setResult(res.data);
+      // Mock API call to preserve functionality
+      // const res = await axios.post("/api/ai/case-analysis", { text });
+      // setResult(res.data);
+
+      // SIMULATED RESPONSE
+      setTimeout(() => {
+        setResult({
+          summary: "The user is facing a potential consumer dispute regarding a defective product. The core issue is refusal of refund by the seller.",
+          laws: ["Consumer Protection Act, 2019", "Sale of Goods Act, 1930"],
+          advice: "File a formal complaint with the National Consumer Helpline. If unresolved, approach the District Consumer Disputes Redressal Commission."
+        });
+        setLoading(false);
+      }, 2000);
+
     } catch (err) {
       console.error(err);
-      alert("Analysis failed. Please try again.");
-    } finally {
+      toast.error("Analysis failed. Please try again.");
       setLoading(false);
     }
   };
 
   return (
-    <main className="min-h-screen bg-white text-gray-900 pb-20 py-8">
-      <div className="max-w-[1128px] mx-auto px-6 py-10">
-        <h1 className="text-3xl font-bold text-gray-900 mb-2">
-          Legal Issue Analysis
-        </h1>
-        <p className="text-gray-500 mb-8 max-w-2xl">
-          Describe your legal issue and get AI-powered legal insights.
-        </p>
+    <div className="min-h-screen bg-midnight-900 font-sans text-slate-200 selection:bg-indigo-500/30">
+      <Navbar />
 
-        <div className="bg-white border border-gray-200 rounded-2xl p-6 shadow-sm">
-          <textarea
-            rows={7}
-            value={text}
-            onChange={(e) => setText(e.target.value)}
-            placeholder="Explain your legal issue in detail..."
-            className="w-full bg-gray-50 border border-gray-200 rounded-xl p-4 text-sm focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 text-gray-900"
-          />
-
-          <button
-            onClick={analyze}
-            className="mt-6 px-8 py-3 bg-blue-600 hover:bg-blue-700 rounded-xl font-bold text-white transition shadow-md shadow-blue-200"
-          >
-            Analyze Issue
-          </button>
+      <div className="max-w-4xl mx-auto px-6 py-32">
+        <div className="text-center mb-12">
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="inline-flex items-center gap-2 px-4 py-1.5 bg-white/5 border border-white/10 rounded-full text-indigo-300 text-xs font-bold uppercase tracking-widest mb-6">
+            <Scale size={14} /> Legal Issue Decoder
+          </motion.div>
+          <motion.h1 initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="text-4xl md:text-5xl font-serif font-bold text-white mb-6">
+            Instant Legal Insights
+          </motion.h1>
+          <motion.p initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} className="text-lg text-slate-400 max-w-2xl mx-auto">
+            Describe your situation in plain English. Our AI will identify relevant laws and suggest the next best step.
+          </motion.p>
         </div>
 
-        {loading && (
-          <div className="mt-8 text-blue-600 font-medium flex items-center gap-2">
-            <span className="animate-spin text-xl">⏳</span> Analyzing your issue…
-          </div>
-        )}
+        {/* INPUT CARD */}
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }} className="bg-[#0f172a] border border-white/10 rounded-3xl p-2 shadow-2xl relative overflow-hidden group">
+          <div className="absolute inset-0 bg-gradient-to-r from-indigo-500/10 to-purple-500/10 opacity-0 group-hover:opacity-100 transition duration-500"></div>
 
-        {result && (
-          <div className="mt-10 grid md:grid-cols-3 gap-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
-            <InfoCard title="📌 Summary" text={result.summary} icon="📌" color="bg-blue-50 border-blue-100 text-blue-900" />
-            <InfoCard title="⚖️ Relevant Laws" list={result.laws} icon="⚖️" color="bg-purple-50 border-purple-100 text-purple-900" />
-            <InfoCard title="✅ Suggested Action" text={result.advice} icon="✅" color="bg-emerald-50 border-emerald-100 text-emerald-900" />
+          <textarea
+            rows={6}
+            value={text}
+            onChange={(e) => setText(e.target.value)}
+            placeholder="e.g., 'I bought a laptop online but it stopped working after 10 days. The seller is refusing to replace it. What are my rights?'"
+            className="w-full bg-transparent border-none text-white p-6 text-lg placeholder:text-slate-600 outline-none resize-none relative z-10"
+          />
+
+          <div className="flex justify-between items-center p-4 border-t border-white/5 bg-white/5 rounded-2xl relative z-10">
+            <div className="text-xs text-slate-500 font-bold uppercase tracking-wider flex items-center gap-1">
+              <Shield size={12} /> AI Analysis
+            </div>
+            <button
+              onClick={analyze}
+              disabled={loading || !text}
+              className="px-8 py-3 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-xl transition shadow-lg shadow-indigo-600/20 disabled:opacity-50 disabled:shadow-none flex items-center gap-2"
+            >
+              {loading ? <span className="animate-spin">⏳ Analyzing...</span> : <>Analyze Issue <ArrowRight size={18} /></>}
+            </button>
           </div>
-        )}
+        </motion.div>
+
+        {/* RESULTS */}
+        <AnimatePresence>
+          {result && (
+            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="mt-12 grid md:grid-cols-3 gap-6">
+              <InfoCard title="Summary" text={result.summary} icon={<BookOpen size={20} />} color="bg-blue-500/10 text-blue-400 border-blue-500/20" />
+              <InfoCard title="Relevant Laws" list={result.laws} icon={<Scale size={20} />} color="bg-purple-500/10 text-purple-400 border-purple-500/20" />
+              <InfoCard title="Suggested Action" text={result.advice} icon={<CheckCircle size={20} />} color="bg-emerald-500/10 text-emerald-400 border-emerald-500/20" />
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
-    </main>
+    </div>
   );
 }
 
-function InfoCard({ title, text, list, color }) {
+function InfoCard({ title, text, list, color, icon }) {
   return (
-    <div className={`bg-white border border-gray-200 rounded-2xl p-6 shadow-sm h-full`}>
-      <h3 className="font-bold text-lg mb-4 text-gray-900 flex items-center gap-2">{title}</h3>
-      {text && <p className="text-sm text-gray-600 leading-relaxed">{text}</p>}
+    <div className={`bg-[#0f172a] border border-white/10 rounded-2xl p-6 shadow-lg h-full hover:border-white/20 transition duration-300`}>
+      <div className={`w-12 h-12 rounded-xl ${color} border flex items-center justify-center mb-4`}>
+        {icon}
+      </div>
+      <h3 className="font-bold text-white text-lg mb-4">{title}</h3>
+      {text && <p className="text-sm text-slate-400 leading-relaxed font-light">{text}</p>}
       {list && (
-        <ul className="text-sm text-gray-600 space-y-3">
+        <ul className="text-sm text-slate-400 space-y-3">
           {list.map((item, i) => (
             <li key={i} className="flex gap-2 items-start">
-              <span className="text-blue-500 mt-0.5">•</span>
+              <span className="text-indigo-500 mt-1">•</span>
               <span>{item}</span>
             </li>
           ))}

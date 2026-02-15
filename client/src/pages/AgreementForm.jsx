@@ -5,6 +5,7 @@ import Navbar from "../components/Navbar";
 import { useAuth } from "../context/AuthContext";
 import PaywallModal from "../components/PaywallModal";
 import { motion, AnimatePresence } from "framer-motion";
+import { FileText, Lock, Briefcase, Scroll, ExternalLink, Sparkles, Printer, Edit2, ArrowLeft } from "lucide-react";
 
 export default function AgreementForm() {
     const { user } = useAuth();
@@ -40,49 +41,60 @@ export default function AgreementForm() {
     };
 
     return (
-        <div className="min-h-screen bg-[#FDFDFC] text-slate-900 font-sans selection:bg-blue-100 pb-20">
+        <div className="min-h-screen bg-midnight-950 text-slate-200 font-sans selection:bg-indigo-500/30 pb-20 overflow-hidden relative">
             <Navbar />
             <PaywallModal isOpen={showPaywall} onClose={() => setShowPaywall(false)} />
 
-            {/* PROGRESS HEADER */}
-            <div className="fixed top-20 left-0 w-full z-40 bg-white/80 backdrop-blur-md border-b border-slate-200 py-4">
-                <div className="max-w-4xl mx-auto px-6 flex items-center justify-between">
-                    <h1 className="font-bold text-slate-900">AI Drafter <span className="text-slate-400 font-normal">/ {docType}</span></h1>
-                    <div className="flex gap-2">
+            {/* PROGRESS READER */}
+            <div className="fixed top-24 left-0 w-full z-40 px-6 pointer-events-none">
+                <div className="max-w-7xl mx-auto flex items-center justify-between pointer-events-auto">
+                    <button onClick={step > 1 ? () => setStep(step - 1) : null} className={`flex items-center gap-2 text-sm font-bold uppercase tracking-widest transition ${step > 1 ? 'text-slate-400 hover:text-white cursor-pointer' : 'opacity-0'}`}>
+                        <ArrowLeft size={16} /> Back
+                    </button>
+                    <div className="flex gap-2 bg-black/50 backdrop-blur-md p-2 rounded-full border border-white/10">
                         {[1, 2, 3].map(s => (
-                            <div key={s} className={`h-1.5 rounded-full transition-all duration-500 ${step >= s ? 'w-12 bg-blue-600' : 'w-4 bg-slate-200'}`}></div>
+                            <div key={s} className={`h-2 rounded-full transition-all duration-500 ${step >= s ? 'w-12 bg-indigo-500 shadow-[0_0_10px_#6366f1]' : 'w-4 bg-white/10'}`}></div>
                         ))}
                     </div>
                 </div>
             </div>
 
-            <div className="pt-40 max-w-4xl mx-auto px-6 relative z-10">
+            <div className="pt-40 max-w-6xl mx-auto px-6 relative z-10 min-h-[600px] flex flex-col justify-center">
                 <AnimatePresence mode="wait">
 
                     {/* STEP 1: TYPE SELECTION */}
                     {step === 1 && (
-                        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }} key="step1">
-                            <h2 className="text-4xl font-black text-center mb-4">What are we drafting today?</h2>
-                            <p className="text-slate-500 text-center mb-12 text-lg">Select a template to get started with your legal document.</p>
+                        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, scale: 0.95 }} key="step1" className="text-center">
+                            <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} className="w-20 h-20 bg-gradient-to-br from-indigo-600 to-purple-600 rounded-3xl mx-auto mb-8 flex items-center justify-center text-4xl shadow-xl shadow-indigo-500/20">
+                                <Scroll className="text-white" />
+                            </motion.div>
+                            <h2 className="text-5xl md:text-6xl font-black text-white mb-6 tracking-tight">AI Drafting <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-purple-400">Studio</span></h2>
+                            <p className="text-slate-400 mb-16 text-xl max-w-2xl mx-auto">Select a legal framework to begin automating your documentation.</p>
 
-                            <div className="grid md:grid-cols-3 gap-6">
+                            <div className="grid md:grid-cols-3 gap-6 max-w-5xl mx-auto">
                                 {[
-                                    { name: "Rent Agreement", icon: "🏠", desc: "Lease for residential or commercial property." },
-                                    { name: "NDA", icon: "🔒", desc: "Non-Disclosure Agreement for confidentiality." },
-                                    { name: "Employment Contract", icon: "💼", desc: "Job offer terms and conditions." },
-                                    { name: "Sale Deed", icon: "📜", desc: "Asset transfer and ownership proof." },
-                                    { name: "Freelance Agreement", icon: "💻", desc: "Client-Contractor work scope." },
-                                    { name: "Custom", icon: "✨", desc: "Tailor-made for specific needs." },
+                                    { name: "Rent Agreement", icon: <FileText size={28} />, desc: "Residential or commercial lease terms." },
+                                    { name: "NDA", icon: <Lock size={28} />, desc: "Confidentiality & Non-Disclosure." },
+                                    { name: "Employment Contract", icon: <Briefcase size={28} />, desc: "Offer letters and role definitions." },
+                                    { name: "Sale Deed", icon: <Scroll size={28} />, desc: "Property & asset transfer proof." },
+                                    { name: "Freelance Agreement", icon: <ExternalLink size={28} />, desc: "Client-Contractor scope of work." },
+                                    { name: "Custom", icon: <Sparkles size={28} />, desc: "Tailor-made for specific needs." },
                                 ].map(t => (
                                     <button
                                         key={t.name}
                                         onClick={() => { setDocType(t.name); setStep(2); }}
-                                        className={`p-8 rounded-3xl border-2 text-left hover:scale-[1.02] transition shadow-sm group
-                                        ${docType === t.name ? 'border-blue-600 bg-blue-50 ring-4 ring-blue-100' : 'border-slate-100 bg-white hover:border-blue-300'}`}
+                                        className={`p-8 rounded-[2rem] border transition-all text-left flex flex-col gap-4 group relative overflow-hidden
+                                        ${docType === t.name
+                                                ? 'bg-indigo-600 border-indigo-500 shadow-2xl scale-[1.02]'
+                                                : 'bg-white/5 border-white/5 hover:bg-white/10 hover:border-white/10 hover:-translate-y-1'}`}
                                     >
-                                        <span className="text-4xl mb-4 block group-hover:scale-110 transition origin-left">{t.icon}</span>
-                                        <h3 className="font-bold text-xl text-slate-900 mb-1">{t.name}</h3>
-                                        <p className="text-sm text-slate-500">{t.desc}</p>
+                                        <div className={`w-14 h-14 rounded-2xl flex items-center justify-center transition-colors ${docType === t.name ? 'bg-white/20 text-white' : 'bg-white/5 text-indigo-400 group-hover:bg-indigo-500 group-hover:text-white'}`}>
+                                            {t.icon}
+                                        </div>
+                                        <div>
+                                            <h3 className="font-bold text-xl text-white mb-1 group-hover:text-indigo-200 transition">{t.name}</h3>
+                                            <p className="text-sm text-slate-500 group-hover:text-slate-300 transition">{t.desc}</p>
+                                        </div>
                                     </button>
                                 ))}
                             </div>
@@ -92,30 +104,40 @@ export default function AgreementForm() {
                     {/* STEP 2: DETAILS FORM */}
                     {step === 2 && (
                         <motion.div initial={{ opacity: 0, x: 50 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -50 }} key="step2">
-                            <h2 className="text-3xl font-bold mb-8">Enter Details for {docType}</h2>
-                            <div className="bg-white p-8 rounded-3xl border border-slate-200 shadow-xl shadow-slate-200/50 space-y-8">
-                                <div className="grid md:grid-cols-2 gap-8">
-                                    <Input label="First Party (e.g. Landlord)" placeholder="Full Legal Name" value={formData.partyA} onChange={e => setFormData({ ...formData, partyA: e.target.value })} />
-                                    <Input label="Second Party (e.g. Tenant)" placeholder="Full Legal Name" value={formData.partyB} onChange={e => setFormData({ ...formData, partyB: e.target.value })} />
-                                    <Input label="Terms Value (Amount)" placeholder="₹ 0.00" value={formData.amount} onChange={e => setFormData({ ...formData, amount: e.target.value })} />
-                                    <Input label="Duration / Date" placeholder="e.g. 11 Months" value={formData.duration} onChange={e => setFormData({ ...formData, duration: e.target.value })} />
-                                </div>
-                                <Input label="Property / Location Address" placeholder="Complete Address" value={formData.location} onChange={e => setFormData({ ...formData, location: e.target.value })} />
-                                <div>
-                                    <label className="block text-sm font-bold text-slate-700 mb-2 ml-1">Extra Clauses / Specific Terms</label>
-                                    <textarea
-                                        className="w-full bg-slate-50 border border-slate-200 rounded-xl p-4 outline-none focus:ring-2 focus:ring-blue-500/20 transition resize-none h-32"
-                                        placeholder="Any specific conditions..."
-                                        value={formData.extraTerms}
-                                        onChange={e => setFormData({ ...formData, extraTerms: e.target.value })}
-                                    />
+                            <div className="max-w-3xl mx-auto">
+                                <div className="text-center mb-10">
+                                    <h2 className="text-3xl font-bold text-white mb-2">Configure {docType}</h2>
+                                    <p className="text-slate-400">Fill in the key parameters for the AI engine.</p>
                                 </div>
 
-                                <div className="flex justify-between items-center pt-4 border-t border-slate-100">
-                                    <button onClick={() => setStep(1)} className="text-slate-500 font-bold hover:text-slate-800 transition">Back to Templates</button>
-                                    <button onClick={handleDraft} disabled={loading} className="px-8 py-4 bg-slate-900 text-white font-bold rounded-xl hover:bg-slate-800 hover:scale-[1.02] transition shadow-lg disabled:opacity-50 flex items-center gap-2">
-                                        {loading ? <><span className="animate-spin">⏳</span> Generating...</> : <>✨ Generate Contract</>}
-                                    </button>
+                                <div className="bg-white/5 backdrop-blur-xl p-8 md:p-12 rounded-[2.5rem] border border-white/10 shadow-2xl space-y-8">
+                                    <div className="grid md:grid-cols-2 gap-8">
+                                        <Input label="First Party" placeholder="Full Legal Name (e.g. Landlord)" value={formData.partyA} onChange={e => setFormData({ ...formData, partyA: e.target.value })} />
+                                        <Input label="Second Party" placeholder="Full Legal Name (e.g. Tenant)" value={formData.partyB} onChange={e => setFormData({ ...formData, partyB: e.target.value })} />
+                                        <Input label="Term Duration" placeholder="e.g. 11 Months" value={formData.duration} onChange={e => setFormData({ ...formData, duration: e.target.value })} />
+                                        <Input label="Consideration Value" placeholder="₹ 0.00 (Rent/Salary/Fee)" value={formData.amount} onChange={e => setFormData({ ...formData, amount: e.target.value })} />
+                                    </div>
+                                    <Input label="Jurisdiction / Address" placeholder="Complete Location Address" value={formData.location} onChange={e => setFormData({ ...formData, location: e.target.value })} />
+
+                                    <div>
+                                        <label className="block text-xs font-bold text-slate-400 mb-2 ml-1 uppercase tracking-wider">Special Clauses</label>
+                                        <textarea
+                                            className="w-full bg-black/40 border border-white/10 rounded-2xl p-5 outline-none focus:border-indigo-500 transition resize-none h-32 text-white placeholder-slate-600 font-medium"
+                                            placeholder="Add specific terms, conditions, or bespoke clauses here..."
+                                            value={formData.extraTerms}
+                                            onChange={e => setFormData({ ...formData, extraTerms: e.target.value })}
+                                        />
+                                    </div>
+
+                                    <div className="pt-6">
+                                        <button
+                                            onClick={handleDraft}
+                                            disabled={loading}
+                                            className="w-full py-5 bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-bold rounded-2xl hover:scale-[1.01] transition shadow-[0_0_30px_rgba(99,102,241,0.3)] disabled:opacity-50 flex items-center justify-center gap-3 text-lg"
+                                        >
+                                            {loading ? <><span className="animate-spin text-xl">🌀</span> Synthesizing Document...</> : <><Sparkles size={20} /> Generate Agreement</>}
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
                         </motion.div>
@@ -123,28 +145,45 @@ export default function AgreementForm() {
 
                     {/* STEP 3: PREVIEW */}
                     {step === 3 && (
-                        <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} key="step3">
-                            <div className="flex justify-between items-center mb-8">
-                                <h2 className="text-3xl font-bold flex items-center gap-2"><span className="text-green-500">✓</span> Your Draft is Ready</h2>
-                                <div className="flex gap-4">
-                                    <button onClick={() => setStep(2)} className="text-slate-500 font-bold px-4 hover:bg-slate-100 py-2 rounded-lg transition">Edit Details</button>
-                                    <button onClick={() => window.print()} className="bg-blue-600 text-white px-6 py-2 rounded-lg font-bold hover:bg-blue-700 shadow-lg shadow-blue-500/30 transition">Download PDF</button>
+                        <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} key="step3" className="max-w-4xl mx-auto">
+                            <div className="flex justify-between items-center mb-8 bg-black/40 p-4 rounded-2xl border border-white/10 backdrop-blur-md sticky top-24 z-30">
+                                <div className="flex items-center gap-3">
+                                    <div className="w-10 h-10 bg-emerald-500/20 text-emerald-400 rounded-xl flex items-center justify-center border border-emerald-500/30">✓</div>
+                                    <div>
+                                        <h2 className="font-bold text-white leading-tight">Draft Ready</h2>
+                                        <p className="text-xs text-slate-400">AI-Generated Legal Draft</p>
+                                    </div>
+                                </div>
+                                <div className="flex gap-3">
+                                    <button onClick={() => setStep(2)} className="text-slate-400 hover:text-white px-4 py-2 rounded-lg transition font-bold text-sm bg-white/5 hover:bg-white/10 flex items-center gap-2">
+                                        <Edit2 size={14} /> Edit
+                                    </button>
+                                    <button onClick={() => window.print()} className="bg-white text-black px-6 py-2.5 rounded-xl font-bold hover:bg-slate-200 shadow-lg transition flex items-center gap-2 text-sm">
+                                        <Printer size={16} /> Print / PDF
+                                    </button>
                                 </div>
                             </div>
 
-                            <div className="bg-white p-12 shadow-2xl shadow-slate-300/50 min-h-[800px] border border-slate-200 mx-auto max-w-3xl print:shadow-none print:border-0">
-                                <article className="prose prose-slate max-w-none prose-p:leading-loose prose-headings:font-serif prose-headings:font-bold">
+                            <div className="bg-white text-slate-900 p-16 shadow-2xl rounded-[3px] min-h-[800px] mx-auto print:shadow-none print:border-0 print:m-0 print:w-full font-serif leading-relaxed">
+                                <div className="mb-12 text-center border-b-2 border-black pb-8">
+                                    <h1 className="text-4xl font-bold uppercase tracking-widest mb-2">{docType.toUpperCase()}</h1>
+                                    <p className="italic text-slate-600">Generated via NyayNow Legal AI</p>
+                                </div>
+
+                                <article className="prose prose-slate max-w-none prose-p:text-justify prose-headings:font-bold prose-lg">
                                     <ReactMarkdown>{contract}</ReactMarkdown>
                                 </article>
 
-                                <div className="mt-20 flex justify-between pt-10 border-t-2 border-slate-900/10 print:flex">
-                                    <div className="text-center w-64 border-t border-slate-400 pt-4">
-                                        <p className="font-bold text-slate-900">{formData.partyA || "Party A"}</p>
-                                        <p className="text-xs text-slate-500 uppercase tracking-widest mt-1">Signature</p>
+                                <div className="mt-32 flex justify-between pt-10 border-t border-slate-300 break-inside-avoid">
+                                    <div className="text-center w-64">
+                                        <div className="h-16 border-b border-black mb-2"></div>
+                                        <p className="font-bold text-lg">{formData.partyA || "Party A"}</p>
+                                        <p className="text-xs uppercase tracking-widest text-slate-500">(Signature)</p>
                                     </div>
-                                    <div className="text-center w-64 border-t border-slate-400 pt-4">
-                                        <p className="font-bold text-slate-900">{formData.partyB || "Party B"}</p>
-                                        <p className="text-xs text-slate-500 uppercase tracking-widest mt-1">Signature</p>
+                                    <div className="text-center w-64">
+                                        <div className="h-16 border-b border-black mb-2"></div>
+                                        <p className="font-bold text-lg">{formData.partyB || "Party B"}</p>
+                                        <p className="text-xs uppercase tracking-widest text-slate-500">(Signature)</p>
                                     </div>
                                 </div>
                             </div>
@@ -160,9 +199,9 @@ export default function AgreementForm() {
 function Input({ label, value, onChange, placeholder }) {
     return (
         <div>
-            <label className="block text-sm font-bold text-slate-700 mb-2 ml-1">{label}</label>
+            <label className="block text-xs font-bold text-slate-400 mb-2 ml-1 uppercase tracking-wider">{label}</label>
             <input
-                className="w-full bg-slate-50 border border-slate-200 rounded-xl p-4 outline-none focus:ring-2 focus:ring-blue-500/20 transition font-medium"
+                className="w-full bg-black/40 border border-white/10 rounded-xl p-4 outline-none focus:border-indigo-500 transition font-medium text-white placeholder-slate-600"
                 placeholder={placeholder}
                 value={value}
                 onChange={onChange}

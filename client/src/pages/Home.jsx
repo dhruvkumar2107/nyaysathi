@@ -1,127 +1,88 @@
 import { Link } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { motion } from "framer-motion";
+import Footer from "../components/Footer";
 
 export default function Home() {
   const { user } = useAuth();
 
-  const container = {
-    hidden: { opacity: 0 },
-    show: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.1
-      }
-    }
-  };
-
-  const item = {
-    hidden: { opacity: 0, y: 20 },
-    show: { opacity: 1, y: 0 }
-  };
-
   return (
-    <div className="min-h-screen bg-slate-50 font-sans text-slate-900 selection:bg-indigo-100 selection:text-indigo-900">
+    <div className="min-h-screen bg-midnight-900 font-sans text-slate-200 selection:bg-indigo-500/30">
 
-      {/* --- HERO SECTION --- */}
-      <section className="relative pt-32 pb-20 lg:pt-48 lg:pb-32 overflow-hidden">
+      {/* --- HERO SECTION (PREMIUM DARK) --- */}
+      <section className="relative pt-32 pb-32 lg:pt-48 lg:pb-40 overflow-hidden">
         {/* Abstract Backgrounds */}
-        <motion.div
-          animate={{ scale: [1, 1.1, 1], opacity: [0.5, 0.8, 0.5] }}
-          transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
-          className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-[800px] bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-indigo-100/50 via-white to-transparent pointer-events-none"
-        />
-        <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-slate-200 to-transparent" />
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[1000px] h-[600px] bg-indigo-600/20 rounded-full blur-[120px] pointer-events-none opacity-50"></div>
+        <div className="absolute bottom-0 right-0 w-[800px] h-[600px] bg-purple-600/10 rounded-full blur-[120px] pointer-events-none opacity-30"></div>
+        <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20 contrast-150 brightness-100 mix-blend-overlay"></div>
 
         <div className="max-w-[1200px] mx-auto px-6 relative z-10 text-center">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
-            className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white border border-slate-200 shadow-sm mb-8"
+            className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/5 border border-white/10 shadow-[0_0_15px_rgba(255,255,255,0.05)] mb-8"
           >
-            <span className="flex h-2 w-2 rounded-full bg-indigo-500 animate-pulse"></span>
-            <span className="text-xs font-semibold text-slate-600 tracking-wide uppercase">AI-Powered Legal Intelligence</span>
+            <span className="flex h-2 w-2 rounded-full bg-gold-500 animate-pulse shadow-[0_0_10px_rgba(250,204,21,0.5)]"></span>
+            <span className="text-xs font-bold text-gold-200 tracking-[0.1em] uppercase">The Future of Legal Practice</span>
           </motion.div>
 
           <motion.h1
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.1 }}
-            className="text-5xl md:text-7xl font-extrabold tracking-tight text-slate-900 mb-6 leading-[1.1]"
+            className="text-6xl md:text-8xl font-serif font-bold tracking-tight text-white mb-8 leading-[1.1]"
           >
-            Your Personal
-            <span className="block text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-blue-500">Legal Supermind.</span>
+            Your Personal <br />
+            <span className="text-transparent bg-clip-text bg-gradient-to-b from-indigo-300 to-indigo-600">Legal Supermind.</span>
           </motion.h1>
 
           <motion.p
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.2 }}
-            className="text-lg md:text-xl text-slate-500 max-w-2xl mx-auto mb-10 leading-relaxed"
+            className="text-lg md:text-xl text-slate-400 max-w-2xl mx-auto mb-12 leading-relaxed font-light"
           >
-            Navigate the complexities of Indian Law with confidence. Draft notices, analyze contracts, and consult top lawyers—all powered by advanced AI.
+            Navigate the complexities of Indian Law with elite precision. <br className="hidden md:block" />
+            Designed for the top 1% of legal professionals and visionary firms.
           </motion.p>
 
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.3 }}
-            className="flex flex-col sm:flex-row items-center justify-center gap-4"
+            className="flex flex-col sm:flex-row items-center justify-center gap-6"
           >
             {!user ? (
               <>
                 <Link
                   to="/register"
-                  className="w-full sm:w-auto px-8 py-4 rounded-xl bg-slate-900 text-white font-bold text-base hover:bg-slate-800 transition shadow-xl shadow-slate-900/10 hover:shadow-slate-900/20 active:scale-95 duration-200"
+                  className="w-full sm:w-auto px-10 py-5 rounded-xl bg-white text-midnight-900 font-bold text-sm hover:bg-slate-200 transition shadow-[0_0_40px_rgba(255,255,255,0.2)] active:scale-95 duration-200 uppercase tracking-wider"
                 >
-                  Get Started Free
+                  Start Free Trial
                 </Link>
                 <Link
                   to="/login"
-                  className="w-full sm:w-auto px-8 py-4 rounded-xl bg-white text-slate-700 border border-slate-200 font-bold text-base hover:bg-slate-50 transition active:scale-95 duration-200"
+                  className="w-full sm:w-auto px-10 py-5 rounded-xl bg-white/5 text-white border border-white/10 font-bold text-sm hover:bg-white/10 transition active:scale-95 duration-200 uppercase tracking-wider backdrop-blur-sm"
                 >
-                  Sign In
+                  Member Login
                 </Link>
               </>
             ) : (
               <Link
                 to={user.role === "lawyer" ? "/lawyer/dashboard" : "/client/dashboard"}
-                className="w-full sm:w-auto px-8 py-4 rounded-xl bg-indigo-600 text-white font-bold text-base hover:bg-indigo-700 transition shadow-xl shadow-indigo-600/20 active:scale-95 duration-200"
+                className="w-full sm:w-auto px-10 py-5 rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-bold text-sm hover:opacity-90 transition shadow-[0_0_40px_rgba(99,102,241,0.4)] active:scale-95 duration-200 uppercase tracking-wider flex items-center gap-2 justify-center"
               >
-                Go to Dashboard
+                Enter Command Center
               </Link>
             )}
           </motion.div>
         </div>
       </section>
 
-      {/* --- LEGAL SUPERMIND SHOWCASE (UNICORN STYLE) --- */}
-      <section className="py-24 bg-[#0B1120] relative overflow-hidden">
-        {/* Animated Background Orbs */}
-        <div className="absolute top-0 left-1/4 w-96 h-96 bg-indigo-600/20 rounded-full blur-[128px] animate-pulse"></div>
-        <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-purple-600/20 rounded-full blur-[128px] animate-pulse delay-1000"></div>
-
-        {/* Grid Pattern Overlay */}
-        <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20 contrast-150 brightness-100"></div>
-
+      {/* --- LEGAL SUPERMIND SHOWCASE --- */}
+      <section className="py-24 bg-midnight-950 relative overflow-hidden border-t border-white/5">
         <div className="max-w-[1400px] mx-auto px-6 relative z-10">
-          <div className="text-center mb-16 space-y-4">
-            <motion.span
-              initial={{ opacity: 0, y: 10 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              className="px-5 py-2 rounded-full border border-indigo-500/30 bg-indigo-500/10 text-indigo-300 text-xs font-bold uppercase tracking-[0.2em] shadow-[0_0_15px_rgba(99,102,241,0.3)]"
-            >
-              The Pro Suite
-            </motion.span>
-            <h2 className="text-5xl md:text-8xl font-black text-white mt-6 mb-6 tracking-tight leading-tight">
-              The Legal <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-400 animate-gradient-x">Singularity.</span>
-            </h2>
-            <p className="text-slate-400 max-w-2xl mx-auto text-xl md:text-2xl font-light leading-relaxed">
-              Unlock the future of legal practice with our flagship AI modules. <br />Designed for the top 1%.
-            </p>
-          </div>
-
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 perspective-1000">
 
             {/* CARD 1: AI ASSISTANT (FIRST) */}
@@ -169,7 +130,7 @@ export default function Home() {
 
             {/* CARD 5: MARKETPLACE */}
             <UnicornCard
-              title="Elite Legal Network"
+              title="Elite Network"
               desc="Connect with the top 1% of legal minds in the country. Validated lawyers, arbitrators, and experts."
               icon="💎"
               color="from-amber-400 via-orange-500 to-red-500"
@@ -212,6 +173,7 @@ export default function Home() {
         </div>
       </section>
 
+      <Footer />
     </div>
   );
 }
@@ -227,10 +189,10 @@ function UnicornCard({ title, desc, icon, color, href, badge, delay }) {
       onClick={() => window.location.href = href}
     >
       {/* GLOW EFFECT */}
-      <div className={`absolute -inset-0.5 bg-gradient-to-r ${color} rounded-2xl blur opacity-30 group-hover:opacity-100 transition duration-500 group-hover:blur-md`}></div>
+      <div className={`absolute -inset-0.5 bg-gradient-to-r ${color} rounded-2xl blur opacity-20 group-hover:opacity-80 transition duration-500 group-hover:blur-md`}></div>
 
       {/* CARD CONTENT */}
-      <div className="relative h-full bg-[#0a0a1a] border border-white/10 rounded-2xl p-8 flex flex-col items-start overflow-hidden hover:border-white/20 transition-all shadow-2xl">
+      <div className="relative h-full bg-[#0B1120] border border-white/10 rounded-2xl p-8 flex flex-col items-start overflow-hidden hover:border-white/20 transition-all shadow-2xl">
 
         {badge && (
           <span className="absolute top-4 right-4 px-3 py-1 bg-gradient-to-r from-indigo-500 to-purple-600 text-white text-[10px] font-bold uppercase rounded-full shadow-[0_0_10px_rgba(99,102,241,0.5)] tracking-wider">
@@ -238,7 +200,7 @@ function UnicornCard({ title, desc, icon, color, href, badge, delay }) {
           </span>
         )}
 
-        <div className={`w-16 h-16 rounded-2xl bg-gradient-to-br ${color} flex items-center justify-center text-3xl shadow-lg mb-8 group-hover:scale-110 group-hover:rotate-6 transition-all duration-300`}>
+        <div className={`w-16 h-16 rounded-2xl bg-gradient-to-br ${color} flex items-center justify-center text-3xl shadow-lg mb-8 group-hover:scale-110 group-hover:rotate-6 transition-all duration-300 relative z-10`}>
           {icon}
         </div>
 
@@ -246,12 +208,12 @@ function UnicornCard({ title, desc, icon, color, href, badge, delay }) {
           {title}
         </h3>
 
-        <p className="text-slate-400 text-sm leading-relaxed mb-8 flex-grow border-l-2 border-white/5 pl-4 group-hover:border-white/20 transition-colors">
+        <p className="text-slate-400 text-sm leading-relaxed mb-8 flex-grow border-l-2 border-white/5 pl-4 group-hover:border-white/20 transition-colors font-light">
           {desc}
         </p>
 
-        <div className="mt-auto w-full pt-4 border-t border-white/5 flex items-center justify-between text-sm font-bold text-white opacity-80 group-hover:opacity-100 transition-opacity">
-          <span>Try Now</span>
+        <div className="mt-auto w-full pt-4 border-t border-white/5 flex items-center justify-between text-sm font-bold text-white opacity-80 group-hover:opacity-100 transition-opacity uppercase tracking-wider text-xs">
+          <span>Explore Module</span>
           <span className="group-hover:translate-x-2 transition-transform bg-white/10 rounded-full w-8 h-8 flex items-center justify-center">→</span>
         </div>
       </div>

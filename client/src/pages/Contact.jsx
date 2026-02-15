@@ -1,118 +1,145 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { toast } from 'react-hot-toast';
+import { Mail, MapPin, Clock, Send, ArrowRight } from 'lucide-react';
+import Footer from '../components/Footer';
 
 export default function Contact() {
     const [formData, setFormData] = useState({ name: '', email: '', message: '' });
+    const [sending, setSending] = useState(false);
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        // Simulate form submission
-        toast.success("Message sent! We'll get back to you shortly.");
-        setFormData({ name: '', email: '', message: '' });
+        setSending(true);
+        setTimeout(() => {
+            toast.success("Message transmitted securely.");
+            setFormData({ name: '', email: '', message: '' });
+            setSending(false);
+        }, 1500);
     };
 
     return (
-        <div className="min-h-screen bg-slate-50 pt-24 pb-12 px-6">
-            <div className="max-w-4xl mx-auto">
+        <div className="min-h-screen bg-midnight-900 font-sans text-slate-200 selection:bg-indigo-500/30">
+
+            <div className="max-w-7xl mx-auto px-6 pt-32 pb-20 grid lg:grid-cols-2 gap-16 items-center">
+
+                {/* LEFT: INFO */}
                 <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    className="text-center mb-16"
+                    initial={{ opacity: 0, x: -30 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ duration: 0.6 }}
                 >
-                    <h1 className="text-4xl md:text-5xl font-black text-slate-900 mb-6">
-                        Get in <span className="text-indigo-600">Touch.</span>
+                    <span className="text-gold-400 font-bold tracking-[0.2em] text-xs uppercase mb-4 block">Concierge Support</span>
+                    <h1 className="text-5xl md:text-6xl font-serif font-bold text-white mb-8 leading-tight">
+                        We are here to <br />
+                        <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-purple-400">Serve Justice.</span>
                     </h1>
-                    <p className="text-xl text-slate-600 leading-relaxed max-w-2xl mx-auto">
-                        Have questions about our AI tools? Need help with your account? We are here to listen.
+                    <p className="text-lg text-slate-400 mb-12 max-w-lg leading-relaxed font-light">
+                        Whether you need enterprise API access, have questions about our AI models, or require legal assistance, our team is ready to deploy.
                     </p>
+
+                    <div className="space-y-8">
+                        <ContactItem
+                            icon={<Mail size={24} />}
+                            title="Direct Line"
+                            desc="nyaynow.in@gmail.com"
+                            action="Email Us"
+                        />
+                        <ContactItem
+                            icon={<MapPin size={24} />}
+                            title="Headquarters"
+                            desc="Cyber City, DLF Phase 2, Gurugram, India 122002"
+                            action="View Map"
+                        />
+                        <ContactItem
+                            icon={<Clock size={24} />}
+                            title="Operating Hours"
+                            desc="Mon - Fri: 09:00 - 18:00 IST"
+                            action="Support Status: Online"
+                        />
+                    </div>
                 </motion.div>
 
-                <div className="grid md:grid-cols-2 gap-12 items-start">
+                {/* RIGHT: FORM */}
+                <motion.div
+                    initial={{ opacity: 0, x: 30 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ duration: 0.6, delay: 0.2 }}
+                    className="relative"
+                >
+                    <div className="absolute inset-0 bg-gradient-to-r from-indigo-500 to-purple-500 rounded-3xl blur-2xl opacity-10"></div>
+                    <form onSubmit={handleSubmit} className="relative bg-white/5 backdrop-blur-xl border border-white/10 p-8 md:p-12 rounded-3xl shadow-2xl">
+                        <h3 className="text-2xl font-bold text-white mb-8 font-serif">Secure Inquiry Form</h3>
 
-                    {/* Contact Info */}
-                    <div className="bg-slate-900 text-white p-8 rounded-2xl shadow-xl">
-                        <h3 className="text-2xl font-bold mb-6">Contact Information</h3>
                         <div className="space-y-6">
-                            <div className="flex items-start gap-4">
-                                <span className="text-2xl">📧</span>
-                                <div>
-                                    <p className="text-indigo-300 text-sm font-bold uppercase tracking-wider mb-1">Email Us</p>
-                                    <a href="mailto:nyaynow.in@gmail.com" className="text-lg font-medium hover:text-white transition-colors">nyaynow.in@gmail.com</a>
-                                </div>
+                            <div>
+                                <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Identify Yourself</label>
+                                <input
+                                    type="text"
+                                    required
+                                    value={formData.name}
+                                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                                    className="w-full bg-black/20 border border-white/10 rounded-xl px-4 py-4 text-white outline-none focus:border-indigo-500 transition placeholder:text-slate-600"
+                                    placeholder="Full Name"
+                                />
                             </div>
-                            <div className="flex items-start gap-4">
-                                <span className="text-2xl">🏢</span>
-                                <div>
-                                    <p className="text-indigo-300 text-sm font-bold uppercase tracking-wider mb-1">Headquarters</p>
-                                    <p className="text-slate-300 leading-relaxed">
-                                        NyayNow Labs,<br />
-                                        Cyber City, DLF Phase 2,<br />
-                                        Gurugram, India 122002
-                                    </p>
-                                </div>
+                            <div>
+                                <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Communication Channel</label>
+                                <input
+                                    type="email"
+                                    required
+                                    value={formData.email}
+                                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                                    className="w-full bg-black/20 border border-white/10 rounded-xl px-4 py-4 text-white outline-none focus:border-indigo-500 transition placeholder:text-slate-600"
+                                    placeholder="name@company.com"
+                                />
                             </div>
-                            <div className="flex items-start gap-4">
-                                <span className="text-2xl">🕒</span>
-                                <div>
-                                    <p className="text-indigo-300 text-sm font-bold uppercase tracking-wider mb-1">Support Hours</p>
-                                    <p className="text-slate-300">Mon - Fri: 9:00 AM - 6:00 PM IST</p>
-                                </div>
+                            <div>
+                                <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Message Payload</label>
+                                <textarea
+                                    required
+                                    rows="4"
+                                    value={formData.message}
+                                    onChange={(e) => setFormData({ ...formData, message: e.target.value })}
+                                    className="w-full bg-black/20 border border-white/10 rounded-xl px-4 py-4 text-white outline-none focus:border-indigo-500 transition placeholder:text-slate-600 resize-none"
+                                    placeholder="How can we assist you?"
+                                ></textarea>
                             </div>
                         </div>
 
-                        <div className="mt-12 pt-8 border-t border-slate-700">
-                            <p className="text-slate-400 text-sm">Follow us on social media for updates.</p>
-                            <div className="flex gap-4 mt-4 text-2xl">
-                                <a href="#" className="hover:text-indigo-400 transition">𝕏</a>
-                                <a href="#" className="hover:text-indigo-400 transition">In</a>
-                                <a href="#" className="hover:text-indigo-400 transition">Ig</a>
-                            </div>
-                        </div>
-                    </div>
-
-                    {/* Contact Form */}
-                    <form onSubmit={handleSubmit} className="bg-white p-8 rounded-2xl shadow-lg border border-slate-100">
-                        <div className="mb-6">
-                            <label className="block text-sm font-bold text-slate-700 mb-2">Name</label>
-                            <input
-                                type="text"
-                                required
-                                className="w-full px-4 py-3 rounded-lg border border-slate-200 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 outline-none transition"
-                                placeholder="Your full name"
-                                value={formData.name}
-                                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                            />
-                        </div>
-                        <div className="mb-6">
-                            <label className="block text-sm font-bold text-slate-700 mb-2">Email Address</label>
-                            <input
-                                type="email"
-                                required
-                                className="w-full px-4 py-3 rounded-lg border border-slate-200 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 outline-none transition"
-                                placeholder="you@example.com"
-                                value={formData.email}
-                                onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                            />
-                        </div>
-                        <div className="mb-6">
-                            <label className="block text-sm font-bold text-slate-700 mb-2">Message</label>
-                            <textarea
-                                required
-                                rows="4"
-                                className="w-full px-4 py-3 rounded-lg border border-slate-200 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 outline-none transition resize-none"
-                                placeholder="How can we help you?"
-                                value={formData.message}
-                                onChange={(e) => setFormData({ ...formData, message: e.target.value })}
-                            ></textarea>
-                        </div>
-                        <button type="submit" className="w-full py-4 bg-indigo-600 text-white font-bold rounded-xl hover:bg-indigo-700 transition shadow-lg shadow-indigo-600/20 active:scale-95">
-                            Send Message
+                        <button
+                            type="submit"
+                            disabled={sending}
+                            className="w-full mt-8 py-4 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-xl shadow-lg shadow-indigo-600/20 active:scale-95 transition-all flex items-center justify-center gap-2"
+                        >
+                            {sending ? (
+                                <>Processing <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div></>
+                            ) : (
+                                <>Transmit Message <Send size={18} /></>
+                            )}
                         </button>
                     </form>
+                </motion.div>
 
+            </div>
+            <Footer />
+        </div>
+    );
+}
+
+function ContactItem({ icon, title, desc, action }) {
+    return (
+        <div className="flex gap-4 group cursor-pointer">
+            <div className="w-12 h-12 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-indigo-400 group-hover:bg-indigo-500 group-hover:text-white transition duration-300 shadow-lg">
+                {icon}
+            </div>
+            <div>
+                <h4 className="text-white font-bold text-lg mb-1">{title}</h4>
+                <p className="text-slate-400 text-sm mb-2">{desc}</p>
+                <div className="text-xs font-bold text-indigo-400 uppercase tracking-wider flex items-center gap-1 group-hover:text-indigo-300 transition">
+                    {action} <ArrowRight size={12} className="group-hover:translate-x-1 transition" />
                 </div>
             </div>
         </div>
-    );
+    )
 }

@@ -5,6 +5,7 @@ import { io } from "socket.io-client";
 import { useSearchParams } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import { motion, AnimatePresence } from "framer-motion";
+import { Send, Paperclip, Smile, Video, MoreVertical, Search, Phone } from "lucide-react";
 
 const socket = io(import.meta.env.VITE_API_URL?.replace("/api", "") || "http://localhost:4000");
 
@@ -123,112 +124,123 @@ export default function Messages() {
   };
 
   if (loading) return (
-    <div className="h-screen flex items-center justify-center bg-[#FDFDFC]">
+    <div className="h-screen flex items-center justify-center bg-midnight-950 text-white">
       <div className="flex flex-col items-center">
-        <div className="w-10 h-10 border-4 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
-        <p className="mt-4 text-slate-400 font-medium">Syncing encrypted chats...</p>
+        <div className="w-12 h-12 border-4 border-indigo-500 border-t-transparent rounded-full animate-spin"></div>
+        <p className="mt-4 text-indigo-300 font-bold uppercase tracking-widest text-xs">Establishing Secure Uplink...</p>
       </div>
     </div>
   );
 
   return (
-    <div className="h-screen bg-[#FDFDFC] overflow-hidden flex flex-col font-sans">
+    <div className="h-screen bg-midnight-950 overflow-hidden flex flex-col font-sans text-slate-200 selection:bg-indigo-500/30">
       <Navbar />
 
-      <div className="flex-1 flex max-w-[1600px] mx-auto w-full pt-20 px-4 pb-4 gap-4 h-[calc(100vh-80px)]">
+      <div className="flex-1 flex max-w-[1800px] mx-auto w-full pt-20 px-4 pb-4 gap-6 h-[calc(100vh)]">
 
         {/* SIDEBAR */}
-        <aside className="w-96 bg-white rounded-3xl border border-slate-200 shadow-xl shadow-slate-200/50 flex flex-col overflow-hidden hidden md:flex">
-          <div className="p-6 border-b border-slate-100 bg-[#F8FAFC]">
-            <h2 className="text-xl font-bold text-slate-900 mb-1">Chats</h2>
-            <p className="text-xs text-slate-500 font-medium">{chatList.length} Active Conversations</p>
+        <aside className="w-96 bg-white/5 backdrop-blur-xl rounded-[2rem] border border-white/10 flex flex-col overflow-hidden hidden md:flex shadow-2xl">
+          <div className="p-6 border-b border-white/5 bg-gradient-to-r from-white/5 to-transparent">
+            <h2 className="text-xl font-bold text-white mb-4 font-serif">Encrypted Chats</h2>
+            <div className="relative">
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500" size={16} />
+              <input
+                placeholder="Search conversations..."
+                className="w-full bg-black/40 border border-white/10 rounded-xl pl-10 pr-4 py-3 text-sm text-white outline-none focus:border-indigo-500 transition placeholder:text-slate-600"
+              />
+            </div>
           </div>
 
           <div className="flex-1 overflow-y-auto custom-scrollbar p-3 space-y-2">
             {chatList.length === 0 && (
-              <div className="text-center p-8 opacity-50">
-                <span className="text-4xl block mb-2">📭</span>
-                <p className="text-sm">No conversations yet.</p>
+              <div className="text-center p-8 opacity-30 mt-10">
+                <span className="text-4xl block mb-4 grayscale">📭</span>
+                <p className="text-sm font-bold uppercase tracking-widest text-slate-500">No Active Links</p>
               </div>
             )}
 
             {chatList.map((chat) => (
               <motion.div
                 key={chat._id}
-                whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
                 onClick={() => setActiveChat(chat)}
                 className={`p-4 rounded-2xl cursor-pointer transition-all flex items-center gap-4 relative group ${activeChat?._id === chat._id
-                    ? "bg-blue-600 shadow-lg shadow-blue-500/30"
-                    : "hover:bg-slate-50 border border-transparent hover:border-slate-200"
+                  ? "bg-indigo-600/20 border border-indigo-500/50 shadow-lg shadow-indigo-600/10"
+                  : "hover:bg-white/5 border border-transparent hover:border-white/5"
                   }`}
               >
-                <div className={`w-12 h-12 rounded-full flex items-center justify-center font-bold text-lg shadow-sm ${activeChat?._id === chat._id ? "bg-white/20 text-white" : "bg-blue-50 text-blue-600"
+                <div className={`w-12 h-12 rounded-xl flex items-center justify-center font-bold text-lg shadow-inner ${activeChat?._id === chat._id ? "bg-indigo-500 text-white" : "bg-white/10 text-slate-400"
                   }`}>
                   {chat.name ? chat.name[0] : "?"}
                 </div>
                 <div className="flex-1 min-w-0">
-                  <h4 className={`font-bold truncate ${activeChat?._id === chat._id ? "text-white" : "text-slate-900"}`}>
+                  <h4 className={`font-bold truncate text-sm ${activeChat?._id === chat._id ? "text-white" : "text-slate-300"}`}>
                     {chat.name}
                   </h4>
-                  <p className={`text-xs truncate ${activeChat?._id === chat._id ? "text-blue-100" : "text-slate-500"}`}>
+                  <p className={`text-xs truncate font-medium ${activeChat?._id === chat._id ? "text-indigo-300" : "text-slate-500"}`}>
                     {chat.role === 'lawyer' ? `⚖️ ${chat.specialization}` : `📍 ${chat.location}`}
                   </p>
                 </div>
                 {activeChat?._id === chat._id && (
-                  <div className="w-2 h-2 bg-white rounded-full animate-pulse"></div>
+                  <div className="w-2 h-2 bg-indigo-400 rounded-full animate-pulse shadow-[0_0_10px_rgba(129,140,248,0.8)]"></div>
                 )}
               </motion.div>
             ))}
           </div>
         </aside>
 
-        {/* MAIN CHAT */}
-        <section className="flex-1 bg-white rounded-3xl border border-slate-200 shadow-xl shadow-slate-200/50 flex flex-col overflow-hidden relative">
+        {/* MAIN CHAT AREA */}
+        <section className="flex-1 bg-midnight-900/50 backdrop-blur-xl rounded-[2rem] border border-white/10 flex flex-col overflow-hidden relative shadow-2xl">
 
           {activeChat ? (
             <>
               {/* CHAT HEADER */}
-              <header className="p-4 border-b border-slate-100 flex justify-between items-center bg-white/80 backdrop-blur-md z-10">
+              <header className="p-5 border-b border-white/5 flex justify-between items-center bg-white/5 backdrop-blur-md z-10">
                 <div className="flex items-center gap-4">
-                  <div className="w-10 h-10 rounded-full bg-gradient-to-tr from-blue-500 to-indigo-600 text-white flex items-center justify-center font-bold shadow-md">
+                  <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 text-white flex items-center justify-center font-bold shadow-lg shadow-indigo-500/20 text-xl">
                     {activeChat.name ? activeChat.name[0] : "?"}
                   </div>
                   <div>
-                    <h3 className="font-bold text-slate-900">{activeChat.name}</h3>
-                    <div className="flex items-center gap-1.5">
-                      <span className="w-2 h-2 bg-emerald-500 rounded-full"></span>
-                      <span className="text-xs text-slate-500 font-medium">Online now</span>
+                    <h3 className="font-bold text-white text-lg font-serif">{activeChat.name}</h3>
+                    <div className="flex items-center gap-2">
+                      <span className="relative flex h-2 w-2">
+                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                        <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+                      </span>
+                      <span className="text-xs text-emerald-400 font-bold uppercase tracking-wider">Secure Connection Active</span>
                     </div>
                   </div>
                 </div>
 
-                <div className="flex gap-2">
+                <div className="flex gap-3">
+                  <button className="p-3 rounded-xl bg-white/5 text-slate-400 hover:text-white hover:bg-white/10 transition border border-white/5">
+                    <Phone size={20} />
+                  </button>
                   <button
                     onClick={() => {
                       const roomId = `nyay-${Date.now()}`;
                       const link = `${window.location.origin}/meet/${roomId}`;
                       window.open(link, "_blank");
-                      setInput(`📞 Join Video Meeting: ${link}`);
+                      setInput(`📞 Join Secure Video Link: ${link}`);
                       setTimeout(() => sendMessage(), 100);
                     }}
-                    className="p-3 rounded-xl bg-purple-50 text-purple-600 hover:bg-purple-100 transition"
+                    className="p-3 rounded-xl bg-indigo-600 text-white hover:bg-indigo-500 transition shadow-lg shadow-indigo-600/20 border border-indigo-500"
                     title="Start Video Call"
                   >
-                    📹
+                    <Video size={20} />
                   </button>
-                  <button className="p-3 rounded-xl bg-slate-50 text-slate-600 hover:bg-slate-100 transition">
-                    ℹ️
+                  <button className="p-3 rounded-xl bg-white/5 text-slate-400 hover:text-white hover:bg-white/10 transition border border-white/5">
+                    <MoreVertical size={20} />
                   </button>
                 </div>
               </header>
 
               {/* MESSAGES LIST */}
-              <div className="flex-1 overflow-y-auto p-8 space-y-6 bg-[#F8FAFC]">
+              <div className="flex-1 overflow-y-auto p-8 space-y-6 custom-scrollbar bg-[url('https://grainy-gradients.vercel.app/noise.svg')] bg-opacity-5">
                 {messages.length === 0 && (
-                  <div className="h-full flex flex-col items-center justify-center opacity-40">
-                    <div className="w-24 h-24 bg-slate-200 rounded-full flex items-center justify-center text-4xl mb-4">💬</div>
-                    <p>Say hello to start the conversation!</p>
+                  <div className="h-full flex flex-col items-center justify-center opacity-30">
+                    <div className="w-24 h-24 bg-white/10 rounded-full flex items-center justify-center text-5xl mb-6 grayscale">💬</div>
+                    <p className="text-slate-400 font-bold uppercase tracking-widest">Encrypted Channel Ready</p>
                   </div>
                 )}
 
@@ -243,19 +255,22 @@ export default function Messages() {
                       key={i}
                       className={`flex ${isMe ? "justify-end" : "justify-start"}`}
                     >
-                      <div className={`max-w-[70%] px-6 py-3 rounded-2xl text-sm leading-relaxed shadow-sm relative group ${isMe
-                          ? "bg-blue-600 text-white rounded-tr-sm"
-                          : "bg-white border border-slate-200 text-slate-800 rounded-tl-sm"
+                      <div className={`max-w-[70%] px-6 py-4 rounded-3xl text-sm leading-relaxed shadow-lg backdrop-blur-md border ${isMe
+                        ? "bg-indigo-600 text-white border-indigo-500 rounded-tr-md"
+                        : "bg-white/5 text-slate-200 border-white/10 rounded-tl-md"
                         }`}>
                         {msg.content.includes("http") && msg.content.includes("meet/") ? (
-                          <a href={msg.content.split(": ")[1]} target="_blank" rel="noreferrer" className="underline font-bold hover:text-blue-200">
-                            {msg.content}
-                          </a>
+                          <div className="flex flex-col gap-2">
+                            <span className="font-bold flex items-center gap-2 text-indigo-200"><Video size={14} /> Video Meeting Invite</span>
+                            <a href={msg.content.split(": ")[1]} target="_blank" rel="noreferrer" className="underline font-bold text-white hover:text-indigo-200 break-all">
+                              Join Now
+                            </a>
+                          </div>
                         ) : (
                           msg.content
                         )}
 
-                        <div className={`text-[10px] mt-2 opacity-70 text-right ${isMe ? "text-blue-100" : "text-slate-400"}`}>
+                        <div className={`text-[10px] mt-2 opacity-60 text-right font-bold tracking-wider ${isMe ? "text-indigo-200" : "text-slate-500"}`}>
                           {msg.createdAt && new Date(msg.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                         </div>
                       </div>
@@ -266,34 +281,34 @@ export default function Messages() {
               </div>
 
               {/* INPUT AREA */}
-              <div className="p-4 bg-white border-t border-slate-100">
-                <div className="relative flex items-center gap-3 bg-slate-50 p-2 rounded-2xl border border-slate-200 focus-within:border-blue-400 focus-within:ring-4 focus-within:ring-blue-500/10 transition-all">
-                  <button className="p-2 text-slate-400 hover:text-slate-600 transition">📎</button>
+              <div className="p-6 border-t border-white/5 bg-black/20 backdrop-blur-lg">
+                <div className="relative flex items-center gap-3 bg-white/5 p-2 pr-3 rounded-2xl border border-white/10 focus-within:border-indigo-500/50 focus-within:bg-black/40 transition-all shadow-inner">
+                  <button className="p-3 text-slate-400 hover:text-white transition rounded-xl hover:bg-white/5"><Paperclip size={20} /></button>
                   <input
                     value={input}
                     onChange={(e) => setInput(e.target.value)}
                     onKeyDown={(e) => e.key === "Enter" && sendMessage()}
-                    placeholder="Type a message..."
-                    className="flex-1 bg-transparent border-none outline-none text-slate-800 placeholder-slate-400 font-medium"
+                    placeholder="Type an encrypted message..."
+                    className="flex-1 bg-transparent border-none outline-none text-white placeholder-slate-500 font-medium h-10 px-2"
                   />
-                  <button className="p-2 text-slate-400 hover:text-slate-600 transition">😊</button>
+                  <button className="p-3 text-slate-400 hover:text-yellow-400 transition rounded-xl hover:bg-white/5"><Smile size={20} /></button>
                   <button
                     onClick={sendMessage}
-                    className="bg-blue-600 hover:bg-blue-700 text-white p-3 rounded-xl shadow-lg shadow-blue-600/20 transition-all transform active:scale-95"
+                    className="bg-indigo-600 hover:bg-indigo-500 text-white p-3 rounded-xl shadow-lg shadow-indigo-600/20 transition-all transform active:scale-95 border border-indigo-400/20"
                   >
-                    <svg className="w-5 h-5 translate-x-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                    <Send size={20} />
                   </button>
                 </div>
               </div>
 
             </>
           ) : (
-            <div className="h-full flex flex-col items-center justify-center text-slate-400 bg-slate-50/50">
-              <div className="w-32 h-32 bg-white rounded-full flex items-center justify-center shadow-xl shadow-slate-200/50 mb-6 animate-pulse-slow">
-                <span className="text-6xl">👋</span>
+            <div className="h-full flex flex-col items-center justify-center text-slate-500 bg-black/20">
+              <div className="w-40 h-40 bg-white/5 rounded-full flex items-center justify-center shadow-[0_0_50px_rgba(255,255,255,0.05)] mb-8 animate-pulse-slow">
+                <span className="text-7xl drop-shadow-2xl">📡</span>
               </div>
-              <h3 className="text-xl font-bold text-slate-700 mb-2">Welcome to Secure Chat</h3>
-              <p className="max-w-xs text-center">Select a conversation from the sidebar to start instant messaging.</p>
+              <h3 className="text-2xl font-bold text-white mb-2 font-serif">Secure Command Center</h3>
+              <p className="max-w-xs text-center text-sm">Select a secure frequency from the left to establish communication.</p>
             </div>
           )}
         </section>

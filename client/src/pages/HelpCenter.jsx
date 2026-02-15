@@ -1,67 +1,106 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { motion } from 'framer-motion';
+import { Search, ChevronRight, MessageCircle, FileText, Shield, Zap } from 'lucide-react';
+import Footer from '../components/Footer';
 
 export default function HelpCenter() {
     return (
-        <div className="min-h-screen bg-slate-50 pt-24 pb-12 px-6">
-            <div className="max-w-4xl mx-auto">
+        <div className="min-h-screen bg-midnight-900 font-sans text-slate-200 selection:bg-indigo-500/30">
+
+            {/* HERO SEARCH */}
+            <section className="relative pt-32 pb-20 px-6 text-center border-b border-white/5 bg-gradient-to-b from-midnight-950 to-midnight-900">
                 <motion.div
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
-                    className="text-center mb-16"
+                    className="max-w-3xl mx-auto"
                 >
-                    <span className="text-4xl">👋</span>
-                    <h1 className="text-4xl md:text-5xl font-black text-slate-900 mt-4 mb-6">
-                        How can we <span className="text-indigo-600">help you?</span>
-                    </h1>
-                    <div className="max-w-xl mx-auto relative group">
-                        <input
-                            type="text"
-                            placeholder="Search for answers..."
-                            className="w-full pl-12 pr-6 py-4 rounded-xl border border-slate-200 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-100 outline-none transition shadow-sm"
-                        />
-                        <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 text-xl">🔍</span>
+                    <span className="text-xs font-bold text-gold-400 uppercase tracking-widest mb-4 block">Support Center</span>
+                    <h1 className="text-5xl font-serif font-bold text-white mb-8">How can we assist you?</h1>
+
+                    <div className="relative group max-w-2xl mx-auto">
+                        <div className="absolute inset-0 bg-indigo-500/20 blur-xl rounded-2xl group-hover:bg-indigo-500/30 transition duration-500"></div>
+                        <div className="relative flex items-center bg-black/40 backdrop-blur-xl border border-white/10 rounded-2xl overflow-hidden shadow-2xl">
+                            <span className="pl-6 text-slate-400"><Search size={20} /></span>
+                            <input
+                                type="text"
+                                placeholder="Search our knowledge base..."
+                                className="flex-1 bg-transparent border-none outline-none text-white p-5 text-lg placeholder:text-slate-500"
+                            />
+                        </div>
                     </div>
                 </motion.div>
+            </section>
 
-                <div className="grid gap-6">
-                    <FaqItem
-                        question="Is the legal advice provided by AI binding?"
-                        answer="No. NyayNow's AI provides 'legal information' and 'predictions' based on data. It is a powerful tool to assist research and drafting, but it is NOT a substitute for a licensed attorney. Always consult a human lawyer for specialized advice."
-                    />
-                    <FaqItem
-                        question="How accurate is the Judge AI Predictor?"
-                        answer="Our Judge AI has shown a 94% accuracy rate in historical case validations. However, future cases have variables that no model can fully predict. Use the probability score as a strategic indicator, not a guarantee."
-                    />
-                    <FaqItem
-                        question="Is my case data private and secure?"
-                        answer="Absolutely. We use enterprise-grade AES-256 encryption. Your case files are anonymized before being processed by our AI models. We do not sell your data to third parties."
-                    />
-                    <FaqItem
-                        question="Can I hire a lawyer through the platform?"
-                        answer="Yes! Our Marketplace connects you with top-rated lawyers. You can view their profiles, past case history (verified), and book consultations directly."
-                    />
-                    <FaqItem
-                        question="What languages does NyayVoice support?"
-                        answer="Currently, NyayVoice supports English, Hindi, Tamil, Telugu, Marathi, and Bengali. We are adding support for Kannada and Malayalam in the next update."
-                    />
+            {/* QUICK CATEGORIES */}
+            <section className="py-20 px-6 max-w-6xl mx-auto">
+                <div className="grid md:grid-cols-3 gap-6 mb-20">
+                    <CategoryCard icon={<Zap size={24} />} title="Getting Started" desc="Account setup, API keys, and first steps." />
+                    <CategoryCard icon={<Shield size={24} />} title="Security & Privacy" desc="Data encryption, 2FA, and compliance." />
+                    <CategoryCard icon={<FileText size={24} />} title="Billing & Plans" desc="Invoices, upgrades, and enterprise pricing." />
                 </div>
 
-                <div className="mt-16 text-center">
-                    <p className="text-slate-600 mb-4">Still stuck? We are here to help.</p>
-                    <a href="/contact" className="text-indigo-600 font-bold hover:underline">Contact Support</a>
-                </div>
+                <div className="grid lg:grid-cols-2 gap-16">
+                    <div>
+                        <h2 className="text-2xl font-bold text-white mb-8 font-serif">Frequently Asked Questions</h2>
+                        <div className="space-y-4">
+                            <FaqItem
+                                question="Is the legal advice provided by AI binding?"
+                                answer="No. NyayNow's AI provides 'legal information' and 'predictions' based on data. It is a powerful tool to assist research and drafting, but it is NOT a substitute for a licensed attorney."
+                            />
+                            <FaqItem
+                                question="How accurate is the Judge AI Predictor?"
+                                answer="Our Judge AI has shown a 94% accuracy rate in historical case validations. However, future cases have variables that no model can fully predict."
+                            />
+                            <FaqItem
+                                question="Is my case data private and secure?"
+                                answer="Absolutely. We use enterprise-grade AES-256 encryption. Your case files are anonymized before being processed by our AI models."
+                            />
+                        </div>
+                    </div>
 
-            </div>
+                    <div className="bg-white/5 rounded-3xl p-8 border border-white/10 text-center flex flex-col justify-center items-center">
+                        <div className="w-16 h-16 bg-indigo-600 rounded-full flex items-center justify-center text-white mb-6 shadow-lg shadow-indigo-600/30">
+                            <MessageCircle size={32} />
+                        </div>
+                        <h3 className="text-2xl font-bold text-white mb-2">Still need help?</h3>
+                        <p className="text-slate-400 mb-8 max-w-xs">Our concierge support team is available 24/7 for Enterprise clients.</p>
+                        <a href="/contact" className="px-8 py-3 bg-white text-midnight-900 font-bold rounded-xl hover:bg-slate-200 transition">Contact Support</a>
+                    </div>
+                </div>
+            </section>
+
+            <Footer />
         </div>
     );
 }
 
-function FaqItem({ question, answer }) {
+function CategoryCard({ icon, title, desc }) {
     return (
-        <div className="bg-white p-6 rounded-xl border border-slate-200 hover:border-indigo-300 transition cursor-pointer group">
-            <h3 className="text-lg font-bold text-slate-900 mb-2 group-hover:text-indigo-600 transition-colors">{question}</h3>
-            <p className="text-slate-600 leading-relaxed">{answer}</p>
+        <div className="p-8 rounded-2xl bg-white/5 border border-white/5 hover:bg-white/10 hover:border-indigo-500/30 transition cursor-pointer group">
+            <div className="w-12 h-12 bg-black/30 rounded-xl flex items-center justify-center text-indigo-400 mb-6 group-hover:text-white transition">
+                {icon}
+            </div>
+            <h3 className="text-xl font-bold text-white mb-2">{title}</h3>
+            <p className="text-slate-400 text-sm">{desc}</p>
+        </div>
+    )
+}
+
+function FaqItem({ question, answer }) {
+    const [open, setOpen] = useState(false);
+    return (
+        <div onClick={() => setOpen(!open)} className="border border-white/5 rounded-xl bg-white/[0.02] hover:bg-white/[0.05] transition cursor-pointer overflow-hidden">
+            <div className="p-5 flex justify-between items-center">
+                <h4 className="font-bold text-slate-200 text-sm md:text-base pr-8">{question}</h4>
+                <div className={`text-slate-500 transition-transform duration-300 ${open ? 'rotate-90 text-indigo-400' : ''}`}>
+                    <ChevronRight size={16} />
+                </div>
+            </div>
+            {open && (
+                <div className="px-5 pb-5 text-sm text-slate-400 leading-relaxed border-t border-white/5 pt-3">
+                    {answer}
+                </div>
+            )}
         </div>
     )
 }

@@ -3,11 +3,11 @@ import axios from 'axios';
 import { toast } from 'react-hot-toast';
 import { motion, AnimatePresence } from 'framer-motion';
 import Navbar from '../components/Navbar';
-import { useAuth } from '../context/AuthContext'; // NEW
-import { Link } from 'react-router-dom'; // NEW
+import { useAuth } from '../context/AuthContext';
+import { Link } from 'react-router-dom';
 
 const VoiceAssistant = () => {
-    const { user } = useAuth(); // NEW
+    const { user } = useAuth();
     const [listening, setListening] = useState(false);
     const [transcript, setTranscript] = useState('');
     const [response, setResponse] = useState('');
@@ -25,7 +25,7 @@ const VoiceAssistant = () => {
 
         const recognition = new window.webkitSpeechRecognition();
         recognition.continuous = false;
-        recognition.interimResults = true; // Show words as they are spoken
+        recognition.interimResults = true;
         recognition.lang = language;
 
         recognition.onstart = () => setListening(true);
@@ -115,14 +115,14 @@ const VoiceAssistant = () => {
     };
 
     return (
-        <div className="min-h-screen bg-black text-white font-sans overflow-hidden relative selection:bg-purple-500/30">
+        <div className="min-h-screen bg-midnight-900 text-slate-200 font-sans overflow-hidden relative selection:bg-indigo-500/30">
             <Navbar />
 
             {/* Background Ambience */}
             <div className="absolute inset-0 z-0 pointer-events-none">
-                <div className="absolute top-[-20%] left-[-10%] w-[800px] h-[800px] bg-purple-900/20 rounded-full blur-[120px] animate-pulse-slow"></div>
-                <div className="absolute bottom-[-20%] right-[-10%] w-[800px] h-[800px] bg-blue-900/20 rounded-full blur-[120px] animate-pulse-slow delay-1000"></div>
-                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full bg-[url('https://www.transparenttextures.com/patterns/stardust.png')] opacity-20"></div>
+                <div className="absolute top-[-20%] left-[-10%] w-[800px] h-[800px] bg-indigo-900/10 rounded-full blur-[120px] animate-pulse-slow"></div>
+                <div className="absolute bottom-[-20%] right-[-10%] w-[800px] h-[800px] bg-purple-900/10 rounded-full blur-[120px] animate-pulse-slow delay-1000"></div>
+                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20 mix-blend-overlay"></div>
             </div>
 
             <div className="relative z-10 flex flex-col items-center justify-center min-h-screen p-6">
@@ -131,7 +131,7 @@ const VoiceAssistant = () => {
                 <motion.div
                     initial={{ y: -50, opacity: 0 }}
                     animate={{ y: 0, opacity: 1 }}
-                    className="absolute top-24 uppercase tracking-[0.3em] text-xs font-bold text-blue-300/50"
+                    className="absolute top-28 uppercase tracking-[0.3em] text-xs font-bold text-indigo-300/50"
                 >
                     NyayNow Voice Intelligence
                 </motion.div>
@@ -141,13 +141,15 @@ const VoiceAssistant = () => {
                     {/* Core */}
                     <motion.div
                         animate={{
-                            scale: listening ? [1, 1.2, 1] : 1,
+                            scale: listening ? [1, 1.1, 1] : 1,
                             filter: listening ? "brightness(1.5) blur(2px)" : "brightness(1) blur(0px)"
                         }}
                         transition={{ repeat: Infinity, duration: 2 }}
-                        className="w-48 h-48 rounded-full bg-gradient-to-br from-blue-500 via-indigo-600 to-purple-700 shadow-[0_0_100px_rgba(79,70,229,0.5)] relative z-20 flex items-center justify-center border border-white/10"
+                        className="w-48 h-48 rounded-full bg-gradient-to-br from-indigo-600 via-purple-600 to-indigo-800 shadow-[0_0_100px_rgba(79,70,229,0.4)] relative z-20 flex items-center justify-center border border-white/10 group-hover:scale-105 transition-transform duration-500"
                     >
-                        <span className="text-6xl drop-shadow-xl">{listening ? '🎙️' : '🤖'}</span>
+                        <span className="text-6xl drop-shadow-xl filter drop-shadow-[0_0_20px_rgba(255,255,255,0.5)]">
+                            {listening ? '🎙️' : '🤖'}
+                        </span>
                     </motion.div>
 
                     {/* Ripples */}
@@ -157,7 +159,7 @@ const VoiceAssistant = () => {
                                 initial={{ opacity: 0.5, scale: 1 }}
                                 animate={{ opacity: 0, scale: 2.5 }}
                                 transition={{ repeat: Infinity, duration: 1.5, ease: "easeOut" }}
-                                className="absolute inset-0 rounded-full border border-blue-400/30 z-10"
+                                className="absolute inset-0 rounded-full border border-indigo-400/30 z-10"
                             ></motion.div>
                             <motion.div
                                 initial={{ opacity: 0.5, scale: 1 }}
@@ -174,13 +176,13 @@ const VoiceAssistant = () => {
                     <select
                         value={language}
                         onChange={(e) => setLanguage(e.target.value)}
-                        className="bg-white/5 backdrop-blur-md border border-white/10 rounded-full px-6 py-2 text-sm text-blue-200 outline-none focus:ring-2 focus:ring-blue-500/50 cursor-pointer appearance-none text-center font-bold tracking-wide hover:bg-white/10 transition"
+                        className="bg-white/5 backdrop-blur-md border border-white/10 rounded-full px-6 py-3 text-sm text-indigo-200 outline-none focus:ring-2 focus:ring-indigo-500/50 cursor-pointer appearance-none text-center font-bold tracking-wide hover:bg-white/10 transition shadow-lg"
                     >
-                        <option className="bg-slate-900" value="en-IN">English (India)</option>
-                        <option className="bg-slate-900" value="hi-IN">Hindi (हिंदी)</option>
-                        <option className="bg-slate-900" value="ta-IN">Tamil (தமிழ்)</option>
-                        <option className="bg-slate-900" value="te-IN">Telugu (తెలుగు)</option>
-                        <option className="bg-slate-900" value="mr-IN">Marathi (मराठी)</option>
+                        <option className="bg-midnight-950" value="en-IN">English (India)</option>
+                        <option className="bg-midnight-950" value="hi-IN">Hindi (हिंदी)</option>
+                        <option className="bg-midnight-950" value="ta-IN">Tamil (தமிழ்)</option>
+                        <option className="bg-midnight-950" value="te-IN">Telugu (తెలుగు)</option>
+                        <option className="bg-midnight-950" value="mr-IN">Marathi (मराठी)</option>
                     </select>
                 </motion.div>
 
@@ -192,9 +194,9 @@ const VoiceAssistant = () => {
                                 initial={{ opacity: 0 }}
                                 animate={{ opacity: 1 }}
                                 exit={{ opacity: 0 }}
-                                className="text-2xl text-slate-400 font-light"
+                                className="text-2xl text-slate-500 font-light font-serif italic"
                             >
-                                "Tap the orb and ask me anything legal..."
+                                "Tap the orb and ask me anything regarding law..."
                             </motion.p>
                         )}
 
@@ -202,7 +204,7 @@ const VoiceAssistant = () => {
                             <motion.div
                                 initial={{ y: 20, opacity: 0 }}
                                 animate={{ y: 0, opacity: 1 }}
-                                className="inline-block px-6 py-3 rounded-2xl bg-white/10 border border-white/5 backdrop-blur-lg text-lg text-white font-medium"
+                                className="inline-block px-8 py-4 rounded-3xl bg-white/5 border border-white/10 backdrop-blur-lg text-xl text-white font-medium shadow-2xl"
                             >
                                 "{transcript}"
                             </motion.div>
@@ -210,9 +212,9 @@ const VoiceAssistant = () => {
 
                         {loading && (
                             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex justify-center gap-2 mt-4">
-                                <span className="w-2 h-2 bg-blue-400 rounded-full animate-bounce"></span>
-                                <span className="w-2 h-2 bg-blue-400 rounded-full animate-bounce delay-100"></span>
-                                <span className="w-2 h-2 bg-blue-400 rounded-full animate-bounce delay-200"></span>
+                                <span className="w-2 h-2 bg-indigo-400 rounded-full animate-bounce"></span>
+                                <span className="w-2 h-2 bg-indigo-400 rounded-full animate-bounce delay-100"></span>
+                                <span className="w-2 h-2 bg-indigo-400 rounded-full animate-bounce delay-200"></span>
                             </motion.div>
                         )}
 
@@ -220,10 +222,10 @@ const VoiceAssistant = () => {
                             <motion.div
                                 initial={{ scale: 0.9, opacity: 0 }}
                                 animate={{ scale: 1, opacity: 1 }}
-                                className="mt-8 text-left bg-gradient-to-br from-slate-900/90 to-black/90 p-8 rounded-3xl border border-blue-500/20 shadow-2xl backdrop-blur-xl max-h-[40vh] overflow-y-auto custom-scrollbar"
+                                className="mt-8 text-left bg-black/40 p-8 rounded-[2rem] border border-white/10 shadow-2xl backdrop-blur-xl max-h-[40vh] overflow-y-auto custom-scrollbar"
                             >
                                 <div className="flex gap-4 mb-4 items-center border-b border-white/5 pb-4">
-                                    <div className="w-8 h-8 rounded-full bg-indigo-500 flex items-center justify-center text-sm">🧠</div>
+                                    <div className="w-8 h-8 rounded-full bg-indigo-500 flex items-center justify-center text-sm shadow-lg shadow-indigo-500/50">🧠</div>
                                     <span className="font-bold text-sm text-indigo-300 uppercase tracking-wider">AI Legal Analysis</span>
                                 </div>
                                 <p className="text-slate-300 leading-relaxed whitespace-pre-wrap text-lg font-light">

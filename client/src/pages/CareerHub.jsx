@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import axios from 'axios';
 import toast from 'react-hot-toast';
 import SubscriptionModal from '../components/SubscriptionModal';
+import { Briefcase, ChevronRight, Award, CheckCircle, Clock } from 'lucide-react';
 
 const CareerHub = () => {
     const [activeTask, setActiveTask] = useState(null);
@@ -15,22 +16,31 @@ const CareerHub = () => {
             id: 1,
             title: "Criminal Defense Intern",
             firm: "Luthra & Luthra Offices",
+            logo: "L",
+            color: "bg-red-500",
             task: "Draft a Bail Application for a client accused of Section 379 IPC (Theft). Focus on the grounds of 'no previous convictions'.",
-            difficulty: "Beginner"
+            difficulty: "Beginner",
+            time: "2 Hours"
         },
         {
             id: 2,
             title: "Corporate Law Associate",
             firm: "Shardul Amarchand Mangaldas",
+            logo: "S",
+            color: "bg-blue-600",
             task: "Review this clause: 'The employee shall not work for any competitor for 5 years after leaving.' Is this valid under Section 27 of Contract Act?",
-            difficulty: "Intermediate"
+            difficulty: "Intermediate",
+            time: "45 Mins"
         },
         {
             id: 3,
             title: "IPR Researcher",
             firm: "Anand and Anand",
+            logo: "A",
+            color: "bg-purple-600",
             task: "Summarize the 'Delhi High Court vs. Telegram' copyright infringement judgment in 100 words.",
-            difficulty: "Advanced"
+            difficulty: "Advanced",
+            time: "3 Hours"
         }
     ];
 
@@ -80,112 +90,125 @@ const CareerHub = () => {
     };
 
     return (
-        <div className="min-h-screen bg-slate-50 font-sans text-slate-900 pt-24 pb-20 px-6">
+        <div className="min-h-screen bg-midnight-900 text-slate-200 font-sans pt-28 pb-20 px-6 selection:bg-indigo-500/30">
             <SubscriptionModal
                 isOpen={showModal}
                 onClose={() => setShowModal(false)}
                 featureName="Career & Mentorship Hub"
             />
 
-            <div className="max-w-7xl mx-auto">
-                <header className="mb-12">
-                    <h1 className="text-4xl md:text-5xl font-black mb-4 text-slate-900">
-                        Career & Mentorship Hub
-                    </h1>
-                    <p className="text-xl text-slate-500">
-                        Gain real-world experience with <span className="text-indigo-600 font-bold">AI-Simulated Internships</span>.
-                    </p>
+            <div className="max-w-7xl mx-auto h-[85vh] flex flex-col">
+                <header className="mb-10 flex justify-between items-end">
+                    <div>
+                        <h1 className="text-4xl font-serif font-bold text-white mb-2">Career Simulator</h1>
+                        <p className="text-slate-400">Virtual experience programs with top-tier law firms.</p>
+                    </div>
+                    <div className="flex gap-6 text-sm font-bold text-slate-500">
+                        <span className="flex items-center gap-2"><CheckCircle size={16} className="text-emerald-500" /> 12 Modules Completed</span>
+                        <span className="flex items-center gap-2"><Award size={16} className="text-gold-500" /> Top 5% Rank</span>
+                    </div>
                 </header>
 
-                <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <div className="flex-1 grid grid-cols-1 lg:grid-cols-12 gap-8 min-h-0">
 
                     {/* LEFT: TASK LIST */}
-                    <div className="space-y-6">
-                        <h2 className="font-bold text-lg text-slate-400 uppercase tracking-wider">Available Internships</h2>
-                        {tasks.map(task => (
-                            <motion.div
-                                key={task.id}
-                                whileHover={{ scale: 1.02 }}
-                                whileTap={{ scale: 0.98 }}
-                                onClick={() => { setActiveTask(task); setGrading(null); setSubmission(''); }}
-                                className={`p-6 rounded-2xl border cursor-pointer transition-all ${activeTask?.id === task.id ? 'bg-indigo-600 text-white border-indigo-600 shadow-xl' : 'bg-white border-slate-200 hover:border-indigo-300'}`}
-                            >
-                                <div className="flex justify-between items-start mb-2">
-                                    <h3 className="font-bold text-lg">{task.title}</h3>
-                                    <span className={`text-[10px] uppercase font-bold px-2 py-1 rounded bg-white/20 ${activeTask?.id === task.id ? 'text-white' : 'text-slate-500 bg-slate-100'}`}>
-                                        {task.difficulty}
-                                    </span>
-                                </div>
-                                <p className={`text-sm ${activeTask?.id === task.id ? 'text-indigo-200' : 'text-slate-500'}`}>{task.firm}</p>
-                            </motion.div>
-                        ))}
+                    <div className="lg:col-span-4 overflow-y-auto pr-2 custom-scrollbar">
+                        <h2 className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-6">Available Internships</h2>
+                        <div className="space-y-4">
+                            {tasks.map(task => (
+                                <motion.div
+                                    key={task.id}
+                                    whileHover={{ scale: 1.02 }}
+                                    onClick={() => { setActiveTask(task); setGrading(null); setSubmission(''); }}
+                                    className={`group p-5 rounded-2xl border cursor-pointer transition-all relative overflow-hidden ${activeTask?.id === task.id ? 'bg-indigo-600 border-indigo-500 shadow-xl' : 'bg-white/5 border-white/10 hover:bg-white/10 hover:border-white/20'}`}
+                                >
+                                    {activeTask?.id === task.id && <div className="absolute inset-0 bg-gradient-to-r from-indigo-500 to-purple-600 opacity-20"></div>}
 
-                        {/* MENTORSHIP TEASER */}
-                        <div className="mt-12 bg-gradient-to-br from-slate-900 to-slate-800 rounded-3xl p-8 text-white relative overflow-hidden">
+                                    <div className="flex items-center gap-4 relative z-10">
+                                        <div className={`w-12 h-12 rounded-xl flex items-center justify-center font-bold text-xl text-white shadow-lg ${task.color}`}>
+                                            {task.logo}
+                                        </div>
+                                        <div className="flex-1">
+                                            <h3 className={`font-bold text-base mb-1 ${activeTask?.id === task.id ? 'text-white' : 'text-slate-200'}`}>{task.title}</h3>
+                                            <p className={`text-xs ${activeTask?.id === task.id ? 'text-indigo-200' : 'text-slate-400'}`}>{task.firm}</p>
+                                        </div>
+                                        <ChevronRight size={16} className={`transition ${activeTask?.id === task.id ? 'text-white translate-x-1' : 'text-slate-600 group-hover:text-slate-400'}`} />
+                                    </div>
+                                    <div className="mt-4 flex items-center gap-4 text-[10px] font-bold uppercase tracking-wide opacity-80 relative z-10 pl-16">
+                                        <span className={`px-2 py-1 rounded ${activeTask?.id === task.id ? 'bg-black/20 text-white' : 'bg-white/10 text-slate-400'}`}>{task.difficulty}</span>
+                                        <span className={`flex items-center gap-1 ${activeTask?.id === task.id ? 'text-indigo-200' : 'text-slate-500'}`}><Clock size={10} /> {task.time}</span>
+                                    </div>
+                                </motion.div>
+                            ))}
+                        </div>
+
+                        {/* MENTORSHIP CTA */}
+                        <div className="mt-8 bg-gradient-to-br from-gold-600 to-amber-700 rounded-3xl p-6 text-white relative overflow-hidden shadow-lg">
                             <div className="relative z-10">
-                                <h3 className="text-xl font-bold mb-2">Find a Mentor</h3>
-                                <p className="text-slate-400 text-sm mb-6">Connect with Senior Advocates from Supreme Court.</p>
-                                <button className="w-full py-3 bg-white/10 hover:bg-white/20 rounded-xl font-bold transition">Coming Soon</button>
+                                <h3 className="text-lg font-bold mb-2">Unlock Mentorship</h3>
+                                <p className="text-amber-100 text-xs mb-4">Get 1-on-1 guidance from Supreme Court advocates.</p>
+                                <button className="w-full py-2.5 bg-black/20 hover:bg-black/30 rounded-xl font-bold text-xs uppercase tracking-wider transition">Coming Soon</button>
                             </div>
                         </div>
                     </div>
 
-                    {/* MIDDLE & RIGHT: WORKSPACE */}
-                    <div className="lg:col-span-2 bg-white rounded-3xl border border-slate-200 shadow-xl min-h-[600px] flex flex-col overflow-hidden relative">
+                    {/* RIGHT: WORKSPACE */}
+                    <div className="lg:col-span-8 bg-[#0f172a] rounded-3xl border border-white/10 shadow-2xl relative overflow-hidden flex flex-col">
                         {activeTask ? (
-                            <div className="flex-1 flex flex-col">
+                            <div className="flex-1 flex flex-col h-full">
                                 {/* Task Header */}
-                                <div className="p-8 border-b border-slate-100 bg-slate-50">
-                                    <h3 className="text-2xl font-bold text-slate-900 mb-2">Task Brief</h3>
-                                    <p className="text-slate-600 leading-relaxed">{activeTask.task}</p>
+                                <div className="p-8 border-b border-white/5 bg-black/20">
+                                    <h3 className="text-xl font-bold text-white mb-2 font-serif">Task Brief</h3>
+                                    <p className="text-slate-400 leading-relaxed text-sm">{activeTask.task}</p>
                                 </div>
 
                                 {/* Workspace */}
-                                <div className="flex-1 p-8 bg-slate-50 flex gap-8">
-                                    <div className="flex-1 flex flex-col">
+                                <div className="flex-1 p-0 flex">
+                                    <div className="flex-1 flex flex-col p-6">
                                         <textarea
                                             value={submission}
                                             onChange={(e) => setSubmission(e.target.value)}
-                                            placeholder="Type your draft or answer here..."
-                                            className="flex-1 w-full p-6 rounded-2xl border-0 focus:ring-0 bg-white shadow-sm resize-none text-slate-700 placeholder-slate-400 font-mono text-sm leading-relaxed"
+                                            placeholder="Draft your legal response here..."
+                                            className="flex-1 w-full bg-transparent border-none outline-none resize-none text-slate-300 placeholder-slate-600 font-mono text-sm leading-relaxed custom-scrollbar p-2"
                                         ></textarea>
-                                        <div className="mt-4 flex justify-end">
+                                        <div className="pt-4 border-t border-white/5 flex justify-between items-center">
+                                            <span className="text-xs text-slate-500 font-mono">{submission.split(' ').length} Words</span>
                                             <button
                                                 onClick={handleSubmit}
                                                 disabled={loading || grading}
-                                                className="px-8 py-3 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-xl shadow-lg shadow-indigo-600/20 disabled:opacity-50 transition-all"
+                                                className="px-8 py-3 bg-white text-midnight-900 font-bold rounded-xl hover:bg-slate-200 disabled:opacity-50 transition-all shadow-lg"
                                             >
-                                                {loading ? "Grading..." : grading ? "Graded" : "Submit Work"}
+                                                {loading ? "AI Grading..." : grading ? "Graded" : "Submit Scope"}
                                             </button>
                                         </div>
                                     </div>
 
-                                    {/* Grading Side Panel (Conditional) */}
+                                    {/* Grading Side Panel */}
                                     <AnimatePresence>
                                         {grading && (
                                             <motion.div
                                                 initial={{ width: 0, opacity: 0 }}
-                                                animate={{ width: 300, opacity: 1 }}
-                                                className="w-[300px] bg-white border-l border-slate-200 p-6 overflow-y-auto"
+                                                animate={{ width: 320, opacity: 1 }}
+                                                className="w-80 bg-black/20 border-l border-white/10 p-6 overflow-y-auto"
                                             >
-                                                <div className="text-center mb-6">
-                                                    <div className={`w-20 h-20 rounded-full flex items-center justify-center text-4xl font-black mx-auto mb-2 ${grading.grade === 'A' ? 'bg-green-100 text-green-600' : 'bg-yellow-100 text-yellow-600'}`}>
+                                                <div className="text-center mb-8">
+                                                    <div className={`w-24 h-24 rounded-full flex items-center justify-center text-5xl font-black mx-auto mb-4 border-4 ${grading.grade === 'A' ? 'bg-emerald-500/10 text-emerald-500 border-emerald-500' : 'bg-amber-500/10 text-amber-500 border-amber-500'}`}>
                                                         {grading.grade}
                                                     </div>
-                                                    <p className="text-sm font-bold text-slate-400">SCORE: {grading.score}/100</p>
+                                                    <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">Performance Score</p>
                                                 </div>
 
-                                                <h4 className="font-bold text-sm text-slate-900 mb-2">Feedback</h4>
-                                                <ul className="space-y-2 mb-6">
+                                                <h4 className="font-bold text-xs text-white uppercase tracking-wider mb-4 border-b border-white/10 pb-2">Feedback</h4>
+                                                <ul className="space-y-3 mb-8">
                                                     {grading.feedback?.map((f, i) => (
-                                                        <li key={i} className="text-xs text-slate-600 bg-slate-100 p-2 rounded">
+                                                        <li key={i} className="text-xs text-slate-400 bg-white/5 p-3 rounded-lg border border-white/5">
                                                             {f}
                                                         </li>
                                                     ))}
                                                 </ul>
 
-                                                <h4 className="font-bold text-sm text-slate-900 mb-2">Pro Tip</h4>
-                                                <p className="text-xs text-slate-500 italic">
+                                                <h4 className="font-bold text-xs text-white uppercase tracking-wider mb-4 border-b border-white/10 pb-2">Mastery Tip</h4>
+                                                <p className="text-xs text-indigo-300 italic p-3 bg-indigo-500/10 border border-indigo-500/20 rounded-lg">
                                                     "{grading.correction || "Keep practicing!"}"
                                                 </p>
                                             </motion.div>
@@ -194,9 +217,9 @@ const CareerHub = () => {
                                 </div>
                             </div>
                         ) : (
-                            <div className="flex-1 flex flex-col items-center justify-center text-center p-8">
-                                <span className="text-6xl mb-4 grayscale opacity-50">💼</span>
-                                <h3 className="text-2xl font-bold text-slate-300">Select an internship to start</h3>
+                            <div className="flex-1 flex flex-col items-center justify-center text-center p-8 opacity-30">
+                                <Briefcase size={60} className="text-slate-400 mb-6" />
+                                <h3 className="text-2xl font-bold text-slate-400">Select a module to begin</h3>
                             </div>
                         )}
                     </div>

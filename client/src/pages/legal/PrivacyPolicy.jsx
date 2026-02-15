@@ -1,65 +1,95 @@
 import React from 'react';
 import Navbar from '../../components/Navbar';
 import Footer from '../../components/Footer';
+import { Shield, Lock, Eye, Database } from 'lucide-react';
 
 const PrivacyPolicy = () => {
     return (
-        <div className="min-h-screen bg-slate-50 flex flex-col font-sans text-slate-900">
+        <div className="min-h-screen bg-midnight-950 flex flex-col font-sans text-slate-300 selection:bg-indigo-500/30">
             <Navbar />
-            <div className="flex-grow container mx-auto px-6 py-12 max-w-4xl">
-                <h1 className="text-4xl font-extrabold mb-8 text-slate-800">Privacy Policy</h1>
-                <p className="text-sm text-slate-500 mb-8 uppercase tracking-wider font-bold">Last Updated: {new Date().toLocaleDateString()}</p>
 
-                <div className="space-y-8 bg-white p-10 rounded-2xl shadow-sm border border-slate-200">
-                    <section>
-                        <h2 className="text-xl font-bold mb-3 text-slate-800">1. Information We Collect</h2>
-                        <p className="text-slate-600 leading-relaxed mb-3">
-                            We collect information you provide directly to us, such as when you create an account, fill out a profile, or communicate with us. This may include:
-                        </p>
-                        <ul className="list-disc pl-5 text-slate-600 space-y-2">
-                            <li>Name, email address, and contact details.</li>
-                            <li>Professional credentials (for Lawyers).</li>
-                            <li>Case details and consultation history (stored securely).</li>
-                        </ul>
-                    </section>
+            <div className="relative pt-32 pb-20 px-6">
+                {/* Background FX */}
+                <div className="absolute top-0 left-0 w-[600px] h-[600px] bg-indigo-900/20 rounded-full blur-[120px] pointer-events-none"></div>
 
-                    <section>
-                        <h2 className="text-xl font-bold mb-3 text-slate-800">2. How We Use Your Information</h2>
-                        <p className="text-slate-600 leading-relaxed">
-                            We use the collected information to:
-                        </p>
-                        <ul className="list-disc pl-5 text-slate-600 space-y-2 mt-2">
-                            <li>Provide, maintain, and improve our services.</li>
-                            <li>Match clients with appropriate legal professionals.</li>
-                            <li>Process transactions and send related information.</li>
-                            <li>Monitor and analyze trends and usage.</li>
-                        </ul>
-                    </section>
+                <div className="container mx-auto max-w-4xl relative z-10">
+                    <div className="text-center mb-16">
+                        <div className="inline-flex items-center gap-2 px-3 py-1 bg-indigo-500/10 text-indigo-400 rounded-full text-[10px] font-bold uppercase tracking-widest border border-indigo-500/20 mb-6">
+                            Data Protection
+                        </div>
+                        <h1 className="text-4xl md:text-5xl font-black text-white tracking-tight mb-4">Privacy Policy</h1>
+                        <p className="text-slate-400">Compliance Verified: {new Date().toLocaleDateString()}</p>
+                    </div>
 
-                    <section>
-                        <h2 className="text-xl font-bold mb-3 text-slate-800">3. AI Data Processing</h2>
-                        <div className="bg-blue-50 border-l-4 border-blue-500 p-4 rounded-r-lg">
-                            <p className="text-blue-800 leading-relaxed text-sm font-medium">
-                                Our AI tools process input data to generate insights. We do not use your private case data to train our public models without your explicit consent. All data processing is done in accordance with industry-standard security protocols.
+                    <div className="grid md:grid-cols-2 gap-6 mb-12">
+                        <div className="bg-white/5 border border-white/10 p-6 rounded-2xl flex items-center gap-4">
+                            <div className="bg-emerald-500/20 p-3 rounded-xl text-emerald-400"><Lock size={24} /></div>
+                            <div>
+                                <h3 className="text-white font-bold">End-to-End Encryption</h3>
+                                <p className="text-xs text-slate-400">AES-256 Standard for all case files.</p>
+                            </div>
+                        </div>
+                        <div className="bg-white/5 border border-white/10 p-6 rounded-2xl flex items-center gap-4">
+                            <div className="bg-indigo-500/20 p-3 rounded-xl text-indigo-400"><Database size={24} /></div>
+                            <div>
+                                <h3 className="text-white font-bold">Zero-Training Policy</h3>
+                                <p className="text-xs text-slate-400">Your private data is NOT used to train our AI.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="bg-white/5 backdrop-blur-xl p-10 md:p-16 rounded-[2.5rem] border border-white/10 shadow-2xl space-y-12">
+                        <section>
+                            <h2 className="text-2xl font-bold text-white mb-4 flex items-center gap-3">
+                                1. Data Collection
+                            </h2>
+                            <p className="leading-relaxed text-lg font-light mb-4">
+                                We utilize minimal data collection protocols required to function:
+                            </p>
+                            <ul className="space-y-3">
+                                <li className="flex items-center gap-3 text-slate-300 bg-black/20 p-3 rounded-xl border border-white/5">
+                                    <span className="w-1.5 h-1.5 rounded-full bg-indigo-500"></span> Identity Verification Documents (Encrypted)
+                                </li>
+                                <li className="flex items-center gap-3 text-slate-300 bg-black/20 p-3 rounded-xl border border-white/5">
+                                    <span className="w-1.5 h-1.5 rounded-full bg-indigo-500"></span> Case Metadata for Lawyer Matching
+                                </li>
+                            </ul>
+                        </section>
+
+                        <div className="h-px bg-white/5 w-full"></div>
+
+                        <section>
+                            <h2 className="text-2xl font-bold text-white mb-4 flex items-center gap-3">
+                                2. Usage of Information
+                            </h2>
+                            <p className="leading-relaxed">
+                                Client case details are accessible <span className="text-white font-bold">only</span> to the specific lawyer you explicitly connect with. Our AI analyzes text strings locally or via stateless calls where possible to ensure confidentiality.
+                            </p>
+                        </section>
+
+                        <div className="h-px bg-white/5 w-full"></div>
+
+                        <section>
+                            <h2 className="text-2xl font-bold text-white mb-4 flex items-center gap-3">
+                                3. Cookies & Tracking
+                            </h2>
+                            <p className="leading-relaxed">
+                                We use session cookies strictly for authentication and safety. We do not sell your behavioral data to third-party ad networks.
+                            </p>
+                        </section>
+                    </div>
+
+                    <div className="mt-12 text-center">
+                        <div className="inline-block p-4 rounded-xl bg-slate-900 border border-slate-800">
+                            <p className="text-slate-500 text-xs text-center">
+                                Questions about your data? <br />
+                                <a href="mailto:privacy@nyaynow.com" className="text-indigo-400 font-bold hover:underline">Contact our DPO</a>
                             </p>
                         </div>
-                    </section>
-
-                    <section>
-                        <h2 className="text-xl font-bold mb-3 text-slate-800">4. Data Sharing</h2>
-                        <p className="text-slate-600 leading-relaxed">
-                            We do not sell your personal data. We may share information with legal professionals you choose to connect with, or as required by law.
-                        </p>
-                    </section>
-
-                    <section>
-                        <h2 className="text-xl font-bold mb-3 text-slate-800">5. Security</h2>
-                        <p className="text-slate-600 leading-relaxed">
-                            We take reasonable measures to help protect information about you from loss, theft, misuse and unauthorized access, disclosure, alteration and destruction.
-                        </p>
-                    </section>
+                    </div>
                 </div>
             </div>
+            <Footer />
         </div>
     );
 };

@@ -1,168 +1,17 @@
 import { useState, useEffect, useRef } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
-
-const NAVIGATION_ITEMS = [
-  {
-    label: "Legal Supermind",
-    href: "#",
-    dropdown: [
-      {
-        name: "Moot Court",
-        href: "/moot-court",
-        desc: "Practice arguments in VR",
-        icon: (
-          <svg className="w-5 h-5 text-purple-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 6l3 1m0 0l-3 9a5.002 5.002 0 006.001 0M6 7l3 9M6 7l6-2m6 2l3-1m-3 1l-3 9a5.002 5.002 0 006.001 0M18 7l3 9m-3-9l-6-2m0-2v2m0 16V5m0 16H9m3 0h3" />
-          </svg>
-        )
-      },
-      {
-        name: "Legal Research",
-        href: "/research",
-        desc: "Semantic case search",
-        icon: (
-          <svg className="w-5 h-5 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-          </svg>
-        )
-      },
-      {
-        name: "Drafting Lab",
-        href: "/drafting",
-        desc: "AI Contract Generator",
-        icon: (
-          <svg className="w-5 h-5 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-          </svg>
-        )
-      },
-      {
-        name: "Career Hub",
-        href: "/career",
-        desc: "Internships & Mentorship",
-        icon: (
-          <svg className="w-5 h-5 text-pink-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-          </svg>
-        )
-      },
-    ]
-  },
-  {
-    label: "Products",
-    href: "#",
-    dropdown: [
-      {
-        name: "Judge AI",
-        href: "/judge-ai",
-        desc: "Predict case outcomes with AI",
-        icon: (
-          <svg className="w-5 h-5 text-indigo-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 6l3 1m0 0l-3 9a5.002 5.002 0 006.001 0M6 7l3 9M6 7l6-2m6 2l3-1m-3 1l-3 9a5.002 5.002 0 006.001 0M18 7l3 9m-3-9l-6-2m0-2v2m0 16V5m0 16H9m3 0h3" />
-          </svg>
-        )
-      },
-      {
-        name: "NyayVoice",
-        href: "/voice-assistant",
-        desc: "Multilingual voice assistance",
-        icon: (
-          <svg className="w-5 h-5 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z" />
-          </svg>
-        )
-      },
-      {
-        name: "Smart Drafter",
-        href: "/agreements",
-        desc: "Draft legal documents instantly",
-        icon: (
-          <svg className="w-5 h-5 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-          </svg>
-        )
-      },
-      {
-        name: "AI Assistant",
-        href: "/assistant",
-        desc: "24/7 Legal Expert Chat",
-        icon: (
-          <svg className="w-5 h-5 text-violet-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
-          </svg>
-        )
-      },
-    ]
-  },
-  {
-    label: "Marketplace",
-    href: "#",
-    dropdown: [
-      {
-        name: "Find Lawyers",
-        href: "/marketplace",
-        desc: "Browse verified top-tier experts",
-        icon: (
-          <svg className="w-5 h-5 text-orange-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-          </svg>
-        )
-      },
-      {
-        name: "Nearby Help",
-        href: "/nearby",
-        desc: "Locate courts & police stations",
-        icon: (
-          <svg className="w-5 h-5 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-          </svg>
-        )
-      },
-      {
-        name: "Consultations",
-        href: "/messages",
-        desc: "Secure video calls & chat",
-        icon: (
-          <svg className="w-5 h-5 text-cyan-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
-          </svg>
-        )
-      },
-    ]
-  },
-  {
-    label: "Resources",
-    href: "#",
-    dropdown: [
-      {
-        name: "Pricing",
-        href: "/pricing",
-        desc: "Plans for every need",
-        icon: (
-          <svg className="w-5 h-5 text-yellow-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-          </svg>
-        )
-      },
-      {
-        name: "Community",
-        href: "#",
-        desc: "Join the legal revolution (Soon)",
-        icon: (
-          <svg className="w-5 h-5 text-pink-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
-          </svg>
-        )
-      },
-    ]
-  }
-];
+import { motion, AnimatePresence } from "framer-motion";
+import {
+  Scale, BookOpen, FileText, Briefcase, Gavel,
+  Mic, User, Search, MapPin, Video, DollarSign,
+  Users, Menu, X, ChevronDown, LogOut, LayoutDashboard
+} from "lucide-react";
 
 export default function Navbar() {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [hoveredIndex, setHoveredIndex] = useState(null);
@@ -185,201 +34,192 @@ export default function Navbar() {
   };
 
   const handleMouseLeave = () => {
-    timeoutRef.current = setTimeout(() => {
-      setHoveredIndex(null);
-    }, 200); // Slight delay for better UX
+    timeoutRef.current = setTimeout(() => setHoveredIndex(null), 200);
   };
+
+  const navItems = [
+    {
+      label: "Intelligence",
+      items: [
+        { name: "Judge AI", href: "/judge-ai", desc: "Win Probability Predictor", icon: <Gavel className="text-amber-500" size={20} /> },
+        { name: "Legal Research", href: "/research", desc: "Semantic Case Search", icon: <Search className="text-blue-400" size={20} /> },
+        { name: "Drafting Lab", href: "/drafting", desc: "AI Contract Generator", icon: <FileText className="text-emerald-400" size={20} /> },
+        { name: "NyayVoice", href: "/voice-assistant", desc: "Multilingual Voice AI", icon: <Mic className="text-purple-400" size={20} /> },
+      ]
+    },
+    {
+      label: "Practice",
+      items: [
+        { name: "Moot Court VR", href: "/moot-court", desc: "Argument Simulator", icon: <Scale className="text-rose-400" size={20} /> },
+        { name: "Career Hub", href: "/career", desc: "Internships & Tasks", icon: <Briefcase className="text-orange-400" size={20} /> },
+        { name: "Agreements", href: "/agreements", desc: "Smart Templates", icon: <BookOpen className="text-cyan-400" size={20} /> },
+        { name: "Assistant", href: "/assistant", desc: "24/7 Legal Chat", icon: <User className="text-indigo-400" size={20} /> },
+      ]
+    },
+    {
+      label: "Network",
+      items: [
+        { name: "Marketplace", href: "/marketplace", desc: "Verified Lawyers", icon: <Users className="text-gold-400" size={20} /> },
+        { name: "Nearby Help", href: "/nearby", desc: "Courts & Police", icon: <MapPin className="text-red-400" size={20} /> },
+        { name: "Consultations", href: "/messages", desc: "Secure Video Calls", icon: <Video className="text-teal-400" size={20} /> },
+        { name: "Pricing", href: "/pricing", desc: "Pro Plans", icon: <DollarSign className="text-green-400" size={20} /> },
+      ]
+    }
+  ];
 
   return (
     <>
-      <nav className={`fixed top-0 w-full z-[9999] transition-all duration-300 h-[72px] flex items-center ${scrolled ? "bg-white/80 backdrop-blur-md shadow-sm border-b border-white/20" : "bg-white/50 backdrop-blur-sm border-b border-transparent"}`}>
-        <div className="max-w-7xl w-full mx-auto px-6 h-full flex items-center justify-between">
+      <nav
+        className={`fixed top-0 w-full z-[9999] transition-all duration-500 border-b ${scrolled ? "bg-[#020617]/90 backdrop-blur-xl border-white/5 h-[72px] shadow-2xl" : "bg-transparent border-transparent h-[88px]"}`}
+      >
+        <div className="max-w-7xl mx-auto px-6 h-full flex items-center justify-between">
 
           {/* LOGO */}
-          <Link to="/" className="flex items-center gap-2 relative z-50">
-            <img src="/logo.png" alt="NyayNow" className="h-10 w-auto object-contain transition-transform hover:scale-105" />
+          <Link to="/" className="flex items-center gap-3 group relative z-50">
+            <div className="w-10 h-10 bg-gradient-to-br from-indigo-600 to-purple-600 rounded-xl flex items-center justify-center text-white font-bold text-xl shadow-lg shadow-indigo-500/20 group-hover:scale-105 transition duration-300">
+              N
+            </div>
+            <span className="text-xl font-bold text-white tracking-tight group-hover:text-indigo-200 transition">NyayNow</span>
           </Link>
 
-          {/* DESKTOP MEGA MENU */}
+          {/* DESKTOP NAV */}
           <div className="hidden lg:flex items-center gap-8 h-full">
-            {NAVIGATION_ITEMS.map((item, index) => (
+            {navItems.map((category, idx) => (
               <div
-                key={index}
+                key={idx}
                 className="relative h-full flex items-center"
-                onMouseEnter={() => handleMouseEnter(index)}
+                onMouseEnter={() => handleMouseEnter(idx)}
                 onMouseLeave={handleMouseLeave}
               >
-                <button className={`flex items-center gap-1.5 text-sm font-semibold transition-colors ${hoveredIndex === index ? "text-blue-600" : "text-slate-600 hover:text-slate-900"}`}>
-                  {item.label}
-                  <svg className={`w-4 h-4 transition-transform duration-200 ${hoveredIndex === index ? "rotate-180" : ""}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                  </svg>
+                <button className={`flex items-center gap-1.5 text-sm font-bold transition-colors ${hoveredIndex === idx ? "text-indigo-400" : "text-slate-400 hover:text-white"}`}>
+                  {category.label}
+                  <ChevronDown size={14} className={`transition-transform duration-300 ${hoveredIndex === idx ? "rotate-180" : ""}`} />
                 </button>
 
-                {/* DROPDOWN FLYOUT */}
-                <div
-                  className={`absolute top-full left-1/2 -translate-x-1/2 pt-4 transition-all duration-300 transform origin-top ${hoveredIndex === index ? "opacity-100 visible translate-y-0" : "opacity-0 invisible -translate-y-2 pointer-events-none"}`}
-                >
-                  <div className="bg-white rounded-2xl shadow-xl border border-slate-100 p-4 w-[320px] grid gap-2 relative z-50">
-                    {/* Little Arrow */}
-                    <div className="absolute -top-1.5 left-1/2 -translate-x-1/2 w-4 h-4 bg-white rotate-45 border-t border-l border-slate-100"></div>
+                <AnimatePresence>
+                  {hoveredIndex === idx && (
+                    <motion.div
+                      initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                      animate={{ opacity: 1, y: 0, scale: 1 }}
+                      exit={{ opacity: 0, y: 10, scale: 0.95 }}
+                      transition={{ duration: 0.15 }}
+                      className="absolute top-full left-1/2 -translate-x-1/2 pt-4 w-[600px]"
+                    >
+                      <div className="bg-[#0f172a] border border-white/10 rounded-2xl p-2 shadow-2xl grid grid-cols-2 gap-2 relative overflow-hidden backdrop-blur-3xl">
+                        {/* Glow */}
+                        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-32 h-32 bg-indigo-500/20 blur-[50px] pointer-events-none"></div>
 
-                    {item.dropdown.map((subItem, idx) => (
-                      <Link
-                        key={idx}
-                        to={subItem.href}
-                        className="flex items-start gap-4 p-3 rounded-xl hover:bg-slate-50 transition-colors group relative z-10"
-                      >
-                        <div className="mt-1 p-2 bg-slate-50 rounded-lg group-hover:bg-white group-hover:shadow-sm transition-all text-slate-600 group-hover:text-blue-600">
-                          {subItem.icon}
-                        </div>
-                        <div>
-                          <p className="text-sm font-bold text-slate-900 group-hover:text-blue-700">{subItem.name}</p>
-                          <p className="text-xs text-slate-500 mt-0.5 line-clamp-1">{subItem.desc}</p>
-                        </div>
-                      </Link>
-                    ))}
-                  </div>
-                </div>
+                        {category.items.map((item, i) => (
+                          <Link
+                            key={i}
+                            to={item.href}
+                            className="flex items-center gap-4 p-4 rounded-xl hover:bg-white/5 transition group relative z-10"
+                          >
+                            <div className="w-10 h-10 rounded-lg bg-black/40 flex items-center justify-center border border-white/5 group-hover:border-white/10 transition group-hover:scale-110 duration-300">
+                              {item.icon}
+                            </div>
+                            <div>
+                              <div className="text-white font-bold text-sm group-hover:text-indigo-300 transition">{item.name}</div>
+                              <div className="text-slate-500 text-xs font-medium">{item.desc}</div>
+                            </div>
+                          </Link>
+                        ))}
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
               </div>
             ))}
           </div>
 
-          {/* RIGHT: AUTH & ACTIONS */}
+          {/* RIGHT ACTIONS */}
           <div className="flex items-center gap-4 relative z-50">
             {!user ? (
               <>
-                <Link to="/login" className="hidden sm:block text-slate-600 font-bold hover:text-slate-900 text-sm transition-colors">Log in</Link>
-                <Link to="/register" className="px-5 py-2.5 bg-[#0B1120] text-white font-bold text-sm rounded-lg hover:bg-slate-800 transition-all shadow-lg hover:shadow-xl active:scale-95">
+                <Link to="/login" className="hidden sm:block text-slate-400 hover:text-white font-bold text-sm transition">Log in</Link>
+                <Link to="/register" className="px-6 py-2.5 bg-white text-black font-bold text-sm rounded-xl hover:bg-slate-200 transition shadow-[0_0_20px_rgba(255,255,255,0.2)]">
                   Get Started
                 </Link>
               </>
             ) : (
               <div className="flex items-center gap-4">
-                <Link to={user.role === "lawyer" ? "/lawyer/dashboard" : "/client/dashboard"} className="hidden sm:flex items-center gap-2 text-sm font-bold text-slate-700 hover:text-blue-600 transition-colors">
-                  <span>Dashboard</span>
-                  <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" /></svg>
+                <Link to={user.role === 'lawyer' ? '/lawyer/dashboard' : '/client/dashboard'} className="hidden sm:flex items-center gap-2 text-slate-400 hover:text-white transition font-bold text-sm">
+                  <LayoutDashboard size={18} /> Dashboard
                 </Link>
 
-                <div className="relative group">
-                  <button className="w-9 h-9 rounded-full bg-blue-50 text-blue-600 font-bold border border-blue-100 flex items-center justify-center text-sm shadow-sm hover:ring-2 hover:ring-blue-100 transition-all">
-                    {user.name?.[0]?.toUpperCase() || "U"}
-                  </button>
-                  {/* User Dropdown */}
-                  <div className="absolute right-0 top-full mt-2 w-48 bg-white rounded-xl shadow-xl border border-slate-100 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 flex flex-col p-1.5 z-50 origin-top-right transform">
-                    <div className="px-3 py-2 border-b border-slate-50 mb-1">
-                      <p className="text-xs font-bold text-slate-900 truncate">Hi, {user.name}</p>
+                <div className="relative group cursor-pointer">
+                  <div className="w-10 h-10 rounded-full bg-gradient-to-tr from-indigo-500 to-purple-600 p-[2px]">
+                    <div className="w-full h-full rounded-full bg-[#020617] flex items-center justify-center overflow-hidden">
+                      {user.profileImage ? <img src={user.profileImage} className="w-full h-full object-cover" /> : <span className="font-bold text-white">{user.name[0]}</span>}
                     </div>
-                    <Link to={user.role === "lawyer" ? "/lawyer/dashboard" : "/client/dashboard"} className="px-3 py-2 text-slate-700 hover:bg-slate-50 hover:text-blue-700 text-sm font-medium rounded-lg flex items-center gap-2 transition">
-                      📊 Dashboard
+                  </div>
+
+                  <div className="absolute right-0 top-full mt-4 w-56 bg-[#0f172a] border border-white/10 rounded-xl p-2 shadow-2xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 transform origin-top-right">
+                    <div className="px-3 py-3 border-b border-white/5 mb-2">
+                      <p className="text-white font-bold text-sm truncate">{user.name}</p>
+                      <p className="text-slate-500 text-xs truncate">{user.email}</p>
+                    </div>
+                    <Link to="/settings" className="flex items-center gap-3 px-3 py-2 text-slate-400 hover:text-white hover:bg-white/5 rounded-lg text-sm transition font-medium">
+                      <User size={16} /> Profile & Settings
                     </Link>
-                    <button onClick={handleLogout} className="px-3 py-2 text-red-600 hover:bg-red-50 text-sm font-medium rounded-lg text-left flex items-center gap-2 transition">
-                      🚪 Sign Out
+                    <button onClick={handleLogout} className="w-full flex items-center gap-3 px-3 py-2 text-rose-400 hover:bg-rose-500/10 rounded-lg text-sm transition font-medium text-left">
+                      <LogOut size={16} /> Sign Out
                     </button>
                   </div>
                 </div>
               </div>
             )}
 
-            {/* MOBILE TOGGLE */}
-            <button
-              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="lg:hidden p-2 text-slate-600 hover:text-slate-900 hover:bg-slate-50 rounded-lg transition"
-            >
-              {mobileMenuOpen ? (
-                <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
-              ) : (
-                <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" /></svg>
-              )}
+            {/* MOBILE MENU BTN */}
+            <button onClick={() => setMobileMenuOpen(!mobileMenuOpen)} className="lg:hidden p-2 text-white">
+              {mobileMenuOpen ? <X /> : <Menu />}
             </button>
           </div>
         </div>
-
       </nav>
 
-      {/* MOBILE MENU (Portal/Sibling) */}
-      <div
-        data-lenis-prevent
-        className={`lg:hidden fixed inset-x-0 top-[72px] bottom-0 bg-white z-40 transition-all duration-300 overflow-y-auto ${mobileMenuOpen ? "opacity-100 visible" : "opacity-0 invisible"}`}
-      >
-        <div className="p-6 space-y-2 pb-20">
-          {NAVIGATION_ITEMS.map((item, index) => (
-            <MobileMenuItem key={index} item={item} closeMenu={() => setMobileMenuOpen(false)} />
-          ))}
+      {/* MOBILE MENU */}
+      <AnimatePresence>
+        {mobileMenuOpen && (
+          <motion.div
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            className="fixed inset-0 z-40 bg-[#020617] pt-24 px-6 overflow-y-auto"
+          >
+            <div className="flex flex-col gap-6 pb-20">
+              {navItems.map((group, idx) => (
+                <div key={idx} className="space-y-3">
+                  <h3 className="text-indigo-400 font-bold text-xs uppercase tracking-widest">{group.label}</h3>
+                  <div className="grid grid-cols-1 gap-2">
+                    {group.items.map((item, i) => (
+                      <Link
+                        key={i}
+                        to={item.href}
+                        onClick={() => setMobileMenuOpen(false)}
+                        className="flex items-center gap-4 p-3 rounded-xl bg-white/5 border border-white/5"
+                      >
+                        <div className="text-slate-200">{item.icon}</div>
+                        <div>
+                          <div className="text-white font-bold text-sm">{item.name}</div>
+                          <div className="text-slate-500 text-xs">{item.desc}</div>
+                        </div>
+                      </Link>
+                    ))}
+                  </div>
+                </div>
+              ))}
 
-          <div className="h-px bg-slate-100 my-4"></div>
-
-          <div className="flex flex-col gap-3">
-            {!user && (
-              <>
-                <Link to="/login" onClick={() => setMobileMenuOpen(false)} className="w-full text-center py-3.5 text-slate-800 font-bold bg-slate-100 rounded-xl">Log in</Link>
-                <Link to="/register" onClick={() => setMobileMenuOpen(false)} className="w-full text-center py-3.5 bg-[#0B1120] text-white font-bold rounded-xl shadow-lg">Get Started</Link>
-              </>
-            )}
-          </div>
-        </div>
-      </div>
+              {!user && (
+                <div className="flex flex-col gap-3 mt-4">
+                  <Link to="/login" onClick={() => setMobileMenuOpen(false)} className="w-full py-4 rounded-xl bg-white/10 text-white font-bold text-center">Log In</Link>
+                  <Link to="/register" onClick={() => setMobileMenuOpen(false)} className="w-full py-4 rounded-xl bg-indigo-600 text-white font-bold text-center shadow-lg shadow-indigo-600/20">Get Started</Link>
+                </div>
+              )}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </>
-  );
-}
-
-function MobileMenuItem({ item, closeMenu }) {
-  const [isOpen, setIsOpen] = useState(false);
-
-  return (
-    <div className="border border-slate-100 rounded-xl overflow-hidden active:scale-[0.99] transition-transform">
-      <button
-        onClick={() => setIsOpen(!isOpen)}
-        className="w-full flex items-center justify-between p-4 bg-slate-50/50 hover:bg-slate-50 transition"
-      >
-        <span className="font-bold text-slate-900">{item.label}</span>
-        <svg
-          className={`w-5 h-5 text-slate-400 transition-transform duration-300 ${isOpen ? "rotate-180" : ""}`}
-          fill="none" viewBox="0 0 24 24" stroke="currentColor"
-        >
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-        </svg>
-      </button>
-
-      <div className={`grid transition-all duration-300 ease-in-out ${isOpen ? "grid-rows-[1fr] opacity-100" : "grid-rows-[0fr] opacity-0"}`}>
-        <div className="overflow-hidden">
-          <div className="p-2 space-y-1 bg-white border-t border-slate-100">
-            {item.dropdown.map((subItem, idx) => (
-              <Link
-                key={idx}
-                to={subItem.href}
-                onClick={closeMenu}
-                className="flex items-center gap-3 p-3 rounded-lg hover:bg-slate-50 transition-colors group"
-              >
-                <div className="p-1.5 bg-slate-50 rounded-md text-slate-500 group-hover:text-blue-600 group-hover:bg-blue-50 transition">
-                  {subItem.icon}
-                </div>
-                <div>
-                  <p className="text-sm font-bold text-slate-700 group-hover:text-blue-700">{subItem.name}</p>
-                  <p className="text-[10px] text-slate-400 leading-tight">{subItem.desc}</p>
-                </div>
-              </Link>
-            ))}
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-
-function NavLink({ to, children, active }) {
-  return (
-    <Link
-      to={to}
-      className={`relative font-semibold text-[14px] transition-colors duration-200 
-        ${active ? "text-[#0B1120]" : "text-slate-500 hover:text-blue-600"}`}
-    >
-      {children}
-      {/* Active Indicator */}
-      {active && (
-        <span className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-1 h-1 bg-[#0B1120] rounded-full"></span>
-      )}
-    </Link>
   );
 }
