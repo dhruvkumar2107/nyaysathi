@@ -9,19 +9,79 @@ import { useAuth } from '../context/AuthContext';
 const Pricing = () => {
   const { user } = useAuth();
   const [billingCycle, setBillingCycle] = useState('monthly');
+  const [userType, setUserType] = useState('client'); // 'client' | 'lawyer'
 
   const handleUpgrade = async (plan, price) => {
     if (!user) return alert("Please login first");
     try {
-      // Initiate payment logic here
-      alert(`Initiating upgrade to ${plan} Plan`);
+      alert(`Initiating upgrade to ${plan} Plan for ${userType === 'client' ? 'Clients' : 'Lawyers'}`);
     } catch (error) {
       console.error(error);
     }
   };
 
+  const clientPlans = [
+    {
+      title: "Basic",
+      price: "Free",
+      desc: "Essential legal help for everyone.",
+      features: ['Basic Legal Q&A (5/day)', 'Access to Marketplace', 'Standard Support'],
+      icon: <Shield className="text-slate-400" />
+    },
+    {
+      title: "Pro",
+      price: billingCycle === 'monthly' ? "₹499" : "₹4,999",
+      period: billingCycle === 'monthly' ? "/mo" : "/yr",
+      desc: "For individuals needing regular advice.",
+      features: ['Unlimited AI Chat', 'Document Drafting (5/mo)', 'Priority Support', 'Legal Research Access'],
+      highlight: true,
+      popular: true,
+      icon: <Zap className="text-white" />
+    },
+    {
+      title: "Premium",
+      price: billingCycle === 'monthly' ? "₹1,499" : "₹14,999",
+      period: billingCycle === 'monthly' ? "/mo" : "/yr",
+      desc: "Complete family legal protection.",
+      features: ['Everything in Pro', 'Lawyer Consulation (1/mo)', 'Agreement Review', 'Dedicated Manager'],
+      special: true,
+      icon: <Star className="text-amber-400" />
+    }
+  ];
+
+  const lawyerPlans = [
+    {
+      title: "Starter",
+      price: "Free",
+      desc: "Build your digital presence.",
+      features: ['Basic Profile Listing', 'Accept Client Inquiries', 'Access to Forum'],
+      icon: <Shield className="text-slate-400" />
+    },
+    {
+      title: "Professional",
+      price: billingCycle === 'monthly' ? "₹1,999" : "₹19,999",
+      period: billingCycle === 'monthly' ? "/mo" : "/yr",
+      desc: "Grow your practice with verified leads.",
+      features: ['Verified Badge', '10 Qualified Leads/mo', 'Case Management Tool', 'Priority Support'],
+      highlight: true,
+      popular: true,
+      icon: <Zap className="text-white" />
+    },
+    {
+      title: "Elite",
+      price: billingCycle === 'monthly' ? "₹4,999" : "₹49,999",
+      period: billingCycle === 'monthly' ? "/mo" : "/yr",
+      desc: "Dominate your legal niche.",
+      features: ['Top Ranking in Search', 'Unlimited Leads', 'AI Paralegal Access', 'Moot Court VR Access'],
+      special: true,
+      icon: <Star className="text-amber-400" />
+    }
+  ];
+
+  const plans = userType === 'client' ? clientPlans : lawyerPlans;
+
   return (
-    <div className="min-h-screen bg-[#0B1120] text-white font-sans selection:bg-indigo-500/30">
+    <div className="min-h-screen bg-[#0f172a] text-white font-sans selection:bg-indigo-500/30">
       <Navbar />
 
       {/* HERO */}
@@ -30,20 +90,38 @@ const Pricing = () => {
         <div className="relative z-10 px-6">
           <h1 className="text-5xl md:text-6xl font-serif font-bold mb-6">Invest in Your Legal Security.</h1>
           <p className="text-xl text-slate-400 max-w-2xl mx-auto mb-10">
-            Professional-grade AI tools for lawyers, law firms, and individuals who demand the best.
+            Choose the plan that fits your needs. Whether you are seeking justice or delivering it.
           </p>
 
-          {/* TOGGLE */}
+          {/* USER TYPE TOGGLE */}
+          <div className="flex justify-center mb-8">
+            <div className="inline-flex bg-slate-800 p-1 rounded-xl shadow-inner">
+              <button
+                onClick={() => setUserType('client')}
+                className={`px-8 py-3 rounded-lg text-sm font-bold transition-all ${userType === 'client' ? 'bg-indigo-600 text-white shadow-lg' : 'text-slate-400 hover:text-white'}`}
+              >
+                For Clients
+              </button>
+              <button
+                onClick={() => setUserType('lawyer')}
+                className={`px-8 py-3 rounded-lg text-sm font-bold transition-all ${userType === 'lawyer' ? 'bg-indigo-600 text-white shadow-lg' : 'text-slate-400 hover:text-white'}`}
+              >
+                For Lawyers
+              </button>
+            </div>
+          </div>
+
+          {/* BILLING TOGGLE */}
           <div className="inline-flex bg-white/5 border border-white/10 p-1 rounded-full backdrop-blur-sm">
             <button
               onClick={() => setBillingCycle('monthly')}
-              className={`px-6 py-2 rounded-full text-sm font-bold transition-all ${billingCycle === 'monthly' ? 'bg-indigo-600 text-white shadow-lg' : 'text-slate-400 hover:text-white'}`}
+              className={`px-6 py-2 rounded-full text-sm font-bold transition-all ${billingCycle === 'monthly' ? 'bg-white/10 text-white' : 'text-slate-400 hover:text-white'}`}
             >
               Monthly
             </button>
             <button
               onClick={() => setBillingCycle('yearly')}
-              className={`px-6 py-2 rounded-full text-sm font-bold transition-all ${billingCycle === 'yearly' ? 'bg-indigo-600 text-white shadow-lg' : 'text-slate-400 hover:text-white'}`}
+              className={`px-6 py-2 rounded-full text-sm font-bold transition-all ${billingCycle === 'yearly' ? 'bg-white/10 text-white' : 'text-slate-400 hover:text-white'}`}
             >
               Yearly <span className="text-[10px] text-emerald-300 ml-1">-20%</span>
             </button>
@@ -54,41 +132,13 @@ const Pricing = () => {
       {/* PRICING CARDS */}
       <div className="container mx-auto px-6 pb-32 max-w-6xl">
         <div className="grid md:grid-cols-3 gap-8">
-
-          {/* FREE TIER */}
-          <PricingCard
-            title="Basic"
-            price="Free"
-            desc="Essential tools for everyday legal queries."
-            features={['Basic AI Chat (5/day)', 'Access to Marketplace', 'Standard Support']}
-            icon={<Shield className="text-slate-400" />}
-          />
-
-          {/* GOLD TIER */}
-          <PricingCard
-            title="Gold"
-            price={billingCycle === 'monthly' ? "₹999" : "₹9,999"}
-            period={billingCycle === 'monthly' ? "/mo" : "/yr"}
-            desc="For independent lawyers and power users."
-            features={['Unlimited AI Chat', 'Document Drafting (10/mo)', 'Priority Support', 'Legal Research Access']}
-            highlight
-            popular
-            icon={<Zap className="text-white" />}
-            onAction={() => handleUpgrade('Gold', 999)}
-          />
-
-          {/* DIAMOND TIER */}
-          <PricingCard
-            title="Diamond"
-            price={billingCycle === 'monthly' ? "₹2,499" : "₹24,999"}
-            period={billingCycle === 'monthly' ? "/mo" : "/yr"}
-            desc="Full suite access for law firms."
-            features={['Everything in Gold', 'Judge AI Predictor', 'Moot Court VR Access', 'API Access', 'Dedicated Account Manager']}
-            icon={<Star className="text-amber-400" />}
-            special
-            onAction={() => handleUpgrade('Diamond', 2499)}
-          />
-
+          {plans.map((plan, idx) => (
+            <PricingCard
+              key={idx}
+              {...plan}
+              onAction={() => handleUpgrade(plan.title, plan.price)}
+            />
+          ))}
         </div>
       </div>
 
@@ -101,10 +151,10 @@ const PricingCard = ({ title, price, period, desc, features, highlight, popular,
   <motion.div
     whileHover={{ y: -10 }}
     className={`relative p-8 rounded-3xl border flex flex-col h-full ${special
-        ? "bg-gradient-to-b from-slate-800 to-slate-900 border-amber-500/50 shadow-[0_0_30px_-5px_rgba(245,158,11,0.3)]"
-        : highlight
-          ? "bg-indigo-600 border-indigo-500 text-white shadow-2xl shadow-indigo-600/40"
-          : "bg-white/5 border-white/10 backdrop-blur-sm"
+      ? "bg-gradient-to-b from-slate-800 to-slate-900 border-amber-500/50 shadow-[0_0_30px_-5px_rgba(245,158,11,0.3)]"
+      : highlight
+        ? "bg-indigo-600 border-indigo-500 text-white shadow-2xl shadow-indigo-600/40"
+        : "bg-white/5 border-white/10 backdrop-blur-sm"
       }`}
   >
     {popular && (
@@ -139,10 +189,10 @@ const PricingCard = ({ title, price, period, desc, features, highlight, popular,
     <button
       onClick={onAction}
       className={`w-full py-4 rounded-xl font-bold transition shadow-lg ${highlight
-          ? "bg-white text-indigo-600 hover:bg-slate-50"
-          : special
-            ? "bg-gradient-to-r from-amber-400 to-gold-600 text-black hover:opacity-90"
-            : "bg-white/10 hover:bg-white/20 text-white"
+        ? "bg-white text-indigo-600 hover:bg-slate-50"
+        : special
+          ? "bg-gradient-to-r from-amber-400 to-gold-600 text-black hover:opacity-90"
+          : "bg-white/10 hover:bg-white/20 text-white"
         }`}
     >
       Get Started

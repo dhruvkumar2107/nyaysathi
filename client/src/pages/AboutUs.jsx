@@ -66,17 +66,7 @@ export default function AboutUs() {
                 </div>
             </section>
 
-            {/* TEAM / LEADERSHIP */}
-            <section className="py-24 bg-midnight-950 border-t border-white/5">
-                <div className="max-w-5xl mx-auto px-6 text-center">
-                    <h2 className="text-3xl font-serif font-bold text-white mb-16">Built by Legal Experts & Engineers</h2>
-                    <div className="grid md:grid-cols-3 gap-8">
-                        <TeamCard name="Aditya Verma" role="Founder & CEO" color="bg-indigo-500" />
-                        <TeamCard name="Priya Sharma" role="Head of Legal AI" color="bg-purple-500" />
-                        <TeamCard name="Vikram Singh" role="CTO" color="bg-cyan-500" />
-                    </div>
-                </div>
-            </section>
+
 
             <Footer />
         </div>
