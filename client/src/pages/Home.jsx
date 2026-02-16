@@ -184,27 +184,7 @@ export default function Home() {
         <div className="max-w-[1400px] mx-auto px-6 relative z-10">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 perspective-1000">
 
-            {/* CARD 1: AI ASSISTANT (FIRST) */}
-            <UnicornCard
-              title="AI Legal Assistant"
-              desc="Your 24/7 legal genius. Ask complex queries and get citations, case laws, and strategy in seconds."
-              icon="🤖"
-              color="from-cyan-500 via-blue-500 to-indigo-500"
-              href="/assistant"
-              badge="Daily Driver"
-              delay={0}
-            />
 
-            {/* CARD 2: JUDGE AI (VIRAL) */}
-            <UnicornCard
-              title="Judge AI Predictor"
-              desc="Predict case outcomes with 94% accuracy. Analyze millions of judgments to forecast your winning probability."
-              icon="⚖️"
-              color="from-rose-500 via-red-500 to-orange-500"
-              href="/judge-ai"
-              badge="Viral"
-              delay={0.1}
-            />
 
             {/* CARD 3: NYAY VOICE (VIRAL) */}
             <UnicornCard
