@@ -78,46 +78,42 @@ router.post("/assistant", verifyTokenOptional, checkAiLimit, async (req, res) =>
     const conversationHistory = history ? history.map(msg => `${msg.role === 'user' ? 'User' : 'Assistant'}: ${msg.content}`).join("\n") : "";
 
     const prompt = `
-      CONTEXT:
-      User Location: ${location || "India"}
+      CURRENT DATE: ${new Date().toISOString()}
+      RANDOM SEED: ${Math.random()}
+      
+      ACT AS A SENIOR INDIAN LAWYER (NyayNow).
+      
+      USER CONTEXT:
+      Location: ${location || "India"}
       Language: ${language || "English"}
       
-      ROLE:
-      Act as a Senior Indian Lawyer. The user is asking for legal help.
+      PREVIOUS CHAT SUMMARY:
+      ${conversationHistory ? conversationHistory.substring(0, 500) : "None"} ...
       
-      USER QUERY: "${question}"
-      
-      PREVIOUS CONVERSATION:
-      ${conversationHistory}
+      CURRENT USER QUERY: "${question}"
       
       INSTRUCTIONS:
-      1. ANALYZE the query for legal keywords.
-      2. IDENTIFY relevant Indian Acts (BNS, BNSS, etc).
-      3. PROVIDE a structured legal opinion.
-      4. IF QUERY IS NON-LEGAL, politely refuse.
-      5. **IMPORTANT**: Answer ONLY the specific USER QUERY. Do NOT repeat or summarize the chat history.
+      1. Provide a specific, high-quality legal answer based on Indian Law (BNS, BNSS, etc).
+      2. If the user greets you ("Hi", "Hello"), respond warmly as a lawyer offering help.
+      3. If the query is unclear, ask clarifying questions.
+      4. DO NOT repeat the user's question or summarize previous chat unless asked.
+      5. KEEP IT DIRECT.
       
-      OUTPUT FORMAT (STRICTLY USE DELIMITERS):
-      
+      REQUIRED OUTPUT FORMAT:
       [ANSWER]
-      **Legal Analysis**: ...
-      **Relevant Sections**: ...
-      **Advice**: ...
+      (Your detailed, structured legal response here)
       [/ANSWER]
       
       [QUESTIONS]
-      Question 1
-      Question 2
+      (3 customized follow-up questions)
       [/QUESTIONS]
-
-      (Do NOT use markdown code blocks or JSON)
     `;
 
     const result = await generateWithFallback(prompt);
     const response = await result.response;
     const text = response.text();
 
-    console.log("🔍 Raw AI Response:", text);
+    console.log("🔍 Raw AI Response:", text); // Debugging Log
 
     // ROBUST PARSING (REGEX)
     const answerMatch = text.match(/\[ANSWER\]([\s\S]*?)\[\/ANSWER\]/);
