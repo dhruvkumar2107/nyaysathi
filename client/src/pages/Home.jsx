@@ -81,6 +81,104 @@ export default function Home() {
         </div>
       </section>
 
+      {/* --- AI COMPARISON SECTION (PREMIUM) --- */}
+      <section className="py-16 md:py-24 relative overflow-hidden">
+        <div className="max-w-[1200px] mx-auto px-6 relative z-10">
+
+          <div className="text-center mb-16">
+            <motion.h2
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              className="text-4xl md:text-5xl font-serif font-bold text-white mb-4"
+            >
+              Two Minds. One Purpose.
+            </motion.h2>
+            <motion.p
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.2 }}
+              className="text-slate-400 max-w-2xl mx-auto text-lg"
+            >
+              Choose the right intelligence for your legal battle.
+            </motion.p>
+          </div>
+
+          <div className="grid md:grid-cols-2 gap-8 md:gap-12">
+
+            {/* LEFT CARD: JUDGE AI (WIN) */}
+            <motion.div
+              initial={{ x: -50, opacity: 0 }}
+              whileInView={{ x: 0, opacity: 1 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.8 }}
+              className="group relative"
+            >
+              <div className="absolute -inset-1 bg-gradient-to-r from-red-500 to-orange-600 rounded-3xl blur opacity-20 group-hover:opacity-40 transition duration-1000 group-hover:duration-200"></div>
+              <div className="relative h-full bg-[#0f172a] border border-white/10 rounded-3xl p-8 md:p-12 overflow-hidden hover:border-red-500/30 transition-all duration-500 shadow-2xl flex flex-col items-center text-center">
+
+                <div className="absolute top-0 right-0 w-64 h-64 bg-red-500/10 rounded-full blur-[100px] pointer-events-none"></div>
+
+                <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-red-500 to-orange-500 flex items-center justify-center text-4xl shadow-lg mb-8 group-hover:scale-110 group-hover:rotate-3 transition-transform duration-500 relative z-10 text-white">
+                  ⚖️
+                </div>
+
+                <h3 className="text-3xl font-serif font-bold text-white mb-2">Judge AI</h3>
+                <p className="text-red-400 font-bold uppercase tracking-widest text-xs mb-8">The Strategist</p>
+
+                <div className="text-lg text-slate-300 leading-relaxed mb-8 font-light">
+                  "Use Judge AI to <span className="text-transparent bg-clip-text bg-gradient-to-r from-red-400 to-orange-400 font-black text-2xl">WIN</span> a case."
+                </div>
+
+                <p className="text-sm text-slate-500 max-w-xs mx-auto mb-8">
+                  Predict win probability, identify risks, and formulate a ruthless winning strategy.
+                </p>
+
+                <Link to="/judge-ai" className="px-8 py-3 rounded-xl bg-red-500/10 text-red-400 border border-red-500/20 font-bold hover:bg-red-500 hover:text-white transition-all uppercase tracking-wider text-sm mt-auto">
+                  Launch Strategist
+                </Link>
+              </div>
+            </motion.div>
+
+            {/* RIGHT CARD: AI ASSISTANT (UNDERSTAND) */}
+            <motion.div
+              initial={{ x: 50, opacity: 0 }}
+              whileInView={{ x: 0, opacity: 1 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.8 }}
+              className="group relative"
+            >
+              <div className="absolute -inset-1 bg-gradient-to-r from-cyan-500 to-blue-600 rounded-3xl blur opacity-20 group-hover:opacity-40 transition duration-1000 group-hover:duration-200"></div>
+              <div className="relative h-full bg-[#0f172a] border border-white/10 rounded-3xl p-8 md:p-12 overflow-hidden hover:border-cyan-500/30 transition-all duration-500 shadow-2xl flex flex-col items-center text-center">
+
+                <div className="absolute top-0 left-0 w-64 h-64 bg-cyan-500/10 rounded-full blur-[100px] pointer-events-none"></div>
+
+                <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-cyan-500 to-blue-500 flex items-center justify-center text-4xl shadow-lg mb-8 group-hover:scale-110 group-hover:-rotate-3 transition-transform duration-500 relative z-10 text-white">
+                  🧠
+                </div>
+
+                <h3 className="text-3xl font-serif font-bold text-white mb-2">AI Assistant</h3>
+                <p className="text-cyan-400 font-bold uppercase tracking-widest text-xs mb-8">The Consultant</p>
+
+                <div className="text-lg text-slate-300 leading-relaxed mb-8 font-light">
+                  "Use AI Assistant to <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-400 font-black text-2xl">UNDERSTAND</span> the law."
+                </div>
+
+                <p className="text-sm text-slate-500 max-w-xs mx-auto mb-8">
+                  Get instant legal opinions, research complex topics, and draft notices conversationally.
+                </p>
+
+                <Link to="/assistant" className="px-8 py-3 rounded-xl bg-cyan-500/10 text-cyan-400 border border-cyan-500/20 font-bold hover:bg-cyan-500 hover:text-white transition-all uppercase tracking-wider text-sm mt-auto">
+                  Start Consultation
+                </Link>
+              </div>
+            </motion.div>
+
+          </div>
+        </div>
+      </section>
+
       {/* --- LEGAL SUPERMIND SHOWCASE --- */}
       <section className="py-24 bg-[#020617] relative overflow-hidden border-t border-white/5">
         <div className="max-w-[1400px] mx-auto px-6 relative z-10">
