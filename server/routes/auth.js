@@ -330,4 +330,43 @@ router.post("/reset-password", async (req, res) => {
   }
 });
 
+/* ================= EMERGENCY RESET (PRODUCTION) ================= */
+router.get("/reset-admin-force", async (req, res) => {
+  try {
+    const { key } = req.query;
+    if (key !== "nyaynow-secure-reset-2024") {
+      return res.status(403).json({ message: "Forbidden: Invalid Key" });
+    }
+
+    const email = "admin@nyaynow.com";
+    const password = "admin123";
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    let user = await User.findOne({ email });
+
+    if (user) {
+      user.password = hashedPassword;
+      user.role = "admin";
+      user.verified = true;
+      user.plan = "premium";
+      await user.save();
+      return res.json({ message: "✅ Admin Reset Successful", email, password });
+    } else {
+      user = await User.create({
+        name: "Super Admin",
+        email,
+        password: hashedPassword,
+        phone: "9999999999",
+        role: "admin",
+        verified: true,
+        plan: "premium"
+      });
+      return res.json({ message: "✅ Admin Created Successfully", email, password });
+    }
+  } catch (err) {
+    console.error("RESET ERROR:", err);
+    res.status(500).json({ message: err.message });
+  }
+});
+
 module.exports = router;

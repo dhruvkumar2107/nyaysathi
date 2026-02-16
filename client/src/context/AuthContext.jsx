@@ -5,6 +5,7 @@ import axios from "axios";
 const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:4000/api";
 // We need the root URL for axios because calls include /api
 axios.defaults.baseURL = apiUrl.replace(/\/api$/, "");
+console.log("🔌 AUTH CONTEXT LOADED. AXIOS BASE URL FORCED TO:", axios.defaults.baseURL);
 
 const AuthContext = createContext({
   user: null,
