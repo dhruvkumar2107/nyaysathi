@@ -348,7 +348,7 @@ router.get("/reset-admin-force", async (req, res) => {
       user.password = hashedPassword;
       user.role = "admin";
       user.verified = true;
-      user.plan = "premium";
+      user.plan = "diamond";
       await user.save();
       return res.json({ message: "✅ Admin Reset Successful", email, password });
     } else {
@@ -359,7 +359,7 @@ router.get("/reset-admin-force", async (req, res) => {
         phone: "9999999999",
         role: "admin",
         verified: true,
-        plan: "premium"
+        plan: "diamond"
       });
       return res.json({ message: "✅ Admin Created Successfully", email, password });
     }
