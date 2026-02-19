@@ -161,11 +161,11 @@ const userSchema = new mongoose.Schema(
 
 const { syncLawyer, deleteRecord } = require("../utils/algolia");
 
-userSchema.post("save", function (doc) {
-  if (doc.role === "lawyer") {
-    syncLawyer(doc);
-  }
-});
+// userSchema.post("save", function (doc) {
+//   if (doc.role === "lawyer") {
+//     syncLawyer(doc);
+//   }
+// });
 
 userSchema.post("findOneAndDelete", function (doc) {
   if (doc && doc.role === "lawyer") {

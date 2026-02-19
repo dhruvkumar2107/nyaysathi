@@ -117,6 +117,23 @@ const CustomRefinementList = ({ attribute, title }) => {
 
 const CustomHits = () => {
   const { hits } = useHits();
+  const [loading, setLoading] = React.useState(true);
+
+  React.useEffect(() => {
+    // Simulate loading for premium feel
+    const timer = setTimeout(() => setLoading(false), 800);
+    return () => clearTimeout(timer);
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="grid md:grid-cols-2 gap-6">
+        {[1, 2, 3, 4].map(i => (
+          <div key={i} className="bg-[#0f172a] rounded-2xl p-6 border border-white/5 animate-pulse h-64"></div>
+        ))}
+      </div>
+    )
+  }
 
   if (hits.length === 0) {
     return (
@@ -134,9 +151,13 @@ const CustomHits = () => {
 
   return (
     <div className="grid md:grid-cols-2 gap-6">
-      {hits.map((hit) => (
-        <LawyerCard key={hit.objectID} lawyer={hit} />
-      ))}
+      <AnimatePresence>
+        {hits.map((hit, i) => (
+          <motion.div key={hit.objectID} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.1 }}>
+            <LawyerCard lawyer={hit} />
+          </motion.div>
+        ))}
+      </AnimatePresence>
     </div>
   );
 };

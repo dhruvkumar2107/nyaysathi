@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
+import { useSearchParams } from 'react-router-dom';
 import axios from 'axios';
 import toast from 'react-hot-toast';
 import ReactMarkdown from 'react-markdown';
@@ -12,9 +13,11 @@ const DraftingLab = () => {
     const [loading, setLoading] = useState(false);
 
     // DRAFTING STATE
-    const [contractType, setContractType] = useState('Non-Disclosure Agreement (NDA)');
-    const [parties, setParties] = useState('');
-    const [terms, setTerms] = useState('');
+    // DRAFTING STATE
+    const [searchParams] = useSearchParams();
+    const [contractType, setContractType] = useState(searchParams.get('type') === 'proposal' ? 'Legal Service Proposal' : 'Non-Disclosure Agreement (NDA)');
+    const [parties, setParties] = useState(searchParams.get('type') === 'proposal' ? 'Me (Lawyer) vs Client' : '');
+    const [terms, setTerms] = useState(searchParams.get('type') === 'proposal' ? `Case: ${searchParams.get('title')}\nBudget: ${searchParams.get('budget')}\n\nProposal: I will handle this case with full diligence...` : '');
     const [generatedContract, setGeneratedContract] = useState('');
 
     // ANALYSIS STATE
@@ -182,6 +185,7 @@ const DraftingLab = () => {
                                             className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-slate-200 outline-none focus:border-indigo-500 hover:bg-white/10 transition appearance-none"
                                         >
                                             <option className="bg-[#0f172a] text-slate-200">Non-Disclosure Agreement (NDA)</option>
+                                            <option className="bg-[#0f172a] text-slate-200">Legal Service Proposal</option>
                                             <option className="bg-[#0f172a] text-slate-200">Employment Contract</option>
                                             <option className="bg-[#0f172a] text-slate-200">Rental Agreement</option>
                                             <option className="bg-[#0f172a] text-slate-200">Freelance Service Agreement</option>

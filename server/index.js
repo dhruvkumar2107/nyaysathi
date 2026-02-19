@@ -53,7 +53,8 @@ Sentry.init({
 app.use(compression());
 app.use(helmet({
   contentSecurityPolicy: false, // Disable CSP for now to avoid breaking scripts/images during dev
-  crossOriginResourcePolicy: { policy: "cross-origin" }
+  crossOriginResourcePolicy: { policy: "cross-origin" },
+  crossOriginOpenerPolicy: { policy: "same-origin-allow-popups" }
 }));
 
 const limiter = rateLimit({
@@ -88,7 +89,11 @@ const MONGO_URI =
 /* ================= DB ================= */
 async function connectDB() {
   try {
-    await mongoose.connect(MONGO_URI);
+    await mongoose.connect(MONGO_URI, {
+      maxPoolSize: 10,
+      serverSelectionTimeoutMS: 5000, // Timeout after 5s instead of 30s
+      socketTimeoutMS: 45000, // Close sockets after 45s of inactivity
+    });
     console.log("✅ MongoDB connected");
     console.log("📦 Database:", mongoose.connection.name);
   } catch (err) {

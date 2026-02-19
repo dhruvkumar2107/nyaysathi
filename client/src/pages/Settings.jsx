@@ -12,6 +12,14 @@ export default function Settings() {
     const [notifications, setNotifications] = useState(user?.settings?.notifications || { email: true, push: true, marketing: false });
     const [privacy, setPrivacy] = useState(user?.settings?.privacy || { profileVisible: true, showStatus: true });
 
+    const tabs = [
+        { id: 'account', label: 'My Account', icon: <User size={18} /> },
+        { id: 'security', label: 'Security', icon: <Lock size={18} /> },
+        { id: 'notifications', label: 'Notifications', icon: <Bell size={18} /> },
+        { id: 'billing', label: 'Billing & Plans', icon: <CreditCard size={18} /> },
+        { id: 'privacy', label: 'Privacy', icon: <Shield size={18} /> }
+    ];
+
     const updateSettings = async (section, data) => {
         try {
             const updatedSettings = {

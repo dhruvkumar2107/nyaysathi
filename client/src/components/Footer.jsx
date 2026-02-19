@@ -75,7 +75,7 @@ const Footer = () => {
                     </FooterColumn>
 
                     <FooterColumn title="Use Cases">
-                        <FooterLink to="/laywer/dashboard">For Law Firms</FooterLink>
+                        <FooterLink to="/lawyer/dashboard">For Law Firms</FooterLink>
                         <FooterLink to="/client/dashboard">For Individuals</FooterLink>
                         <FooterLink to="/career">For Students</FooterLink>
                         <FooterLink to="/enterprises">For Enterprises</FooterLink>

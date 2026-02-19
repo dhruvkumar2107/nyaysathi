@@ -8,6 +8,8 @@ import CalendarWidget from "../components/dashboard/CalendarWidget";
 import TrustTimeline from "../components/dashboard/client/TrustTimeline";
 import io from "socket.io-client";
 import { motion, AnimatePresence } from "framer-motion";
+import toast from "react-hot-toast";
+import PremiumLoader from "../components/PremiumLoader";
 
 const socket = io(import.meta.env.VITE_API_URL?.replace(/\/api$/, "") || "http://localhost:4000");
 
@@ -23,6 +25,7 @@ export default function ClientDashboard() {
   const [posts, setPosts] = useState([]);
   const [newCase, setNewCase] = useState({ title: "", desc: "", budget: "" });
   const [showPostModal, setShowPostModal] = useState(false);
+  const [showProfileMenu, setShowProfileMenu] = useState(false);
 
   useEffect(() => {
     if (user) {
@@ -55,14 +58,11 @@ export default function ClientDashboard() {
       await axios.post("/api/cases", { ...newCase, postedBy: user.phone || user.email, postedAt: new Date() });
       setShowPostModal(false);
       fetchMyCases();
-    } catch (err) { alert("Failed to post case"); }
+      toast.success("Legal Matter Posted Successfully!");
+    } catch (err) { toast.error("Failed to post case. Please try again."); }
   };
 
-  if (loading || !user) return (
-    <div className="flex items-center justify-center min-h-screen bg-[#020617] font-serif text-slate-400">
-      <div className="animate-pulse">Loading Workspace...</div>
-    </div>
-  );
+  if (loading || !user) return <PremiumLoader text="Loading Workspace..." />;
 
   const activeCase = activeCases.find(c => c.stage !== 'Closed') || activeCases[0];
 
@@ -86,22 +86,44 @@ export default function ClientDashboard() {
           </div>
         </div>
 
-        <div className="mt-auto p-8 pt-0">
-          <div className="bg-[#1e293b]/50 rounded-xl p-4 border border-white/10 mb-6 backdrop-blur-sm">
-            <div className="flex items-center gap-3 mb-3">
-              <div className="w-10 h-10 rounded-full bg-indigo-500/20 border border-indigo-500/30 flex items-center justify-center text-indigo-400 font-bold text-lg">
+        <div className="mt-auto p-8 pt-0 relative">
+          <div className="bg-[#1e293b]/50 rounded-xl p-4 border border-white/10 mb-6 backdrop-blur-sm cursor-pointer hover:bg-white/5 transition group" onClick={() => setShowProfileMenu(!showProfileMenu)}>
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-full bg-indigo-500/20 border border-indigo-500/30 flex items-center justify-center text-indigo-400 font-bold text-lg group-hover:scale-105 transition">
                 {user.name?.[0]}
               </div>
-              <div>
+              <div className="flex-1">
                 <p className="text-white font-medium text-sm leading-none mb-1">{user.name}</p>
                 <p className="text-xs text-indigo-400 font-bold uppercase tracking-wider">{user.plan || "Premium"}</p>
               </div>
-            </div>
-            <div className="flex justify-between items-center text-xs text-slate-500 mt-2">
-              <span>Cases: {activeCases.length}</span>
-              <button onClick={logout} className="hover:text-white transition">Sign Out</button>
+              <div className={`text-slate-400 transform transition-transform ${showProfileMenu ? 'rotate-180' : ''}`}>▼</div>
             </div>
           </div>
+
+          <AnimatePresence>
+            {showProfileMenu && (
+              <motion.div
+                initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                exit={{ opacity: 0, y: 10, scale: 0.95 }}
+                className="absolute bottom-24 left-8 right-8 bg-[#1e293b] border border-white/10 rounded-xl shadow-2xl overflow-hidden z-50 origin-bottom"
+              >
+                <div className="p-2 space-y-1">
+                  <div className="px-3 py-2 text-xs font-bold text-slate-500 uppercase tracking-widest border-b border-white/5 mb-1">My Account</div>
+                  <Link to="/settings" className="flex items-center gap-3 px-3 py-2 text-sm text-slate-300 hover:bg-white/5 rounded-lg transition">
+                    <span>⚙️</span> Settings
+                  </Link>
+                  <Link to="/profile" className="flex items-center gap-3 px-3 py-2 text-sm text-slate-300 hover:bg-white/5 rounded-lg transition">
+                    <span>👤</span> Profile
+                  </Link>
+                  <div className="h-px bg-white/5 my-1"></div>
+                  <button onClick={logout} className="w-full flex items-center gap-3 px-3 py-2 text-sm text-red-400 hover:bg-red-500/10 rounded-lg transition text-left">
+                    <span>🚪</span> Sign Out
+                  </button>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
       </aside>
 
@@ -163,9 +185,14 @@ export default function ClientDashboard() {
                     <div className="text-2xl mb-2 group-hover:scale-110 transition">📝</div>
                     <div className="font-bold text-sm text-white">Draft Contract</div>
                   </div>
-                  <div className="p-4 bg-white/5 rounded-2xl border border-white/10 text-center hover:bg-white/10 hover:border-indigo-500/30 transition cursor-pointer group" onClick={() => navigate('/assistant')}>
-                    <div className="text-2xl mb-2 group-hover:scale-110 transition">🤖</div>
-                    <div className="font-bold text-sm text-white">Ask AI Assistant</div>
+                  {/* JUDGE AI MINI WIDGET */}
+                  <div className="p-4 bg-gradient-to-br from-indigo-900/50 to-purple-900/50 rounded-2xl border border-indigo-500/30 text-center hover:scale-105 transition cursor-pointer group relative overflow-hidden" onClick={() => navigate('/judge-ai')}>
+                    <div className="absolute inset-0 bg-indigo-500/10 animate-pulse"></div>
+                    <div className="relative z-10">
+                      <div className="text-2xl mb-2">⚖️</div>
+                      <div className="font-bold text-sm text-white">Judge AI Scan</div>
+                      <div className="text-[10px] text-indigo-300 mt-1">Check Win Probability</div>
+                    </div>
                   </div>
                   <div className="p-4 bg-white/5 rounded-2xl border border-white/10 text-center hover:bg-white/10 hover:border-indigo-500/30 transition cursor-pointer group" onClick={() => navigate('/marketplace')}>
                     <div className="text-2xl mb-2 group-hover:scale-110 transition">🔍</div>

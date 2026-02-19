@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import axios from "axios";
+import toast from "react-hot-toast";
 
 export default function BookingModal({ lawyer, client, onClose }) {
     const [date, setDate] = useState("");
@@ -21,7 +22,7 @@ export default function BookingModal({ lawyer, client, onClose }) {
     }, [date, lawyer._id]);
 
     const handleBook = async () => {
-        if (!date || !slot) return alert("Please select date and time");
+        if (!date || !slot) return toast.error("Please select date and time");
 
         setLoading(true);
         try {
@@ -32,10 +33,10 @@ export default function BookingModal({ lawyer, client, onClose }) {
                 slot,
                 notes
             });
-            alert(`Appointment requested with ${lawyer.name}!`);
+            toast.success(`Appointment requested with ${lawyer.name}!`);
             onClose();
         } catch (err) {
-            alert(err.response?.data?.error || "Booking failed");
+            toast.error(err.response?.data?.error || "Booking failed");
         } finally {
             setLoading(false);
         }

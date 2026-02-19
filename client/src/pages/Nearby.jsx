@@ -7,7 +7,7 @@ import axios from "axios";
 import toast from "react-hot-toast";
 import Navbar from "../components/Navbar";
 import { motion, AnimatePresence } from "framer-motion";
-import { Search, MapPin, Shield, Gavel, User, Navigation } from "lucide-react";
+import { Search, MapPin, Shield, Gavel, User, Navigation, Scan, X } from "lucide-react";
 
 // ICONS
 import icon from "leaflet/dist/images/marker-icon.png";
@@ -72,6 +72,7 @@ export default function Nearby() {
   const [loading, setLoading] = useState(true);
   const [data, setData] = useState({ police: [], courts: [], lawyers: [] });
   const [selectedCategory, setSelectedCategory] = useState("all");
+  const [showAR, setShowAR] = useState(false);
 
   useEffect(() => {
     if (!navigator.geolocation) {
@@ -198,6 +199,59 @@ export default function Nearby() {
           </div>
         </div>
       </motion.div>
+
+      {/* AR VIEW TOGGLE (NEW) */}
+      <div className="absolute top-24 right-6 z-[500]">
+        <button
+          onClick={() => setShowAR(!showAR)}
+          className={`flex items-center gap-2 px-6 py-3 rounded-full font-bold shadow-2xl transition-all ${showAR ? 'bg-red-500 text-white animate-pulse' : 'bg-white text-slate-900 hover:bg-indigo-50'}`}
+        >
+          {showAR ? <X size={18} /> : <Scan size={18} />}
+          {showAR ? "Close AR Vision" : "Enable AR Vision"}
+        </button>
+      </div>
+
+      {/* AR OVERLAY (MOCK) */}
+      <AnimatePresence>
+        {showAR && (
+          <motion.div
+            initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+            className="absolute inset-0 z-[400] bg-black/50 pointer-events-none"
+          >
+            {/* Camera Feed Simulator */}
+            <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1517331566373-cf67e9140d33?q=80&w=2000&auto=format&fit=crop')] bg-cover bg-center opacity-40 mix-blend-overlay"></div>
+
+            {/* HUD Elements */}
+            <div className="absolute inset-0 border-[20px] border-indigo-500/20 rounded-[3rem] m-4 pointer-events-none"></div>
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-12 h-12 border-2 border-white/50 rounded-full flex items-center justify-center">
+              <div className="w-1 h-1 bg-red-500 rounded-full"></div>
+            </div>
+
+            {/* Floating AR Markers */}
+            {data.lawyers.slice(0, 2).map((l, i) => (
+              <motion.div
+                key={l.id}
+                initial={{ scale: 0, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                transition={{ delay: 0.5 + i * 0.2 }}
+                style={{ top: `${30 + i * 20}%`, left: `${20 + i * 40}%` }}
+                className="absolute pointer-events-auto cursor-pointer"
+              >
+                <div className="bg-black/80 backdrop-blur-md border border-indigo-500 p-4 rounded-xl text-center shadow-[0_0_30px_rgba(79,70,229,0.6)]">
+                  <div className="w-12 h-12 rounded-full border-2 border-indigo-500 mx-auto -mt-10 overflow-hidden bg-slate-900">
+                    <img src={l.image} alt={l.name} className="w-full h-full object-cover" />
+                  </div>
+                  <h4 className="text-white font-bold mt-2 text-sm">{l.name}</h4>
+                  <p className="text-[10px] text-indigo-400 font-bold uppercase">{l.specialization}</p>
+                  <p className="text-[10px] text-emerald-400 mt-1">{0.4 + i * 0.3} km away</p>
+                  <Link to={`/lawyer/${l.id}`} className="block mt-2 bg-indigo-600 text-[10px] py-1 rounded text-white font-bold">Connect</Link>
+                </div>
+                <div className="w-0.5 h-20 bg-gradient-to-b from-indigo-500 to-transparent mx-auto"></div>
+              </motion.div>
+            ))}
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* MAP */}
       <div className="w-full h-full z-0 block bg-slate-900">

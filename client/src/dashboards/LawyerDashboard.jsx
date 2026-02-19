@@ -6,8 +6,12 @@ import KanbanBoard from "../components/dashboard/KanbanBoard";
 import CalendarWidget from "../components/dashboard/CalendarWidget";
 import WorkloadMonitor from "../components/dashboard/lawyer/WorkloadMonitor";
 import CaseIntelligencePanel from "../components/dashboard/lawyer/CaseIntelligencePanel";
+import ClientCRM from "../components/dashboard/lawyer/ClientCRM";
+import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
 import io from "socket.io-client";
 import { motion, AnimatePresence } from "framer-motion";
+import toast from "react-hot-toast";
+import PremiumLoader from "../components/PremiumLoader";
 
 const socket = io(import.meta.env.VITE_API_URL?.replace(/\/api$/, "") || "http://localhost:4000");
 
@@ -20,6 +24,7 @@ export default function LawyerDashboard() {
   const [invoices, setInvoices] = useState([]);
   const [loading, setLoading] = useState(true);
   const [crmData, setCrmData] = useState(null);
+  const [showProfileMenu, setShowProfileMenu] = useState(false);
 
   useEffect(() => {
     if (user) {
@@ -41,11 +46,15 @@ export default function LawyerDashboard() {
   const fetchInvoices = async (id) => axios.get(`/api/invoices?lawyerId=${id}`).then(res => setInvoices(res.data)).catch(console.error);
 
   const acceptLead = async (id, tier) => {
-    if (!user.verified) return alert("Please verify your account first.");
-    try { await axios.post(`/api/cases/${id}/accept`, { lawyerPhone: user.phone || user.email }); alert("Lead Accepted!"); fetchLeads(); } catch (err) { alert("Failed to accept"); }
+    if (!user.verified) return toast.error("Verification Required. Please complete your profile.");
+    try {
+      await axios.post(`/api/cases/${id}/accept`, { lawyerPhone: user.phone || user.email });
+      toast.success("Lead Accepted! Client has been notified.");
+      fetchLeads();
+    } catch (err) { toast.error("Failed to accept lead."); }
   };
 
-  if (loading || !user) return <div className="flex items-center justify-center min-h-screen bg-[#020617] font-serif text-slate-400"><div className="animate-pulse">Loading Command Center...</div></div>;
+  if (loading || !user) return <PremiumLoader text="Initializing Command Center..." />;
 
   return (
     <div className="min-h-screen bg-[#020617] font-sans text-slate-400 selection:bg-indigo-500/30">
@@ -67,25 +76,44 @@ export default function LawyerDashboard() {
           </div>
         </div>
 
-        <div className="mt-auto p-8 pt-0">
-          <div className="bg-[#1e293b]/50 rounded-xl p-4 border border-white/10 mb-6 backdrop-blur-sm">
-            <div className="flex items-center gap-3 mb-3">
-              <div className="w-10 h-10 rounded-full bg-indigo-500/20 border border-indigo-500/30 flex items-center justify-center text-indigo-400 font-bold text-lg">
+        <div className="mt-auto p-8 pt-0 relative">
+          <div className="bg-[#1e293b]/50 rounded-xl p-4 border border-white/10 mb-6 backdrop-blur-sm cursor-pointer hover:bg-white/5 transition group" onClick={() => setShowProfileMenu(!showProfileMenu)}>
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-full bg-indigo-500/20 border border-indigo-500/30 flex items-center justify-center text-indigo-400 font-bold text-lg group-hover:scale-105 transition">
                 {user.name?.[0]}
               </div>
-              <div>
+              <div className="flex-1">
                 <p className="text-white font-medium text-sm leading-none mb-1">{user.name}</p>
                 <p className="text-xs text-indigo-400 font-bold uppercase tracking-wider">{user.specialization || "Partner"}</p>
               </div>
-            </div>
-            <div className="w-full bg-white/10 h-1.5 rounded-full overflow-hidden mb-2">
-              <div className="bg-indigo-500 h-full w-[85%] rounded-full shadow-[0_0_10px_rgba(99,102,241,0.5)]"></div>
-            </div>
-            <div className="flex justify-between items-center text-[10px] text-slate-500">
-              <span>Profile: 85%</span>
-              <button onClick={logout} className="hover:text-white transition">Sign Out</button>
+              <div className={`text-slate-400 transform transition-transform ${showProfileMenu ? 'rotate-180' : ''}`}>▼</div>
             </div>
           </div>
+
+          <AnimatePresence>
+            {showProfileMenu && (
+              <motion.div
+                initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                exit={{ opacity: 0, y: 10, scale: 0.95 }}
+                className="absolute bottom-24 left-8 right-8 bg-[#1e293b] border border-white/10 rounded-xl shadow-2xl overflow-hidden z-50 origin-bottom"
+              >
+                <div className="p-2 space-y-1">
+                  <div className="px-3 py-2 text-xs font-bold text-slate-500 uppercase tracking-widest border-b border-white/5 mb-1">My Account</div>
+                  <Link to="/lawyer/profile/edit" className="flex items-center gap-3 px-3 py-2 text-sm text-slate-300 hover:bg-white/5 rounded-lg transition">
+                    <span>⚙️</span> Edit Profile
+                  </Link>
+                  <Link to="/settings" className="flex items-center gap-3 px-3 py-2 text-sm text-slate-300 hover:bg-white/5 rounded-lg transition">
+                    <span>🔒</span> Security
+                  </Link>
+                  <div className="h-px bg-white/5 my-1"></div>
+                  <button onClick={logout} className="w-full flex items-center gap-3 px-3 py-2 text-sm text-red-400 hover:bg-red-500/10 rounded-lg transition text-left">
+                    <span>🚪</span> Sign Out
+                  </button>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
       </aside>
 
@@ -116,6 +144,39 @@ export default function LawyerDashboard() {
 
             {activeTab === 'board' && (
               <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-6">
+                {/* ANALYTICS WIDGET (NEW) */}
+                <div className="bg-[#0f172a] rounded-3xl p-6 border border-white/10 shadow-xl">
+                  <div className="flex justify-between items-center mb-6">
+                    <h3 className="font-bold text-lg text-white">Performance Analytics</h3>
+                    <select className="bg-white/5 border border-white/10 text-xs rounded-lg px-2 py-1 text-slate-400">
+                      <option>Last 30 Days</option>
+                      <option>Last 6 Months</option>
+                    </select>
+                  </div>
+                  <div className="h-64 w-full">
+                    <ResponsiveContainer width="100%" height="100%">
+                      <AreaChart data={[{ name: 'W1', views: 400, leads: 24 }, { name: 'W2', views: 300, leads: 13 }, { name: 'W3', views: 500, leads: 38 }, { name: 'W4', views: 780, leads: 39 }, { name: 'W5', views: 600, leads: 48 }, { name: 'W6', views: 900, leads: 58 }]}>
+                        <defs>
+                          <linearGradient id="colorViews" x1="0" y1="0" x2="0" y2="1">
+                            <stop offset="5%" stopColor="#8884d8" stopOpacity={0.8} />
+                            <stop offset="95%" stopColor="#8884d8" stopOpacity={0} />
+                          </linearGradient>
+                          <linearGradient id="colorLeads" x1="0" y1="0" x2="0" y2="1">
+                            <stop offset="5%" stopColor="#82ca9d" stopOpacity={0.8} />
+                            <stop offset="95%" stopColor="#82ca9d" stopOpacity={0} />
+                          </linearGradient>
+                        </defs>
+                        <XAxis dataKey="name" tick={{ fill: '#64748b', fontSize: 10 }} axisLine={false} tickLine={false} />
+                        <YAxis tick={{ fill: '#64748b', fontSize: 10 }} axisLine={false} tickLine={false} />
+                        <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#1e293b" />
+                        <Tooltip contentStyle={{ backgroundColor: '#1e293b', borderColor: '#334155', borderRadius: '8px' }} itemStyle={{ color: '#f8fafc', fontSize: '12px' }} />
+                        <Area type="monotone" dataKey="views" stroke="#8884d8" fillOpacity={1} fill="url(#colorViews)" strokeWidth={2} />
+                        <Area type="monotone" dataKey="leads" stroke="#82ca9d" fillOpacity={1} fill="url(#colorLeads)" strokeWidth={2} />
+                      </AreaChart>
+                    </ResponsiveContainer>
+                  </div>
+                </div>
+
                 {/* INTELLIGENCE PANEL */}
                 <div className="grid grid-cols-2 gap-6">
                   {crmData && <WorkloadMonitor workload={crmData.workload} />}
@@ -129,6 +190,8 @@ export default function LawyerDashboard() {
                 </div>
               </motion.div>
             )}
+
+            {activeTab === 'clients' && <ClientCRM />}
 
             {activeTab === 'leads' && (
               <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-4">
@@ -147,6 +210,20 @@ export default function LawyerDashboard() {
                     <p className="text-slate-400 text-sm mb-4 bg-black/20 p-3 rounded-lg border border-white/5">{lead.desc}</p>
                     <div className="flex gap-3">
                       <button onClick={() => acceptLead(lead._id, lead.tier)} className="flex-1 bg-indigo-600 text-white py-3 rounded-lg font-bold text-xs uppercase tracking-wider hover:bg-indigo-500 transition shadow-lg shadow-indigo-500/20">Accept Case</button>
+
+                      <button
+                        onClick={() => {
+                          if (user.plan !== 'gold') {
+                            toast.error("Upgrade to Gold to use AI Drafts");
+                          } else {
+                            navigate(`/drafting?type=proposal&title=${encodeURIComponent(lead.title)}&budget=${lead.budget}`);
+                          }
+                        }}
+                        className="flex-1 bg-gradient-to-r from-purple-600 to-pink-600 text-white py-3 rounded-lg font-bold text-xs uppercase tracking-wider hover:scale-105 transition shadow-lg shadow-purple-500/20 flex items-center justify-center gap-2"
+                      >
+                        <span className="text-lg">✨</span> Draft Proposal
+                      </button>
+
                       <button className="px-6 py-3 border border-white/10 font-bold text-xs uppercase tracking-wider text-slate-500 rounded-lg hover:bg-white/5 hover:text-white transition">Pass</button>
                     </div>
                   </div>

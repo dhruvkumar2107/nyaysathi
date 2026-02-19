@@ -5,6 +5,7 @@ import axios from "axios";
 const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:4000/api";
 // We need the root URL for axios because calls include /api
 axios.defaults.baseURL = apiUrl.replace(/\/api$/, "");
+axios.defaults.timeout = 15000; // 15s timeout
 console.log("🔌 AUTH CONTEXT LOADED. AXIOS BASE URL FORCED TO:", axios.defaults.baseURL);
 
 const AuthContext = createContext({
@@ -43,8 +44,12 @@ export function AuthProvider({ children }) {
       setUser(user);
       return { success: true, user };
     } catch (error) {
-      console.error("Login failed:", error.response?.data?.message);
-      return { success: false, message: error.response?.data?.message || "Login failed" };
+    } catch (error) {
+      console.error("Login failed:", error);
+      let msg = error.response?.data?.message || "Login failed";
+      if (error.code === "ECONNABORTED") msg = "Server timeout. Please try again.";
+      else if (!error.response) msg = "Network error. Please check your connection.";
+      return { success: false, message: msg };
     }
   };
 

@@ -4,6 +4,7 @@ import Navbar from '../components/Navbar';
 import { motion } from 'framer-motion';
 import { Check, Star, Zap, Shield } from 'lucide-react';
 import axios from 'axios';
+import toast from 'react-hot-toast';
 import { useAuth } from '../context/AuthContext';
 
 const Pricing = () => {
@@ -12,9 +13,16 @@ const Pricing = () => {
   const [userType, setUserType] = useState('client'); // 'client' | 'lawyer'
 
   const handleUpgrade = async (plan, price) => {
-    if (!user) return alert("Please login first");
+    if (!user) return toast.error("Please login first");
     try {
-      alert(`Initiating upgrade to ${plan} Plan for ${userType === 'client' ? 'Clients' : 'Lawyers'}`);
+      toast.promise(
+        new Promise(resolve => setTimeout(resolve, 2000)),
+        {
+          loading: `Processing ${plan} Plan upgrade...`,
+          success: `Upgraded to ${plan} Plan!`,
+          error: "Upgrade failed"
+        }
+      );
     } catch (error) {
       console.error(error);
     }
