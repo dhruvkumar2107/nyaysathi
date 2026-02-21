@@ -565,7 +565,7 @@ export default function Home() {
             {/* LARGE FEATURE: MOOT COURT */}
             <BentoCard
               title="Moot Court VR"
-              desc="Experience the intensity of a real courtroom from your home. Practice your oral arguments against a ruthless AI Judge that listens, analyzes your logic, and provides instant feedback on your speech and legal reasoning."
+              desc="Experience the raw intensity of a real courtroom without leaving your home. Practice your oral arguments against a ruthless AI Judge that listens, analyzes your logic, and provides instant, professional feedback on your speech, legal reasoning, and emotional delivery. Perfect for students and practitioners looking to sharpen their litigation edge in a safe, high-stakes environment."
               icon={<Scale className="text-white" size={20} />}
               color="from-indigo-500 via-purple-500 to-pink-500"
               href="/moot-court"
@@ -575,7 +575,7 @@ export default function Home() {
             {/* NYAY VOICE */}
             <BentoCard
               title="NyayVoice"
-              desc="Break the language barrier. Speak naturally in Hindi, Tamil, or 10+ Indian languages to get instant guidance."
+              desc="Break the language barrier with our multilingual AI assistant. Speak naturally in Hindi, Tamil, or any of 10+ Indian languages to get instant legal guidance and simplified explanations."
               icon={<Mic className="text-white" size={18} />}
               color="from-violet-600 via-indigo-600 to-purple-600"
               href="/voice-assistant"
@@ -584,7 +584,7 @@ export default function Home() {
             {/* ELITE NETWORK */}
             <BentoCard
               title="Elite Network"
-              desc="Direct access to the top 1% of legal minds for high-stakes litigation and specialized advisory."
+              desc="Gain direct access to the top 1% of India's legal minds. Our verified network connects you with expert advocates and legal consultants for high-stakes litigation and specialized advisory."
               icon={<Users className="text-white" size={18} />}
               color="from-amber-400 via-orange-500 to-red-500"
               href="/marketplace"
@@ -594,7 +594,7 @@ export default function Home() {
             {/* DRAFTING */}
             <BentoCard
               title="Drafting Lab"
-              desc="Create ironclad contracts, notices, and agreements in seconds with AI-powered legal templates."
+              desc="Generate ironclad contracts, notices, and agreements in seconds. Our AI-powered lab uses standard legal templates to ensure every document is compliant with current Indian laws."
               icon={<FileText className="text-white" size={18} />}
               color="from-emerald-500 via-green-500 to-teal-500"
               href="/drafting"
@@ -603,7 +603,7 @@ export default function Home() {
             {/* RESEARCH */}
             <BentoCard
               title="Deep Research"
-              desc="Find winning precedents with semantic search. Access a massive database of past case laws instantly."
+              desc="Find winning precedents with advanced semantic search. Access a massive database of past case laws and legal judgments, with AI highlighting the most relevant points for your case."
               icon={<Search className="text-white" size={18} />}
               color="from-blue-500 via-cyan-500 to-indigo-500"
               href="/research"
@@ -612,7 +612,7 @@ export default function Home() {
             {/* CAREER HUB */}
             <BentoCard
               title="Career Hub"
-              desc="Exclusive internships and mentorship programs for students and young legal professionals."
+              desc="Launch your legal career with NyayNow. Explore exclusive internships, mentorship programs from senior advocates, and skill-building tasks designed for young legal professionals."
               icon={<Briefcase className="text-white" size={18} />}
               color="from-rose-500 via-pink-500 to-orange-500"
               href="/career"
