@@ -549,7 +549,7 @@ export default function Home() {
             <p className="text-slate-500 text-lg">The world's most advanced legal operating system.</p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-12 gap-6 auto-rows-[300px]">
+          <div className="grid grid-cols-1 md:grid-cols-12 gap-6 auto-rows-[260px]">
             {/* LARGE FEATURE: MOOT COURT */}
             <BentoCard
               title="Moot Court VR"
@@ -624,7 +624,7 @@ function BentoCard({ title, desc, icon, color, href, badge, className }) {
     <motion.div
       whileHover={{ y: -5 }}
       transition={{ duration: 0.3 }}
-      className={`relative group bg-[#0f172a] border border-white/5 rounded-3xl p-8 overflow-hidden hover:border-white/20 transition-all shadow-2xl flex flex-col ${className}`}
+      className={`relative group bg-[#0f172a] border border-white/5 rounded-3xl p-6 overflow-hidden hover:border-white/20 transition-all shadow-2xl flex flex-col ${className}`}
       onClick={() => window.location.href = href}
     >
       <div className={`absolute -inset-1 bg-gradient-to-r ${color} rounded-3xl blur opacity-0 group-hover:opacity-10 transition duration-500`} />
@@ -635,15 +635,15 @@ function BentoCard({ title, desc, icon, color, href, badge, className }) {
         </span>
       )}
 
-      <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${color} flex items-center justify-center text-2xl shadow-lg mb-6 group-hover:scale-110 transition-transform duration-500 text-white`}>
+      <div className={`w-10 h-10 rounded-xl bg-gradient-to-br ${color} flex items-center justify-center text-xl shadow-lg mb-4 group-hover:scale-110 transition-transform duration-500 text-white`}>
         {icon}
       </div>
 
-      <h3 className="text-2xl font-bold text-white mb-2">{title}</h3>
-      <p className="text-slate-500 text-sm leading-relaxed max-w-xs">{desc}</p>
+      <h3 className="text-xl font-bold text-white mb-2">{title}</h3>
+      <p className="text-slate-500 text-[13px] leading-relaxed max-w-xs">{desc}</p>
 
-      <div className="mt-auto pt-6 opacity-0 group-hover:opacity-100 transition-opacity">
-        <span className="text-white text-xs font-bold uppercase tracking-widest flex items-center gap-2">
+      <div className="mt-auto pt-4 opacity-0 group-hover:opacity-100 transition-opacity">
+        <span className="text-white text-[10px] font-bold uppercase tracking-widest flex items-center gap-2">
           Explore Module <span className="translate-x-0 group-hover:translate-x-1 transition-transform">→</span>
         </span>
       </div>
