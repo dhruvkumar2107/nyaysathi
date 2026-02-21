@@ -73,10 +73,8 @@ export default function ClientDashboard() {
       {/* SIDEBAR NAVIGATION (Fixed Left) */}
       <aside className="fixed left-0 top-0 h-screen w-72 bg-[#0f172a] border-r border-white/10 flex flex-col z-50">
         <div className="p-8 pb-4">
-          <Link to="/" className="flex items-center gap-3 mb-10 group">
-            <div className="w-8 h-8 bg-gradient-to-br from-indigo-500 to-violet-600 rounded-lg flex items-center justify-center text-xl shadow-lg shadow-indigo-500/20 ring-1 ring-white/10 group-hover:scale-110 transition duration-300">⚖️</div>
-            <span className="font-bold text-2xl tracking-tight text-white/90">NyayNow</span>
-          </Link>
+          {/* LOGO REMOVED - ALREADY IN WORKSPACE CONTEXT */}
+          <div className="mb-6 invisible" />
 
           <div className="space-y-1">
             <NavItem icon="📊" label="Overview" active={activeTab === 'overview'} onClick={() => setActiveTab('overview')} />

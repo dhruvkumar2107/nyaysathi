@@ -36,7 +36,7 @@ export default function Home() {
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.1, ease: "easeOut" }}
-            className="text-6xl md:text-9xl font-serif font-black text-white mb-8 leading-[0.95] tracking-tight"
+            className="text-5xl md:text-7xl font-serif font-black text-white mb-6 leading-[0.95] tracking-tight"
           >
             Justice shouldn't
             <br />
@@ -49,7 +49,7 @@ export default function Home() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.2 }}
-            className="text-lg md:text-2xl text-slate-400 max-w-3xl mx-auto mb-14 font-light leading-relaxed tracking-wide"
+            className="text-base md:text-xl text-slate-400 max-w-2xl mx-auto mb-12 font-light leading-relaxed tracking-wide"
           >
             NyayNow puts the full power of the Indian legal system in your pocket. <br className="hidden md:block" />
             Designed for the <span className="text-white font-semibold">1.4 billion</span> who deserve access to justice.

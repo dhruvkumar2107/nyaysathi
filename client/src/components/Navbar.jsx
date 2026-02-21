@@ -138,28 +138,35 @@ export default function Navbar() {
           </div>
 
           {/* RIGHT ACTIONS */}
-          <div className="flex items-center gap-4 relative z-50">
+          <div className="flex items-center gap-3 lg:gap-4 relative z-50">
             {!user ? (
-              <>
-                <Link to="/login" className="hidden sm:block font-bold text-sm text-slate-300 hover:text-gold-400 transition-colors duration-300">Log in</Link>
-                <Link to="/register" className="relative overflow-hidden px-6 py-2.5 bg-gradient-gold text-midnight-950 font-bold text-sm rounded-xl hover:shadow-[0_0_20px_rgba(212,175,55,0.4)] transition duration-300 group">
-                  <span className="relative z-10">Get Started</span>
-                  <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition duration-300"></div>
+              <div className="flex items-center gap-5">
+                <Link to="/login" className="hidden sm:block font-bold text-sm text-slate-300 hover:text-white transition-all duration-300 relative group">
+                  Log in
+                  <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-gold-400 transition-all duration-300 group-hover:w-full"></span>
                 </Link>
-              </>
+                <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+                  <Link to="/register" className="relative overflow-hidden px-6 py-2.5 bg-gradient-to-r from-gold-400 to-yellow-600 text-midnight-950 font-bold text-sm rounded-xl hover:shadow-[0_0_25px_rgba(212,175,55,0.4)] transition duration-300 group flex items-center gap-2">
+                    <span className="relative z-10">Get Started</span>
+                    <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition duration-300"></div>
+                  </Link>
+                </motion.div>
+              </div>
             ) : (
-              <div className="flex items-center gap-4">
-                <Link to={user.role === 'admin' ? '/admin' : (user.role === 'lawyer' ? '/lawyer/dashboard' : '/client/dashboard')} className="hidden sm:flex items-center gap-2 transition font-bold text-sm text-slate-300 hover:text-white duration-300 hover:bg-white/5 px-3 py-1.5 rounded-lg border border-transparent hover:border-white/10">
-                  <LayoutDashboard size={18} className="text-gold-400" /> {user.role === 'admin' ? 'Back to Console' : 'Dashboard'}
-                </Link>
+              <div className="flex items-center gap-3">
+                <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+                  <Link to={user.role === 'admin' ? '/admin' : (user.role === 'lawyer' ? '/lawyer/dashboard' : '/client/dashboard')} className="hidden sm:flex items-center gap-2 transition font-bold text-xs uppercase tracking-widest text-slate-300 hover:text-white duration-300 bg-white/5 px-4 py-2 rounded-xl border border-white/10 hover:border-gold-500/30">
+                    <LayoutDashboard size={15} className="text-gold-400" /> {user.role === 'admin' ? 'Console' : 'Dashboard'}
+                  </Link>
+                </motion.div>
 
                 <div className="relative group cursor-pointer">
-                  <div className="w-10 h-10 rounded-full bg-gradient-to-tr from-gold-400 to-yellow-600 p-[2px] shadow-[0_0_15px_rgba(212,175,55,0.3)]">
+                  <div className="w-10 h-10 rounded-full bg-gradient-to-tr from-gold-400 to-yellow-600 p-[2px] shadow-[0_0_15px_rgba(212,175,55,0.3)] hover:scale-105 transition duration-300">
                     <div className="w-full h-full rounded-full bg-midnight-950 flex items-center justify-center overflow-hidden">
                       {user.profileImage ? <img src={user.profileImage} className="w-full h-full object-cover" /> : <span className="font-display font-bold text-gold-400 text-lg">{user.name[0]}</span>}
                     </div>
                   </div>
-                  <div className="absolute right-0 top-full mt-4 w-64 glass-card rounded-xl p-2 shadow-2xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 transform origin-top-right">
+                  <div className="absolute right-0 top-full mt-4 w-64 glass-card rounded-xl p-2 shadow-2xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 transform origin-top-right border border-white/10">
                     <div className="px-3 py-3 border-b border-white/5 mb-2 bg-midnight-950/30 rounded-t-lg">
                       <p className="text-white font-display font-bold text-sm truncate">{user.name}</p>
                       <p className="text-slate-500 text-xs truncate">{user.email}</p>
@@ -175,25 +182,30 @@ export default function Navbar() {
               </div>
             )}
 
-            <Link
-              to="/courtroom-battle"
-              className="hidden md:flex items-center gap-1.5 px-3 py-2 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-400 font-black text-xs uppercase tracking-widest hover:bg-amber-500/20 transition shadow-[0_0_12px_rgba(245,158,11,0.15)] group"
-            >
-              <Gavel size={13} className="group-hover:animate-bounce" />
-              <span>NyayCourt</span>
-            </Link>
-            {/* MOBILE MENU BTN */}
-            <Link
-              to="/legal-sos"
-              className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-red-600/20 border border-red-500/40 text-red-400 font-black text-xs uppercase tracking-widest hover:bg-red-600/30 transition shadow-[0_0_15px_rgba(239,68,68,0.25)] group"
-            >
-              <span className="relative flex h-2 w-2 mr-0.5">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-500 opacity-75" />
-                <span className="relative inline-flex rounded-full h-2 w-2 bg-red-500" />
-              </span>
-              <span className="hidden sm:inline">Legal SOS</span>
-              <Siren size={14} className="group-hover:animate-bounce" />
-            </Link>
+            <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+              <Link
+                to="/courtroom-battle"
+                className="hidden md:flex items-center gap-2 px-4 py-2 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-400 font-bold text-[10px] uppercase tracking-[0.15em] hover:bg-amber-500/20 transition shadow-[0_0_15px_rgba(245,158,11,0.15)] group"
+              >
+                <Gavel size={14} className="group-hover:rotate-12 transition duration-300" />
+                <span>NyayCourt</span>
+              </Link>
+            </motion.div>
+
+            <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+              <Link
+                to="/legal-sos"
+                className="flex items-center gap-2 px-4 py-2 rounded-xl bg-red-600/15 border border-red-500/30 text-red-500 font-bold text-[10px] uppercase tracking-[0.15em] hover:bg-red-600/25 transition shadow-[0_0_20px_rgba(239,68,68,0.2)] group"
+              >
+                <span className="relative flex h-2 w-2 mr-0.5">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-500 opacity-75" />
+                  <span className="relative inline-flex rounded-full h-2 w-2 bg-red-500" />
+                </span>
+                <span className="hidden lg:inline text-red-400">Legal SOS</span>
+                <Siren size={15} className="group-hover:animate-pulse transition duration-300" />
+              </Link>
+            </motion.div>
+
             <button onClick={() => setMobileMenuOpen(!mobileMenuOpen)} className="lg:hidden p-2 text-slate-300 hover:text-gold-400 transition-colors duration-300">
               {mobileMenuOpen ? <X /> : <Menu />}
             </button>

@@ -76,6 +76,7 @@ export default function App() {
         {!window.location.pathname.startsWith('/login') &&
           !window.location.pathname.startsWith('/register') &&
           !window.location.pathname.includes('/dashboard') &&
+          !window.location.pathname.startsWith('/admin') &&
           <Navbar />}
 
         {/* PAGE CONTENT */}
