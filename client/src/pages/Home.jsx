@@ -553,7 +553,7 @@ export default function Home() {
             {/* LARGE FEATURE: MOOT COURT */}
             <BentoCard
               title="Moot Court VR"
-              desc="Practice oral arguments against a ruthless AI Judge. Real-time feedback on your speech & extensive logic."
+              desc="Experience the intensity of a real courtroom from your home. Practice your oral arguments against a ruthless AI Judge that listens, analyzes your logic, and provides instant feedback on your speech and legal reasoning. Perfect for students and professionals looking to sharpen their litigation skills."
               icon="🏛️"
               color="from-indigo-500 via-purple-500 to-pink-500"
               href="/moot-court"
@@ -563,7 +563,7 @@ export default function Home() {
             {/* NYAY VOICE */}
             <BentoCard
               title="NyayVoice"
-              desc="Speak naturally in Hindi, Tamil, or 10+ languages."
+              desc="Break the language barrier with our multilingual AI assistant. Speak naturally in Hindi, Tamil, or any of 10+ Indian languages to get instant legal guidance. Designed for accessibility, it ensures no citizen is left behind due to complex legal jargon or language gaps."
               icon="🎙️"
               color="from-violet-500 via-purple-500 to-fuchsia-500"
               href="/voice-assistant"
@@ -572,7 +572,7 @@ export default function Home() {
             {/* ELITE NETWORK */}
             <BentoCard
               title="Elite Network"
-              desc="Connect with the top 1% of legal minds."
+              desc="Gain direct access to the top 1% of India's legal minds. Our verified network connects you with expert advocates and legal consultants for high-stakes litigation, advisory, and specialized representations. Secure, fast, and highly professional."
               icon="💎"
               color="from-amber-400 via-orange-500 to-red-500"
               href="/marketplace"
@@ -582,7 +582,7 @@ export default function Home() {
             {/* DRAFTING */}
             <BentoCard
               title="Drafting Lab"
-              desc="Auto-generate ironclad contracts & notices."
+              desc="Create legally binding contracts, notices, and agreements in seconds. Our AI-powered lab uses standard Indian legal templates to ensure every document you generate is ironclad and compliant with current laws. Simple, fast, and professional."
               icon="📝"
               color="from-emerald-500 via-green-500 to-lime-500"
               href="/drafting"
@@ -591,7 +591,7 @@ export default function Home() {
             {/* RESEARCH */}
             <BentoCard
               title="Deep Research"
-              desc="Semantic search for legal precedents."
+              desc="Find winning precedents with our advanced semantic search engine. Access a massive database of past case laws and legal judgments from across Indian courts. Our AI highlights the most relevant points to help you build a stronger case faster than ever."
               icon="🔍"
               color="from-blue-500 via-cyan-500 to-teal-500"
               href="/research"
@@ -600,7 +600,7 @@ export default function Home() {
             {/* CAREER HUB */}
             <BentoCard
               title="Career Hub"
-              desc="Internships & mentorship from top advocates."
+              desc="Launch your legal career with NyayNow. Explore exclusive internships, mentorship programs from senior advocates, and skill-building tasks. Whether you're a student or a young lawyer, the Career Hub is your gateway to the professional world."
               icon="💼"
               color="from-orange-500 via-pink-500 to-rose-500"
               href="/career"

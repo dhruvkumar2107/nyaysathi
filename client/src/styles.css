@@ -30,6 +30,10 @@
   --font-display: 'Playfair Display', serif;
 }
 
+html {
+  scroll-behavior: smooth;
+}
+
 html,
 body,
 #root {
