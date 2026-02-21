@@ -6,6 +6,7 @@ import LegalReels from "../components/dashboard/LegalReels";
 import CaseTimeline from "../components/dashboard/CaseTimeline";
 import CalendarWidget from "../components/dashboard/CalendarWidget";
 import TrustTimeline from "../components/dashboard/client/TrustTimeline";
+import LegalConfessionBooth from "../components/dashboard/client/LegalConfessionBooth";
 import io from "socket.io-client";
 import { motion, AnimatePresence } from "framer-motion";
 import toast from "react-hot-toast";
@@ -83,6 +84,8 @@ export default function ClientDashboard() {
             <NavItem icon="📄" label="Documents" to="/agreements" />
             <NavItem icon="card" label="Payments" active={activeTab === 'invoices'} onClick={() => setActiveTab('invoices')} />
             <NavItem icon="📡" label="Legal Feed" active={activeTab === 'feed'} onClick={() => setActiveTab('feed')} />
+            <div className="my-2 h-px bg-white/5" />
+            <NavItem icon="🎭" label="Confession Booth" active={activeTab === 'confessions'} onClick={() => setActiveTab('confessions')} badge="New" />
           </div>
         </div>
 
@@ -262,37 +265,46 @@ export default function ClientDashboard() {
 
           </div>
 
-          {/* RIGHT SIDEBAR (4 COLS) */}
-          <div className="col-span-4 space-y-6">
-            {/* CALENDAR */}
-            <div className="bg-[#0f172a] rounded-3xl p-4 border border-white/10 shadow-lg">
-              <CalendarWidget user={user} />
-            </div>
+          {/* CONFESSION BOOTH — Full Width */}
+          {activeTab === 'confessions' && (
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="col-span-12">
+              <LegalConfessionBooth />
+            </motion.div>
+          )}
 
-            {/* SUGGESTED LAWYERS */}
-            <div className="bg-[#0f172a] rounded-3xl p-6 border border-white/10 shadow-lg">
-              <h3 className="font-bold text-lg text-white mb-4">Recommended Counsel</h3>
-              <div className="space-y-4">
-                {suggestedLawyers.map(l => (
-                  <div key={l._id} className="flex items-center gap-3 group cursor-pointer hover:bg-white/5 p-2 -mx-2 rounded-xl transition">
-                    <div className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center text-slate-400 font-bold text-sm group-hover:bg-indigo-600 group-hover:text-white transition">
-                      {l.name?.[0]}
-                    </div>
-                    <div className="flex-1">
-                      <h4 className="font-bold text-sm text-white group-hover:text-indigo-400 transition">{l.name}</h4>
-                      <p className="text-xs text-slate-500">{l.specialization || "Legal Expert"}</p>
-                    </div>
-                    <button className="w-8 h-8 rounded-full border border-white/10 flex items-center justify-center text-slate-400 hover:border-indigo-500 hover:text-indigo-400 transition">
-                      +
-                    </button>
-                  </div>
-                ))}
+          {/* RIGHT SIDEBAR (4 COLS) — hidden on confession tab */}
+          {activeTab !== 'confessions' && (
+            <div className="col-span-4 space-y-6">
+              {/* CALENDAR */}
+              <div className="bg-[#0f172a] rounded-3xl p-4 border border-white/10 shadow-lg">
+                <CalendarWidget user={user} />
               </div>
-              <button onClick={() => navigate('/marketplace')} className="w-full mt-6 py-3 border border-white/10 rounded-xl text-xs font-bold uppercase tracking-wider text-slate-400 hover:bg-white/5 hover:text-white transition">
-                View Marketplace
-              </button>
+
+              {/* SUGGESTED LAWYERS */}
+              <div className="bg-[#0f172a] rounded-3xl p-6 border border-white/10 shadow-lg">
+                <h3 className="font-bold text-lg text-white mb-4">Recommended Counsel</h3>
+                <div className="space-y-4">
+                  {suggestedLawyers.map(l => (
+                    <div key={l._id} className="flex items-center gap-3 group cursor-pointer hover:bg-white/5 p-2 -mx-2 rounded-xl transition">
+                      <div className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center text-slate-400 font-bold text-sm group-hover:bg-indigo-600 group-hover:text-white transition">
+                        {l.name?.[0]}
+                      </div>
+                      <div className="flex-1">
+                        <h4 className="font-bold text-sm text-white group-hover:text-indigo-400 transition">{l.name}</h4>
+                        <p className="text-xs text-slate-500">{l.specialization || "Legal Expert"}</p>
+                      </div>
+                      <button className="w-8 h-8 rounded-full border border-white/10 flex items-center justify-center text-slate-400 hover:border-indigo-500 hover:text-indigo-400 transition">
+                        +
+                      </button>
+                    </div>
+                  ))}
+                </div>
+                <button onClick={() => navigate('/marketplace')} className="w-full mt-6 py-3 border border-white/10 rounded-xl text-xs font-bold uppercase tracking-wider text-slate-400 hover:bg-white/5 hover:text-white transition">
+                  View Marketplace
+                </button>
+              </div>
             </div>
-          </div>
+          )}
 
         </div>
       </main>
@@ -328,7 +340,7 @@ export default function ClientDashboard() {
   );
 }
 
-function NavItem({ icon, label, to, active, onClick }) {
+function NavItem({ icon, label, to, active, onClick, badge }) {
   const navigate = useNavigate();
   const handleClick = () => {
     if (onClick) onClick();
@@ -338,10 +350,13 @@ function NavItem({ icon, label, to, active, onClick }) {
   return (
     <div
       onClick={handleClick}
-      className={`flex items-center gap-3 px-4 py-3 rounded-xl cursor-pointer transition-all duration-300 ${active ? 'bg-indigo-600/10 text-indigo-400 border border-indigo-500/20 shadow-inner font-bold' : 'text-slate-400 hover:text-white hover:bg-white/5'}`}
+      className={`flex items-center justify-between px-4 py-3 rounded-xl cursor-pointer transition-all duration-300 ${active ? 'bg-indigo-600/10 text-indigo-400 border border-indigo-500/20 shadow-inner font-bold' : 'text-slate-400 hover:text-white hover:bg-white/5'}`}
     >
-      <span className="text-xl opacity-80">{icon}</span>
-      <span className="text-sm tracking-wide font-medium">{label}</span>
+      <div className="flex items-center gap-3">
+        <span className="text-xl opacity-80">{icon}</span>
+        <span className="text-sm tracking-wide font-medium">{label}</span>
+      </div>
+      {badge && <span className="text-[9px] font-black bg-violet-500/20 text-violet-400 border border-violet-500/30 px-2 py-0.5 rounded-md uppercase tracking-wider">{badge}</span>}
     </div>
   )
 }
