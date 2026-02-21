@@ -4,6 +4,18 @@ import { useAuth } from "../context/AuthContext";
 import { motion } from "framer-motion";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
+import {
+  Gavel,
+  Mic,
+  Users,
+  FileText,
+  Search,
+  Briefcase,
+  Zap,
+  Shield,
+  Scale,
+  Sparkles
+} from "lucide-react";
 
 
 export default function Home() {
@@ -549,12 +561,12 @@ export default function Home() {
             <p className="text-slate-500 text-lg">The world's most advanced legal operating system.</p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-12 gap-6 auto-rows-[260px]">
+          <div className="grid grid-cols-1 md:grid-cols-12 gap-6 auto-rows-[240px]">
             {/* LARGE FEATURE: MOOT COURT */}
             <BentoCard
               title="Moot Court VR"
               desc="Experience the intensity of a real courtroom from your home. Practice your oral arguments against a ruthless AI Judge that listens, analyzes your logic, and provides instant feedback on your speech and legal reasoning. Perfect for students and professionals looking to sharpen their litigation skills."
-              icon="🏛️"
+              icon={<Scale className="text-white" size={24} />}
               color="from-indigo-500 via-purple-500 to-pink-500"
               href="/moot-court"
               badge="Flagship"
@@ -564,8 +576,8 @@ export default function Home() {
             <BentoCard
               title="NyayVoice"
               desc="Break the language barrier with our multilingual AI assistant. Speak naturally in Hindi, Tamil, or any of 10+ Indian languages to get instant legal guidance. Designed for accessibility, it ensures no citizen is left behind due to complex legal jargon or language gaps."
-              icon="🎙️"
-              color="from-violet-500 via-purple-500 to-fuchsia-500"
+              icon={<Mic className="text-white" size={20} />}
+              color="from-violet-600 via-indigo-600 to-purple-600"
               href="/voice-assistant"
               className="md:col-span-4"
             />
@@ -573,7 +585,7 @@ export default function Home() {
             <BentoCard
               title="Elite Network"
               desc="Gain direct access to the top 1% of India's legal minds. Our verified network connects you with expert advocates and legal consultants for high-stakes litigation, advisory, and specialized representations. Secure, fast, and highly professional."
-              icon="💎"
+              icon={<Users className="text-white" size={20} />}
               color="from-amber-400 via-orange-500 to-red-500"
               href="/marketplace"
               badge="Exclusive"
@@ -583,8 +595,8 @@ export default function Home() {
             <BentoCard
               title="Drafting Lab"
               desc="Create legally binding contracts, notices, and agreements in seconds. Our AI-powered lab uses standard Indian legal templates to ensure every document you generate is ironclad and compliant with current laws. Simple, fast, and professional."
-              icon="📝"
-              color="from-emerald-500 via-green-500 to-lime-500"
+              icon={<FileText className="text-white" size={20} />}
+              color="from-emerald-500 via-green-500 to-teal-500"
               href="/drafting"
               className="md:col-span-4"
             />
@@ -592,8 +604,8 @@ export default function Home() {
             <BentoCard
               title="Deep Research"
               desc="Find winning precedents with our advanced semantic search engine. Access a massive database of past case laws and legal judgments from across Indian courts. Our AI highlights the most relevant points to help you build a stronger case faster than ever."
-              icon="🔍"
-              color="from-blue-500 via-cyan-500 to-teal-500"
+              icon={<Search className="text-white" size={20} />}
+              color="from-blue-500 via-cyan-500 to-indigo-500"
               href="/research"
               className="md:col-span-4"
             />
@@ -601,8 +613,8 @@ export default function Home() {
             <BentoCard
               title="Career Hub"
               desc="Launch your legal career with NyayNow. Explore exclusive internships, mentorship programs from senior advocates, and skill-building tasks. Whether you're a student or a young lawyer, the Career Hub is your gateway to the professional world."
-              icon="💼"
-              color="from-orange-500 via-pink-500 to-rose-500"
+              icon={<Briefcase className="text-white" size={20} />}
+              color="from-rose-500 via-pink-500 to-orange-500"
               href="/career"
               className="md:col-span-4"
             />
@@ -622,31 +634,55 @@ export default function Home() {
 function BentoCard({ title, desc, icon, color, href, badge, className }) {
   return (
     <motion.div
-      whileHover={{ y: -5 }}
-      transition={{ duration: 0.3 }}
-      className={`relative group bg-[#0f172a] border border-white/5 rounded-3xl p-6 overflow-hidden hover:border-white/20 transition-all shadow-2xl flex flex-col ${className}`}
+      whileHover={{ y: -8 }}
+      transition={{ duration: 0.4, ease: "easeOut" }}
+      className={`relative group bg-[#0f172a] border border-white/5 rounded-[32px] p-6 overflow-hidden hover:border-white/20 transition-all shadow-2xl flex flex-col ${className}`}
       onClick={() => window.location.href = href}
     >
-      <div className={`absolute -inset-1 bg-gradient-to-r ${color} rounded-3xl blur opacity-0 group-hover:opacity-10 transition duration-500`} />
+      {/* Mesh Gradient Background */}
+      <div className={`absolute inset-0 bg-gradient-to-br ${color} opacity-[0.03] group-hover:opacity-[0.08] transition-opacity duration-500`} />
+
+      {/* Animated Aura */}
+      <div className={`absolute -top-24 -right-24 w-64 h-64 bg-gradient-to-br ${color} blur-[100px] opacity-0 group-hover:opacity-20 transition-opacity duration-700`} />
 
       {badge && (
-        <span className="absolute top-6 right-6 px-3 py-1 bg-white/5 border border-white/10 rounded-full text-[9px] font-black uppercase tracking-widest text-indigo-400">
+        <span className="absolute top-6 right-6 px-3 py-1 bg-white/5 border border-white/10 rounded-full text-[9px] font-black uppercase tracking-widest text-white/50 group-hover:text-white transition-colors">
           {badge}
         </span>
       )}
 
-      <div className={`w-10 h-10 rounded-xl bg-gradient-to-br ${color} flex items-center justify-center text-xl shadow-lg mb-4 group-hover:scale-110 transition-transform duration-500 text-white`}>
+      {/* Floating Icon Container */}
+      <motion.div
+        animate={{ y: [0, -4, 0] }}
+        transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+        className={`w-12 h-12 rounded-2xl bg-gradient-to-br ${color} flex items-center justify-center shadow-lg mb-5 relative z-10`}
+      >
+        <div className="absolute inset-0 rounded-2xl bg-white/20 blur-sm scale-90 opacity-0 group-hover:opacity-100 transition-opacity" />
         {icon}
+      </motion.div>
+
+      <div className="relative z-10">
+        <h3 className="text-xl font-display font-bold text-white mb-2 group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:${color} transition-all duration-300">
+          {title}
+        </h3>
+        <p className="text-slate-500 text-[13px] leading-relaxed max-w-xs group-hover:text-slate-400 transition-colors">
+          {desc}
+        </p>
       </div>
 
-      <h3 className="text-xl font-bold text-white mb-2">{title}</h3>
-      <p className="text-slate-500 text-[13px] leading-relaxed max-w-xs">{desc}</p>
-
-      <div className="mt-auto pt-4 opacity-0 group-hover:opacity-100 transition-opacity">
-        <span className="text-white text-[10px] font-bold uppercase tracking-widest flex items-center gap-2">
-          Explore Module <span className="translate-x-0 group-hover:translate-x-1 transition-transform">→</span>
+      <div className="mt-auto pt-4 relative z-10">
+        <span className="text-white/40 text-[10px] font-bold uppercase tracking-[0.2em] flex items-center gap-2 group-hover:text-white transition-all">
+          Explore Module
+          <motion.span
+            className="inline-block"
+            animate={{ x: [0, 4, 0] }}
+            transition={{ duration: 1.5, repeat: Infinity }}
+          >→</motion.span>
         </span>
       </div>
+
+      {/* Border Glow */}
+      <div className={`absolute inset-0 border border-white/10 rounded-[32px] group-hover:border-white/20 transition-colors pointer-events-none`} />
     </motion.div>
   );
 }
