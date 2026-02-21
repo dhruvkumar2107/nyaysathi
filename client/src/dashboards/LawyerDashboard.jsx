@@ -7,6 +7,7 @@ import CalendarWidget from "../components/dashboard/CalendarWidget";
 import WorkloadMonitor from "../components/dashboard/lawyer/WorkloadMonitor";
 import CaseIntelligencePanel from "../components/dashboard/lawyer/CaseIntelligencePanel";
 import ClientCRM from "../components/dashboard/lawyer/ClientCRM";
+import LegalNoticeGenerator from "../components/dashboard/lawyer/LegalNoticeGenerator";
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
 import io from "socket.io-client";
 import { motion, AnimatePresence } from "framer-motion";
@@ -73,6 +74,8 @@ export default function LawyerDashboard() {
             <NavItem icon="👥" label="Client CRM" active={activeTab === 'clients'} onClick={() => setActiveTab('clients')} />
             <NavItem icon="📅" label="Calendar" to="/calendar" />
             <NavItem icon="📝" label="Invoices" active={activeTab === 'invoices'} onClick={() => setActiveTab('invoices')} />
+            <div className="my-2 h-px bg-white/5" />
+            <NavItem icon="📜" label="Legal Notice Generator" active={activeTab === 'notices'} onClick={() => setActiveTab('notices')} badge="New" />
           </div>
         </div>
 
@@ -234,33 +237,42 @@ export default function LawyerDashboard() {
 
           </div>
 
-          {/* RIGHT SIDEBAR (4 COLS) */}
-          <div className="col-span-4 space-y-6">
-            {/* CALENDAR */}
-            <div className="bg-[#0f172a] rounded-3xl p-4 border border-white/10 shadow-lg h-[380px] overflow-hidden">
-              <CalendarWidget user={user} />
-            </div>
+          {/* LEGAL NOTICE GENERATOR — Full Width */}
+          {activeTab === 'notices' && (
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="col-span-12">
+              <LegalNoticeGenerator />
+            </motion.div>
+          )}
 
-            {/* UPCOMING MEETINGS */}
-            <div className="bg-[#0f172a] rounded-3xl p-6 border border-white/10 shadow-lg">
-              <h3 className="font-bold text-lg text-white mb-4">Agenda</h3>
-              {appointments.length === 0 ? <p className="text-xs text-slate-500">No meetings scheduled.</p> : (
-                <div className="space-y-3">
-                  {appointments.slice(0, 3).map(apt => (
-                    <div key={apt._id} className="p-3 bg-white/5 rounded-xl border border-white/10 flex items-center justify-between">
-                      <div>
-                        <p className="font-bold text-xs text-white">{apt.clientId?.name || "Client"}</p>
-                        <p className="text-[10px] text-slate-500">{new Date(apt.date).toLocaleDateString()} • {apt.slot}</p>
+          {/* RIGHT SIDEBAR (4 COLS) — Hidden on notices tab */}
+          {activeTab !== 'notices' && (
+            <div className="col-span-4 space-y-6">
+              {/* CALENDAR */}
+              <div className="bg-[#0f172a] rounded-3xl p-4 border border-white/10 shadow-lg h-[380px] overflow-hidden">
+                <CalendarWidget user={user} />
+              </div>
+
+              {/* UPCOMING MEETINGS */}
+              <div className="bg-[#0f172a] rounded-3xl p-6 border border-white/10 shadow-lg">
+                <h3 className="font-bold text-lg text-white mb-4">Agenda</h3>
+                {appointments.length === 0 ? <p className="text-xs text-slate-500">No meetings scheduled.</p> : (
+                  <div className="space-y-3">
+                    {appointments.slice(0, 3).map(apt => (
+                      <div key={apt._id} className="p-3 bg-white/5 rounded-xl border border-white/10 flex items-center justify-between">
+                        <div>
+                          <p className="font-bold text-xs text-white">{apt.clientId?.name || "Client"}</p>
+                          <p className="text-[10px] text-slate-500">{new Date(apt.date).toLocaleDateString()} • {apt.slot}</p>
+                        </div>
+                        {apt.status === 'confirmed' ? (
+                          <button onClick={() => window.open(`${window.location.origin}/meet/${apt._id}`, "_blank")} className="bg-purple-500/20 text-purple-300 px-3 py-1 rounded-md text-[10px] font-bold border border-purple-500/30 hover:bg-purple-500/30 transition">Join</button>
+                        ) : <span className="bg-amber-500/20 text-amber-300 px-3 py-1 rounded-md text-[10px] font-bold uppercase border border-amber-500/30">Pending</span>}
                       </div>
-                      {apt.status === 'confirmed' ? (
-                        <button onClick={() => window.open(`${window.location.origin}/meet/${apt._id}`, "_blank")} className="bg-purple-500/20 text-purple-300 px-3 py-1 rounded-md text-[10px] font-bold border border-purple-500/30 hover:bg-purple-500/30 transition">Join</button>
-                      ) : <span className="bg-amber-500/20 text-amber-300 px-3 py-1 rounded-md text-[10px] font-bold uppercase border border-amber-500/30">Pending</span>}
-                    </div>
-                  ))}
-                </div>
-              )}
+                    ))}
+                  </div>
+                )}
+              </div>
             </div>
-          </div>
+          )}
 
         </div>
       </main>
@@ -269,7 +281,7 @@ export default function LawyerDashboard() {
   );
 }
 
-function NavItem({ icon, label, to, count, active, onClick }) {
+function NavItem({ icon, label, to, count, active, onClick, badge }) {
   const navigate = useNavigate();
   const handleClick = () => {
     if (onClick) onClick();
@@ -286,6 +298,7 @@ function NavItem({ icon, label, to, count, active, onClick }) {
         <span className="text-sm tracking-wide font-medium">{label}</span>
       </div>
       {count !== undefined && <span className="text-[10px] font-bold bg-indigo-500 text-white px-2 py-0.5 rounded-md shadow-lg shadow-indigo-500/40">{count}</span>}
+      {badge && <span className="text-[9px] font-black bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 px-2 py-0.5 rounded-md uppercase tracking-wider">{badge}</span>}
     </div>
   )
 }

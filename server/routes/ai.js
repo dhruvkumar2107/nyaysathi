@@ -957,5 +957,106 @@ function extractSections(text) {
   return [...new Set(matches)].slice(0, 3);
 }
 
+/* ────────────────────────────────────────────────────────
+   INSTANT LEGAL NOTICE GENERATOR
+   POST /api/ai/legal-notice
+──────────────────────────────────────────────────────── */
+router.post("/legal-notice", verifyToken, async (req, res) => {
+  try {
+    const {
+      noticeType,        // e.g. "Demand Notice", "Eviction Notice", "Cheque Bounce"
+      senderName,        // Lawyer/Client name
+      senderAddress,
+      senderBarCouncil,  // Lawyer's Bar Council ID
+      recipientName,
+      recipientAddress,
+      facts,             // Brief of the matter
+      amount,            // If monetary demand
+      complianceDays,    // Days to comply (default 15)
+      additionalClauses
+    } = req.body;
+
+    if (!noticeType || !senderName || !recipientName || !facts) {
+      return res.status(400).json({ error: "Missing required fields: noticeType, senderName, recipientName, facts" });
+    }
+
+    const today = new Date().toLocaleDateString("en-IN", { day: "numeric", month: "long", year: "numeric" });
+
+    const prompt = `You are a Senior Advocate of the Supreme Court of India drafting a formal LEGAL NOTICE.
+
+Generate a complete, professional, court-ready Legal Notice with the following structure and details:
+
+NOTICE DETAILS:
+- Notice Type: ${noticeType}
+- Date: ${today}
+- Sender (Advocate/Client): ${senderName}
+- Sender Address: ${senderAddress || "To be filled"}
+- Bar Council ID: ${senderBarCouncil || "N/A"}
+- Recipient: ${recipientName}
+- Recipient Address: ${recipientAddress || "To be filled"}
+- Facts of the Matter: ${facts}
+${amount ? `- Amount in Dispute: ₹${amount}` : ""}
+- Compliance Period: ${complianceDays || 15} days
+${additionalClauses ? `- Additional Clauses: ${additionalClauses}` : ""}
+
+FORMAT THE NOTICE EXACTLY AS FOLLOWS:
+
+LEGAL NOTICE
+(Under [Relevant Act/Section])
+
+Date: ${today}
+
+To,
+[Recipient Name]
+[Recipient Address]
+
+Subject: Legal Notice for [One Line Subject]
+
+Sir/Madam,
+
+Under instructions from and on behalf of my client, [Sender Name], I hereby serve upon you the following Legal Notice:
+
+1. FACTS AND BACKGROUND:
+   [3-5 detailed paragraphs describing the factual background with dates, events, and context]
+
+2. CAUSE OF ACTION:
+   [Cite specific Indian laws — IPC/BNS sections, CrPC/BNSS, CPC, specific Acts — that apply]
+
+3. LEGAL VIOLATIONS:
+   [Enumerate each legal violation with relevant section numbers]
+
+4. DEMAND/PRAYER:
+   [Clear demand — payment, action, cessation — with specific amount if applicable]
+
+5. CONSEQUENCES OF NON-COMPLIANCE:
+   [Legal consequences if ignored — civil suit, criminal complaint, etc.]
+
+TAKE NOTICE that if you fail to comply with the above demands within ${complianceDays || 15} days of receipt of this notice, my client shall be constrained to initiate appropriate legal proceedings before the competent court/forum, including but not limited to filing a civil suit for recovery/injunction and/or a criminal complaint, without any further notice to you, at your risk, cost and consequences.
+
+This notice is WITHOUT PREJUDICE to the rights and remedies available to my client.
+
+Yours faithfully,
+
+[SIGNATURE SLOT]
+${senderName}
+${senderBarCouncil ? `Bar Council Enrolment No.: ${senderBarCouncil}` : "Advocate"}
+${senderAddress || ""}
+Date: ${today}
+
+Note: The above is a formal legal notice prepared ${senderBarCouncil ? "by a registered Advocate" : "on behalf of the sender"}.
+
+Generate this notice with complete professional legal language, proper recitals, and cite the most relevant Indian law sections (BNS 2023, BNSS 2023, CPC 1908, or relevant specific Acts). Make it court-ready and enforceable.`;
+
+    const result = await generateWithFallback(prompt);
+    const noticeText = result.response.text();
+
+    res.json({ notice: noticeText, date: today, type: noticeType });
+  } catch (err) {
+    console.error("Legal Notice Generation Error:", err);
+    res.status(500).json({ error: "Failed to generate legal notice. Please try again." });
+  }
+});
+
 module.exports = router;
+
 
