@@ -665,7 +665,7 @@ function BentoCard({ title, desc, icon, color, href, badge, className }) {
         <h3 className="text-lg font-display font-bold text-white mb-1 group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:${color} transition-all duration-300">
           {title}
         </h3>
-        <p className="text-slate-500 text-[12px] leading-snug max-w-xs group-hover:text-slate-400 transition-colors line-clamp-3">
+        <p className="text-slate-500 text-[12px] leading-relaxed max-w-sm group-hover:text-slate-400 transition-colors">
           {desc}
         </p>
       </div>
