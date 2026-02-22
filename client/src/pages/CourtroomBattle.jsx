@@ -316,7 +316,7 @@ export default function CourtroomBattle() {
     const CASE_TYPES = ['Civil', 'Criminal', 'Property / Real Estate', 'Family / Matrimonial', 'Consumer', 'Constitutional', 'Corporate / Commercial', 'Cyber / IT'];
 
     return (
-        <div className="min-h-screen bg-[#020617] font-sans text-slate-400 selection:bg-indigo-500/30">
+        <div className="min-h-screen bg-[#0c1220] font-sans text-slate-400 selection:bg-amber-500/10 relative overflow-hidden">
             <Navbar />
 
             {/* ── HERO ─────────────────────────────────────────────────────────── */}

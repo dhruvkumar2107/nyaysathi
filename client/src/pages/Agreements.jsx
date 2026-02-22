@@ -62,7 +62,7 @@ export default function Agreements() {
   };
 
   return (
-    <main className="min-h-screen bg-[#020617] text-slate-400 font-sans selection:bg-indigo-500/30">
+    <div className="min-h-screen bg-[#0c1220] font-sans text-slate-400 selection:bg-indigo-500/30">
       <Navbar />
       <PaywallModal isOpen={showPaywall} onClose={() => setShowPaywall(false)} />
 
@@ -202,6 +202,6 @@ export default function Agreements() {
         </div>
       </div>
       <Footer />
-    </main>
+    </div>
   );
 }

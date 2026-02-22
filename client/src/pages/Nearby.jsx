@@ -136,7 +136,7 @@ export default function Nearby() {
   ];
 
   if (loading) return (
-    <div className="h-screen w-full flex items-center justify-center bg-midnight-950 text-white">
+    <div className="min-h-screen bg-[#0c1220] font-sans pb-20 flex items-center justify-center text-white">
       <div className="flex flex-col items-center">
         <div className="w-16 h-16 border-4 border-amber-500 border-t-transparent rounded-full animate-spin"></div>
         <h2 className="text-2xl font-bold mt-6 tracking-widest uppercase">Initializing Satellites</h2>
@@ -146,7 +146,7 @@ export default function Nearby() {
   );
 
   return (
-    <div className="h-screen w-full relative overflow-hidden font-sans bg-[#020617]">
+    <div className="min-h-screen bg-[#0c1220] relative overflow-hidden font-sans">
       <div className="absolute top-0 left-0 w-full z-[1000]">
         <Navbar />
       </div>

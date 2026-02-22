@@ -217,7 +217,7 @@ const Pricing = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#020617] text-slate-400 font-sans selection:bg-indigo-500/30">
+    <div className="min-h-screen bg-[#0c1220] text-slate-400 font-sans selection:bg-indigo-500/30">
       <Navbar />
 
       {/* ─── HERO ──────────────────────────────────────────── */}
@@ -271,8 +271,8 @@ const Pricing = () => {
                   key={type}
                   onClick={() => setUserType(type)}
                   className={`relative px-8 py-3 rounded-xl text-sm font-bold transition-all duration-300 capitalize flex items-center gap-2 ${userType === type
-                      ? 'bg-white text-slate-900 shadow-lg'
-                      : 'text-slate-400 hover:text-slate-200'
+                    ? 'bg-white text-slate-900 shadow-lg'
+                    : 'text-slate-400 hover:text-slate-200'
                     }`}
                 >
                   {type === 'client' ? <Users2 size={16} /> : <Building2 size={16} />}

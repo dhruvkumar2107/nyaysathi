@@ -78,7 +78,7 @@ export default function Lawyers() {
   const [searchTerm, setSearchTerm] = useState("");
 
   return (
-    <div className="min-h-screen bg-[#020617] font-sans text-slate-400 selection:bg-gold-500/30">
+    <div className="min-h-screen bg-[#0c1220] font-sans text-slate-400 selection:bg-gold-500/30 pb-20">
       <Navbar />
 
       {/* HERO SECTION */}
@@ -90,12 +90,12 @@ export default function Lawyers() {
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="inline-block px-4 py-1.5 rounded-full bg-white/5 border border-white/10 text-gold-400 text-xs font-bold uppercase tracking-[0.2em] mb-6 shadow-[0_0_15px_rgba(250,204,21,0.1)]">
             Verified Experts
           </motion.div>
-          <motion.h1 initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="text-5xl md:text-7xl font-serif font-bold text-white mb-8">
-            The Legal <span className="text-transparent bg-clip-text bg-gradient-to-r from-gold-400 to-amber-500">Marketplace.</span>
-          </motion.h1>
-          <motion.p initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} className="text-xl text-slate-400 max-w-2xl mx-auto mb-12 font-light">
-            Connect with the top 1% of legal minds in India. Pre-vetted, highly rated, and ready to fight for you.
-          </motion.p>
+          <div className="text-center mb-16 px-6">
+            <h1 className="text-5xl md:text-6xl font-serif font-black text-white mb-6">Connect with Elite <br /><span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-violet-400">Legal Minds</span></h1>
+            <p className="text-lg text-slate-400 max-w-2xl mx-auto leading-relaxed">
+              The top 1% of India's legal talent, verified by AI and available for immediate consultation.
+            </p>
+          </div>
 
           {/* SEARCH BAR */}
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }} className="max-w-3xl mx-auto relative group">

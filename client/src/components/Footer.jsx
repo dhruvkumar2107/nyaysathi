@@ -4,7 +4,7 @@ import { motion } from 'framer-motion';
 
 const Footer = () => {
     return (
-        <footer className="bg-white border-t border-slate-200 text-slate-600 font-sans pt-24 pb-12 relative overflow-hidden">
+        <footer className="bg-[#0c1220] border-t border-white/5 text-slate-400 font-sans pt-24 pb-12 relative overflow-hidden">
 
             {/* Background Glow */}
             <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[800px] h-[300px] bg-indigo-500/[0.03] blur-[120px] rounded-full pointer-events-none"></div>
@@ -18,9 +18,9 @@ const Footer = () => {
                             <div className="h-10 w-10 bg-gradient-to-br from-indigo-600 to-violet-700 rounded-xl flex items-center justify-center text-white font-bold text-xl shadow-lg">
                                 N
                             </div>
-                            <span className="text-2xl font-bold text-slate-900 tracking-tight">NyayNow</span>
+                            <span className="text-2xl font-bold text-white tracking-tight">NyayNow</span>
                         </Link>
-                        <p className="text-slate-600 text-lg leading-relaxed mb-8">
+                        <p className="text-slate-400 text-lg leading-relaxed mb-8">
                             The operating system for the Indian Justice System. We are democratizing legal intelligence for 1.4 billion people with AI.
                         </p>
                         <div className="flex gap-4">
@@ -30,16 +30,16 @@ const Footer = () => {
                         </div>
                     </div>
 
-                    <div className="w-full lg:w-auto bg-slate-50 border border-slate-200 rounded-2xl p-8 shadow-sm">
-                        <h4 className="text-lg font-bold text-slate-900 mb-2">Stay ahead of the curve.</h4>
-                        <p className="text-sm text-slate-600 mb-6 max-w-xs">
+                    <div className="w-full lg:w-auto bg-white/5 border border-white/10 rounded-2xl p-8 shadow-sm">
+                        <h4 className="text-lg font-bold text-white mb-2">Stay ahead of the curve.</h4>
+                        <p className="text-sm text-slate-400 mb-6 max-w-xs">
                             Get the latest updates on Supreme Court judgments and new AI features.
                         </p>
                         <form className="flex gap-2">
                             <input
                                 type="email"
                                 placeholder="Enter your email"
-                                className="bg-white border border-slate-200 rounded-lg px-4 py-3 text-slate-900 placeholder:text-slate-400 text-sm focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 w-full"
+                                className="bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-white placeholder:text-slate-500 text-sm focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 w-full"
                             />
                             <button className="bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-6 py-3 rounded-lg text-sm transition shadow-lg shadow-indigo-600/10">
                                 Subscribe

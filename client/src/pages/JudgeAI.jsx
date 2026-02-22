@@ -148,7 +148,7 @@ const JudgeAI = () => {
     };
 
     return (
-        <div className="min-h-screen bg-[#020617] text-slate-400 font-sans selection:bg-indigo-500/30">
+        <div className="min-h-screen bg-[#0c1220] text-slate-400 font-sans selection:bg-indigo-500/30">
             <Navbar />
 
             {/* HERO SECTION */}

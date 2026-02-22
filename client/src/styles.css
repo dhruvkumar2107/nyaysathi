@@ -11,16 +11,16 @@
 }
 
 ::-webkit-scrollbar-track {
-  background: #f8fafc;
+  background: #0c1220;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #cbd5e1;
+  background: #2d3755;
   border-radius: 10px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #94a3b8;
+  background: #4a5a80;
 }
 
 /* Global resets */
@@ -36,10 +36,10 @@ html {
 html,
 body,
 #root {
-  background-color: #f8fafc;
-  /* Slate 50 - Cloud Light */
-  color: #1e293b;
-  /* Slate 800 - Deep Charcoal */
+  background-color: #0c1220;
+  /* Deep Premium Navy — low mid dark */
+  color: #cbd5e1;
+  /* Slate 300 — crisp and readable */
   font-family: var(--font-sans);
   overflow-x: hidden;
 }
@@ -52,7 +52,8 @@ h5,
 h6 {
   font-family: var(--font-display);
   letter-spacing: -0.01em;
-  color: #0f172a;
+  color: #f1f5f9;
+  /* Bright Slate 100 for premium headings */
 }
 
 /* Premium Utilities */
@@ -68,28 +69,29 @@ h6 {
 }
 
 .glass-premium {
-  background: rgba(255, 255, 255, 0.7);
-  backdrop-filter: blur(16px);
-  border: 1px solid rgba(0, 0, 0, 0.05);
-  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.05);
+  background: rgba(18, 28, 50, 0.75);
+  backdrop-filter: blur(20px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.4);
 }
 
 .glass-card {
-  background: rgba(255, 255, 255, 0.8);
-  backdrop-filter: blur(12px);
-  border: 1px solid rgba(0, 0, 0, 0.05);
-  box-shadow: 0 4px 20px 0 rgba(0, 0, 0, 0.03);
+  background: rgba(20, 32, 56, 0.8);
+  backdrop-filter: blur(14px);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  box-shadow: 0 4px 20px 0 rgba(0, 0, 0, 0.3);
 }
 
 .glass-input {
-  background: white;
-  border: 1px solid #e2e8f0;
-  color: #1e293b;
+  background: rgba(15, 25, 45, 0.8);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: #f1f5f9;
   transition: all 0.3s ease;
 }
 
 .glass-input:focus {
-  box-shadow: 0 0 0 2px rgba(212, 175, 55, 0.1);
+  border-color: rgba(212, 175, 55, 0.4);
+  box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.08);
   outline: none;
 }
 
@@ -130,13 +132,13 @@ html.lenis body {
 /* Glow card — glowing border on hover */
 .glow-card {
   transition: box-shadow 0.4s ease, border-color 0.4s ease;
-  border: 1px solid rgba(0, 0, 0, 0.05);
-  background: white;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  background: rgba(16, 26, 46, 0.9);
 }
 
 .glow-card:hover {
-  box-shadow: 0 20px 40px -10px rgba(99, 102, 241, 0.15);
-  border-color: rgba(99, 102, 241, 0.2);
+  box-shadow: 0 20px 50px -10px rgba(99, 102, 241, 0.25);
+  border-color: rgba(99, 102, 241, 0.35);
 }
 
 /* Badge pill — small labeled indicator */
@@ -164,7 +166,7 @@ html.lenis body {
 .section-header h2 {
   font-size: clamp(2rem, 5vw, 3.5rem);
   font-weight: 700;
-  color: #0f172a;
+  color: #f1f5f9;
   margin-bottom: 16px;
 }
 
@@ -232,10 +234,10 @@ html.lenis body {
 
 /* Premium Glassmorphism */
 .premium-glass {
-  background: rgba(255, 255, 255, 0.8);
-  backdrop-filter: blur(20px) saturate(160%);
-  border: 1px solid rgba(0, 0, 0, 0.05);
-  box-shadow: 0 10px 40px -10px rgba(0, 0, 0, 0.05);
+  background: rgba(14, 22, 42, 0.85);
+  backdrop-filter: blur(24px) saturate(200%);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 10px 50px -10px rgba(0, 0, 0, 0.5);
 }
 
 /* Glow Shadows */

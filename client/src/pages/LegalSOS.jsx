@@ -134,7 +134,7 @@ export default function LegalSOS() {
                 'bg-yellow-500/20 text-yellow-400 border-yellow-500/40';
 
     return (
-        <div className="min-h-screen bg-[#020617] font-sans text-slate-400">
+        <div className="min-h-screen bg-[#0c1220] font-sans selection:bg-red-500/10">
             <Navbar />
 
             {/* ── HERO ──────────────────────────────────────────────────────────── */}

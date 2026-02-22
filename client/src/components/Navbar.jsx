@@ -72,7 +72,7 @@ export default function Navbar() {
               <div className="absolute inset-0 bg-gold-400 blur-[20px] opacity-10 group-hover:opacity-30 transition duration-500"></div>
               <img src="/logo.png" alt="NyayNow" className="relative w-10 h-10 object-contain hover:scale-105 transition duration-300 drop-shadow-[0_0_10px_rgba(212,175,55,0.2)]" />
             </div>
-            <span className="text-2xl font-display font-bold tracking-tight text-slate-900 group-hover:text-gold-600 transition-colors duration-300">NyayNow</span>
+            <span className="text-2xl font-display font-bold tracking-tight text-white group-hover:text-gold-400 transition-colors duration-300">NyayNow</span>
           </Link>
 
           {/* DESKTOP NAV */}
@@ -85,7 +85,7 @@ export default function Navbar() {
                 onMouseEnter={() => handleMouseEnter(idx)}
                 onMouseLeave={handleMouseLeave}
               >
-                <button className={`flex items-center gap-1.5 text-sm font-bold tracking-wide transition-all duration-300 ${hoveredIndex === idx ? "text-gold-600" : "text-slate-600 hover:text-slate-900"}`}>
+                <button className={`flex items-center gap-1.5 text-sm font-bold tracking-wide transition-all duration-300 ${hoveredIndex === idx ? "text-gold-400" : "text-slate-300 hover:text-white"}`}>
                   {category.label}
                   <ChevronDown size={14} className={`transition-transform duration-300 ${hoveredIndex === idx ? "rotate-180 text-gold-600" : ""}`} />
                 </button>
@@ -99,7 +99,7 @@ export default function Navbar() {
                       transition={{ duration: 0.2, ease: "easeOut" }}
                       className="absolute top-full left-1/2 -translate-x-1/2 pt-6 w-[600px]"
                     >
-                      <div className="bg-white border border-slate-200 rounded-2xl p-2 shadow-2xl grid grid-cols-2 gap-2 relative overflow-hidden backdrop-blur-3xl">
+                      <div className="bg-[#111b33] border border-white/10 rounded-2xl p-2 shadow-2xl grid grid-cols-2 gap-2 relative overflow-hidden backdrop-blur-3xl">
                         {/* Gold Border Glow */}
                         <div className="absolute inset-0 pointer-events-none border border-gold-500/10 rounded-2xl"></div>
 
@@ -107,17 +107,17 @@ export default function Navbar() {
                           <Link
                             key={i}
                             to={item.href}
-                            className="flex items-center gap-4 p-4 rounded-xl hover:bg-slate-50 transition group relative z-10 border border-transparent hover:border-gold-500/10"
+                            className="flex items-center gap-4 p-4 rounded-xl hover:bg-white/5 transition group relative z-10 border border-transparent hover:border-gold-500/20"
                           >
-                            <div className="w-10 h-10 rounded-lg bg-slate-50 flex items-center justify-center border border-slate-200 group-hover:border-gold-500/30 transition group-hover:scale-110 duration-300 shadow-sm">
+                            <div className="w-10 h-10 rounded-lg bg-white/5 flex items-center justify-center border border-white/10 group-hover:border-gold-500/30 transition group-hover:scale-110 duration-300 shadow-sm">
                               {/* Override Icon Colors for Premium Feel */}
-                              <div className="group-hover:text-gold-400 transition duration-300">
+                              <div className="text-slate-400 group-hover:text-gold-400 transition duration-300">
                                 {item.icon}
                               </div>
                             </div>
                             <div>
-                              <div className="text-slate-900 font-display font-semibold text-sm group-hover:text-gold-600 transition">{item.name}</div>
-                              <div className="text-slate-500 text-xs font-medium">{item.desc}</div>
+                              <div className="text-white font-display font-semibold text-sm group-hover:text-gold-400 transition">{item.name}</div>
+                              <div className="text-slate-400 text-xs font-medium">{item.desc}</div>
                             </div>
                           </Link>
                         ))}
@@ -206,7 +206,7 @@ export default function Navbar() {
               </Link>
             </motion.div>
 
-            <button onClick={() => setMobileMenuOpen(!mobileMenuOpen)} className="lg:hidden p-2 text-slate-600 hover:text-gold-600 transition-colors duration-300">
+            <button onClick={() => setMobileMenuOpen(!mobileMenuOpen)} className="lg:hidden p-2 text-slate-400 hover:text-gold-400 transition-colors duration-300">
               {mobileMenuOpen ? <X /> : <Menu />}
             </button>
           </div>
@@ -220,7 +220,7 @@ export default function Navbar() {
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
-            className="fixed inset-0 z-40 bg-white backdrop-blur-xl pt-24 px-6 overflow-y-auto"
+            className="fixed inset-0 z-40 bg-[#0c1220]/95 backdrop-blur-2xl pt-24 px-6 overflow-y-auto"
           >
             <div className="flex flex-col gap-6 pb-20">
               {navItems.map((group, idx) => (
@@ -232,11 +232,11 @@ export default function Navbar() {
                         key={i}
                         to={item.href}
                         onClick={() => setMobileMenuOpen(false)}
-                        className="flex items-center gap-4 p-3 rounded-xl bg-slate-50 border border-slate-100 hover:border-gold-500/30 transition"
+                        className="flex items-center gap-4 p-3 rounded-xl bg-white/5 border border-white/10 hover:border-gold-500/30 transition"
                       >
-                        <div className="text-slate-600">{item.icon}</div>
+                        <div className="text-slate-400">{item.icon}</div>
                         <div>
-                          <div className="text-slate-900 font-semibold text-sm">{item.name}</div>
+                          <div className="text-white font-semibold text-sm">{item.name}</div>
                           <div className="text-slate-500 text-xs">{item.desc}</div>
                         </div>
                       </Link>

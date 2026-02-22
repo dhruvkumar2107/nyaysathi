@@ -56,7 +56,7 @@ const MootCourt = () => {
     };
 
     return (
-        <div className="min-h-screen bg-[#020617] text-slate-400 font-sans selection:bg-indigo-500/30 overflow-hidden relative">
+        <div className="min-h-screen bg-[#0c1220] font-sans selection:bg-indigo-500/30 overflow-hidden relative">
             <Navbar />
 
             {/* AMBIENT BACKGROUND */}

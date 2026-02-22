@@ -41,7 +41,7 @@ export default function Settings() {
     };
 
     return (
-        <div className="min-h-screen bg-[#020617] font-sans text-slate-400 selection:bg-indigo-500/30 pb-20 relative overflow-hidden">
+        <div className="min-h-screen bg-[#0c1220] font-sans text-slate-400 selection:bg-indigo-500/30 pb-20 relative overflow-hidden">
             <Navbar />
 
             {/* Ambient Glow */}

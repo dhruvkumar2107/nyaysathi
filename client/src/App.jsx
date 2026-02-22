@@ -70,7 +70,7 @@ export default function App() {
     <BrowserRouter>
       {/* <SmoothScroll /> */}
       {/* ROOT APP WRAPPER */}
-      <div className="min-h-screen bg-[#020617] text-slate-400 font-sans">
+      <div className="min-h-screen bg-[#0c1220] text-slate-400 font-sans">
         <Toaster position="top-right" reverseOrder={false} />
         {/* FIXED NAVBAR - Conditionally Hidden on Auth/Dashboard */}
         {!window.location.pathname.startsWith('/login') &&
