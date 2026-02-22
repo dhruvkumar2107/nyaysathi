@@ -141,9 +141,9 @@ export default function Navbar() {
           <div className="flex items-center gap-3 lg:gap-4 relative z-50">
             {!user ? (
               <div className="flex items-center gap-5">
-                <Link to="/login" className="hidden sm:block font-bold text-sm text-slate-600 hover:text-slate-900 transition-all duration-300 relative group">
+                <Link to="/login" className="hidden sm:block font-black text-sm text-white hover:text-gold-400 transition-all duration-300 relative group">
                   Log in
-                  <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-gold-600 transition-all duration-300 group-hover:w-full"></span>
+                  <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-gold-400 transition-all duration-300 group-hover:w-full"></span>
                 </Link>
                 <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
                   <Link to="/register" className="relative overflow-hidden px-6 py-2.5 bg-gradient-to-r from-gold-400 to-yellow-600 text-midnight-950 font-bold text-sm rounded-xl hover:shadow-[0_0_25px_rgba(212,175,55,0.4)] transition duration-300 group flex items-center gap-2">
@@ -247,7 +247,7 @@ export default function Navbar() {
 
               {!user && (
                 <div className="flex flex-col gap-3 mt-4 pt-4 border-t border-white/10">
-                  <Link to="/login" onClick={() => setMobileMenuOpen(false)} className="w-full py-4 rounded-xl bg-white/5 hover:bg-white/10 text-white font-bold text-center border border-white/10 transition">Log In</Link>
+                  <Link to="/login" onClick={() => setMobileMenuOpen(false)} className="w-full py-4 rounded-xl bg-white/5 hover:bg-white/10 text-white font-black text-center border border-white/10 transition">Log In</Link>
                   <Link to="/register" onClick={() => setMobileMenuOpen(false)} className="w-full py-4 rounded-xl bg-gradient-gold text-midnight-950 font-bold text-center shadow-lg shadow-gold-500/20">Get Started</Link>
                 </div>
               )}
