@@ -22,12 +22,17 @@ Sentry.init({
 });
 
 // Initialize PostHog (Analytics)
-posthog.init(import.meta.env.VITE_POSTHOG_KEY || 'phc_TEST_KEY_JUST_A_PLACEHOLDER', {
-  api_host: 'https://app.posthog.com',
-  loaded: (posthog) => {
-    if (import.meta.env.DEV) posthog.opt_out_capturing();
-  },
-});
+const POSTHOG_KEY = import.meta.env.VITE_POSTHOG_KEY;
+if (POSTHOG_KEY && POSTHOG_KEY.startsWith('phc_')) {
+  posthog.init(POSTHOG_KEY, {
+    api_host: 'https://app.posthog.com',
+    loaded: (posthog) => {
+      if (import.meta.env.DEV) posthog.opt_out_capturing();
+    },
+  });
+} else {
+  console.info("ℹ️ PostHog: Skipping initialization (No valid API key found)");
+}
 
 console.log("Rendering Main entry point");
 const GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID;
