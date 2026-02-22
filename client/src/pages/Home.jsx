@@ -64,7 +64,7 @@ export default function Home() {
             className="text-base md:text-xl text-slate-400 max-w-2xl mx-auto mb-12 font-light leading-relaxed tracking-wide"
           >
             NyayNow puts the full power of the Indian legal system in your pocket. <br className="hidden md:block" />
-            Designed for the <span className="text-slate-900 font-semibold">1.4 billion</span> who deserve access to justice.
+            Designed for the <span className="text-white font-bold">1.4 billion</span> who deserve access to justice.
           </motion.p>
 
           <motion.div
