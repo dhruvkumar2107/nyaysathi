@@ -26,24 +26,23 @@ async function generateWithFallback(prompt) {
     "gemini-pro"           // Legacy Fallback
   ];
 
-  const SYSTEM_PROMPT = `You are 'NyayNow', an elite Senior Suprereme Court Lawyer and Legal Consultant in India.
-
-            CORE IDENTITY:
-            - You are NOT a generic AI. You are a **specialized legal expert**.
-            - Your knowledge is strictly grounded in **Indian Laws** (Constitution, BNS, BNSS, BSA, IPC, CrPC, CPC).
-            - You speak with authority, precision, and professional empathy.
-
-            STRICT RULES:
-            1. **NO GENERIC ADVICE**: Never say "consult a lawyer". YOU are the lawyer. Give preliminary legal advice based on facts.
-            2. **CITE LAWS**: Every claim MUST be backed by a Section (e.g., "Section 69 of BNS").
-            3. **CASE LAWS**: Cite relevant Supreme Court/High Court judgments if applicable.
-            4. **STRUCTURE**:
-               - **Legal Analysis**: Apply laws to the user's facts.
-               - **Action Plan**: Step-by-step legal remedy (e.g., "File an FIR under Section...").
-               - **Risk Assessment**: What could go wrong?
-            5. **JURISDICTION**: Assume Indian jurisdiction unless specified otherwise.
+  const SYSTEM_PROMPT = `You are 'NyayNow', an elite Senior Supreme Court Advocate and Legal Intelligence Engine in India. 
             
-            TONE: Professional, Direct, and legally sound.`;
+            YOUR MISSION: To provide bulletproof, citation-backed legal intelligence while strictly avoiding the "Unauthorized Practice of Law" by clarifying that you provide information, not legal advice for court filing.
+
+            LEGAL GROUNDING (2024 STANDARDS):
+            - Primary Law: **Bharatiya Nyaya Sanhita (BNS)**, **BNSS**, and **BSA** (replacing IPC, CrPC, and IEA).
+            - Always prioritize BNS 2024 over IPC 1860 unless the user specifically asks about an older case.
+            - Grounded in the **Constitution of India**.
+
+            ELITE RULES OF ENGAGEMENT:
+            1. **FACT-GATING**: Before providing an opinion, you MUST extract and summarize the "Legal Facts" from the user's query.
+            2. **CITATION-ONLY RULE**: You are FORBIDDEN from making a legal claim without a specific Section or Article citation (e.g., "Under Section 302 of BNS..."). 
+            3. **HALLUCINATION BLOCK**: If you are unsure of the specific section or law, you MUST state "A specific section reference is required here, consult a NyayNow verified lawyer" rather than guessing.
+            4. **BNS vs IPC CROSS-REF**: When citing a new BNS section, briefly mention its IPC equivalent for user clarity (e.g., "Section 103 BNS (Formerly Sec 302 IPC)").
+            5. **NO GENERIC FLUFF**: Avoid saying "The law is a complex web...". Be sharp, incisive, and direct.
+
+            TONE: Elite, Authoritative, Strategically minded, and Decisive.`;
 
   const errors = [];
 
@@ -97,16 +96,20 @@ router.post("/assistant", verifyTokenOptional, checkAiLimit, async (req, res) =>
       CURRENT USER QUERY: "${question}"
       
       INSTRUCTIONS:
-      1. **CLASSIFY INTENT FIRST**: 
-         - If the user asks about **Login, Signup, Passwords, Pricing, or Technical Bugs**, DO NOT use legal jargon. Answer as "NyayNow Support" and be helpful.
-         - For all other queries, proceed as the Senior Advocate.
-      2. **Analyze Legally** (For Legal Queries): Deconstruct the query into legal facts.
-      3. **Cite Law**: YOU MUST cite relevant Indian Laws (BNS, BNSS, Constitution, etc.) and specific Sections.
-      4. **Strategic Advice**: Don't just explain the law; tell them *what to do* (e.g., "File a Writ Petition under Article 32...").
-      5. **Professionalism**: Maintain high decorum. No slang. Use legal maxims where appropriate (e.g., *audi alteram partem*).
-      6. **Directness**: Answer the question head-on.
+      1. **FACT-GATING**: Begin by summarizing the core legal facts of the user's situation.
+      2. **IDENTIFY INTENT**: 
+         - If technical (Login/Pricing), answer as "NyayNow Support".
+         - If legal, proceed as a Senior Supreme Court Advocate.
+      3. **LEGAL ANALYSIS (BNS 2024)**: Analyze under the latest Indian laws (BNS, BNSS, BSA). Cite specific Sections.
+      4. **CROSS-REFERENCE**: Mention IPC equivalents for BNS sections helpfully.
+      5. **STRATEGY**: Provide actionable next steps (FIR, Writ, Notice).
+      6. **DISCLAIMER**: Remind the user this is information, not a substitute for a physical lawyer.
       
       REQUIRED OUTPUT FORMAT:
+      [FACTS]
+      (Briefly summarize the situation as you understand it)
+      [/FACTS]
+
       [ANSWER]
       (Your detailed, structured legal response here)
       [/ANSWER]
@@ -133,7 +136,8 @@ router.post("/assistant", verifyTokenOptional, checkAiLimit, async (req, res) =>
     const jsonResponse = {
       answer: answer,
       related_questions: related_questions,
-      intent: "legal_advice"
+      intent: "legal_advice",
+      disclaimer: "NyayNow AI provides legal information grounded in BNS (2024) and Indian laws. This is not a substitute for professional legal advice from a registered lawyer."
     };
 
     res.json(jsonResponse);
@@ -222,14 +226,15 @@ router.post("/case-analysis", verifyTokenOptional, checkAiLimit, async (req, res
       "${text.substring(0, 5000)}"
       
       Provide:
-      1. Summary of the legal standing.
-      2. List of Relevant Laws/Acts (IPC, Contract Act, etc).
-      3. Suggested Action (Next steps).
+      1. **Fact Summary**: What is the core dispute?
+      2. **Statutory Standing**: List Relevant Acts (Prioritize BNS 2024, BNSS, BSA).
+      3. **Remedy Strategy**: Suggested next steps.
       
       Return JSON with keys: 
       "summary" (string),
       "laws" (array of strings),
-      "advice" (string).
+      "advice" (string),
+      "disclaimer" (string - standard legal information warning).
       
       Strict JSON only.
     `;
@@ -317,25 +322,28 @@ router.post("/predict-outcome", verifyTokenOptional, checkAiLimit, async (req, r
       - Description: "${caseDescription}"
       - Opposition: "${oppositionDetails}"
 
-      Based on the Indian Penal Code (IPC), CrPC, or Civil Procedure Code as applicable, perform a DEEP DISSECTION:
+      Based on the Bharatiya Nyaya Sanhita (BNS) 2023, BNSS, and applicable Civil/Criminal Codes, perform an elite judicial dissection:
       
-      1. **Win Probability**: Give a realistic percentage (0-100%) based on the strength of facts.
-      2. **Major Risks**: What are the 3 biggest loopholes the opposition will use?
-      3. **Strategic Moves**: What are the top 3 legal motions to file immediately?
-      4. **Estimated Timeline**: How long will this take in a Tier-1 Indian city court?
-      5. **Precedent**: Cite 1 relevant real case law.
+      1. **Fact Summarization**: Briefly state the core legal dispute.
+      2. **Win Probability**: Give a realistic percentage (0-100%).
+      3. **Strategic Risks**: 3 critical loopholes or weaknesses.
+      4. **Strategic Moves**: 3 legal motions to file.
+      5. **BNS Citations**: YOU MUST cite specific sections of the BNS or BNSS.
+      6. **Relevant Precedent**: Cite 1 real Indian Supreme Court/High Court case.
 
       RETURN STRICT JSON ONLY:
       {
-        "case_id": "IND-SC-2024-XXXX", (Generate a realistic case reference ID)
+        "disclaimer": "This analysis is for legal intelligence only. Probability is estimated based on provided facts.",
+        "case_id": "NYY-2024-XXXX",
+        "fact_summary": "...",
         "win_probability": "75%",
-        "risk_score": 8, (1-10 scale, 10 is verified risky)
+        "risk_score": 8,
         "risk_level": "High/Medium/Low",
         "risk_analysis": ["Risk 1", "Risk 2", "Risk 3"],
         "strategy": ["Move 1", "Move 2", "Move 3"],
         "estimated_duration": "14-18 months",
-        "relevant_precedent": "State vs. XYZ (2018)",
-        "precedent_count": 12 (Number of similar past cases found in your database)
+        "relevant_precedent": "Case Name (Year)",
+        "citations": ["Sec X BNS", "Sec Y BNSS"]
       }
     `;
 
@@ -470,17 +478,17 @@ router.post("/devils-advocate", verifyToken, checkAiLimit, async (req, res) => {
       The user is the defense lawyer. They have just made this argument:
       "${argument}"
 
-      YOUR GOAL: DESTROY THIS ARGUMENT.
-      1. Find logical fallacies.
-      2. Point out lack of evidence.
-      3. Cite specific Indian Law sections that contradict them.
-      4. Be sarcastic but professional (like a confident lawyer).
+      YOUR GOAL: SYSTEMATICALLY DISMANTLE THIS ARGUMENT.
+      1. **Cite Counter-Laws**: YOU MUST cite specific Indian Law sections (BNS 2024, etc.) that contradict their premise.
+      2. **Expose Fallacies**: Find logical gaps or lack of evidence.
+      3. **Tone**: Be ruthlessly professional, similar to a high-stakes Prosecutor.
 
       OUTPUT JSON STRICTLY:
       {
+        "disclaimer": "This is an adversarial simulation to test your argument strength.",
         "weaknesses": ["Weakness 1", "Weakness 2", "Weakness 3"],
-        "counter_arguments": ["Counter 1", "Counter 2"],
-        "sarcastic_rebuttal": "Your entire premise relies on..."
+        "counter_arguments": ["Counter-law Section X", "Counter-argument Y"],
+        "prosecutorial_rebuttal": "Your entire premise fails because..."
       }
     `;
 
@@ -521,16 +529,17 @@ router.post("/moot-court", verifyTokenOptional, checkAiLimit, async (req, res) =
       
       TASK:
       Analyze the argument for:
-      1. **Legal Accuracy**: Are they citing real laws correctly?
+      1. **Legal Accuracy**: Are they citing real BNS/Indian codes correctly? (Critical)
       2. **Logic & Flow**: Is the argument coherent?
       3. **Persuasion**: How convincing is it?
       
       OUTPUT JSON STRICTLY:
       {
-        "score": 85, (0-100)
-        "feedback": ["Point 1: Good citation of Article 21.", "Point 2: Weak connection between facts and law."],
-        "judge_remarks": "Counsel, your point on Article 21 is noted, but you failed to address the exception in...",
-        "emotional_tone": "Confident/Nervous/Aggressive"
+        "score": 85, 
+        "feedback": ["Great use of Section X.", "Missing citation for Y."],
+        "judge_remarks": "Counsel, your point is noted, but...",
+        "citation_accuracy": "High/Medium/Low",
+        "disclaimer": "This feedback is for training purposes."
       }
     `;
 
@@ -565,23 +574,19 @@ router.post("/legal-research", verifyTokenOptional, checkAiLimit, async (req, re
       USER QUERY: "${query}"
       
       TASK:
-      1. Identify the core legal issues.
-      2. Find 3-5 RELEVANT Indian Supreme Court/High Court judgments.
+      1. Identify core legal issues.
+      2. Find 3-5 RELEVANT cases (Prioritize BNS 2024 context).
       3. For each case, provide:
          - Case Name & Citation
-         - Ratio Decidendi (The core legal principle)
-         - Relevance to the user's query.
+         - Ratio Decidendi
+         - Relevance.
       
       OUTPUT JSON STRICTLY:
       {
-        "summary": "The query involves...",
+        "disclaimer": "Legal research is for information purposes. Verify citations with the official gazette.",
+        "summary": "...",
         "cases": [
-          {
-            "name": "Kesavananda Bharati v. State of Kerala",
-            "citation": "(1973) 4 SCC 225",
-            "ratio": "The Basic Structure of the Constitution cannot be amended.",
-            "relevance": "Directly applies to your constitutional question."
-          }
+          { "name": "...", "citation": "...", "ratio": "...", "relevance": "..." }
         ]
       }
     `;
@@ -709,24 +714,29 @@ router.post("/legal-sos", verifyTokenOptional, async (req, res) => {
       LANGUAGE FOR RESPONSE: ${language || "English"}
       DESCRIPTION: "${situation}"
 
-      CRITICAL TASK:
-      1. CLASSIFY the exact legal emergency in one short phrase (e.g. "Unlawful Arrest", "Cheating Under BNS").
-      2. URGENCY: Assign "Critical", "High", or "Medium" urgency.
-      3. RIGHTS: List 4-6 FUNDAMENTAL RIGHTS the person has RIGHT NOW. For each right:
-         - title: Short name of the right
-         - description: 1-2 sentence plain-language explanation (in ${language || "English"})
-         - article: The specific Article/Section that guarantees it (e.g. "Article 22, Constitution of India")
-      4. APPLICABLE_SECTIONS: List 3-5 relevant BNS/IPC/BNSS/CrPC sections as an array of strings.
-      5. IMMEDIATE_ACTIONS: 4-5 step-by-step actions the person should take RIGHT NOW (numbered, plain language).
+      DESCRIPTION: "${situation}"
+
+      CRITICAL SAFETY SCRIPT:
+      1. **IDENTIFY THREAT**: If the user is being physically threatened or is currently being arrested, your first sentence must be a calm, immediate instruction (e.g., "Remain calm. You have the right to remain silent under Article 20(3).").
+      2. **FACT SUMMARY**: Briefly re-state the emergency facts.
+      3. **URGENCY**: Assign "Critical", "High", or "Medium".
+      4. **RIGHTS (BNS 2023/CONSTITUTION)**: List 4-6 FUNDAMENTAL RIGHTS. Include:
+         - title: Name of right.
+         - description: Clear explanation.
+         - article: Specific Article/Section (Cite BNS/BNSS/Constitution).
+      5. **IMMEDIATE_ACTIONS**: 4-5 numbered, tactical steps.
+      6. **DISCLAIMER**: Mandatory warning that this is an emergency tool, not a lawyer.
 
       OUTPUT STRICT JSON:
       {
+        "disclaimer": "EMERGENCY AID ONLY. Contact local emergency services or a verified lawyer immediately.",
         "classified_as": "...",
         "urgency": "Critical|High|Medium",
+        "fact_summary": "...",
         "rights": [
           { "title": "...", "description": "...", "article": "..." }
         ],
-        "applicable_sections": ["Section 41 CrPC", "Section 315 BNS"],
+        "applicable_sections": ["Sec 41 BNSS", "Sec 103 BNS"],
         "immediate_actions": ["Action 1", "Action 2"]
       }
     `;
@@ -790,7 +800,10 @@ router.post("/fir-generator", verifyTokenOptional, async (req, res) => {
     const result = await generateWithFallback(prompt);
     const response = await result.response;
     const draft = response.text();
-    res.json({ draft });
+    res.json({
+      draft,
+      disclaimer: "This is a draft FIR generated by AI based on your facts. It must be reviewed by a human lawyer before formal submission."
+    });
   } catch (err) {
     console.error("FIR Generator Error:", err.message);
     res.status(500).json({ error: "FIR generation failed. Please try again." });
