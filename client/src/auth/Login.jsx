@@ -1,5 +1,7 @@
+'use client'
 import { useState } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { useAuth } from "../context/AuthContext";
 import axios from "axios";
 import toast from "react-hot-toast";
@@ -7,7 +9,7 @@ import { GoogleLogin } from '@react-oauth/google';
 import { motion, AnimatePresence } from "framer-motion";
 
 export default function Login() {
-  const navigate = useNavigate();
+  const router = useRouter();
   const { login, loginWithToken } = useAuth();
   const [method, setMethod] = useState("email");
   const [email, setEmail] = useState("");
@@ -26,7 +28,7 @@ export default function Login() {
     setLoading(false);
     if (res.success) {
       toast.success("Welcome back!");
-      navigate(res.user.role === "lawyer" ? "/lawyer/dashboard" : "/client/dashboard");
+      router.push(res.user.role === "lawyer" ? "/lawyer/dashboard" : "/client/dashboard");
     } else {
       toast.error(res.message);
     }
@@ -44,7 +46,7 @@ export default function Login() {
       } else {
         loginWithToken(res.data.user, res.data.token);
         toast.success("Login Successful!");
-        navigate(res.data.user.role === 'lawyer' ? "/lawyer/dashboard" : "/client/dashboard");
+        router.push(res.data.user.role === 'lawyer' ? "/lawyer/dashboard" : "/client/dashboard");
       }
     } catch (err) {
       toast.error("Google Login Failed");
@@ -58,7 +60,7 @@ export default function Login() {
       const res = await axios.post("/api/auth/google", { token: googleData, role: selectedRole });
       loginWithToken(res.data.user, res.data.token);
       toast.success(`Welcome!`);
-      navigate(selectedRole === 'lawyer' ? "/lawyer/dashboard" : "/client/dashboard");
+      router.push(selectedRole === 'lawyer' ? "/lawyer/dashboard" : "/client/dashboard");
     } catch (err) { toast.error("Reg Failed"); }
     finally { setLoading(false); setShowRoleModal(false); }
   };
@@ -125,7 +127,7 @@ export default function Login() {
               <div className="space-y-1.5">
                 <div className="flex justify-between items-center mb-1">
                   <label className="block text-xs font-bold text-slate-400 ml-1 uppercase tracking-wider">Password</label>
-                  <Link to="/forgot-password" className="text-xs font-bold text-gold-400 hover:text-gold-300 transition">Forgot?</Link>
+                  <Link href="/forgot-password" className="text-xs font-bold text-gold-400 hover:text-gold-300 transition">Forgot?</Link>
                 </div>
                 <input type="password" value={password} onChange={e => setPassword(e.target.value)} className="glass-input w-full rounded-xl px-4 py-3.5 placeholder-slate-600 focus:ring-1 focus:ring-gold-500/50 transition duration-300" placeholder="••••••••" />
               </div>
@@ -167,7 +169,7 @@ export default function Login() {
           </div>
 
           <p className="text-center text-slate-500 text-sm">
-            Don't have an account? <Link to="/register" className="text-gold-400 font-bold hover:text-gold-300 transition underline decoration-transparent hover:decoration-gold-400 underline-offset-4">Create Account</Link>
+            Don't have an account? <Link href="/register" className="text-gold-400 font-bold hover:text-gold-300 transition underline decoration-transparent hover:decoration-gold-400 underline-offset-4">Create Account</Link>
           </p>
 
         </div>

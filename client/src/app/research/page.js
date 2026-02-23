@@ -1,4 +1,5 @@
-import LegalResearch from "../../legacy_ignore/pages/LegalResearch";
+'use client'
+import LegalResearch from "../../../legacy_ignore/pages/LegalResearch";
 
 export default function ResearchPage() {
     return <LegalResearch />;

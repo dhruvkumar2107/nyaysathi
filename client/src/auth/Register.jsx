@@ -1,5 +1,8 @@
+'use client'
+
 import { useState, useMemo } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { useAuth } from "../context/AuthContext";
 import toast from "react-hot-toast";
 import { GoogleLogin } from '@react-oauth/google';
@@ -18,7 +21,7 @@ const INDIAN_CITIES = [
 const PHONE_REGEX = /^(\+91[\-\s]?)?[6789]\d{9}$/;
 
 export default function Register() {
-  const navigate = useNavigate();
+  const router = useRouter();
   const { register, loginWithToken } = useAuth();
 
   const [role, setRole] = useState("client");
@@ -99,7 +102,7 @@ export default function Register() {
 
       if (res.success) {
         toast.success("Account Created! Please login.");
-        navigate("/login");
+        router.push("/login");
       } else {
         toast.error(res.message);
       }
@@ -120,7 +123,7 @@ export default function Register() {
       });
       loginWithToken(res.data.user, res.data.token);
       toast.success("Welcome to NyayNow!");
-      navigate(role === 'lawyer' ? "/lawyer/dashboard" : "/client/dashboard");
+      router.push(role === 'lawyer' ? "/lawyer/dashboard" : "/client/dashboard");
     } catch (err) {
       toast.error("Google Signup Failed");
     } finally {
@@ -336,7 +339,7 @@ export default function Register() {
           </div>
 
           <p className="text-center text-slate-500 text-sm">
-            Already have an account? <Link to="/login" className="text-gold-400 font-bold hover:text-gold-300 transition underline decoration-transparent hover:decoration-gold-400 underline-offset-4">Log in</Link>
+            Already have an account? <Link href="/login" className="text-gold-400 font-bold hover:text-gold-300 transition underline decoration-transparent hover:decoration-gold-400 underline-offset-4">Log in</Link>
           </p>
         </div>
       </div>

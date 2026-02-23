@@ -1,3 +1,4 @@
+'use client'
 import Register from "../../auth/Register";
 
 export default function RegisterPage() {
