@@ -1,13 +1,14 @@
+'use client'
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { useSearchParams } from 'react-router-dom';
+import { useSearchParams } from 'next/navigation';
 import axios from 'axios';
 import toast from 'react-hot-toast';
 import ReactMarkdown from 'react-markdown';
-import SubscriptionModal from '../components/SubscriptionModal';
+import SubscriptionModal from '../../src/components/SubscriptionModal';
 import { FileText, Search, Zap, AlertTriangle, CheckCircle, Download } from 'lucide-react';
-import Navbar from '../components/Navbar';
-import Footer from '../components/Footer';
+import Navbar from '../../src/components/Navbar';
+import Footer from '../../src/components/Footer';
 
 const DraftingLab = () => {
     const [activeTab, setActiveTab] = useState('draft'); // 'draft' or 'analyze'
@@ -15,7 +16,7 @@ const DraftingLab = () => {
 
     // DRAFTING STATE
     // DRAFTING STATE
-    const [searchParams] = useSearchParams();
+    const searchParams = useSearchParams();
     const [contractType, setContractType] = useState(searchParams.get('type') === 'proposal' ? 'Legal Service Proposal' : 'Non-Disclosure Agreement (NDA)');
     const [parties, setParties] = useState(searchParams.get('type') === 'proposal' ? 'Me (Lawyer) vs Client' : '');
     const [terms, setTerms] = useState(searchParams.get('type') === 'proposal' ? `Case: ${searchParams.get('title')}\nBudget: ${searchParams.get('budget')}\n\nProposal: I will handle this case with full diligence...` : '');

@@ -3,14 +3,14 @@ import React, { useState } from "react";
 import { motion } from "framer-motion";
 import CountUp from "react-countup";
 import { UploadCloud, FileText, CheckCircle, AlertTriangle, Scale, Swords, Play } from "lucide-react";
-import Navbar from '../components/Navbar';
-import Footer from '../components/Footer';
+import Navbar from '../../src/components/Navbar';
+import Footer from '../../src/components/Footer';
 import axios from 'axios';
 import toast from 'react-hot-toast';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
-import { useAuth } from "../context/AuthContext";
-import PaywallModal from "../components/PaywallModal";
+import { useAuth } from "../../src/context/AuthContext";
+import PaywallModal from "../../src/components/PaywallModal";
 import { Lock } from "lucide-react";
 
 const JudgeAI = () => {
