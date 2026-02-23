@@ -5,12 +5,20 @@ import Footer from "../../../components/Footer"
 
 async function getLawyer(id) {
     const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000"
+
+    // Safety check for build-time fetches to localhost
+    if (typeof window === 'undefined' && apiUrl.includes('localhost') && process.env.NODE_ENV === 'production') {
+        return null
+    }
+
     try {
         const res = await fetch(`${apiUrl}/api/users/public/${id}`, { next: { revalidate: 3600 } })
         if (!res.ok) return null
         return res.json()
     } catch (error) {
-        console.error("Error fetching lawyer:", error)
+        if (!apiUrl.includes('localhost')) {
+            console.error("Error fetching lawyer:", error)
+        }
         return null
     }
 }
