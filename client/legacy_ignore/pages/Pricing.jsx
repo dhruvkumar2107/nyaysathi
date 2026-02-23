@@ -1,11 +1,12 @@
+'use client'
 import React, { useState } from 'react';
-import Navbar from '../components/Navbar';
-import Footer from '../components/Footer';
+import Navbar from '../../src/components/Navbar';
+import Footer from '../../src/components/Footer';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Check, Zap, Shield, Star, ArrowRight, Lock, RefreshCw, Headphones, ChevronDown, Sparkles, Building2, Users2, Globe } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import Link from 'next/link';
 import toast from 'react-hot-toast';
-import { useAuth } from '../context/AuthContext';
+import { useAuth } from '../../src/context/AuthContext';
 
 const Pricing = () => {
   const { user } = useAuth();
@@ -523,7 +524,7 @@ const Pricing = () => {
 
               <div className="flex flex-col gap-4 text-center flex-shrink-0">
                 <Link
-                  to="/contact"
+                  href="/contact"
                   className="group px-10 py-5 bg-white text-slate-900 font-bold rounded-2xl hover:bg-amber-50 transition-all duration-300 shadow-2xl flex items-center gap-3 whitespace-nowrap active:scale-95"
                 >
                   Contact Sales

@@ -1,6 +1,7 @@
+'use client'
 import React, { useState, useEffect, useRef } from "react";
-import Navbar from "../components/Navbar";
-import Footer from "../components/Footer";
+import Navbar from "../../src/components/Navbar";
+import Footer from "../../src/components/Footer";
 import { motion, AnimatePresence } from "framer-motion";
 import { Mic, MicOff, Volume2, VolumeX, Sparkles, Zap, MessageCircle, ChevronRight } from "lucide-react";
 import axios from "axios";
