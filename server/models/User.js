@@ -66,7 +66,6 @@ const userSchema = new mongoose.Schema(
 
     // --- NEW PROFILE FIELDS ---
     bio: { type: String, default: "" }, // About Me
-    headline: { type: String, default: "" }, // e.g. "Ex-High Court Judge | Family Law Expert"
 
     profileImage: { type: String, default: "" }, // URL from Uploads
 
@@ -79,8 +78,6 @@ const userSchema = new mongoose.Schema(
       college: String,
       year: Number
     }],
-
-    awards: [String], // "Best Lawyer 2024"
 
     socials: {
       linkedin: String,
@@ -101,28 +98,8 @@ const userSchema = new mongoose.Schema(
     stats: {
       profileViews: { type: Number, default: 0 },
       searchAppearances: { type: Number, default: 0 },
-      rating: { type: Number, default: 0 },
-      reviews: { type: Number, default: 0 },
-      casesSolved: { type: Number, default: 0 },
-      successRate: { type: Number, default: 95 }, // Percentage
       yearsExperience: { type: Number, default: 0 }
     },
-
-    // Enterprise Profile 2.0
-    videoIntro: { type: String, default: "" }, // Youtube/Vimeo URL
-    awards: [{
-      title: String,
-      year: Number,
-      issuer: String
-    }],
-    faqs: [{
-      question: String,
-      answer: String
-    }],
-    mediaMentions: [{
-      outlet: String, // e.g. "Times of India"
-      url: String
-    }],
 
     // VERIFICATION SYSTEM
     barCouncilId: { type: String, default: "" }, // e.g. MAH/2345/2020

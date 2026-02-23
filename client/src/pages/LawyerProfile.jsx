@@ -118,14 +118,7 @@ export default function LawyerProfile() {
                                         <div className="text-2xl font-black text-white">{lawyer.experience || 1}+</div>
                                         <div className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mt-1">Years</div>
                                     </div>
-                                    <div className="text-center border-l border-white/5 pl-8">
-                                        <div className="text-2xl font-black text-white flex items-center justify-center gap-1">4.9 <Star size={14} className="text-amber-400 fill-amber-400" /></div>
-                                        <div className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mt-1">Rating</div>
-                                    </div>
-                                    <div className="text-center border-l border-white/5 pl-8">
-                                        <div className="text-2xl font-black text-white">{lawyer.casesWon || 24}</div>
-                                        <div className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mt-1">Wins</div>
-                                    </div>
+                                    {/* REMOVED: Rating and Wins to comply with BCI 2008 Amendment */}
                                 </div>
 
                                 {/* ACTION BUTTONS */}

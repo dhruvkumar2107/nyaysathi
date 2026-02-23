@@ -42,32 +42,14 @@ router.get("/", async (req, res) => {
             query.specialization = { $regex: category, $options: "i" };
         }
 
-        // PLAN PRIORITY (Diamond > Gold > Silver > Free)
-        // Since 'plan' is a string, we can't sort by it directly in Mongo without an aggregate or helper field.
-        // For MVP Excellence: We will fetch slightly more records and sort in memory, 
-        // OR better: use aggregate to add a sort weight.
-
-        // Let's use Aggregate for "Excellent" Sorting
+        // REMOVED PLAN BOOSTER: BCI forbids paid/sponsored boosting.
+        // Sorting is now strictly by verification status and date joined.
         const pipeline = [
             { $match: query },
-            {
-                $addFields: {
-                    planWeight: {
-                        $switch: {
-                            branches: [
-                                { case: { $eq: [{ $toLower: "$plan" }, "diamond"] }, then: 3 },
-                                { case: { $eq: [{ $toLower: "$plan" }, "gold"] }, then: 2 },
-                                { case: { $eq: [{ $toLower: "$plan" }, "silver"] }, then: 1 }
-                            ],
-                            default: 0
-                        }
-                    }
-                }
-            },
-            { $sort: { planWeight: -1, verified: -1, createdAt: -1 } },
+            { $sort: { verified: -1, createdAt: -1 } },
             { $skip: (page - 1) * limit },
             { $limit: limit },
-            { $project: { password: 0, planWeight: 0, otp: 0 } } // Clean up
+            { $project: { password: 0, otp: 0 } } // Clean up
         ];
 
         const lawyers = await User.aggregate(pipeline);

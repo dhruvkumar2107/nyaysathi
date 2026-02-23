@@ -227,12 +227,6 @@ const LawyerCard = ({ lawyer }) => (
         <p className="text-sm font-bold text-white">{lawyer.experience || 0} Years</p>
       </div>
       <div>
-        <p className="text-[10px] uppercase font-bold text-slate-500 mb-1">Rating</p>
-        <div className="flex items-center gap-1 text-sm font-bold text-white">
-          <Star size={12} className="text-amber-400 fill-amber-400" /> {lawyer.rating || lawyer.stats?.rating?.toFixed(1) || "New"}
-        </div>
-      </div>
-      <div>
         <p className="text-[10px] uppercase font-bold text-slate-500 mb-1">Consultation</p>
         <p className="text-sm font-bold text-white">₹{lawyer.hourlyRate || lawyer.consultationFee || 500}/hr</p>
       </div>

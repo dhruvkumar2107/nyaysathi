@@ -122,11 +122,11 @@ const Pricing = () => {
       tagline: "Grow your practice with AI tools and verified leads.",
       features: [
         'Verified Badge ✓',
-        '10 Qualified Leads/mo',
+        '10 Connection Requests/mo',
         'Unlimited AI Research',
         'Case Management Dashboard',
         'Client CRM Access',
-        'Priority Listing in Search',
+        'Enhanced Profile Tools',
         'NyayCourt Simulator',
       ],
       cta: 'Start Growing',
@@ -142,8 +142,7 @@ const Pricing = () => {
       savings: "Save ₹12,000/yr",
       tagline: "Dominate your legal niche with unlimited AI power.",
       features: [
-        'Top Search Placement',
-        'Unlimited Qualified Leads',
+        'Unlimited Connection Requests',
         'AI Paralegal Assistant',
         'Moot Court VR Access',
         'Dedicated Account Manager',
