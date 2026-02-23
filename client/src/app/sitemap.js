@@ -1,11 +1,18 @@
 async function getLawyers() {
     const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000"
+    // Skip fetching during build if on localhost (backend won't be there)
+    if (typeof window === 'undefined' && apiUrl.includes('localhost') && process.env.NODE_ENV === 'production') {
+        return []
+    }
     try {
-        const res = await fetch(`${apiUrl}/api/users?role=lawyer`)
+        const res = await fetch(`${apiUrl}/api/users?role=lawyer`, { cache: 'no-store' })
         if (!res.ok) return []
         return res.json()
     } catch (error) {
-        console.error("Error fetching lawyers for sitemap:", error)
+        // Only log error if not in a known build-time failure scenario
+        if (!apiUrl.includes('localhost')) {
+            console.error("Error fetching lawyers for sitemap:", error)
+        }
         return []
     }
 }

@@ -6,12 +6,20 @@ import MarketplaceClient from "../../components/marketplace/MarketplaceClient"
 
 async function getLawyers() {
     const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000"
+
+    // Safety check for build-time fetches to localhost
+    if (typeof window === 'undefined' && apiUrl.includes('localhost') && process.env.NODE_ENV === 'production') {
+        return []
+    }
+
     try {
         const res = await fetch(`${apiUrl}/api/users?role=lawyer`, { next: { revalidate: 3600 } })
         if (!res.ok) return []
         return res.json()
     } catch (error) {
-        console.error("Failed to fetch lawyers for SSR", error)
+        if (!apiUrl.includes('localhost')) {
+            console.error("Failed to fetch lawyers for SSR", error)
+        }
         return []
     }
 }
