@@ -1,5 +1,8 @@
+'use client'
+
 import { useState, useRef } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useAuth } from "../context/AuthContext";
 import { motion, AnimatePresence } from "framer-motion";
 import {
@@ -7,17 +10,18 @@ import {
   Mic, User, Search, MapPin, Video, DollarSign,
   Users, Menu, X, ChevronDown, LogOut, LayoutDashboard, Shield, Siren
 } from "lucide-react";
+import Image from "next/image";
 
 export default function Navbar() {
   const { user, logout } = useAuth();
-  const navigate = useNavigate();
+  const router = useRouter();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [hoveredIndex, setHoveredIndex] = useState(null);
   const timeoutRef = useRef(null);
 
   const handleLogout = () => {
     logout();
-    navigate("/");
+    router.push("/");
   };
 
   const handleMouseEnter = (index) => {
@@ -67,10 +71,10 @@ export default function Navbar() {
         <div className="max-w-7xl mx-auto px-6 h-full flex items-center justify-between">
 
           {/* LOGO */}
-          <Link to="/" className="flex items-center gap-3 group relative z-50">
+          <Link href="/" className="flex items-center gap-3 group relative z-50" aria-label="NyayNow Home">
             <div className="relative">
               <div className="absolute inset-0 bg-gold-400 blur-[20px] opacity-10 group-hover:opacity-30 transition duration-500"></div>
-              <img src="/logo.png" alt="NyayNow" className="relative w-10 h-10 object-contain hover:scale-105 transition duration-300 drop-shadow-[0_0_10px_rgba(212,175,55,0.2)]" />
+              <Image src="/logo.png" alt="NyayNow Logo" width={40} height={40} className="relative object-contain hover:scale-105 transition duration-300 drop-shadow-[0_0_10px_rgba(212,175,55,0.2)]" />
             </div>
             <span className="text-2xl font-display font-bold tracking-tight text-white group-hover:text-gold-400 transition-colors duration-300">NyayNow</span>
           </Link>
@@ -85,7 +89,11 @@ export default function Navbar() {
                 onMouseEnter={() => handleMouseEnter(idx)}
                 onMouseLeave={handleMouseLeave}
               >
-                <button className={`flex items-center gap-1.5 text-sm font-bold tracking-wide transition-all duration-300 ${hoveredIndex === idx ? "text-gold-400" : "text-slate-300 hover:text-white"}`}>
+                <button
+                  className={`flex items-center gap-1.5 text-sm font-bold tracking-wide transition-all duration-300 ${hoveredIndex === idx ? "text-gold-400" : "text-slate-300 hover:text-white"}`}
+                  aria-expanded={hoveredIndex === idx}
+                  aria-haspopup="true"
+                >
                   {category.label}
                   <ChevronDown size={14} className={`transition-transform duration-300 ${hoveredIndex === idx ? "rotate-180 text-gold-600" : ""}`} />
                 </button>
@@ -106,7 +114,7 @@ export default function Navbar() {
                         {category.items.map((item, i) => (
                           <Link
                             key={i}
-                            to={item.href}
+                            href={item.href}
                             className="flex items-center gap-4 p-4 rounded-xl hover:bg-white/5 transition group relative z-10 border border-transparent hover:border-gold-500/20"
                           >
                             <div className="w-10 h-10 rounded-lg bg-white/5 flex items-center justify-center border border-white/10 group-hover:border-gold-500/30 transition group-hover:scale-110 duration-300 shadow-sm">
@@ -141,12 +149,12 @@ export default function Navbar() {
           <div className="flex items-center gap-3 lg:gap-4 relative z-50">
             {!user ? (
               <div className="flex items-center gap-5">
-                <Link to="/login" className="hidden sm:block font-black text-sm text-white hover:text-gold-400 transition-all duration-300 relative group">
+                <Link href="/login" className="hidden sm:block font-black text-sm text-white hover:text-gold-400 transition-all duration-300 relative group">
                   Log in
                   <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-gold-400 transition-all duration-300 group-hover:w-full"></span>
                 </Link>
                 <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
-                  <Link to="/register" className="relative overflow-hidden px-6 py-2.5 bg-gradient-to-r from-gold-400 to-yellow-600 text-midnight-950 font-bold text-sm rounded-xl hover:shadow-[0_0_25px_rgba(212,175,55,0.4)] transition duration-300 group flex items-center gap-2">
+                  <Link href="/register" className="relative overflow-hidden px-6 py-2.5 bg-gradient-to-r from-gold-400 to-yellow-600 text-midnight-950 font-bold text-sm rounded-xl hover:shadow-[0_0_25px_rgba(212,175,55,0.4)] transition duration-300 group flex items-center gap-2">
                     <span className="relative z-10">Get Started</span>
                     <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition duration-300"></div>
                   </Link>
@@ -155,7 +163,7 @@ export default function Navbar() {
             ) : (
               <div className="flex items-center gap-3">
                 <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
-                  <Link to={user.role === 'admin' ? '/admin' : (user.role === 'lawyer' ? '/lawyer/dashboard' : '/client/dashboard')} className="hidden sm:flex items-center gap-2 transition font-bold text-xs uppercase tracking-widest text-slate-600 hover:text-slate-900 duration-300 bg-white px-4 py-2 rounded-xl border border-slate-200 hover:border-gold-500/30 shadow-sm">
+                  <Link href={user.role === 'admin' ? '/admin' : (user.role === 'lawyer' ? '/lawyer/dashboard' : '/client/dashboard')} className="hidden sm:flex items-center gap-2 transition font-bold text-xs uppercase tracking-widest text-slate-600 hover:text-slate-900 duration-300 bg-white px-4 py-2 rounded-xl border border-slate-200 hover:border-gold-500/30 shadow-sm">
                     <LayoutDashboard size={15} className="text-gold-600" /> {user.role === 'admin' ? 'Console' : 'Dashboard'}
                   </Link>
                 </motion.div>
@@ -163,7 +171,11 @@ export default function Navbar() {
                 <div className="relative group cursor-pointer">
                   <div className="w-10 h-10 rounded-full bg-gradient-to-tr from-gold-400 to-yellow-600 p-[2px] shadow-[0_0_15px_rgba(212,175,55,0.3)] hover:scale-105 transition duration-300">
                     <div className="w-full h-full rounded-full bg-midnight-950 flex items-center justify-center overflow-hidden">
-                      {user.profileImage ? <img src={user.profileImage} className="w-full h-full object-cover" /> : <span className="font-display font-bold text-gold-400 text-lg">{user.name[0]}</span>}
+                      {user.profileImage ? (
+                        <img src={user.profileImage} alt="User profile" className="w-full h-full object-cover" />
+                      ) : (
+                        <span className="font-display font-bold text-gold-400 text-lg">{user.name[0]}</span>
+                      )}
                     </div>
                   </div>
                   <div className="absolute right-0 top-full mt-4 w-64 bg-white border border-slate-200 rounded-xl p-2 shadow-2xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 transform origin-top-right">
@@ -171,7 +183,7 @@ export default function Navbar() {
                       <p className="text-slate-900 font-display font-bold text-sm truncate">{user.name}</p>
                       <p className="text-slate-500 text-xs truncate">{user.email}</p>
                     </div>
-                    <Link to="/settings" className="flex items-center gap-3 px-3 py-2 text-slate-600 hover:text-gold-600 hover:bg-slate-50 rounded-lg text-sm transition font-medium">
+                    <Link href="/settings" className="flex items-center gap-3 px-3 py-2 text-slate-600 hover:text-gold-600 hover:bg-slate-50 rounded-lg text-sm transition font-medium">
                       <User size={16} /> Profile & Settings
                     </Link>
                     <button onClick={handleLogout} className="w-full flex items-center gap-3 px-3 py-2 text-rose-500 hover:bg-rose-500/10 rounded-lg text-sm transition font-medium text-left">
@@ -184,7 +196,7 @@ export default function Navbar() {
 
             <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
               <Link
-                to="/courtroom-battle"
+                href="/courtroom-battle"
                 className="hidden md:flex items-center gap-2 px-4 py-2 rounded-xl bg-amber-100 border border-amber-200 text-amber-700 font-bold text-[10px] uppercase tracking-[0.15em] hover:bg-amber-200 transition shadow-sm group"
               >
                 <Gavel size={14} className="group-hover:rotate-12 transition duration-300" />
@@ -194,7 +206,7 @@ export default function Navbar() {
 
             <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
               <Link
-                to="/legal-sos"
+                href="/legal-sos"
                 className="flex items-center gap-2 px-4 py-2 rounded-xl bg-red-100 border border-red-200 text-red-700 font-bold text-[10px] uppercase tracking-[0.15em] hover:bg-red-600 hover:text-white transition shadow-sm group"
               >
                 <span className="relative flex h-2 w-2 mr-0.5">
@@ -206,7 +218,11 @@ export default function Navbar() {
               </Link>
             </motion.div>
 
-            <button onClick={() => setMobileMenuOpen(!mobileMenuOpen)} className="lg:hidden p-2 text-slate-400 hover:text-gold-400 transition-colors duration-300">
+            <button
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              className="lg:hidden p-2 text-slate-400 hover:text-gold-400 transition-colors duration-300"
+              aria-label={mobileMenuOpen ? "Close menu" : "Open menu"}
+            >
               {mobileMenuOpen ? <X /> : <Menu />}
             </button>
           </div>
@@ -230,7 +246,7 @@ export default function Navbar() {
                     {group.items.map((item, i) => (
                       <Link
                         key={i}
-                        to={item.href}
+                        href={item.href}
                         onClick={() => setMobileMenuOpen(false)}
                         className="flex items-center gap-4 p-3 rounded-xl bg-white/5 border border-white/10 hover:border-gold-500/30 transition"
                       >
@@ -247,8 +263,8 @@ export default function Navbar() {
 
               {!user && (
                 <div className="flex flex-col gap-3 mt-4 pt-4 border-t border-white/10">
-                  <Link to="/login" onClick={() => setMobileMenuOpen(false)} className="w-full py-4 rounded-xl bg-white/5 hover:bg-white/10 text-white font-black text-center border border-white/10 transition">Log In</Link>
-                  <Link to="/register" onClick={() => setMobileMenuOpen(false)} className="w-full py-4 rounded-xl bg-gradient-gold text-midnight-950 font-bold text-center shadow-lg shadow-gold-500/20">Get Started</Link>
+                  <Link href="/login" onClick={() => setMobileMenuOpen(false)} className="w-full py-4 rounded-xl bg-white/5 hover:bg-white/10 text-white font-black text-center border border-white/10 transition">Log In</Link>
+                  <Link href="/register" onClick={() => setMobileMenuOpen(false)} className="w-full py-4 rounded-xl bg-gradient-gold text-midnight-950 font-bold text-center shadow-lg shadow-gold-500/20">Get Started</Link>
                 </div>
               )}
             </div>

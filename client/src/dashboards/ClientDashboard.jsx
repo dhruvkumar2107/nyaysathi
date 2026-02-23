@@ -1,22 +1,27 @@
+'use client'
+
 import { useState, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
 import axios from "axios";
 import { useAuth } from "../context/AuthContext";
-import LegalReels from "../components/dashboard/LegalReels";
-import CaseTimeline from "../components/dashboard/CaseTimeline";
-import CalendarWidget from "../components/dashboard/CalendarWidget";
-import TrustTimeline from "../components/dashboard/client/TrustTimeline";
-import LegalConfessionBooth from "../components/dashboard/client/LegalConfessionBooth";
+import dynamic from 'next/dynamic';
+
+const LegalReels = dynamic(() => import("../components/dashboard/LegalReels"), { ssr: false });
+const CaseTimeline = dynamic(() => import("../components/dashboard/CaseTimeline"), { ssr: false });
+const CalendarWidget = dynamic(() => import("../components/dashboard/CalendarWidget"), { ssr: false });
+const TrustTimeline = dynamic(() => import("../components/dashboard/client/TrustTimeline"), { ssr: false });
+const LegalConfessionBooth = dynamic(() => import("../components/dashboard/client/LegalConfessionBooth"), { ssr: false });
 import io from "socket.io-client";
 import { motion, AnimatePresence } from "framer-motion";
 import toast from "react-hot-toast";
 import PremiumLoader from "../components/PremiumLoader";
 
-const socket = io(import.meta.env.VITE_API_URL?.replace(/\/api$/, "") || "http://localhost:4000");
+const socket = io(process.env.NEXT_PUBLIC_API_URL?.replace(/\/api$/, "") || "http://localhost:4000");
 
 export default function ClientDashboard() {
   const { user, logout } = useAuth();
-  const navigate = useNavigate();
+  const router = useRouter();
   const [loading, setLoading] = useState(true);
   const [activeCases, setActiveCases] = useState([]);
   const [invoices, setInvoices] = useState([]);
@@ -111,10 +116,10 @@ export default function ClientDashboard() {
               >
                 <div className="p-2 space-y-1">
                   <div className="px-3 py-2 text-xs font-bold text-slate-500 uppercase tracking-widest border-b border-white/5 mb-1">My Account</div>
-                  <Link to="/settings" className="flex items-center gap-3 px-3 py-2 text-sm text-slate-300 hover:bg-white/5 rounded-lg transition">
+                  <Link href="/settings" className="flex items-center gap-3 px-3 py-2 text-sm text-slate-300 hover:bg-white/5 rounded-lg transition">
                     <span>⚙️</span> Settings
                   </Link>
-                  <Link to="/profile" className="flex items-center gap-3 px-3 py-2 text-sm text-slate-300 hover:bg-white/5 rounded-lg transition">
+                  <Link href="/profile" className="flex items-center gap-3 px-3 py-2 text-sm text-slate-300 hover:bg-white/5 rounded-lg transition">
                     <span>👤</span> Profile
                   </Link>
                   <div className="h-px bg-white/5 my-1"></div>
@@ -195,7 +200,7 @@ export default function ClientDashboard() {
                       <div className="text-[10px] text-indigo-300 mt-1">Check Win Probability</div>
                     </div>
                   </div>
-                  <div className="p-4 bg-white/5 rounded-2xl border border-white/10 text-center hover:bg-white/10 hover:border-indigo-500/30 transition cursor-pointer group" onClick={() => navigate('/marketplace')}>
+                  <div className="p-4 bg-white/5 rounded-2xl border border-white/10 text-center hover:bg-white/10 hover:border-indigo-500/30 transition cursor-pointer group" onClick={() => router.push('/marketplace')}>
                     <div className="text-2xl mb-2 group-hover:scale-110 transition">🔍</div>
                     <div className="font-bold text-sm text-white">Find Lawyer</div>
                   </div>
@@ -339,10 +344,10 @@ export default function ClientDashboard() {
 }
 
 function NavItem({ icon, label, to, active, onClick, badge }) {
-  const navigate = useNavigate();
+  const router = useRouter();
   const handleClick = () => {
     if (onClick) onClick();
-    if (to) navigate(to);
+    if (to) router.push(to);
   };
 
   return (

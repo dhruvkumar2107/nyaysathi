@@ -1,24 +1,30 @@
+'use client'
+
 import { useState, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
 import axios from "axios";
 import { useAuth } from "../context/AuthContext";
-import KanbanBoard from "../components/dashboard/KanbanBoard";
-import CalendarWidget from "../components/dashboard/CalendarWidget";
-import WorkloadMonitor from "../components/dashboard/lawyer/WorkloadMonitor";
-import CaseIntelligencePanel from "../components/dashboard/lawyer/CaseIntelligencePanel";
-import ClientCRM from "../components/dashboard/lawyer/ClientCRM";
-import LegalNoticeGenerator from "../components/dashboard/lawyer/LegalNoticeGenerator";
+import dynamic from 'next/dynamic';
+
+const KanbanBoard = dynamic(() => import("../components/dashboard/KanbanBoard"), { ssr: false });
+const CalendarWidget = dynamic(() => import("../components/dashboard/CalendarWidget"), { ssr: false });
+const WorkloadMonitor = dynamic(() => import("../components/dashboard/lawyer/WorkloadMonitor"), { ssr: false });
+const CaseIntelligencePanel = dynamic(() => import("../components/dashboard/lawyer/CaseIntelligencePanel"), { ssr: false });
+const ClientCRM = dynamic(() => import("../components/dashboard/lawyer/ClientCRM"), { ssr: false });
+const LegalNoticeGenerator = dynamic(() => import("../components/dashboard/lawyer/LegalNoticeGenerator"), { ssr: false });
+
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
 import io from "socket.io-client";
 import { motion, AnimatePresence } from "framer-motion";
 import toast from "react-hot-toast";
 import PremiumLoader from "../components/PremiumLoader";
 
-const socket = io(import.meta.env.VITE_API_URL?.replace(/\/api$/, "") || "http://localhost:4000");
+const socket = io(process.env.NEXT_PUBLIC_API_URL?.replace(/\/api$/, "") || "http://localhost:4000");
 
 export default function LawyerDashboard() {
   const { user, logout } = useAuth();
-  const navigate = useNavigate();
+  const router = useRouter();
   const [activeTab, setActiveTab] = useState("board");
   const [leads, setLeads] = useState([]);
   const [appointments, setAppointments] = useState([]);
@@ -217,7 +223,7 @@ export default function LawyerDashboard() {
                           if (user.plan !== 'gold') {
                             toast.error("Upgrade to Gold to use AI Drafts");
                           } else {
-                            navigate(`/drafting?type=proposal&title=${encodeURIComponent(lead.title)}&budget=${lead.budget}`);
+                            router.push(`/drafting?type=proposal&title=${encodeURIComponent(lead.title)}&budget=${lead.budget}`);
                           }
                         }}
                         className="flex-1 bg-gradient-to-r from-purple-600 to-pink-600 text-white py-3 rounded-lg font-bold text-xs uppercase tracking-wider hover:scale-105 transition shadow-lg shadow-purple-500/20 flex items-center justify-center gap-2"
@@ -280,10 +286,10 @@ export default function LawyerDashboard() {
 }
 
 function NavItem({ icon, label, to, count, active, onClick, badge }) {
-  const navigate = useNavigate();
+  const router = useRouter();
   const handleClick = () => {
     if (onClick) onClick();
-    if (to) navigate(to);
+    if (to) router.push(to);
   };
 
   return (

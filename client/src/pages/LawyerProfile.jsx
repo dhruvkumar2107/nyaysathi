@@ -7,6 +7,7 @@ import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import { motion } from "framer-motion";
 import { Mail, Linkedin, MapPin, Globe, Award, Briefcase, Gavel, Star, MessageCircle, UserPlus, Clock } from "lucide-react";
+import { Helmet } from "react-helmet-async";
 
 export default function LawyerProfile() {
     const { id } = useParams();
@@ -77,6 +78,10 @@ export default function LawyerProfile() {
 
     return (
         <main className="min-h-screen bg-[#020617] font-sans text-slate-400 selection:bg-indigo-500/30">
+            <Helmet>
+                <title>{lawyer ? `${lawyer.name} | Verified Lawyer on NyayNow` : "Lawyer Profile | NyayNow"}</title>
+                <meta name="description" content={lawyer ? `Consult with ${lawyer.name}, a legal expert specializing in ${lawyer.specialization || 'law'}. Book an appointment on NyayNow.` : "View lawyer profile and book consultations on NyayNow."} />
+            </Helmet>
             <Navbar />
 
             {/* HEADER HERO */}
@@ -99,7 +104,7 @@ export default function LawyerProfile() {
                             <div className="relative w-40 h-40 mx-auto rounded-full p-1 bg-gradient-to-br from-indigo-400 to-purple-500 shadow-2xl mb-6">
                                 <div className="w-full h-full rounded-full bg-midnight-900 overflow-hidden relative">
                                     {lawyer.image ? (
-                                        <img src={lawyer.image} className="w-full h-full object-cover rounded-full" />
+                                        <img src={lawyer.image} alt={`${lawyer.name}'s Professional Avatar`} className="w-full h-full object-cover rounded-full" />
                                     ) : (
                                         <div className="w-full h-full bg-slate-800 flex items-center justify-center text-5xl">⚖️</div>
                                     )}

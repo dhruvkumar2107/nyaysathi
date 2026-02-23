@@ -1,13 +1,15 @@
+'use client'
+
 import { useState, useEffect, useRef } from "react";
 import axios from "axios";
 import { useAuth } from "../context/AuthContext";
 import { io } from "socket.io-client";
-import { useSearchParams } from "react-router-dom";
+import { useSearchParams } from "next/navigation";
 import Navbar from "../components/Navbar";
 import { motion, AnimatePresence } from "framer-motion";
 import { Send, Paperclip, Smile, Video, MoreVertical, Search, Phone } from "lucide-react";
 
-const socket = io(import.meta.env.VITE_API_URL?.replace("/api", "") || "http://localhost:4000");
+const socket = io(process.env.NEXT_PUBLIC_API_URL?.replace("/api", "") || "http://localhost:4000");
 
 export default function Messages() {
   const { user } = useAuth();

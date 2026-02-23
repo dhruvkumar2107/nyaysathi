@@ -18,11 +18,17 @@ import {
 } from "lucide-react";
 
 
+import { Helmet } from "react-helmet-async";
+
 export default function Home() {
   const { user } = useAuth();
 
   return (
     <div className="min-h-screen bg-[#0c1220] font-sans text-slate-400 selection:bg-indigo-500/30">
+      <Helmet>
+        <title>NyayNow | AI Legal Intelligence & Lawyer Marketplace</title>
+        <meta name="description" content="NyayNow: AI-Powered Legal Assistant & Lawyer Marketplace for India. Get instant legal advice and connect with expert lawyers." />
+      </Helmet>
       {/* ══════════════════════════════════════════════════════
           NEW HERO ENTRANCE — "JUSTICE SHOULDN'T BE A LUXURY"
       ══════════════════════════════════════════════════════ */}
@@ -76,6 +82,7 @@ export default function Home() {
             <Link
               to={!user ? "/register" : (user.role === "lawyer" ? "/lawyer/dashboard" : "/client/dashboard")}
               className="group relative w-full sm:w-auto px-12 py-5 rounded-2xl text-midnight-950 font-black text-lg bg-gradient-to-r from-gold-400 to-yellow-600 hover:shadow-[0_0_40px_rgba(212,175,55,0.3)] transition-all duration-300 active:scale-95 overflow-hidden"
+              aria-label={!user ? "Get Started for Free" : "Go to Dashboard"}
             >
               <span className="relative z-10 flex items-center justify-center gap-2">
                 ✦ {!user ? "Get Started Free" : "Enter Command Center"}
@@ -85,13 +92,15 @@ export default function Home() {
             <Link
               to="/legal-sos"
               className="w-full sm:w-auto px-10 py-5 rounded-2xl font-bold text-base text-white bg-white/5 border border-white/10 hover:bg-white/10 hover:border-red-500/40 transition-all duration-300 active:scale-95 flex items-center justify-center gap-2 shadow-sm"
+              aria-label="Activate Legal SOS for Emergency Assistance"
             >
               🚨 Legal SOS
             </Link>
             {!user && (
               <Link
                 to="/login"
-                className="w-full sm:w-auto px-6 py-5 text-slate-500 hover:text-slate-900 font-bold text-sm transition-colors duration-300 flex items-center justify-center underline underline-offset-4"
+                className="w-full sm:w-auto px-6 py-5 text-slate-400 hover:text-white font-bold text-sm transition-colors duration-300 flex items-center justify-center underline underline-offset-4"
+                aria-label="Login to your account"
               >
                 Member Login
               </Link>
@@ -203,6 +212,7 @@ export default function Home() {
                 <Link
                   to="/legal-sos"
                   className="group relative flex items-center justify-center gap-3 px-8 py-5 rounded-2xl bg-gradient-to-r from-red-600 to-rose-600 text-white font-black text-base tracking-wide shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden active:scale-95"
+                  aria-label="Activate Emergency Legal SOS"
                 >
                   <span className="relative flex h-3 w-3">
                     <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-white/50" />
@@ -214,6 +224,7 @@ export default function Home() {
                 <a
                   href="tel:112"
                   className="flex items-center justify-center gap-2 px-8 py-5 rounded-2xl bg-white/5 border border-white/10 text-white font-bold text-base hover:bg-white/10 transition active:scale-95 shadow-sm"
+                  aria-label="Call Police Emergency at 112"
                 >
                   📞 Call Police: 112
                 </a>
@@ -633,11 +644,10 @@ export default function Home() {
 
 function BentoCard({ title, desc, icon, color, href, badge, className, isLarge }) {
   return (
-    <motion.div
-      whileHover={{ y: -5 }}
-      transition={{ duration: 0.4, ease: "easeOut" }}
-      className={`relative group bg-white/5 border border-white/10 rounded-[24px] ${isLarge ? 'p-8 md:p-12' : 'p-5'} overflow-hidden hover:border-indigo-500/20 transition-all shadow-sm hover:shadow-xl flex flex-col ${className}`}
-      onClick={() => window.location.href = href}
+    <Link
+      to={href}
+      className={`relative group bg-white/5 border border-white/10 rounded-[24px] ${isLarge ? 'p-8 md:p-12' : 'p-5'} overflow-hidden hover:border-indigo-500/20 transition-all shadow-sm hover:shadow-xl flex flex-col focus:outline-none focus:ring-2 focus:ring-indigo-500/50 ${className}`}
+      aria-label={`Explore ${title}: ${desc}`}
     >
       {/* Mesh Gradient Background */}
       <div className={`absolute inset-0 bg-gradient-to-br ${color} opacity-[0.03] group-hover:opacity-[0.08] transition-opacity duration-500`} />
@@ -683,7 +693,7 @@ function BentoCard({ title, desc, icon, color, href, badge, className, isLarge }
 
       {/* Border Glow */}
       <div className={`absolute inset-0 border border-white/5 rounded-[24px] group-hover:border-indigo-500/10 transition-colors pointer-events-none`} />
-    </motion.div>
+    </Link>
   );
 }
 
@@ -693,39 +703,42 @@ function UnicornCard({ title, desc, icon, color, href, badge, delay }) {
       initial={{ opacity: 0, y: 30 }}
       whileInView={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5, delay }}
-      whileHover={{ y: -15, rotateX: 5, scale: 1.02 }}
-      className="relative group cursor-pointer"
-      onClick={() => window.location.href = href}
+      className="relative group h-full"
     >
-      {/* GLOW EFFECT */}
-      <div className={`absolute -inset-0.5 bg-gradient-to-r ${color} rounded-2xl blur opacity-20 group-hover:opacity-60 transition duration-500 group-hover:blur-md`}></div>
+      <Link
+        to={href}
+        className="relative block h-full bg-[#0f172a] border border-white/5 rounded-2xl p-8 flex flex-col items-start overflow-hidden hover:border-white/10 transition-all shadow-xl focus:outline-none focus:ring-2 focus:ring-indigo-500/50"
+        aria-label={`${title}: ${desc}`}
+      >
+        {/* GLOW EFFECT */}
+        <div className={`absolute -inset-0.5 bg-gradient-to-r ${color} rounded-2xl blur opacity-20 group-hover:opacity-60 transition duration-500 group-hover:blur-md`}></div>
 
-      {/* CARD CONTENT */}
-      <div className="relative h-full bg-[#0f172a] border border-white/5 rounded-2xl p-8 flex flex-col items-start overflow-hidden hover:border-white/10 transition-all shadow-xl">
+        {/* CARD CONTENT */}
+        <div className="relative z-10 w-full h-full flex flex-col">
+          {badge && (
+            <span className="absolute top-0 right-0 px-3 py-1 bg-gradient-to-r from-indigo-500 to-purple-600 text-white text-[10px] font-bold uppercase rounded-full shadow-sm tracking-wider">
+              {badge}
+            </span>
+          )}
 
-        {badge && (
-          <span className="absolute top-4 right-4 px-3 py-1 bg-gradient-to-r from-indigo-500 to-purple-600 text-white text-[10px] font-bold uppercase rounded-full shadow-sm tracking-wider">
-            {badge}
-          </span>
-        )}
+          <div className={`w-16 h-16 rounded-2xl bg-gradient-to-br ${color} flex items-center justify-center text-3xl shadow-lg mb-8 group-hover:scale-110 group-hover:rotate-6 transition-all duration-300 text-white`}>
+            {icon}
+          </div>
 
-        <div className={`w-16 h-16 rounded-2xl bg-gradient-to-br ${color} flex items-center justify-center text-3xl shadow-lg mb-8 group-hover:scale-110 group-hover:rotate-6 transition-all duration-300 relative z-10 text-white`}>
-          {icon}
+          <h3 className="text-2xl font-bold text-white mb-4 group-hover:text-indigo-400 transition-colors">
+            {title}
+          </h3>
+
+          <p className="text-slate-400 text-sm leading-relaxed mb-8 flex-grow border-l-2 border-white/5 pl-4 group-hover:border-indigo-500/50 transition-colors font-normal">
+            {desc}
+          </p>
+
+          <div className="mt-auto w-full pt-4 border-t border-white/5 flex items-center justify-between text-sm font-bold text-slate-500 opacity-80 group-hover:opacity-100 transition-opacity uppercase tracking-wider text-[10px]">
+            <span>Explore Module</span>
+            <span className="group-hover:translate-x-2 transition-transform bg-white/5 rounded-full w-8 h-8 flex items-center justify-center border border-white/10 text-white">→</span>
+          </div>
         </div>
-
-        <h3 className="text-2xl font-bold text-white mb-4 group-hover:text-indigo-400 transition-colors">
-          {title}
-        </h3>
-
-        <p className="text-slate-400 text-sm leading-relaxed mb-8 flex-grow border-l-2 border-white/5 pl-4 group-hover:border-indigo-500/50 transition-colors font-normal">
-          {desc}
-        </p>
-
-        <div className="mt-auto w-full pt-4 border-t border-white/5 flex items-center justify-between text-sm font-bold text-slate-500 opacity-80 group-hover:opacity-100 transition-opacity uppercase tracking-wider text-xs">
-          <span>Explore Module</span>
-          <span className="group-hover:translate-x-2 transition-transform bg-white/5 rounded-full w-8 h-8 flex items-center justify-center border border-white/10 text-white">→</span>
-        </div>
-      </div>
+      </Link>
     </motion.div>
   );
 }

@@ -292,7 +292,7 @@ export default function EditProfile() {
                             <div className="absolute top-24 left-1/2 -translate-x-1/2 p-1 bg-midnight-900 rounded-full">
                                 <div className="w-28 h-28 rounded-full bg-slate-800 border-4 border-midnight-900 overflow-hidden relative group">
                                     {user?.profileImage ? (
-                                        <img src={user.profileImage} className="w-full h-full object-cover" />
+                                        <img src={user.profileImage} alt={`${user.name}'s profile`} className="w-full h-full object-cover rounded-full" />
                                     ) : (
                                         <div className="w-full h-full flex items-center justify-center text-4xl text-slate-600">👤</div>
                                     )}

@@ -2,6 +2,7 @@ import React, { useState, useEffect, useMemo } from "react";
 import { Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { Search, MapPin, Star, ShieldCheck, Filter, X } from "lucide-react";
+import { Helmet } from "react-helmet-async";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import axios from "axios";
@@ -9,6 +10,10 @@ import axios from "axios";
 const Marketplace = () => {
   return (
     <div className="min-h-screen bg-[#020617] font-sans text-slate-400 pb-20 selection:bg-indigo-500/30">
+      <Helmet>
+        <title>Lawyer Marketplace | Find Top Legal Experts - NyayNow</title>
+        <meta name="description" content="Browse and connect with verified lawyers across India on NyayNow. Filter by specialization, location, and experience to find the right legal expert for your case." />
+      </Helmet>
       <Navbar />
       <MarketplaceContent />
     </div>
@@ -202,9 +207,9 @@ const LawyerCard = ({ lawyer }) => (
     className="bg-[#0f172a]/80 backdrop-blur-md rounded-2xl p-6 border border-white/10 hover:border-indigo-500/50 hover:shadow-2xl hover:shadow-indigo-500/10 transition-all duration-300 group"
   >
     <div className="flex justify-between items-start mb-6">
-      <Link to={`/lawyer/profile/${lawyer._id}`} className="flex gap-4 cursor-pointer">
+      <Link to={`/lawyer/${lawyer._id}`} className="flex gap-4 cursor-pointer">
         <div className="w-16 h-16 rounded-xl bg-slate-800 flex items-center justify-center text-2xl font-bold text-slate-500 group-hover:bg-indigo-600 group-hover:text-white transition-colors duration-300 overflow-hidden">
-          {lawyer.profileImage ? <img src={lawyer.profileImage} alt="" className="w-full h-full object-cover" /> : lawyer.name?.[0]}
+          {lawyer.profileImage ? <img src={lawyer.profileImage} alt={`${lawyer.name}'s profile`} className="w-full h-full object-cover" /> : lawyer.name?.[0]}
         </div>
         <div>
           <h3 className="text-xl font-bold text-white group-hover:text-indigo-400 transition-colors">{lawyer.name}</h3>
@@ -233,7 +238,7 @@ const LawyerCard = ({ lawyer }) => (
     </div>
 
     <div className="flex gap-3 text-sm font-bold">
-      <Link to={`/lawyer/profile/${lawyer._id}`} className="flex-1 py-3 text-center rounded-lg bg-white/5 text-white hover:bg-indigo-600 transition shadow-lg border border-white/10 hover:border-indigo-500/50">
+      <Link to={`/lawyer/${lawyer._id}`} className="flex-1 py-3 text-center rounded-lg bg-white/5 text-white hover:bg-indigo-600 transition shadow-lg border border-white/10 hover:border-indigo-500/50">
         View Profile
       </Link>
       <button className="px-4 py-3 rounded-lg border border-white/10 text-slate-400 hover:bg-white/5 hover:text-white transition">

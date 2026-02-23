@@ -1,0 +1,1 @@
+"use strict";exports.id=5569,exports.ids=[5569],exports.modules={85569:(e,o,t)=>{t.d(o,{uploadFile:()=>s});let l=process.env.NEXT_PUBLIC_API_URL||"http://localhost:4000/api";async function s(e){let o=new FormData;o.append("file",e);let t=await fetch(`${l}/uploads`,{method:"POST",body:o});if(!t.ok)throw Error("File upload failed");return t.json()}}};

@@ -1,0 +1,11 @@
+{
+  "/_not-found": "app/_not-found.js",
+  "/lawyer/[id]/page": "app/lawyer/[id]/page.js",
+  "/messages/page": "app/messages/page.js",
+  "/moot-court/page": "app/moot-court/page.js",
+  "/sitemap.xml/route": "app/sitemap.xml/route.js",
+  "/robots.txt/route": "app/robots.txt/route.js",
+  "/page": "app/page.js",
+  "/legal-sos/page": "app/legal-sos/page.js",
+  "/marketplace/page": "app/marketplace/page.js"
+}

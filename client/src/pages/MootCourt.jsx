@@ -8,7 +8,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import axios from "axios";
 
 // Connect to backend (Voice Socket)
-const socket = io(import.meta.env.VITE_API_URL?.replace(/\/api$/, "") || "http://localhost:4000");
+const socket = io(process.env.NEXT_PUBLIC_API_URL?.replace(/\/api$/, "") || "http://localhost:4000");
 
 const MootCourt = () => {
     const { user } = useAuth();
