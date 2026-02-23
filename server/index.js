@@ -52,9 +52,25 @@ Sentry.init({
 /* ================= MIDDLEWARE ================= */
 app.use(compression());
 app.use(helmet({
-  contentSecurityPolicy: false, // Disable CSP for now to avoid breaking scripts/images during dev
+  contentSecurityPolicy: {
+    directives: {
+      defaultSrc: ["'self'"],
+      scriptSrc: ["'self'", "'unsafe-inline'", "https://checkout.razorpay.com", "https://*.sentry.io"],
+      styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com"],
+      imgSrc: ["'self'", "data:", "https://res.cloudinary.com", "https://*.posthog.com"],
+      connectSrc: ["'self'", "https://*.sentry.io", "https://*.posthog.com", "https://*.algolia.net", "https://*.algolianet.com"],
+      fontSrc: ["'self'", "https://fonts.gstatic.com"],
+      objectSrc: ["'none'"],
+      upgradeInsecureRequests: [],
+    },
+  },
   crossOriginResourcePolicy: { policy: "cross-origin" },
-  crossOriginOpenerPolicy: { policy: "same-origin-allow-popups" }
+  crossOriginOpenerPolicy: { policy: "same-origin" }, // Hardened to same-origin
+  hsts: {
+    maxAge: 31536000,
+    includeSubDomains: true,
+    preload: true
+  }
 }));
 
 const limiter = rateLimit({
@@ -245,7 +261,9 @@ if (fs.existsSync(clientDist)) {
       const User = require("./models/User");
       const lawyers = await User.find({ role: "lawyer" });
 
-      const baseUrl = "https://nyaynow.com"; // Replace with actual domain
+      const host = req.get('host');
+      const protocol = req.protocol;
+      const baseUrl = `${protocol}://${host}`;
 
       let xml = `<?xml version="1.0" encoding="UTF-8"?>
       <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
@@ -257,7 +275,22 @@ if (fs.existsSync(clientDist)) {
         <url>
           <loc>${baseUrl}/marketplace</loc>
           <changefreq>daily</changefreq>
-          <priority>0.8</priority>
+          <priority>0.9</priority>
+        </url>
+        <url>
+          <loc>${baseUrl}/about</loc>
+          <changefreq>monthly</changefreq>
+          <priority>0.5</priority>
+        </url>
+        <url>
+          <loc>${baseUrl}/pricing</loc>
+          <changefreq>monthly</changefreq>
+          <priority>0.5</priority>
+        </url>
+        <url>
+          <loc>${baseUrl}/contact</loc>
+          <changefreq>monthly</changefreq>
+          <priority>0.5</priority>
         </url>`;
 
       lawyers.forEach(lawyer => {
@@ -279,9 +312,72 @@ if (fs.existsSync(clientDist)) {
     }
   });
 
-  app.get("*", (req, res) => {
-    if (!req.originalUrl.startsWith("/api")) {
-      res.sendFile(path.join(clientDist, "index.html"));
+  app.get("*", async (req, res) => {
+    if (req.originalUrl.startsWith("/api") || req.originalUrl.startsWith("/uploads")) {
+      return res.status(404).json({ error: "Not Found" });
+    }
+
+    try {
+      let indexPath = path.join(clientDist, "index.html");
+      if (!fs.existsSync(indexPath)) {
+        return res.status(404).send("Index file not found");
+      }
+
+      let html = fs.readFileSync(indexPath, "utf8");
+
+      // DEFAULT META
+      let title = "NyayNow | AI Legal Intelligence";
+      let description = "NyayNow: AI-Powered Legal Assistant & Lawyer Marketplace for India. Get instant legal advice and connect with expert lawyers.";
+      let ogImage = "https://nyaynow.com/og-image.jpg";
+      let url = `https://nyaynow.in${req.originalUrl}`;
+
+      // DYNAMIC META BASED ON ROUTE
+      if (req.originalUrl.startsWith("/lawyer/")) {
+        const lawyerId = req.originalUrl.split("/")[2];
+        try {
+          const User = require("./models/User");
+          const lawyer = await User.findById(lawyerId);
+          if (lawyer) {
+            title = `${lawyer.name} | Verified Lawyer on NyayNow`;
+            description = `Consult with ${lawyer.name}, a legal expert specializing in ${lawyer.specialization || 'law'}. Book an appointment on NyayNow.`;
+          }
+        } catch (e) {
+          // Fallback to default if DB fails or ID invalid
+        }
+      } else if (req.originalUrl === "/marketplace") {
+        title = "Lawyer Marketplace | Find Top Legal Experts - NyayNow";
+        description = "Browse and connect with verified lawyers across India. Filter by specialization, location, and experience.";
+      } else if (req.originalUrl === "/assistant") {
+        title = "AI Legal Assistant | Instant Legal Guidance - NyayNow";
+        description = "Get instant answers to your legal queries with NyayNow's AI-powered assistant.";
+      }
+
+      // INJECT META
+      const metaHtml = `
+  <title>${title}</title>
+  <meta name="description" content="${description}" />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="${url}" />
+  <meta property="og:title" content="${title}" />
+  <meta property="og:description" content="${description}" />
+  <meta property="og:image" content="${ogImage}" />
+  <meta property="twitter:card" content="summary_large_image" />
+  <meta property="twitter:url" content="${url}" />
+  <meta property="twitter:title" content="${title}" />
+  <meta property="twitter:description" content="${description}" />
+  <meta property="twitter:image" content="${ogImage}" />
+      `;
+
+      // Replace the placeholder or the existing meta tags
+      // We'll replace everything between <!-- META_START --> and <!-- META_END -->
+      // And also replace the existing <title> for good measure if it exists outside
+      html = html.replace(/<title>.*?<\/title>/g, ""); // Remove static title
+      html = html.replace(/<!-- META_START -->[\s\S]*?<!-- META_END -->/, metaHtml);
+
+      res.send(html);
+    } catch (err) {
+      console.error("Error serving index.html:", err);
+      res.status(500).send("Internal Server Error");
     }
   });
 }

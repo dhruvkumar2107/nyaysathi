@@ -8,7 +8,7 @@ const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000/api";
 // We need the root URL for axios because calls include /api
 axios.defaults.baseURL = apiUrl.replace(/\/api$/, "");
 axios.defaults.timeout = 15000; // 15s timeout
-console.log("🔌 AUTH CONTEXT LOADED. AXIOS BASE URL FORCED TO:", axios.defaults.baseURL);
+console.log("🔌 AUTH CONTEXT INITIALIZED. API BASE URL:", axios.defaults.baseURL);
 
 const AuthContext = createContext({
   user: null,
