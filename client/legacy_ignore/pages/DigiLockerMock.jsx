@@ -1,10 +1,11 @@
+'use client'
 import React, { useState } from 'react';
-import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { Shield, Lock, CheckCircle, Loader } from 'lucide-react';
 
 const DigiLockerMock = () => {
-    const navigate = useNavigate();
-    const [searchParams] = useSearchParams();
+    const router = useRouter();
+    const searchParams = useSearchParams();
     const returnUrl = searchParams.get('returnUrl') || '/register';
 
     const [step, setStep] = useState('login'); // login, otp, consent, success
@@ -37,7 +38,7 @@ const DigiLockerMock = () => {
             setStep('success');
             setTimeout(() => {
                 // Redirect back with success flag
-                navigate(`${returnUrl}?digilocker_verified=true`);
+                router.push(`${returnUrl}?digilocker_verified=true`);
             }, 1000);
         }, 1500);
     };
@@ -124,7 +125,7 @@ const DigiLockerMock = () => {
                                     <button
                                         type="button"
                                         className="flex-1 py-3 border border-gray-300 text-gray-600 font-bold rounded-lg hover:bg-gray-50 transition"
-                                        onClick={() => navigate(returnUrl)}
+                                        onClick={() => router.push(returnUrl)}
                                     >
                                         Deny
                                     </button>

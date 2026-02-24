@@ -1,7 +1,7 @@
-import { useNavigate } from 'react-router-dom';
+import { useRouter } from 'next/navigation';
 
 export default function CaseIntelligencePanel({ insights }) {
-    const navigate = useNavigate();
+    const router = useRouter();
 
     if (!insights || insights.length === 0) return null;
 
@@ -19,7 +19,7 @@ export default function CaseIntelligencePanel({ insights }) {
                     <div key={item.caseId} className="border-b border-slate-50 last:border-0 pb-3 last:pb-0">
                         <div className="flex justify-between items-start mb-1">
                             <h4
-                                onClick={() => navigate(`/case/${item.caseId}`)}
+                                onClick={() => router.push(`/case/${item.caseId}`)}
                                 className="font-bold text-slate-900 text-sm hover:text-blue-600 cursor-pointer truncate w-2/3"
                             >
                                 {item.title}

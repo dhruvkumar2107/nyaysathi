@@ -1,12 +1,13 @@
+'use client'
 import { useRef, useEffect, useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
-import Navbar from '../components/Navbar';
+import Navbar from '../../src/components/Navbar';
 import { ShieldCheck, Lock } from 'lucide-react';
 
 export default function VideoCall() {
     const { id } = useParams();
-    const navigate = useNavigate();
+    const router = useRouter();
     const jitsiContainer = useRef(null);
     const [loading, setLoading] = useState(true);
 
@@ -72,7 +73,7 @@ export default function VideoCall() {
 
         api.addEventListeners({
             videoConferenceLeft: () => {
-                navigate(-1);
+                router.back();
                 api.dispose();
             },
         });

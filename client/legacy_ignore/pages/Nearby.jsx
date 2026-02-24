@@ -1,11 +1,12 @@
+'use client'
 import { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import Link from "next/link";
 import { MapContainer, TileLayer, Marker, Popup, useMap } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
 import axios from "axios";
 import toast from "react-hot-toast";
-import Navbar from "../components/Navbar";
+import Navbar from "../../src/components/Navbar";
 import { motion, AnimatePresence } from "framer-motion";
 import { Search, MapPin, Shield, Gavel, User, Navigation, Scan, X } from "lucide-react";
 
@@ -244,7 +245,7 @@ export default function Nearby() {
                   <h4 className="text-white font-bold mt-2 text-sm">{l.name}</h4>
                   <p className="text-[10px] text-indigo-400 font-bold uppercase">{l.specialization}</p>
                   <p className="text-[10px] text-emerald-400 mt-1">{0.4 + i * 0.3} km away</p>
-                  <Link to={`/lawyer/${l.id}`} className="block mt-2 bg-indigo-600 text-[10px] py-1 rounded text-white font-bold">Connect</Link>
+                  <Link href={`/lawyer/${l.id}`} className="block mt-2 bg-indigo-600 text-[10px] py-1 rounded text-white font-bold">Connect</Link>
                 </div>
                 <div className="w-0.5 h-20 bg-gradient-to-b from-indigo-500 to-transparent mx-auto"></div>
               </motion.div>
@@ -280,7 +281,7 @@ export default function Nearby() {
                     <img src={l.image} className="w-12 h-12 rounded-full mx-auto mb-2 border-2 border-slate-900" />
                     <b className="text-slate-900 text-lg">{l.name}</b><br />
                     <span className="text-xs text-indigo-600 font-bold uppercase">{l.specialization}</span><br />
-                    <Link to={`/lawyer/${l.id}`} className="block mt-3 bg-slate-900 text-white text-xs font-bold px-4 py-2 rounded-lg hover:bg-black transition">Full Profile</Link>
+                    <Link href={`/lawyer/${l.id}`} className="block mt-3 bg-slate-900 text-white text-xs font-bold px-4 py-2 rounded-lg hover:bg-black transition">Full Profile</Link>
                   </div>
                 </Popup>
               </Marker>
@@ -328,7 +329,7 @@ const LawyerCard = ({ data }) => (
         {data.plan === 'diamond' && <span className="text-[10px] bg-amber-500/20 text-amber-400 px-1.5 py-0.5 rounded border border-amber-500/30">PRO</span>}
       </h4>
       <p className="text-xs text-indigo-400 font-bold">{data.specialization}</p>
-      <Link to={`/lawyer/${data.id}`} className="block mt-2 text-[10px] font-bold text-slate-500 hover:text-white uppercase tracking-wider transition">View Dossier →</Link>
+      <Link href={`/lawyer/${data.id}`} className="block mt-2 text-[10px] font-bold text-slate-500 hover:text-white uppercase tracking-wider transition">View Dossier →</Link>
     </div>
   </div>
 );

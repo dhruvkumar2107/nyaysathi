@@ -1,14 +1,15 @@
+'use client'
 import React, { useState } from 'react';
-import Navbar from '../components/Navbar';
-import { useAuth } from '../context/AuthContext';
-import { useNavigate } from 'react-router-dom';
+import Navbar from '../../src/components/Navbar';
+import { useAuth } from '../../src/context/AuthContext';
+import { useRouter } from 'next/navigation';
 import axios from 'axios';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Search, Scale, BookOpen, User, TrendingUp, AlertTriangle, CheckCircle } from 'lucide-react';
 
 const JudgeProfile = () => {
     const { user } = useAuth();
-    const navigate = useNavigate();
+    const router = useRouter();
     const [query, setQuery] = useState('');
     const [data, setData] = useState(null);
     const [loading, setLoading] = useState(false);
@@ -45,10 +46,10 @@ const JudgeProfile = () => {
                     </div>
 
                     <div className="space-y-4">
-                        <button onClick={() => navigate("/pricing")} className="w-full py-5 bg-gradient-to-r from-amber-400 to-orange-600 text-midnight-950 font-black uppercase tracking-widest rounded-2xl hover:scale-[1.02] transition shadow-lg shadow-amber-500/20 text-sm">
+                        <button onClick={() => router.push("/pricing")} className="w-full py-5 bg-gradient-to-r from-amber-400 to-orange-600 text-midnight-950 font-black uppercase tracking-widest rounded-2xl hover:scale-[1.02] transition shadow-lg shadow-amber-500/20 text-sm">
                             Upgrade to Unlock
                         </button>
-                        <button onClick={() => navigate("/")} className="text-sm text-slate-500 hover:text-white transition font-bold uppercase tracking-wider">No thanks</button>
+                        <button onClick={() => router.push("/")} className="text-sm text-slate-500 hover:text-white transition font-bold uppercase tracking-wider">No thanks</button>
                     </div>
                 </motion.div>
             </div>

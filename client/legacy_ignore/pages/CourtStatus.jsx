@@ -1,9 +1,10 @@
+'use client'
 import React, { useState } from 'react';
-import Navbar from '../components/Navbar';
-import Footer from '../components/Footer';
+import Navbar from '../../src/components/Navbar';
+import Footer from '../../src/components/Footer';
 import axios from 'axios';
-import { useAuth } from '../context/AuthContext';
-import { Link } from 'react-router-dom';
+import { useAuth } from '../../src/context/AuthContext';
+import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Search, Gavel, Scale, Calendar, FileText, Activity } from 'lucide-react';
 

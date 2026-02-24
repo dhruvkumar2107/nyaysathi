@@ -1,8 +1,9 @@
+'use client'
 import React from 'react';
-import { Link } from "react-router-dom";
+import Link from "next/link";
 import { motion } from "framer-motion";
 import { Clock, MessageCircle, ShieldAlert, CheckCircle, Mail, ArrowRight } from "lucide-react";
-import Navbar from '../components/Navbar';
+import Navbar from '../../src/components/Navbar';
 
 const STEPS = [
     {
@@ -76,8 +77,8 @@ export default function VerificationPending() {
                                         animate={{ opacity: 1, x: 0 }}
                                         transition={{ delay: 0.4 + i * 0.1 }}
                                         className={`flex gap-4 p-4 rounded-xl border transition ${step.done
-                                                ? 'bg-amber-500/5 border-amber-500/20'
-                                                : 'bg-white/[0.02] border-white/8'
+                                            ? 'bg-amber-500/5 border-amber-500/20'
+                                            : 'bg-white/[0.02] border-white/8'
                                             }`}
                                     >
                                         <div className={`w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 ${step.done ? 'bg-amber-500/20' : 'bg-white/5'}`}>
@@ -96,13 +97,13 @@ export default function VerificationPending() {
                             {/* ACTIONS */}
                             <div className="space-y-3">
                                 <Link
-                                    to="/contact"
+                                    href="/contact"
                                     className="block w-full py-3.5 bg-amber-500 hover:bg-amber-400 text-black font-bold rounded-xl transition shadow-lg shadow-amber-500/20 flex items-center justify-center gap-2 text-sm"
                                 >
                                     <MessageCircle size={16} /> Contact Support <ArrowRight size={14} />
                                 </Link>
                                 <Link
-                                    to="/"
+                                    href="/"
                                     className="block w-full py-3 bg-white/5 border border-white/10 hover:bg-white/10 text-slate-300 font-bold rounded-xl transition text-center text-sm"
                                 >
                                     Back to Home

@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import { Check, Star, X } from "lucide-react";
 
@@ -52,7 +52,7 @@ export default function PaywallModal({ isOpen, onClose, title = "Upgrade to Acce
 
                     <div className="flex flex-col gap-4">
                         <Link
-                            to="/pricing"
+                            href="/pricing"
                             className="bg-white text-black hover:bg-slate-200 w-full py-4 rounded-xl font-black text-sm uppercase tracking-widest transition shadow-lg shadow-white/10"
                         >
                             View All Upgrade Options

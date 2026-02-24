@@ -1,15 +1,16 @@
+'use client'
 import React, { useState } from 'react';
-import Navbar from '../components/Navbar';
-import Footer from '../components/Footer';
-import { useAuth } from '../context/AuthContext';
-import { useNavigate } from 'react-router-dom';
+import Navbar from '../../src/components/Navbar';
+import Footer from '../../src/components/Footer';
+import { useAuth } from '../../src/context/AuthContext';
+import { useRouter } from 'next/navigation';
 import axios from 'axios';
 import { Toaster, toast } from 'react-hot-toast';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const DevilsAdvocate = () => {
     const { user } = useAuth();
-    const navigate = useNavigate();
+    const router = useRouter();
     const [argument, setArgument] = useState('');
     const [analysis, setAnalysis] = useState(null);
     const [loading, setLoading] = useState(false);
@@ -46,7 +47,7 @@ const DevilsAdvocate = () => {
                         The Devil's Advocate engine employs military-grade adversarial AI to dismantle weak arguments.
                         Upgrade your clearance to proceed.
                     </p>
-                    <button onClick={() => navigate("/pricing")} className="w-full py-4 bg-red-600 hover:bg-red-700 text-white font-bold rounded-xl uppercase tracking-widest transition shadow-[0_0_20px_red]">
+                    <button onClick={() => router.push("/pricing")} className="w-full py-4 bg-red-600 hover:bg-red-700 text-white font-bold rounded-xl uppercase tracking-widest transition shadow-[0_0_20px_red]">
                         Request Clearance
                     </button>
                 </div>

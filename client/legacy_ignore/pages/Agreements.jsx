@@ -1,11 +1,13 @@
+'use client'
 import { useState } from "react";
 import axios from "axios";
 import ReactMarkdown from 'react-markdown';
-import { useNavigate, Link } from "react-router-dom";
-import PaywallModal from "../components/PaywallModal";
-import Navbar from "../components/Navbar";
-import Footer from "../components/Footer";
-import { useAuth } from "../context/AuthContext";
+import { useRouter } from "next/navigation";
+import Link from "next/link";
+import PaywallModal from "../../src/components/PaywallModal";
+import Navbar from "../../src/components/Navbar";
+import Footer from "../../src/components/Footer";
+import { useAuth } from "../../src/context/AuthContext";
 import { toast } from "react-hot-toast";
 import { motion, AnimatePresence } from "framer-motion";
 import { FileText, Shield, AlertTriangle, CheckCircle, Zap, Search, Upload } from "lucide-react";
@@ -15,7 +17,7 @@ export default function Agreements() {
   const [result, setResult] = useState(null);
   const [loading, setLoading] = useState(false);
   const [showPaywall, setShowPaywall] = useState(false);
-  const navigate = useNavigate();
+  const router = useRouter();
   const { user } = useAuth();
 
   const analyzeAgreement = async () => {
@@ -28,7 +30,7 @@ export default function Agreements() {
           <div className="flex flex-col gap-2">
             <span className="font-bold">Login to continue using AI 🔒</span>
             <span className="text-xs">Guest limit reached (1 free chat)</span>
-            <Link to="/login" onClick={() => toast.dismiss(t.id)} className="bg-indigo-600 text-white px-3 py-1.5 rounded-lg text-xs font-bold text-center mt-1">Login Now</Link>
+            <Link href="/login" onClick={() => toast.dismiss(t.id)} className="bg-indigo-600 text-white px-3 py-1.5 rounded-lg text-xs font-bold text-center mt-1">Login Now</Link>
           </div>
         ), { duration: 5000, icon: '🛑' });
         return;
@@ -84,7 +86,7 @@ export default function Agreements() {
           </motion.p>
 
           <motion.div initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.3 }} className="mt-10 flex flex-wrap gap-4 justify-center">
-            <Link to="/rent-agreement" className="px-8 py-4 rounded-xl font-bold text-midnight-900 bg-white hover:bg-slate-200 transition shadow-[0_0_20px_rgba(255,255,255,0.3)] flex items-center gap-2">
+            <Link href="/rent-agreement" className="px-8 py-4 rounded-xl font-bold text-midnight-900 bg-white hover:bg-slate-200 transition shadow-[0_0_20px_rgba(255,255,255,0.3)] flex items-center gap-2">
               <FileText size={20} /> Draft New Contract
             </Link>
             <button onClick={() => document.getElementById('analyzer').scrollIntoView({ behavior: 'smooth' })} className="px-8 py-4 rounded-xl font-bold text-white bg-white/5 border border-white/10 hover:bg-white/10 transition backdrop-blur-md flex items-center gap-2">

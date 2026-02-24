@@ -1,17 +1,18 @@
+'use client'
 import { useState, useEffect } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useRouter } from "next/navigation";
 import axios from "axios";
-import { useAuth } from "../context/AuthContext";
+import { useAuth } from "../../src/context/AuthContext";
 import toast from "react-hot-toast";
-import Navbar from "../components/Navbar";
-import Footer from "../components/Footer";
+import Navbar from "../../src/components/Navbar";
+import Footer from "../../src/components/Footer";
 import { motion } from "framer-motion";
 import { Mail, Linkedin, MapPin, Globe, Award, Briefcase, Gavel, Star, MessageCircle, UserPlus, Clock } from "lucide-react";
 import { Helmet } from "react-helmet-async";
 
 export default function LawyerProfile() {
     const { id } = useParams();
-    const navigate = useNavigate();
+    const router = useRouter();
     const { user } = useAuth();
 
     const [lawyer, setLawyer] = useState(null);
@@ -22,7 +23,7 @@ export default function LawyerProfile() {
     useEffect(() => {
         if (!user) {
             toast.error("Please login to view lawyer profiles");
-            navigate("/login");
+            router.push("/login");
             return;
         }
 
@@ -129,7 +130,7 @@ export default function LawyerProfile() {
                                 {/* ACTION BUTTONS */}
                                 <div className="space-y-3">
                                     {connection?.status === 'active' ? (
-                                        <button onClick={() => navigate(`/messages?chatId=${id}`)} className="w-full py-4 bg-white text-midnight-900 rounded-xl font-bold shadow-lg hover:bg-slate-200 transition flex items-center justify-center gap-2">
+                                        <button onClick={() => router.push(`/messages?chatId=${id}`)} className="w-full py-4 bg-white text-midnight-900 rounded-xl font-bold shadow-lg hover:bg-slate-200 transition flex items-center justify-center gap-2">
                                             <MessageCircle size={20} /> Secure Message
                                         </button>
                                     ) : connection?.status === 'pending' ? (

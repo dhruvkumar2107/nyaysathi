@@ -1,9 +1,10 @@
+'use client'
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Search, ChevronDown, MessageCircle, FileText, Shield, Zap, BookOpen, Users, ArrowRight, Star } from 'lucide-react';
-import Navbar from '../components/Navbar';
-import Footer from '../components/Footer';
-import { Link } from 'react-router-dom';
+import Navbar from '../../src/components/Navbar';
+import Footer from '../../src/components/Footer';
+import Link from 'next/link';
 
 const FAQS = [
     {
@@ -97,7 +98,7 @@ export default function HelpCenter() {
                 <h2 className="text-xl font-bold text-white mb-8 text-center">Browse by Topic</h2>
                 <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-4 mb-20">
                     {CATEGORIES.map((c, i) => (
-                        <Link key={i} to={c.link}>
+                        <Link key={i} href={c.link}>
                             <motion.div
                                 initial={{ opacity: 0, y: 10 }}
                                 whileInView={{ opacity: 1, y: 0 }}
@@ -154,7 +155,7 @@ export default function HelpCenter() {
                             </div>
                             <h3 className="text-2xl font-bold text-white mb-2 font-serif">Still need help?</h3>
                             <p className="text-slate-400 mb-8 text-sm leading-relaxed">Our support team is available Mon–Sat 9AM–7PM IST. Enterprise clients get 24/7 priority.</p>
-                            <Link to="/contact" className="w-full py-3.5 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-xl transition shadow-lg shadow-indigo-600/20 flex items-center justify-center gap-2 text-sm">
+                            <Link href="/contact" className="w-full py-3.5 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-xl transition shadow-lg shadow-indigo-600/20 flex items-center justify-center gap-2 text-sm">
                                 Contact Support <ArrowRight size={16} />
                             </Link>
                         </div>
@@ -162,7 +163,7 @@ export default function HelpCenter() {
                         <div className="bg-gradient-to-br from-amber-500/10 to-orange-500/5 border border-amber-500/20 rounded-2xl p-6">
                             <h4 className="text-white font-bold mb-2 flex items-center gap-2"><Star size={16} className="text-amber-400" /> Enterprise Support</h4>
                             <p className="text-slate-400 text-sm mb-4 leading-relaxed">SLA-backed support with a dedicated account manager for law firms and government clients.</p>
-                            <Link to="/contact" className="text-amber-400 text-xs font-bold uppercase tracking-wider hover:text-amber-300 transition flex items-center gap-1">
+                            <Link href="/contact" className="text-amber-400 text-xs font-bold uppercase tracking-wider hover:text-amber-300 transition flex items-center gap-1">
                                 Talk to Sales <ArrowRight size={12} />
                             </Link>
                         </div>

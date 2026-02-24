@@ -1,23 +1,23 @@
-import { Navigate } from "react-router-dom";
+import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 import { useAuth } from "../context/AuthContext";
 
 export default function ProtectedRoute({ children, role }) {
   const { user } = useAuth();
+  const router = useRouter();
 
-  if (!user) {
-    return <Navigate to="/login" replace />;
-  }
+  useEffect(() => {
+    if (!user) {
+      router.replace("/login");
+    } else if (role && user.role !== role) {
+      router.replace("/");
+    } else if (user.role === "lawyer" && !user.verified) {
+      router.replace("/verification-pending");
+    }
+  }, [user, role, router]);
 
-  if (role && user.role !== role) {
-    return <Navigate to="/" replace />;
-  }
-
-  // FORCE VERIFICATION CHECK
-  if (user.role === "lawyer" && !user.verified) {
-    // Allow access to setup-profile (if needed) but generally block dashboard
-    // Assuming /verification-pending is a public route or we handle it in App.jsx to not be protected?
-    // Actually, ProtectedRoute is finding its children. If we wrap Dashboard, we block it.
-    return <Navigate to="/verification-pending" replace />;
+  if (!user || (role && user.role !== role) || (user.role === "lawyer" && !user.verified)) {
+    return null;
   }
 
   return children;

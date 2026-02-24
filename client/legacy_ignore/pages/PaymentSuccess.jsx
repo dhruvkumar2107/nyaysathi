@@ -1,12 +1,13 @@
-import { useNavigate } from "react-router-dom";
-import { useAuth } from "../context/AuthContext";
+'use client'
+import { useRouter } from "next/navigation";
+import { useAuth } from "../../src/context/AuthContext";
 import { motion } from "framer-motion";
 import { Check, ArrowRight, Star } from "lucide-react";
 import confetti from "canvas-confetti";
 import { useEffect } from "react";
 
 export default function PaymentSuccess() {
-  const navigate = useNavigate();
+  const router = useRouter();
   const { user } = useAuth();
 
   useEffect(() => {
@@ -37,8 +38,8 @@ export default function PaymentSuccess() {
   }, []);
 
   const goToDashboard = () => {
-    if (!user) { navigate("/login"); return; }
-    navigate(user.role === "lawyer" ? "/lawyer/dashboard" : "/client/dashboard");
+    if (!user) { router.push("/login"); return; }
+    router.push(user.role === "lawyer" ? "/lawyer/dashboard" : "/client/dashboard");
   };
 
   return (

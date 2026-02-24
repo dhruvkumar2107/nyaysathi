@@ -1,9 +1,10 @@
+'use client'
 import React, { useState } from 'react';
-import Navbar from '../components/Navbar';
-import Footer from '../components/Footer';
+import Navbar from '../../src/components/Navbar';
+import Footer from '../../src/components/Footer';
 import { motion } from 'framer-motion';
 import { Search, MapPin, Star, Shield, Filter, Award } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import Link from 'next/link';
 
 const lawyers = [
   {
@@ -190,7 +191,7 @@ function LawyerCard({ lawyer, index }) {
         ))}
       </div>
 
-      <Link to={`/lawyer/${lawyer.id}`} className="block w-full py-3 bg-white text-midnight-900 font-bold text-center rounded-xl hover:bg-slate-200 transition shadow-lg active:scale-95 text-sm">
+      <Link href={`/lawyer/${lawyer.id}`} className="block w-full py-3 bg-white text-midnight-900 font-bold text-center rounded-xl hover:bg-slate-200 transition shadow-lg active:scale-95 text-sm">
         View Full Profile
       </Link>
     </motion.div>

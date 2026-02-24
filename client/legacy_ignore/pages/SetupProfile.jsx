@@ -1,13 +1,14 @@
+'use client'
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { useAuth } from "../context/AuthContext";
+import { useRouter } from "next/navigation";
+import { useAuth } from "../../src/context/AuthContext";
 import axios from "axios";
 import toast from "react-hot-toast";
 import { Shield, UploadCloud, CheckCircle, XCircle, Loader } from "lucide-react";
 
 export default function SetupProfile() {
     const { user, updateUser } = useAuth();
-    const navigate = useNavigate();
+    const router = useRouter();
     const [loading, setLoading] = useState(false);
 
     const [formData, setFormData] = useState({
@@ -60,7 +61,7 @@ export default function SetupProfile() {
             if (res.data) {
                 updateUser(res.data);
                 toast.success("Profile Setup Complete!");
-                navigate(user.role === "lawyer" ? "/lawyer/dashboard" : "/client/dashboard");
+                router.push(user.role === "lawyer" ? "/lawyer/dashboard" : "/client/dashboard");
             }
         } catch (err) {
             console.error(err);

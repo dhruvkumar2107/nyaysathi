@@ -1,9 +1,10 @@
+'use client'
 import React from "react";
-import { Link } from "react-router-dom";
-import { useAuth } from "../context/AuthContext";
+import Link from "next/link";
+import { useAuth } from "../../src/context/AuthContext";
 import { motion } from "framer-motion";
-import Navbar from "../components/Navbar";
-import Footer from "../components/Footer";
+import Navbar from "../../src/components/Navbar";
+import Footer from "../../src/components/Footer";
 import {
   Gavel,
   Mic,
@@ -80,7 +81,7 @@ export default function Home() {
             className="flex flex-col sm:flex-row items-center justify-center gap-5"
           >
             <Link
-              to={!user ? "/register" : (user.role === "lawyer" ? "/lawyer/dashboard" : "/client/dashboard")}
+              href={!user ? "/register" : (user.role === "lawyer" ? "/lawyer/dashboard" : "/client/dashboard")}
               className="group relative w-full sm:w-auto px-12 py-5 rounded-2xl text-midnight-950 font-black text-lg bg-gradient-to-r from-gold-400 to-yellow-600 hover:shadow-[0_0_40px_rgba(212,175,55,0.3)] transition-all duration-300 active:scale-95 overflow-hidden"
               aria-label={!user ? "Get Started for Free" : "Go to Dashboard"}
             >
@@ -90,7 +91,7 @@ export default function Home() {
               <div className="absolute inset-0 bg-white/20 -translate-x-full group-hover:translate-x-full transition-transform duration-1000" />
             </Link>
             <Link
-              to="/legal-sos"
+              href="/legal-sos"
               className="w-full sm:w-auto px-10 py-5 rounded-2xl font-bold text-base text-white bg-white/5 border border-white/10 hover:bg-white/10 hover:border-red-500/40 transition-all duration-300 active:scale-95 flex items-center justify-center gap-2 shadow-sm"
               aria-label="Activate Legal SOS for Emergency Assistance"
             >
@@ -98,7 +99,7 @@ export default function Home() {
             </Link>
             {!user && (
               <Link
-                to="/login"
+                href="/login"
                 className="w-full sm:w-auto px-6 py-5 text-slate-400 hover:text-white font-bold text-sm transition-colors duration-300 flex items-center justify-center underline underline-offset-4"
                 aria-label="Login to your account"
               >
@@ -210,7 +211,7 @@ export default function Home() {
               {/* CTA buttons */}
               <div className="flex flex-col sm:flex-row gap-4">
                 <Link
-                  to="/legal-sos"
+                  href="/legal-sos"
                   className="group relative flex items-center justify-center gap-3 px-8 py-5 rounded-2xl bg-gradient-to-r from-red-600 to-rose-600 text-white font-black text-base tracking-wide shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden active:scale-95"
                   aria-label="Activate Emergency Legal SOS"
                 >
@@ -601,6 +602,7 @@ export default function Home() {
               href="/marketplace"
               badge="Exclusive"
               className="md:col-span-4"
+              isLarge={false}
             />
             {/* DRAFTING */}
             <BentoCard
@@ -645,7 +647,7 @@ export default function Home() {
 function BentoCard({ title, desc, icon, color, href, badge, className, isLarge }) {
   return (
     <Link
-      to={href}
+      href={href}
       className={`relative group bg-white/5 border border-white/10 rounded-[24px] ${isLarge ? 'p-8 md:p-12' : 'p-5'} overflow-hidden hover:border-indigo-500/20 transition-all shadow-sm hover:shadow-xl flex flex-col focus:outline-none focus:ring-2 focus:ring-indigo-500/50 ${className}`}
       aria-label={`Explore ${title}: ${desc}`}
     >
@@ -706,7 +708,7 @@ function UnicornCard({ title, desc, icon, color, href, badge, delay }) {
       className="relative group h-full"
     >
       <Link
-        to={href}
+        href={href}
         className="relative block h-full bg-[#0f172a] border border-white/5 rounded-2xl p-8 flex flex-col items-start overflow-hidden hover:border-white/10 transition-all shadow-xl focus:outline-none focus:ring-2 focus:ring-indigo-500/50"
         aria-label={`${title}: ${desc}`}
       >

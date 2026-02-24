@@ -1,10 +1,10 @@
 import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useNavigate } from 'react-router-dom';
+import { useRouter } from 'next/navigation';
 import { Sparkles, Check, X } from 'lucide-react';
 
 const SubscriptionModal = ({ isOpen, onClose, featureName }) => {
-    const navigate = useNavigate();
+    const router = useRouter();
 
     if (!isOpen) return null;
 
@@ -51,13 +51,13 @@ const SubscriptionModal = ({ isOpen, onClose, featureName }) => {
 
                     <div className="space-y-3">
                         <button
-                            onClick={() => navigate('/pricing')}
+                            onClick={() => router.push('/pricing')}
                             className="w-full py-4 rounded-xl bg-white text-black font-black uppercase tracking-widest text-xs hover:bg-indigo-50 transition shadow-[0_0_20px_rgba(255,255,255,0.3)]"
                         >
                             Get Diamond Access
                         </button>
                         <button
-                            onClick={() => navigate('/login')}
+                            onClick={() => router.push('/login')}
                             className="w-full py-4 rounded-xl bg-white/5 border border-white/5 hover:bg-white/10 text-white font-bold text-xs uppercase tracking-widest transition"
                         >
                             Login to Restore

@@ -1,10 +1,11 @@
+'use client'
 import { useState } from "react";
 import axios from "axios";
-import { useAuth } from "../context/AuthContext";
+import { useAuth } from "../../src/context/AuthContext";
 import { toast } from "react-hot-toast";
-import { Link } from "react-router-dom";
-import Navbar from "../components/Navbar";
-import Footer from "../components/Footer";
+import Link from "next/link";
+import Navbar from "../../src/components/Navbar";
+import Footer from "../../src/components/Footer";
 import { motion, AnimatePresence } from "framer-motion";
 import { Scale, BookOpen, CheckCircle, Zap, ArrowRight, Shield, Brain, Sparkles, MessageSquare, ChevronRight } from "lucide-react";
 
@@ -31,7 +32,7 @@ export default function Analyze() {
           <div className="flex flex-col gap-2">
             <span className="font-bold">Login to continue using AI 🔒</span>
             <span className="text-xs">Guest limit reached (1 free analysis)</span>
-            <Link to="/login" onClick={() => toast.dismiss(t.id)} className="bg-indigo-600 text-white px-3 py-1.5 rounded-lg text-xs font-bold text-center mt-1">Login Now</Link>
+            <Link href="/login" onClick={() => toast.dismiss(t.id)} className="bg-indigo-600 text-white px-3 py-1.5 rounded-lg text-xs font-bold text-center mt-1">Login Now</Link>
           </div>
         ), { duration: 5000, icon: '🛑' });
         return;
@@ -230,13 +231,13 @@ export default function Analyze() {
               {/* CTA */}
               <div className="flex flex-col sm:flex-row gap-3">
                 <Link
-                  to="/marketplace"
+                  href="/marketplace"
                   className="flex-1 py-4 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-2xl transition text-center flex items-center justify-center gap-2 shadow-lg shadow-indigo-600/20"
                 >
                   <MessageSquare size={16} /> Consult a Real Lawyer <ArrowRight size={15} />
                 </Link>
                 <Link
-                  to="/assistant"
+                  href="/assistant"
                   className="flex-1 py-4 bg-white/5 border border-white/10 hover:bg-white/10 text-slate-300 font-bold rounded-2xl transition text-center flex items-center justify-center gap-2"
                 >
                   Ask AI Follow-up Questions
@@ -251,7 +252,7 @@ export default function Analyze() {
           <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.6 }}
             className="text-center text-xs text-slate-600 mt-8"
           >
-            <Link to="/register" className="text-indigo-400 hover:text-indigo-300 font-bold">Create a free account</Link> to unlock unlimited AI analyses and save your results.
+            <Link href="/register" className="text-indigo-400 hover:text-indigo-300 font-bold">Create a free account</Link> to unlock unlimited AI analyses and save your results.
           </motion.p>
         )}
       </section>
