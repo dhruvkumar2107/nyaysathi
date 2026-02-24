@@ -232,7 +232,7 @@ export default function SetupProfile() {
 
                                                         const toastId = toast.loading("Uploading Document...");
                                                         try {
-                                                            const { uploadFile } = await import("../api");
+                                                            const { uploadFile } = await import("../../src/api");
                                                             const res = await uploadFile(file);
                                                             setIdCardUrl(res.path);
                                                             toast.success("Document Uploaded", { id: toastId });

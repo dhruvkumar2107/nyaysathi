@@ -1,3 +1,4 @@
+'use client'
 import { useState } from "react";
 import { useAuth } from "../../src/context/AuthContext";
 import Navbar from "../../src/components/Navbar";

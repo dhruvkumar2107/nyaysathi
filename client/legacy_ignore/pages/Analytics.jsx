@@ -1,3 +1,4 @@
+'use client'
 import { useAuth } from "../../src/context/AuthContext";
 import { BarChart3, TrendingUp, Users, MessageSquare, Eye, ArrowUpRight } from "lucide-react";
 

@@ -1,3 +1,4 @@
+'use client'
 import { useState, useRef, useEffect } from "react";
 import { Copy, ThumbsUp, ThumbsDown, Send, Paperclip, Mic } from "lucide-react";
 import ReactMarkdown from "react-markdown";
