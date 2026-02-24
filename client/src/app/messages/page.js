@@ -1,6 +1,6 @@
 import dynamic from 'next/dynamic';
 
-const Messages = dynamic(() => import("../../legacy_ignore/pages/Messages"), {
+const Messages = dynamic(() => import("../../../legacy_ignore/pages/Messages"), {
     ssr: false,
     loading: () => (
         <div className="h-screen flex items-center justify-center bg-[#020617] text-white">

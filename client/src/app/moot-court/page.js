@@ -1,6 +1,6 @@
 import dynamic from 'next/dynamic';
 
-const MootCourt = dynamic(() => import("../../legacy_ignore/pages/MootCourt"), {
+const MootCourt = dynamic(() => import("../../../legacy_ignore/pages/MootCourt"), {
     ssr: false,
     loading: () => (
         <div className="h-screen flex items-center justify-center bg-[#0c1220] text-white">

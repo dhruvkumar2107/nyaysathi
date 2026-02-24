@@ -1,6 +1,6 @@
 import dynamic from 'next/dynamic';
 
-const ClientDashboard = dynamic(() => import("../../dashboards/ClientDashboard"), {
+const ClientDashboard = dynamic(() => import("../../../dashboards/ClientDashboard"), {
     ssr: false,
     loading: () => (
         <div className="h-screen flex items-center justify-center bg-[#020617] text-white">

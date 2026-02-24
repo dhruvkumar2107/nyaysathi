@@ -1,6 +1,6 @@
 import dynamic from 'next/dynamic';
 
-const Nearby = dynamic(() => import("../../legacy_ignore/pages/Nearby"), {
+const Nearby = dynamic(() => import("../../../legacy_ignore/pages/Nearby"), {
     ssr: false,
     loading: () => (
         <div className="min-h-screen bg-[#0c1220] font-sans pb-20 flex items-center justify-center text-white">
