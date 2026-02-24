@@ -21,7 +21,7 @@ const VoiceAssistant = () => {
     const [loading, setLoading] = useState(false);
     const [history, setHistory] = useState([]);
     const recognitionRef = useRef(null);
-    const synthRef = useRef(window.speechSynthesis);
+    const synthRef = useRef(typeof window !== 'undefined' ? window.speechSynthesis : null);
     const historyEndRef = useRef(null);
 
     useEffect(() => {

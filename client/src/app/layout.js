@@ -61,6 +61,7 @@ export const metadata = {
 
 
 import Providers from '../components/Providers'
+import AIAssistant from '../components/AIAssistant'
 
 export default function RootLayout({ children }) {
     return (
@@ -69,6 +70,7 @@ export default function RootLayout({ children }) {
                 <Providers>
                     {children}
                     <Toaster position="bottom-right" />
+                    <AIAssistant />
                 </Providers>
             </body>
         </html>
