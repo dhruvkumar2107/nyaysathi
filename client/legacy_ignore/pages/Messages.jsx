@@ -2,10 +2,10 @@
 
 import { useState, useEffect, useRef } from "react";
 import axios from "axios";
-import { useAuth } from "../context/AuthContext";
+import { useAuth } from "../../src/context/AuthContext";
 import { io } from "socket.io-client";
 import { useSearchParams } from "next/navigation";
-import Navbar from "../components/Navbar";
+import Navbar from "../../src/components/Navbar";
 import { motion, AnimatePresence } from "framer-motion";
 import { Send, Paperclip, Smile, Video, MoreVertical, Search, Phone } from "lucide-react";
 

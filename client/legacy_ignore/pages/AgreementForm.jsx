@@ -1,9 +1,10 @@
 import { useState } from "react";
 import axios from "axios";
 import ReactMarkdown from 'react-markdown';
-import Navbar from "../components/Navbar";
-import { useAuth } from "../context/AuthContext";
-import PaywallModal from "../components/PaywallModal";
+import Navbar from "../../src/components/Navbar";
+import { useAuth } from "../../src/context/AuthContext";
+import Footer from "../../src/components/Footer";
+import PaywallModal from "../../src/components/PaywallModal";
 import { motion, AnimatePresence } from "framer-motion";
 import { FileText, Lock, Briefcase, Scroll, ExternalLink, Sparkles, Printer, Edit2, ArrowLeft } from "lucide-react";
 

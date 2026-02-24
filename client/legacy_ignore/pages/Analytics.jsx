@@ -1,4 +1,4 @@
-import { useAuth } from "../context/AuthContext";
+import { useAuth } from "../../src/context/AuthContext";
 import { BarChart3, TrendingUp, Users, MessageSquare, Eye, ArrowUpRight } from "lucide-react";
 
 export default function Analytics() {

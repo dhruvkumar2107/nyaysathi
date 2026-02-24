@@ -2,10 +2,10 @@ import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import axios from 'axios';
 import toast from 'react-hot-toast';
-import SubscriptionModal from '../components/SubscriptionModal';
+import SubscriptionModal from '../../src/components/SubscriptionModal';
 import { Briefcase, ChevronRight, Award, CheckCircle, Clock } from 'lucide-react';
-import Navbar from '../components/Navbar';
-import Footer from '../components/Footer';
+import Navbar from "../../src/components/Navbar";
+import Footer from "../../src/components/Footer";
 
 const CareerHub = () => {
     const [activeTask, setActiveTask] = useState(null);

@@ -1,7 +1,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import Navbar from '../components/Navbar';
-import Footer from '../components/Footer';
+import Navbar from "../../src/components/Navbar";
+import Footer from "../../src/components/Footer";
 import { Briefcase, MapPin, Clock, ArrowRight, Sparkles, Zap, Heart, Globe, Coffee, TrendingUp } from 'lucide-react';
 
 const JOBS = [

@@ -2,8 +2,8 @@ import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { toast } from 'react-hot-toast';
 import { Mail, MapPin, Clock, Send, ArrowRight, Twitter, Linkedin, Github, MessageSquare, Zap, Phone } from 'lucide-react';
-import Navbar from '../components/Navbar';
-import Footer from '../components/Footer';
+import Navbar from "../../src/components/Navbar";
+import Footer from "../../src/components/Footer";
 import axios from 'axios';
 
 export default function Contact() {

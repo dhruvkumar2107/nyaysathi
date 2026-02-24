@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { toast } from 'react-hot-toast';
-import { useAuth } from '../context/AuthContext';
-import Navbar from '../components/Navbar';
-import Footer from '../components/Footer';
+import { useAuth } from "../../src/context/AuthContext";
+import Navbar from "../../src/components/Navbar";
+import Footer from "../../src/components/Footer";
 import { motion, AnimatePresence } from 'framer-motion';
 import { UploadCloud, FileText, Calendar, AlertTriangle, Shield, CheckCircle, Search, Scale } from 'lucide-react';
 

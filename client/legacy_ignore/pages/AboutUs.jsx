@@ -1,8 +1,8 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { Scale, Shield, Users, Globe, Award, Zap, Target, Heart, Code2, ArrowRight, Sparkles } from 'lucide-react';
-import Navbar from '../components/Navbar';
-import Footer from '../components/Footer';
+import Navbar from "../../src/components/Navbar";
+import Footer from "../../src/components/Footer";
 
 const STATS = [
     { number: "1M+", label: "Case Laws Indexed", icon: <Scale size={20} />, color: 'text-indigo-400' },

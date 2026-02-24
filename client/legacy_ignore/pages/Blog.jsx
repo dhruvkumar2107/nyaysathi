@@ -2,8 +2,8 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { ArrowRight, Sparkles, BookOpen, TrendingUp, Scale, Bell } from 'lucide-react';
 import { toast } from 'react-hot-toast';
-import Navbar from '../components/Navbar';
-import Footer from '../components/Footer';
+import Navbar from "../../src/components/Navbar";
+import Footer from "../../src/components/Footer";
 
 const ARTICLES = [
     {
