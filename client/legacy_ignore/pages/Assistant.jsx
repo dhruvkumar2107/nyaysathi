@@ -1,8 +1,9 @@
 'use client'
 import { useState, useRef, useEffect } from "react";
-import { Copy, ThumbsUp, ThumbsDown, Send, Paperclip, Mic } from "lucide-react";
+import { Copy, ThumbsUp, ThumbsDown, Send, Paperclip, Mic, Plus } from "lucide-react";
 import ReactMarkdown from "react-markdown";
 import { motion, AnimatePresence } from "framer-motion";
+import axios from "axios";
 
 export default function Assistant() {
   const [messages, setMessages] = useState([
@@ -22,6 +23,23 @@ export default function Assistant() {
   useEffect(() => {
     scrollToBottom();
   }, [messages]);
+
+  const handleNewChat = () => {
+    setMessages([
+      {
+        role: "model",
+        text: "New session started. How can I assist you with your legal research or drafting today?",
+      },
+    ]);
+    setInput("");
+  };
+
+  const handleRecentInquiry = (label) => {
+    setMessages([
+      { role: "user", text: `I want to discuss: ${label}` },
+      { role: "model", text: `Understood. Loading historical context for **${label}**. How would you like to proceed with the analysis?` }
+    ]);
+  };
 
   const handleSend = async () => {
     if (!input.trim()) return;
@@ -62,17 +80,19 @@ export default function Assistant() {
       {/* SIDEBAR HISTORY */}
       <aside className="w-80 border-r border-white/5 bg-midnight-950/50 hidden md:flex flex-col">
         <div className="p-6">
-          <button className="w-full flex items-center gap-3 px-4 py-3 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl transition shadow-lg shadow-indigo-600/20 group">
-            <span className="text-xl">+</span>
-            <span className="font-bold text-sm tracking-wide">New Chat</span>
+          <button
+            onClick={handleNewChat}
+            className="w-full flex items-center justify-center gap-3 px-4 py-3 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl transition shadow-lg shadow-indigo-600/20 group font-bold text-sm tracking-wide"
+          >
+            <Plus size={18} /> New Chat
           </button>
         </div>
         <div className="flex-1 overflow-y-auto px-4 pb-4">
           <p className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-4 px-2">Recent Inquiries</p>
-          <HistoryItem label="Property Dispute Delhi" active />
-          <HistoryItem label="Draft Lease Agreement" />
-          <HistoryItem label="IPC 420 Analysis" />
-          <HistoryItem label="Divorce Proceedings" />
+          <HistoryItem label="Property Dispute Delhi" onClick={() => handleRecentInquiry("Property Dispute Delhi")} />
+          <HistoryItem label="Draft Lease Agreement" onClick={() => handleRecentInquiry("Draft Lease Agreement")} />
+          <HistoryItem label="IPC 420 Analysis" onClick={() => handleRecentInquiry("IPC 420 Analysis")} />
+          <HistoryItem label="Divorce Proceedings" onClick={() => handleRecentInquiry("Divorce Proceedings")} />
         </div>
         <div className="p-4 border-t border-white/5">
           <div className="flex items-center gap-3 px-2 py-2 rounded-lg hover:bg-white/5 cursor-pointer transition">
@@ -161,7 +181,7 @@ export default function Assistant() {
               onChange={(e) => setInput(e.target.value)}
               onKeyDown={(e) => e.key === "Enter" && !e.shiftKey && (e.preventDefault(), handleSend())}
               placeholder="Ask a legal question..."
-              className="w-full bg-transparent border-none text-white placeholder-slate-500 p-4 pr-32 focus:ring-0 resize-none h-20 scrollbar-hide" // Corrected: text-white and placeholder
+              className="w-full bg-transparent border-none text-white placeholder-slate-500 p-4 pr-32 focus:ring-0 resize-none h-20 scrollbar-hide appearance-none"
               style={{ color: 'white' }}
             />
 
@@ -191,9 +211,12 @@ export default function Assistant() {
   );
 }
 
-function HistoryItem({ label, active }) {
+function HistoryItem({ label, active, onClick }) {
   return (
-    <div className={`px-4 py-3 rounded-xl text-sm font-medium cursor-pointer transition mb-1 truncate ${active ? 'bg-white/10 text-white' : 'text-slate-400 hover:text-slate-200 hover:bg-white/5'}`}>
+    <div
+      onClick={onClick}
+      className={`px-4 py-3 rounded-xl text-sm font-medium cursor-pointer transition mb-1 truncate ${active ? 'bg-white/10 text-white shadow-sm border border-white/5' : 'text-slate-400 hover:text-slate-200 hover:bg-white/5'}`}
+    >
       {label}
     </div>
   )

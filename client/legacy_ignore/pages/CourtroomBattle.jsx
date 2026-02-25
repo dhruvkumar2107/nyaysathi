@@ -377,7 +377,7 @@ export default function CourtroomBattle() {
                         className="text-6xl md:text-8xl font-serif font-black text-white mb-4 leading-[1.05]"
                     >
                         NyayCourt{' '}
-                        <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-400 via-orange-400 to-red-400">
+                        <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-400 via-orange-400 to-red-400 drop-shadow-[0_0_30px_rgba(251,191,36,0.5)]">
                             Battle
                         </span>
                     </motion.h1>

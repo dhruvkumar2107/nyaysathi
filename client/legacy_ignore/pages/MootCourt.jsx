@@ -177,15 +177,19 @@ const MootCourt = () => {
 
                         {/* MAIN STAGE (JUDGE & OPPOSING COUNSEL) */}
                         <div className="col-span-9 flex flex-col gap-6">
-                            <div className="flex-1 bg-[#0f172a] rounded-3xl border border-white/10 relative overflow-hidden flex items-center justify-center group shadow-2xl">
+                            <div className="flex-1 bg-[#0f172a]/40 bg-gradient-to-b from-[#1e293b]/20 to-transparent rounded-3xl border border-white/10 relative overflow-hidden flex items-center justify-center group shadow-2xl backdrop-blur-2xl">
+                                {/* Ambient glow */}
+                                <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_rgba(99,102,241,0.1),_transparent_70%)]" />
+
                                 {/* AI JUDGE VISUALIZATION */}
-                                <div className="text-center opacity-50 group-hover:opacity-100 transition duration-500">
-                                    <div className={`w-32 h-32 bg-indigo-500/20 rounded-full mx-auto mb-4 flex items-center justify-center border border-indigo-500/30 shadow-[0_0_50px_rgba(99,102,241,0.2)] ${analyzing ? 'animate-pulse' : ''}`}>
-                                        <User size={60} className="text-indigo-300" />
+                                <div className="text-center relative z-10 transition duration-500 scale-110">
+                                    <div className={`w-40 h-40 bg-gradient-to-br from-indigo-500/10 to-purple-500/10 rounded-full mx-auto mb-6 flex items-center justify-center border border-white/10 shadow-[0_0_80px_rgba(99,102,241,0.15)] relative ${analyzing ? 'animate-pulse' : ''}`}>
+                                        <div className="absolute inset-0 bg-indigo-500/5 rounded-full animate-ping opacity-20" />
+                                        <User size={80} className="text-indigo-300 relative z-10 drop-shadow-[0_0_15px_rgba(165,180,252,0.5)]" />
                                     </div>
-                                    <h3 className="text-2xl font-serif font-bold text-white">Hon. AI Justice</h3>
-                                    <p className="text-indigo-400 font-mono text-xs mt-2">
-                                        {analyzing ? "Deliberating..." : "Awaiting Argument"}
+                                    <h3 className="text-3xl font-serif font-black text-white tracking-tight">Hon. AI Justice</h3>
+                                    <p className="text-indigo-400 font-black text-[10px] uppercase tracking-[0.3em] mt-3 bg-indigo-500/10 border border-indigo-500/20 px-4 py-1.5 rounded-full inline-block">
+                                        {analyzing ? "Deliberating Verdict..." : "Court in Session"}
                                     </p>
                                 </div>
                             </div>
@@ -212,28 +216,34 @@ const MootCourt = () => {
 
                                 {/* INPUT AREA */}
                                 <div className="flex items-center gap-4">
-                                    <div className="flex-1 bg-black/50 rounded-xl p-2 border border-white/5 flex items-center px-4 md:px-6 focus-within:border-indigo-500/50 transition">
+                                    <div className="flex-1 bg-black/40 backdrop-blur-md rounded-2xl p-1.5 border border-white/10 flex items-center px-4 focus-within:border-indigo-500/50 focus-within:shadow-[0_0_20px_rgba(99,102,241,0.1)] transition-all duration-300">
                                         <input
                                             type="text"
-                                            className="bg-transparent border-none outline-none text-white w-full placeholder-slate-600 font-medium h-10"
-                                            placeholder={mode === "voice" ? "Listening..." : "Type your argument..."}
+                                            className="bg-transparent border-none outline-none text-white w-full placeholder-slate-600 font-semibold h-12 text-sm"
+                                            placeholder={mode === "voice" ? "Listening to your argument..." : "Type your legal argument..."}
                                             value={inputText}
                                             onChange={e => setInputText(e.target.value)}
                                             onKeyDown={e => e.key === 'Enter' && handleSendMessage()}
                                             disabled={mode === "voice" || analyzing}
                                         />
-                                        {mode === "voice" ? (
-                                            <div onClick={isListening ? stopListening : startListening} className="cursor-pointer">
-                                                <Mic className={`${isListening ? 'text-red-500 animate-pulse' : 'text-slate-500'}`} />
-                                            </div>
-                                        ) : (
-                                            <div
-                                                onClick={handleSendMessage}
-                                                className="cursor-pointer p-2 hover:bg-white/10 rounded-lg transition"
-                                            >
-                                                <ArrowRight className="text-indigo-400" />
-                                            </div>
-                                        )}
+                                        <div className="flex items-center gap-2">
+                                            {mode === "voice" ? (
+                                                <button
+                                                    onClick={isListening ? stopListening : startListening}
+                                                    className={`p-2.5 rounded-xl transition-all ${isListening ? 'bg-red-500 text-white shadow-[0_0_15px_rgba(239,68,68,0.4)] animate-pulse' : 'bg-white/5 text-slate-400 hover:text-white'}`}
+                                                >
+                                                    <Mic size={18} />
+                                                </button>
+                                            ) : (
+                                                <button
+                                                    onClick={handleSendMessage}
+                                                    disabled={!inputText.trim() || analyzing}
+                                                    className="p-2.5 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl transition shadow-lg shadow-indigo-600/20 disabled:opacity-40"
+                                                >
+                                                    <ArrowRight size={18} />
+                                                </button>
+                                            )}
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -242,8 +252,8 @@ const MootCourt = () => {
                         {/* SIDEBAR ANALYTICS */}
                         <div className="col-span-3 space-y-6">
                             <div className="bg-[#0f172a]/80 backdrop-blur-xl rounded-3xl p-6 border border-white/10 h-full shadow-lg flex flex-col">
-                                <h4 className="text-xs font-bold uppercase tracking-wider text-slate-500 mb-6 flex items-center gap-2">
-                                    <MessageSquare size={14} /> Live Analysis
+                                <h4 className="text-[10px] font-black uppercase tracking-[0.2em] text-indigo-400 mb-6 flex items-center gap-2 bg-indigo-500/10 w-fit px-3 py-1 rounded-full border border-indigo-500/20">
+                                    <MessageSquare size={12} /> Live Analysis
                                 </h4>
                                 <div className="space-y-8 flex-1">
                                     <div>
