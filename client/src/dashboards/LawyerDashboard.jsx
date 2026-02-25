@@ -13,6 +13,7 @@ const WorkloadMonitor = dynamic(() => import("../components/dashboard/lawyer/Wor
 const CaseIntelligencePanel = dynamic(() => import("../components/dashboard/lawyer/CaseIntelligencePanel"), { ssr: false });
 const ClientCRM = dynamic(() => import("../components/dashboard/lawyer/ClientCRM"), { ssr: false });
 const LegalNoticeGenerator = dynamic(() => import("../components/dashboard/lawyer/LegalNoticeGenerator"), { ssr: false });
+const LegalReels = dynamic(() => import("../components/dashboard/LegalReels"), { ssr: false });
 
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
 import io from "socket.io-client";
@@ -48,9 +49,36 @@ export default function LawyerDashboard() {
     }
   }, [user]);
 
-  const fetchLeads = async () => axios.get("/api/cases?open=true").then(res => setLeads(res.data)).catch(console.error);
-  const fetchAppointments = async (id) => axios.get(`/api/appointments?userId=${id}&role=lawyer`).then(res => setAppointments(res.data.filter(a => a.status !== 'rejected'))).catch(console.error);
-  const fetchInvoices = async (id) => axios.get(`/api/invoices?lawyerId=${id}`).then(res => setInvoices(res.data)).catch(console.error);
+  const fetchLeads = async () => {
+    try {
+      const res = await axios.get("/api/cases?open=true");
+      setLeads(Array.isArray(res.data) ? res.data : []);
+    } catch (err) {
+      console.error("Leads Fetch Error:", err);
+      setLeads([]);
+    }
+  };
+
+  const fetchAppointments = async (id) => {
+    try {
+      const res = await axios.get(`/api/appointments?userId=${id}&role=lawyer`);
+      const list = Array.isArray(res.data) ? res.data : (res.data?.data || []);
+      setAppointments(list.filter(a => a.status !== 'rejected'));
+    } catch (err) {
+      console.error("Appointments Fetch Error:", err);
+      setAppointments([]);
+    }
+  };
+
+  const fetchInvoices = async (id) => {
+    try {
+      const res = await axios.get(`/api/invoices?lawyerId=${id}`);
+      setInvoices(Array.isArray(res.data) ? res.data : []);
+    } catch (err) {
+      console.error("Invoices Fetch Error:", err);
+      setInvoices([]);
+    }
+  };
 
   const acceptLead = async (id, tier) => {
     if (!user.verified) return toast.error("Verification Required. Please complete your profile.");
@@ -62,6 +90,10 @@ export default function LawyerDashboard() {
   };
 
   if (loading || !user) return <PremiumLoader text="Initializing Command Center..." />;
+
+  // Ensure user fields are safe
+  const userName = user?.name || "Counsel";
+  const userInitials = userName[0] || "?";
 
   return (
     <div className="min-h-screen bg-[#020617] font-sans text-slate-400 selection:bg-indigo-500/30">
@@ -107,10 +139,10 @@ export default function LawyerDashboard() {
               >
                 <div className="p-2 space-y-1">
                   <div className="px-3 py-2 text-xs font-bold text-slate-500 uppercase tracking-widest border-b border-white/5 mb-1">My Account</div>
-                  <Link to="/lawyer/profile/edit" className="flex items-center gap-3 px-3 py-2 text-sm text-slate-300 hover:bg-white/5 rounded-lg transition">
+                  <Link href="/lawyer/profile/edit" className="flex items-center gap-3 px-3 py-2 text-sm text-slate-300 hover:bg-white/5 rounded-lg transition">
                     <span>⚙️</span> Edit Profile
                   </Link>
-                  <Link to="/settings" className="flex items-center gap-3 px-3 py-2 text-sm text-slate-300 hover:bg-white/5 rounded-lg transition">
+                  <Link href="/settings" className="flex items-center gap-3 px-3 py-2 text-sm text-slate-300 hover:bg-white/5 rounded-lg transition">
                     <span>🔒</span> Security
                   </Link>
                   <div className="h-px bg-white/5 my-1"></div>
@@ -195,6 +227,9 @@ export default function LawyerDashboard() {
                   <h3 className="font-bold text-lg text-white mb-6">Case Lifecycle</h3>
                   <KanbanBoard cases={leads.filter(l => l.acceptedBy)} onUpdate={fetchLeads} />
                 </div>
+
+                {/* LEGAL REELS (PRO THEME) */}
+                <LegalReels />
               </motion.div>
             )}
 

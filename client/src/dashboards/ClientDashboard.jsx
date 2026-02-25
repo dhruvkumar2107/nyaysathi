@@ -54,10 +54,48 @@ export default function ClientDashboard() {
     } catch (err) { console.error(err); }
   }
 
-  const fetchPosts = async () => axios.get("/api/posts").then(res => setPosts(res.data)).catch(console.error);
-  const fetchMyCases = async () => axios.get(`/api/cases?postedBy=${user.phone || user.email || user._id}`).then(res => setActiveCases(res.data || [])).catch(console.error);
-  const fetchInvoices = async () => axios.get(`/api/invoices?clientId=${user._id || user.id}`).then(res => setInvoices(res.data)).catch(console.error);
-  const fetchAppointments = async () => axios.get(`/api/appointments?clientId=${user._id || user.id}`).then(res => setAppointments(res.data)).catch(console.error);
+  const fetchPosts = async () => {
+    try {
+      const res = await axios.get("/api/posts");
+      setPosts(Array.isArray(res.data) ? res.data : []);
+    } catch (err) {
+      console.error("Posts Fetch Error:", err);
+      setPosts([]);
+    }
+  };
+
+  const fetchMyCases = async () => {
+    try {
+      const identifier = user.phone || user.email || user._id;
+      const res = await axios.get(`/api/cases?postedBy=${identifier}`);
+      setActiveCases(Array.isArray(res.data) ? res.data : []);
+    } catch (err) {
+      console.error("Cases Fetch Error:", err);
+      setActiveCases([]);
+    }
+  };
+
+  const fetchInvoices = async () => {
+    try {
+      const uId = user._id || user.id;
+      const res = await axios.get(`/api/invoices?clientId=${uId}`);
+      setInvoices(Array.isArray(res.data) ? res.data : []);
+    } catch (err) {
+      console.error("Invoices Fetch Error:", err);
+      setInvoices([]);
+    }
+  };
+
+  const fetchAppointments = async () => {
+    try {
+      const uId = user._id || user.id;
+      const res = await axios.get(`/api/appointments?clientId=${uId}`);
+      setAppointments(Array.isArray(res.data) ? res.data : []);
+    } catch (err) {
+      console.error("Appointments Fetch Error:", err);
+      setAppointments([]);
+    }
+  };
 
   const handlePostCase = async () => {
     try {
@@ -76,16 +114,21 @@ export default function ClientDashboard() {
     <div className="min-h-screen bg-[#020617] font-sans text-slate-400 selection:bg-indigo-500/30">
 
       {/* SIDEBAR NAVIGATION (Fixed Left) */}
-      <aside className="fixed left-0 top-0 h-screen w-72 bg-[#0f172a] border-r border-white/10 flex flex-col z-50">
-        <div className="p-8 pb-4">
-          {/* LOGO REMOVED - ALREADY IN WORKSPACE CONTEXT */}
-          <div className="mb-6 invisible" />
+      <aside className="fixed left-0 top-0 h-screen w-72 bg-[#020617] border-r border-white/5 flex flex-col z-50">
+        <div className="p-8">
+          <Link href="/" className="flex items-center gap-3 group">
+            <div className="relative">
+              <div className="absolute inset-0 bg-gold-400 blur-[15px] opacity-10 group-hover:opacity-30 transition duration-500"></div>
+              <img src="/logo.png" alt="NyayNow Logo" className="w-10 h-10 relative object-contain hover:scale-105 transition duration-300" />
+            </div>
+            <span className="text-2xl font-black text-white tracking-tighter transition-colors group-hover:text-indigo-400">NyayNow</span>
+          </Link>
 
-          <div className="space-y-1">
+          <div className="space-y-1 mt-8">
             <NavItem icon="📊" label="Overview" active={activeTab === 'overview'} onClick={() => setActiveTab('overview')} />
             <NavItem icon="⚖️" label="My Matters" active={activeTab === 'cases'} onClick={() => setActiveTab('cases')} />
             <NavItem icon="📄" label="Documents" to="/agreements" />
-            <NavItem icon="card" label="Payments" active={activeTab === 'invoices'} onClick={() => setActiveTab('invoices')} />
+            <NavItem icon="💳" label="Payments" active={activeTab === 'invoices'} onClick={() => setActiveTab('invoices')} />
             <NavItem icon="📡" label="Legal Feed" active={activeTab === 'feed'} onClick={() => setActiveTab('feed')} />
             <div className="my-2 h-px bg-white/5" />
             <NavItem icon="🎭" label="Confession Booth" active={activeTab === 'confessions'} onClick={() => setActiveTab('confessions')} badge="New" />
@@ -139,9 +182,9 @@ export default function ClientDashboard() {
         {/* HEADER */}
         <header className="flex justify-between items-end mb-10 px-4">
           <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
-            <p className="text-slate-500 text-sm font-bold uppercase tracking-wider mb-2">{new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })}</p>
+            <p className="text-slate-500 text-[10px] font-black uppercase tracking-[0.2em] mb-3">{new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })}</p>
             <h1 className="text-4xl font-bold text-white leading-tight">
-              Good Morning, <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-cyan-400">{user.name?.split(' ')[0]}</span>.
+              Welcome back, <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 via-white to-cyan-400">{user.name?.split(' ')[0]}</span>
             </h1>
           </motion.div>
           <button
@@ -181,35 +224,40 @@ export default function ClientDashboard() {
                 </div>}
               </div>
 
-              {activeCase ? (
-                <div className="bg-[#1e293b]/50 rounded-2xl p-6 border border-white/5">
-                  <TrustTimeline stage={activeCase.stage || 'New Lead'} />
-                </div>
-              ) : (
-                <div className="grid grid-cols-3 gap-4">
-                  <div className="p-4 bg-white/5 rounded-2xl border border-white/10 text-center hover:bg-white/10 hover:border-indigo-500/30 transition cursor-pointer group" onClick={() => setShowPostModal(true)}>
-                    <div className="text-2xl mb-2 group-hover:scale-110 transition">📝</div>
-                    <div className="font-bold text-sm text-white">Draft Contract</div>
+              {
+                activeCase ? (
+                  <div className="bg-[#1e293b]/50 rounded-2xl p-6 border border-white/5">
+                    <TrustTimeline stage={activeCase.stage || 'New Lead'} />
                   </div>
-                  {/* JUDGE AI MINI WIDGET */}
-                  <div className="p-4 bg-gradient-to-br from-indigo-900/50 to-purple-900/50 rounded-2xl border border-indigo-500/30 text-center hover:scale-105 transition cursor-pointer group relative overflow-hidden" onClick={() => navigate('/judge-ai')}>
-                    <div className="absolute inset-0 bg-indigo-500/10 animate-pulse"></div>
-                    <div className="relative z-10">
-                      <div className="text-2xl mb-2">⚖️</div>
-                      <div className="font-bold text-sm text-white">Judge AI Scan</div>
-                      <div className="text-[10px] text-indigo-300 mt-1">Check Win Probability</div>
+                ) : (
+                  <div className="grid grid-cols-3 gap-4">
+                    <div className="p-4 bg-white/5 rounded-2xl border border-white/10 text-center hover:bg-white/10 hover:border-indigo-500/30 transition cursor-pointer group" onClick={() => setShowPostModal(true)}>
+                      <div className="text-2xl mb-2 group-hover:scale-110 transition">📝</div>
+                      <div className="font-bold text-sm text-white">Draft Contract</div>
+                    </div>
+                    {/* JUDGE AI MINI WIDGET */}
+                    <div className="p-4 bg-gradient-to-br from-indigo-900/50 to-purple-900/50 rounded-2xl border border-indigo-500/30 text-center hover:scale-105 transition cursor-pointer group relative overflow-hidden" onClick={() => router.push('/judge-ai')}>
+                      <div className="absolute inset-0 bg-indigo-500/10 animate-pulse"></div>
+                      <div className="relative z-10">
+                        <div className="text-2xl mb-2">⚖️</div>
+                        <div className="font-bold text-sm text-white">Judge AI Scan</div>
+                        <div className="text-[10px] text-indigo-300 mt-1">Check Win Probability</div>
+                      </div>
+                    </div>
+                    <div className="p-4 bg-white/5 rounded-2xl border border-white/10 text-center hover:bg-white/10 hover:border-indigo-500/30 transition cursor-pointer group" onClick={() => router.push('/marketplace')}>
+                      <div className="text-2xl mb-2 group-hover:scale-110 transition">🔍</div>
+                      <div className="font-bold text-sm text-white">Find Lawyer</div>
                     </div>
                   </div>
-                  <div className="p-4 bg-white/5 rounded-2xl border border-white/10 text-center hover:bg-white/10 hover:border-indigo-500/30 transition cursor-pointer group" onClick={() => router.push('/marketplace')}>
-                    <div className="text-2xl mb-2 group-hover:scale-110 transition">🔍</div>
-                    <div className="font-bold text-sm text-white">Find Lawyer</div>
-                  </div>
-                </div>
-              )}
+                )
+              }
             </div>
 
+            {/* REELS SECTION (PRO THEME) */}
+            <LegalReels />
+
             {/* SECONDARY ROW: FEED & STATS */}
-            <div className="grid grid-cols-2 gap-6">
+            <div className="grid grid-cols-2 gap-6 mt-8">
               {/* FEED SUMMARY */}
               <div className="bg-[#0f172a] rounded-3xl p-6 border border-white/10 shadow-lg h-[400px] overflow-y-auto custom-scrollbar">
                 <h3 className="font-bold text-lg text-white mb-4 sticky top-0 bg-[#0f172a] pb-2 border-b border-white/10 z-10">Legal Pulse</h3>
@@ -269,75 +317,81 @@ export default function ClientDashboard() {
           </div>
 
           {/* CONFESSION BOOTH — Full Width */}
-          {activeTab === 'confessions' && (
-            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="col-span-12">
-              <LegalConfessionBooth />
-            </motion.div>
-          )}
+          {
+            activeTab === 'confessions' && (
+              <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="col-span-12">
+                <LegalConfessionBooth />
+              </motion.div>
+            )
+          }
 
           {/* RIGHT SIDEBAR (4 COLS) — hidden on confession tab */}
-          {activeTab !== 'confessions' && (
-            <div className="col-span-4 space-y-6">
-              {/* CALENDAR */}
-              <div className="bg-[#0f172a] rounded-3xl p-4 border border-white/10 shadow-lg">
-                <CalendarWidget user={user} />
-              </div>
-
-              {/* SUGGESTED LAWYERS */}
-              <div className="bg-[#0f172a] rounded-3xl p-6 border border-white/10 shadow-lg">
-                <h3 className="font-bold text-lg text-white mb-4">Recommended Counsel</h3>
-                <div className="space-y-4">
-                  {suggestedLawyers.map(l => (
-                    <div key={l._id} className="flex items-center gap-3 group cursor-pointer hover:bg-white/5 p-2 -mx-2 rounded-xl transition">
-                      <div className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center text-slate-400 font-bold text-sm group-hover:bg-indigo-600 group-hover:text-white transition">
-                        {l.name?.[0]}
-                      </div>
-                      <div className="flex-1">
-                        <h4 className="font-bold text-sm text-white group-hover:text-indigo-400 transition">{l.name}</h4>
-                        <p className="text-xs text-slate-500">{l.specialization || "Legal Expert"}</p>
-                      </div>
-                      <button className="w-8 h-8 rounded-full border border-white/10 flex items-center justify-center text-slate-400 hover:border-indigo-500 hover:text-indigo-400 transition">
-                        +
-                      </button>
-                    </div>
-                  ))}
+          {
+            activeTab !== 'confessions' && (
+              <div className="col-span-4 space-y-6">
+                {/* CALENDAR */}
+                <div className="bg-[#0f172a] rounded-3xl p-4 border border-white/10 shadow-lg">
+                  <CalendarWidget user={user} />
                 </div>
-                <button onClick={() => navigate('/marketplace')} className="w-full mt-6 py-3 border border-white/10 rounded-xl text-xs font-bold uppercase tracking-wider text-slate-400 hover:bg-white/5 hover:text-white transition">
-                  View Marketplace
-                </button>
+
+                {/* SUGGESTED LAWYERS */}
+                <div className="bg-[#0f172a] rounded-3xl p-6 border border-white/10 shadow-lg">
+                  <h3 className="font-bold text-lg text-white mb-4">Recommended Counsel</h3>
+                  <div className="space-y-4">
+                    {suggestedLawyers.map(l => (
+                      <div key={l._id} className="flex items-center gap-3 group cursor-pointer hover:bg-white/5 p-2 -mx-2 rounded-xl transition">
+                        <div className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center text-slate-400 font-bold text-sm group-hover:bg-indigo-600 group-hover:text-white transition">
+                          {l.name?.[0]}
+                        </div>
+                        <div className="flex-1">
+                          <h4 className="font-bold text-sm text-white group-hover:text-indigo-400 transition">{l.name}</h4>
+                          <p className="text-xs text-slate-500">{l.specialization || "Legal Expert"}</p>
+                        </div>
+                        <button className="w-8 h-8 rounded-full border border-white/10 flex items-center justify-center text-slate-400 hover:border-indigo-500 hover:text-indigo-400 transition">
+                          +
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                  <button onClick={() => router.push('/marketplace')} className="w-full mt-6 py-3 border border-white/10 rounded-xl text-xs font-bold uppercase tracking-wider text-slate-400 hover:bg-white/5 hover:text-white transition">
+                    View Marketplace
+                  </button>
+                </div>
               </div>
-            </div>
-          )}
+            )
+          }
 
         </div>
-      </main>
+      </main >
 
       {/* MODAL FOR NEW CASE - Simple Glassmorphism */}
-      {showPostModal && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
-          <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setShowPostModal(false)}></div>
-          <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="bg-[#0f172a] border border-white/10 rounded-3xl p-8 max-w-lg w-full relative z-10 shadow-2xl">
-            <h3 className="font-bold text-2xl text-white mb-6">Brief Your Legal Matter</h3>
-            <div className="space-y-4">
-              <div>
-                <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1">Case Title</label>
-                <input type="text" className="w-full p-4 bg-black/20 border border-white/10 rounded-xl outline-none focus:border-indigo-500 text-white transition placeholder-slate-600" placeholder="e.g. Property Dispute in Delhi" value={newCase.title} onChange={e => setNewCase({ ...newCase, title: e.target.value })} />
+      {
+        showPostModal && (
+          <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+            <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setShowPostModal(false)}></div>
+            <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="bg-[#0f172a] border border-white/10 rounded-3xl p-8 max-w-lg w-full relative z-10 shadow-2xl">
+              <h3 className="font-bold text-2xl text-white mb-6">Brief Your Legal Matter</h3>
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1">Case Title</label>
+                  <input type="text" className="w-full p-4 bg-black/20 border border-white/10 rounded-xl outline-none focus:border-indigo-500 text-white transition placeholder-slate-600" placeholder="e.g. Property Dispute in Delhi" value={newCase.title} onChange={e => setNewCase({ ...newCase, title: e.target.value })} />
+                </div>
+                <div>
+                  <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1">Details</label>
+                  <textarea rows="4" className="w-full p-4 bg-black/20 border border-white/10 rounded-xl outline-none focus:border-indigo-500 text-white transition placeholder-slate-600" placeholder="Describe your situation..." value={newCase.desc} onChange={e => setNewCase({ ...newCase, desc: e.target.value })}></textarea>
+                </div>
+                <div>
+                  <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1">Estimated Budget (INR)</label>
+                  <input type="number" className="w-full p-4 bg-black/20 border border-white/10 rounded-xl outline-none focus:border-indigo-500 text-white transition placeholder-slate-600" placeholder="5000" value={newCase.budget} onChange={e => setNewCase({ ...newCase, budget: e.target.value })} />
+                </div>
+                <button onClick={handlePostCase} className="w-full py-4 bg-indigo-600 text-white font-bold rounded-xl hover:bg-indigo-500 transition shadow-lg shadow-indigo-500/25 mt-2">
+                  Post Case
+                </button>
               </div>
-              <div>
-                <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1">Details</label>
-                <textarea rows="4" className="w-full p-4 bg-black/20 border border-white/10 rounded-xl outline-none focus:border-indigo-500 text-white transition placeholder-slate-600" placeholder="Describe your situation..." value={newCase.desc} onChange={e => setNewCase({ ...newCase, desc: e.target.value })}></textarea>
-              </div>
-              <div>
-                <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1">Estimated Budget (INR)</label>
-                <input type="number" className="w-full p-4 bg-black/20 border border-white/10 rounded-xl outline-none focus:border-indigo-500 text-white transition placeholder-slate-600" placeholder="5000" value={newCase.budget} onChange={e => setNewCase({ ...newCase, budget: e.target.value })} />
-              </div>
-              <button onClick={handlePostCase} className="w-full py-4 bg-indigo-600 text-white font-bold rounded-xl hover:bg-indigo-500 transition shadow-lg shadow-indigo-500/25 mt-2">
-                Post Case
-              </button>
-            </div>
-          </motion.div>
-        </div>
-      )}
+            </motion.div>
+          </div>
+        )
+      }
 
     </div>
   );

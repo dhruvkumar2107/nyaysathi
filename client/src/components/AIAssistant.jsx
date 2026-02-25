@@ -59,34 +59,44 @@ export default function AIAssistant() {
                         initial={{ opacity: 0, y: 20, scale: 0.95 }}
                         animate={{ opacity: 1, y: 0, scale: 1 }}
                         exit={{ opacity: 0, y: 20, scale: 0.95 }}
-                        className="fixed bottom-24 right-8 w-96 h-[500px] bg-[#0f172a] border border-white/10 rounded-2xl shadow-2xl flex flex-col z-[9999] overflow-hidden backdrop-blur-xl"
+                        className="fixed bottom-24 right-8 w-96 h-[550px] bg-[#020617] border border-white/10 rounded-2xl shadow-2xl flex flex-col z-[9999] overflow-hidden"
                     >
                         {/* Header */}
-                        <div className="p-4 bg-gradient-to-r from-indigo-600 to-purple-600 flex justify-between items-center text-white">
+                        <div className="p-4 bg-gradient-to-r from-indigo-900 via-midnight-950 to-indigo-900 flex justify-between items-center text-white border-b border-white/5">
                             <div className="flex items-center gap-3">
-                                <div className="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center backdrop-blur-md">
-                                    <Sparkles size={16} className="text-white" />
+                                <div className="relative">
+                                    <div className="absolute inset-0 bg-gold-400 blur-[10px] opacity-20"></div>
+                                    <img src="/logo.png" alt="NyayNow Logo" className="w-8 h-8 relative object-contain drop-shadow-[0_0_5px_rgba(212,175,55,0.4)]" />
                                 </div>
                                 <div>
-                                    <h3 className="font-bold text-sm">NyayChat AI</h3>
+                                    <h3 className="font-bold text-sm tracking-tight">NyayNow AI</h3>
                                     <div className="flex items-center gap-1.5 opacity-80">
-                                        <span className="w-2 h-2 bg-emerald-400 rounded-full animate-pulse"></span>
-                                        <span className="text-[10px] font-medium uppercase tracking-wide">Online</span>
+                                        <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse shadow-[0_0_5px_rgba(16,185,129,0.5)]"></span>
+                                        <span className="text-[10px] font-bold uppercase tracking-widest text-emerald-400">Secure AI</span>
                                     </div>
                                 </div>
                             </div>
-                            <button onClick={() => setIsOpen(false)} className="p-1 hover:bg-white/20 rounded-lg transition">
-                                <X size={18} />
-                            </button>
+                            <div className="flex items-center gap-2">
+                                <button
+                                    onClick={() => setMessages([{ role: "system", content: "Hello! I am NyayChat. How can I assist you with your legal queries today?" }])}
+                                    className="p-1.5 hover:bg-white/10 rounded-lg transition text-slate-400 hover:text-white"
+                                    title="New Chat"
+                                >
+                                    <Sparkles size={16} />
+                                </button>
+                                <button onClick={() => setIsOpen(false)} className="p-1.5 hover:bg-white/10 rounded-lg transition text-slate-400 hover:text-white">
+                                    <X size={18} />
+                                </button>
+                            </div>
                         </div>
 
                         {/* Chat Area */}
-                        <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-slate-900/50 custom-scrollbar">
+                        <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-transparent custom-scrollbar">
                             {messages.map((msg, i) => (
                                 <div key={i} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
-                                    <div className={`max-w-[80%] p-3 rounded-2xl text-sm leading-relaxed ${msg.role === 'user'
-                                        ? 'bg-indigo-600 text-white rounded-br-none'
-                                        : 'bg-[#1e293b] text-slate-200 border border-white/5 rounded-bl-none'
+                                    <div className={`max-w-[85%] p-3.5 rounded-2xl text-sm leading-relaxed shadow-sm transition-all duration-300 ${msg.role === 'user'
+                                        ? 'bg-indigo-600 text-white rounded-br-none shadow-indigo-600/20'
+                                        : 'bg-white/5 text-slate-200 border border-white/10 rounded-bl-none'
                                         }`}>
                                         {msg.content}
                                     </div>
@@ -94,10 +104,10 @@ export default function AIAssistant() {
                             ))}
                             {isTyping && (
                                 <div className="flex justify-start">
-                                    <div className="bg-[#1e293b] px-4 py-3 rounded-2xl rounded-bl-none border border-white/5 flex gap-1">
-                                        <span className="w-1.5 h-1.5 bg-slate-500 rounded-full animate-bounce [animation-delay:-0.3s]"></span>
-                                        <span className="w-1.5 h-1.5 bg-slate-500 rounded-full animate-bounce [animation-delay:-0.15s]"></span>
-                                        <span className="w-1.5 h-1.5 bg-slate-500 rounded-full animate-bounce"></span>
+                                    <div className="bg-white/5 px-4 py-3 rounded-2xl rounded-bl-none border border-white/10 flex gap-1.5">
+                                        <span className="w-1.5 h-1.5 bg-indigo-400 rounded-full animate-bounce [animation-delay:-0.3s]"></span>
+                                        <span className="w-1.5 h-1.5 bg-indigo-400 rounded-full animate-bounce [animation-delay:-0.15s]"></span>
+                                        <span className="w-1.5 h-1.5 bg-indigo-400 rounded-full animate-bounce"></span>
                                     </div>
                                 </div>
                             )}
@@ -105,26 +115,32 @@ export default function AIAssistant() {
                         </div>
 
                         {/* Input Area */}
-                        <div className="p-4 bg-[#0f172a] border-t border-white/10">
+                        <div className="p-4 bg-[#020617] border-t border-white/10">
                             <div className="relative">
                                 <input
                                     type="text"
                                     value={input}
                                     onChange={(e) => setInput(e.target.value)}
                                     onKeyDown={(e) => e.key === 'Enter' && handleSend()}
-                                    placeholder="Ask anything about Indian Law..."
-                                    className="w-full bg-[#1e293b] text-white text-sm rounded-xl pl-4 pr-12 py-3 border border-white/5 focus:border-indigo-500 outline-none transition placeholder-slate-500"
+                                    placeholder="Type your legal query..."
+                                    className="w-full bg-white/5 text-white text-sm rounded-xl pl-4 pr-12 py-3.5 border border-white/10 focus:border-indigo-500/50 outline-none transition placeholder-slate-600 shadow-inner"
                                 />
                                 <button
                                     onClick={handleSend}
-                                    disabled={!input.trim()}
-                                    className="absolute right-2 top-1/2 -translate-y-1/2 p-1.5 bg-indigo-500 text-white rounded-lg hover:bg-indigo-400 disabled:opacity-50 disabled:hover:bg-indigo-500 transition"
+                                    disabled={!input.trim() || isTyping}
+                                    className="absolute right-2 top-1/2 -translate-y-1/2 p-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-500 disabled:opacity-30 transition shadow-lg shadow-indigo-600/20"
                                 >
                                     <Send size={16} />
                                 </button>
                             </div>
-                            <div className="text-center mt-2">
-                                <p className="text-[10px] text-slate-600">Powered by NyayNow AI Engine</p>
+                            <div className="flex justify-between items-center mt-3 px-1">
+                                <p className="text-[9px] text-slate-600 font-bold uppercase tracking-widest flex items-center gap-1">
+                                    <span className="w-1 h-1 bg-slate-600 rounded-full"></span>
+                                    End-to-End Encrypted
+                                </p>
+                                <p className="text-[9px] text-indigo-400 font-black uppercase tracking-widest">
+                                    NyayNow AI 2.0
+                                </p>
                             </div>
                         </div>
                     </motion.div>

@@ -20,9 +20,9 @@ export default function CaseTimeline({ stage, timeline = [] }) {
                     const status = checkStatus(step);
                     return (
                         <div key={step} className="flex flex-col items-center">
-                            <div className={`w-8 h-8 rounded-full flex items-center justify-center font-bold text-xs border-4 transition-all ${status === 'completed' ? 'bg-emerald-500 border-emerald-900/50 text-white' :
-                                status === 'current' ? 'bg-blue-600 border-blue-900/50 text-white scale-110 shadow-lg shadow-blue-900/40' :
-                                    'bg-[#0f172a] border-white/10 text-slate-500'
+                            <div className={`w-8 h-8 rounded-full flex items-center justify-center font-bold text-[10px] border-2 transition-all duration-500 ${status === 'completed' ? 'bg-emerald-500 border-emerald-500 shadow-[0_0_15px_rgba(16,185,129,0.3)] text-white' :
+                                status === 'current' ? 'bg-indigo-600 border-indigo-600 text-white scale-125 shadow-xl shadow-indigo-900/40 ring-4 ring-indigo-500/10' :
+                                    'bg-slate-900 border-white/10 text-slate-600'
                                 }`}>
                                 {status === 'completed' ? '✓' : idx + 1}
                             </div>

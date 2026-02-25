@@ -28,40 +28,46 @@ export default function KanbanBoard({ cases, onUpdate }) {
         <div className="overflow-x-auto pb-4">
             <div className="flex gap-4 min-w-[1200px]">
                 {STAGES.map(stage => (
-                    <div key={stage} className="w-72 bg-slate-50 rounded-xl p-3 border border-slate-200 flex-shrink-0 flex flex-col max-h-[600px]">
-                        <div className="flex justify-between items-center mb-3 px-1">
-                            <h4 className="font-bold text-slate-700 text-sm uppercase tracking-wide">{stage}</h4>
-                            <span className="bg-slate-200 text-slate-600 text-[10px] px-2 py-0.5 rounded-full font-bold">{board[stage]?.length || 0}</span>
+                    <div key={stage} className="w-80 bg-[#0f172a] rounded-2xl p-4 border border-white/5 flex-shrink-0 flex flex-col max-h-[700px] shadow-sm">
+                        <div className="flex justify-between items-center mb-4 px-1">
+                            <h4 className="font-bold text-white text-[10px] uppercase tracking-[0.2em]">{stage}</h4>
+                            <span className="bg-white/5 text-slate-400 text-[9px] px-2 py-0.5 rounded-full border border-white/5 font-black">{board[stage]?.length || 0}</span>
                         </div>
 
-                        <div className="flex-1 overflow-y-auto space-y-3 custom-scrollbar pr-1">
+                        <div className="flex-1 overflow-y-auto space-y-4 custom-scrollbar pr-1">
                             {board[stage]?.map(c => (
-                                <div key={c._id} className="bg-white p-3 rounded-lg shadow-sm border border-slate-200 hover:shadow-md transition group">
-                                    <div className="flex justify-between items-start mb-2">
-                                        <span className="text-[10px] font-bold bg-blue-50 text-blue-600 px-1.5 py-0.5 rounded uppercase">{c.category || 'Case'}</span>
-                                        <button onClick={() => window.open(`/case/${c._id}`, '_blank')} className="text-slate-400 hover:text-blue-600">↗</button>
+                                <div key={c._id} className="bg-[#1e293b]/30 p-4 rounded-xl border border-white/5 hover:border-indigo-500/30 transition-all duration-300 group shadow-inner">
+                                    <div className="flex justify-between items-start mb-3">
+                                        <span className={`text-[9px] font-black px-2 py-0.5 rounded uppercase tracking-widest ${c.tier === 'gold' ? 'bg-amber-500/20 text-amber-300' : 'bg-indigo-500/20 text-indigo-300'}`}>{c.category || 'Law'}</span>
+                                        <button onClick={() => window.open(`/case/${c._id}`, '_blank')} className="text-slate-500 hover:text-white transition">
+                                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" /></svg>
+                                        </button>
                                     </div>
-                                    <h5 className="font-bold text-slate-800 text-sm mb-1 leading-tight">{c.title}</h5>
-                                    <p className="text-xs text-slate-500 mb-2 truncate">{c.client?.name || "Client"}</p>
+                                    <h5 className="font-bold text-slate-100 text-sm mb-1 leading-tight group-hover:text-indigo-400 transition">{c.title}</h5>
+                                    <p className="text-[10px] text-slate-500 mb-4 font-medium uppercase tracking-wider">{c.client?.name || "Private Client"}</p>
 
                                     {/* Actions */}
-                                    <div className="flex justify-between items-center pt-2 border-t border-slate-50 mt-2 opacity-100 transition-opacity">
+                                    <div className="flex justify-between items-center pt-3 border-t border-white/5 mt-2">
                                         <button
                                             disabled={stage === 'New Lead'}
                                             onClick={() => moveCard(c._id, STAGES[STAGES.indexOf(stage) - 1])}
-                                            className="text-slate-400 hover:text-slate-600 font-bold text-lg disabled:opacity-20 flex-1 text-left"
-                                        >←</button>
+                                            className="text-slate-500 hover:text-white font-bold text-sm disabled:opacity-0 flex-1 text-left transition"
+                                        >
+                                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7" /></svg>
+                                        </button>
                                         <button
                                             disabled={stage === 'Closed'}
                                             onClick={() => moveCard(c._id, STAGES[STAGES.indexOf(stage) + 1])}
-                                            className="text-slate-400 hover:text-blue-600 font-bold text-lg disabled:opacity-20 flex-1 text-right"
-                                        >→</button>
+                                            className="text-slate-500 hover:text-indigo-400 font-bold text-sm disabled:opacity-0 flex-1 text-right transition"
+                                        >
+                                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" /></svg>
+                                        </button>
                                     </div>
                                 </div>
                             ))}
                             {(!board[stage] || board[stage].length === 0) && (
-                                <div className="h-24 border-2 border-dashed border-slate-200 rounded-lg flex items-center justify-center text-slate-300 text-xs font-medium">
-                                    Empty
+                                <div className="h-32 border border-dashed border-white/5 rounded-xl flex items-center justify-center text-slate-600 text-[10px] font-bold uppercase tracking-widest bg-white/[0.01]">
+                                    No Items
                                 </div>
                             )}
                         </div>

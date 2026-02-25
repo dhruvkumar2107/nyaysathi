@@ -15,8 +15,9 @@ const Footer = () => {
                 <div className="flex flex-col lg:flex-row justify-between items-start gap-12 mb-20">
                     <div className="max-w-md">
                         <Link href="/" className="inline-flex items-center gap-3 mb-6 group" aria-label="NyayNow Home">
-                            <div className="h-10 w-10 bg-gradient-to-br from-gold-400 to-yellow-600 rounded-xl flex items-center justify-center text-midnight-950 font-bold text-xl shadow-lg">
-                                N
+                            <div className="relative">
+                                <div className="absolute inset-0 bg-gold-400 blur-[15px] opacity-10 group-hover:opacity-30 transition duration-500"></div>
+                                <Image src="/logo.png" alt="NyayNow Logo" width={40} height={40} className="relative object-contain hover:scale-105 transition duration-300 drop-shadow-[0_0_8px_rgba(212,175,55,0.2)]" />
                             </div>
                             <span className="text-2xl font-bold text-white tracking-tight group-hover:text-gold-400 transition-colors">NyayNow</span>
                         </Link>

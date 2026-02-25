@@ -11,16 +11,17 @@ export default function WorkloadMonitor({ workload }) {
     };
 
     return (
-        <div className="bg-[#0f172a] border border-white/10 rounded-xl p-4 shadow-sm flex items-center justify-between">
+        <div className="bg-[#0f172a] border border-white/5 rounded-2xl p-6 shadow-xl flex items-center justify-between group overflow-hidden relative">
+            <div className="absolute top-0 right-0 w-32 h-32 bg-indigo-500/5 rounded-full -translate-y-1/2 translate-x-1/2 blur-2xl"></div>
             <div>
-                <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1">Current Workload</p>
-                <span className={`px-2 py-1 rounded-md text-xs font-black uppercase tracking-wide ${getStatusColor(workload.status)}`}>
+                <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-500 mb-2">Current Workload</p>
+                <span className={`px-2.5 py-1 rounded-md text-[10px] font-black uppercase tracking-widest ${getStatusColor(workload.status)}`}>
                     {workload.status}
                 </span>
             </div>
-            <div className="text-right">
-                <p className="text-2xl font-black text-white">{workload.activeCases}</p>
-                <p className="text-[10px] text-slate-500 font-medium">Active Cases</p>
+            <div className="text-right flex flex-col items-end">
+                <p className="text-3xl font-black text-white leading-tight">{workload.activeCases}</p>
+                <p className="text-[10px] text-slate-500 font-bold uppercase tracking-widest mt-1">Active Cases</p>
             </div>
         </div>
     );
