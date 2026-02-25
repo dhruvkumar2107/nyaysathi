@@ -156,7 +156,7 @@ export default function LegalSOS() {
             <Navbar />
 
             {/* ── HERO ──────────────────────────────────────────────────────────── */}
-            <div className="relative pt-28 pb-16 px-6 overflow-hidden">
+            <div className="relative pt-40 pb-16 px-6 overflow-hidden">
                 {/* Bloody glow background */}
                 <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[900px] h-[500px] bg-red-900/25 rounded-full blur-[140px] pointer-events-none" />
                 <div className="absolute top-10 right-0 w-[400px] h-[400px] bg-rose-900/15 rounded-full blur-[100px] pointer-events-none" />

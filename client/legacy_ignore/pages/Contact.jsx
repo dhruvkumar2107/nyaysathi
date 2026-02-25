@@ -36,7 +36,7 @@ export default function Contact() {
             <Navbar />
 
             {/* HERO */}
-            <section className="relative pt-32 pb-16 overflow-hidden">
+            <section className="relative pt-36 pb-16 overflow-hidden">
                 <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[900px] h-[500px] bg-indigo-600/8 blur-[140px] rounded-full pointer-events-none" />
                 <div className="absolute top-20 right-0 w-[400px] h-[400px] bg-purple-600/5 blur-[100px] rounded-full pointer-events-none" />
                 <div className="max-w-7xl mx-auto px-6 relative z-10">

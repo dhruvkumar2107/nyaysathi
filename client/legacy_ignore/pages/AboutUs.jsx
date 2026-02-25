@@ -55,7 +55,7 @@ export default function AboutUs() {
             <Navbar />
 
             {/* HERO SECTION */}
-            <section className="relative pt-32 pb-24 overflow-hidden">
+            <section className="relative pt-36 pb-24 overflow-hidden">
                 <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[1000px] h-[600px] bg-indigo-500/10 blur-[120px] pointer-events-none mix-blend-screen" />
                 <div className="absolute top-32 right-0 w-[400px] h-[400px] bg-purple-500/5 blur-[100px] pointer-events-none" />
                 <div className="max-w-5xl mx-auto px-6 text-center relative z-10">

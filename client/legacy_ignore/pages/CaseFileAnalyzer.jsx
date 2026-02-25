@@ -76,7 +76,7 @@ const CaseFileAnalyzer = () => {
         <div className="min-h-screen bg-[#020617] font-sans text-slate-400 selection:bg-indigo-500/30">
             <Navbar />
 
-            <div className="max-w-[1400px] mx-auto px-6 pt-32 pb-20">
+            <div className="max-w-[1400px] mx-auto px-6 pt-40 pb-20">
                 <header className="text-center mb-16">
                     <motion.div initial={{ y: -20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} className="inline-block px-4 py-1.5 rounded-full bg-white/5 border border-white/10 text-indigo-300 text-xs font-bold uppercase tracking-[0.2em] mb-6 shadow-[0_0_15px_rgba(99,102,241,0.2)]">
                         Legal Forensics v2.0

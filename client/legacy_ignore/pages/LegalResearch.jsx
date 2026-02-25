@@ -50,7 +50,7 @@ const LegalResearch = () => {
             <Navbar />
 
             {/* HERO / SEARCH SECTION */}
-            <div className={`transition-all duration-700 ease-in-out ${searched ? 'pt-32 pb-12' : 'min-h-screen flex flex-col justify-center items-center -mt-20'}`}>
+            <div className={`transition-all duration-700 ease-in-out ${searched ? 'pt-36 pb-12' : 'min-h-screen flex flex-col justify-center items-center -mt-20'}`}>
 
                 <div className={`w-full max-w-4xl px-6 relative z-10 ${searched ? '' : 'text-center'}`}>
 

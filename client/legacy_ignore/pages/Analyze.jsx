@@ -61,7 +61,7 @@ export default function Analyze() {
       <Navbar />
 
       {/* HERO */}
-      <section className="relative pt-32 pb-16 overflow-hidden text-center">
+      <section className="relative pt-40 pb-16 overflow-hidden text-center">
         {/* Ambient glow */}
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[900px] h-[400px] bg-indigo-500/15 rounded-full blur-[120px] pointer-events-none" />
         <div className="absolute top-20 right-1/4 w-64 h-64 bg-violet-500/10 rounded-full blur-[80px] pointer-events-none" />

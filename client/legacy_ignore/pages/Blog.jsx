@@ -80,7 +80,7 @@ export default function Blog() {
             <Navbar />
 
             {/* HERO */}
-            <section className="relative pt-32 pb-20 px-6 text-center border-b border-white/5 overflow-hidden">
+            <section className="relative pt-36 pb-20 px-6 text-center border-b border-white/5 overflow-hidden">
                 <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[900px] h-[500px] bg-indigo-900/20 rounded-full blur-[120px] pointer-events-none" />
                 <div className="absolute top-32 right-1/4 w-[300px] h-[300px] bg-purple-800/10 rounded-full blur-[80px] pointer-events-none" />
                 <motion.div

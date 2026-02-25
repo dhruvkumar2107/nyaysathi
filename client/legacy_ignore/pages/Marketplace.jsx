@@ -91,7 +91,7 @@ const MarketplaceContent = () => {
   return (
     <>
       {/* HEADER */}
-      <div className="bg-[#0f172a] text-white pt-32 pb-24 relative overflow-hidden text-center border-b border-white/5">
+      <div className="bg-[#0f172a] text-white pt-40 pb-24 relative overflow-hidden text-center border-b border-white/5">
         <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')] opacity-10 mix-blend-overlay"></div>
         <div className="absolute top-0 w-full h-full bg-gradient-to-b from-[#020617] to-transparent opacity-80 pointer-events-none"></div>
         <div className="container mx-auto px-6 relative z-10">

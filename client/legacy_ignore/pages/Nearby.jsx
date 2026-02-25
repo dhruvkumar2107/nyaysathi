@@ -157,7 +157,7 @@ export default function Nearby() {
         initial={{ x: -100, opacity: 0 }}
         animate={{ x: 0, opacity: 1 }}
         transition={{ duration: 0.5, ease: "circOut" }}
-        className="absolute top-24 left-6 z-[500] w-full max-w-sm h-[calc(100vh-120px)] pointer-events-none"
+        className="absolute top-32 left-6 z-[500] w-full max-w-sm h-[calc(100vh-140px)] pointer-events-none"
       >
         <div className="w-full h-full bg-[#020617]/90 backdrop-blur-xl rounded-[2rem] shadow-2xl border border-white/10 flex flex-col overflow-hidden pointer-events-auto">
           <div className="p-6 border-b border-white/5 bg-gradient-to-r from-white/5 to-transparent">
@@ -202,7 +202,7 @@ export default function Nearby() {
       </motion.div>
 
       {/* AR VIEW TOGGLE (NEW) */}
-      <div className="absolute top-24 right-6 z-[500]">
+      <div className="absolute top-32 right-6 z-[500]">
         <button
           onClick={() => setShowAR(!showAR)}
           className={`flex items-center gap-2 px-6 py-3 rounded-full font-bold shadow-2xl transition-all ${showAR ? 'bg-red-500 text-white animate-pulse' : 'bg-white text-slate-900 hover:bg-indigo-50'}`}

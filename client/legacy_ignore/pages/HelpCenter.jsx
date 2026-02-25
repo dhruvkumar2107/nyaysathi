@@ -61,7 +61,7 @@ export default function HelpCenter() {
             <Navbar />
 
             {/* HERO SEARCH */}
-            <section className="relative pt-32 pb-20 px-6 text-center border-b border-white/5 overflow-hidden">
+            <section className="relative pt-36 pb-20 px-6 text-center border-b border-white/5 overflow-hidden">
                 <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[500px] bg-indigo-900/20 rounded-full blur-[120px] pointer-events-none" />
                 <motion.div
                     initial={{ opacity: 0, y: 20 }}

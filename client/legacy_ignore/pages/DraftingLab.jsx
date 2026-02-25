@@ -1,5 +1,5 @@
 'use client'
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { useSearchParams } from 'next/navigation';
 import axios from 'axios';
@@ -147,7 +147,7 @@ const DraftingLab = () => {
     };
 
     return (
-        <div className="min-h-screen bg-[#020617] text-slate-400 font-sans pb-20 pt-28 px-6 selection:bg-indigo-500/30">
+        <div className="min-h-screen bg-[#020617] text-slate-400 font-sans pb-20 pt-36 px-6 selection:bg-indigo-500/30">
             <Navbar />
             <SubscriptionModal
                 isOpen={showModal}

@@ -65,7 +65,7 @@ export default function Careers() {
             <Navbar />
 
             {/* HERO */}
-            <div className="pt-32 pb-20 px-6 text-center relative overflow-hidden">
+            <div className="pt-40 pb-20 px-6 text-center relative overflow-hidden">
                 <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[500px] bg-indigo-500/8 rounded-full blur-[120px] pointer-events-none" />
                 <div className="relative z-10 max-w-4xl mx-auto">
                     <motion.div

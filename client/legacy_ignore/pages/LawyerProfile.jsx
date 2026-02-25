@@ -50,7 +50,7 @@ export default function LawyerProfile() {
             }
         };
         fetchData();
-    }, [id, user, navigate]);
+    }, [id, user, router]);
 
     const handleConnect = async () => {
         try {
@@ -86,7 +86,7 @@ export default function LawyerProfile() {
             <Navbar />
 
             {/* HEADER HERO */}
-            <div className="relative pt-32 pb-20 px-4 max-w-7xl mx-auto">
+            <div className="relative pt-40 pb-20 px-4 max-w-7xl mx-auto">
                 {/* Background Blobs */}
                 <div className="absolute top-0 right-0 w-[800px] h-[800px] bg-indigo-900/10 rounded-full blur-[120px] pointer-events-none animate-pulse-slow"></div>
                 <div className="absolute top-20 left-0 w-[600px] h-[600px] bg-purple-900/10 rounded-full blur-[120px] pointer-events-none"></div>

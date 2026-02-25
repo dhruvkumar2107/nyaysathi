@@ -221,7 +221,7 @@ const Pricing = () => {
       <Navbar />
 
       {/* ─── HERO ──────────────────────────────────────────── */}
-      <section className="relative pt-36 pb-20 overflow-hidden text-center">
+      <section className="relative pt-40 pb-20 overflow-hidden text-center">
         {/* Background glows */}
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[900px] h-[600px] bg-indigo-500/8 blur-[130px] rounded-full pointer-events-none" />
         <div className="absolute top-40 left-1/4 w-[400px] h-[400px] bg-violet-500/5 blur-[100px] rounded-full pointer-events-none" />

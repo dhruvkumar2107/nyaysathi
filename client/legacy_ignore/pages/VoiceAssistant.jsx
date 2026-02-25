@@ -5,6 +5,7 @@ import Footer from "../../src/components/Footer";
 import { motion, AnimatePresence } from "framer-motion";
 import { Mic, MicOff, Volume2, VolumeX, Sparkles, Zap, MessageCircle, ChevronRight } from "lucide-react";
 import axios from "axios";
+import { toast } from "react-hot-toast";
 
 const SUGGESTED = [
     "What are my rights if a shopkeeper refuses to give a bill?",
@@ -122,7 +123,7 @@ const VoiceAssistant = () => {
                     <div className="absolute top-3/4 left-1/2 w-[300px] h-[300px] bg-cyan-600/8 rounded-full blur-[80px]" />
                 </div>
 
-                <div className="relative z-10 min-h-screen flex flex-col lg:flex-row pt-20">
+                <div className="relative z-10 min-h-screen flex flex-col lg:flex-row pt-28">
 
                     {/* LEFT — ORB + STATUS */}
                     <div className="flex-1 flex flex-col items-center justify-center px-6 py-12 lg:py-0">

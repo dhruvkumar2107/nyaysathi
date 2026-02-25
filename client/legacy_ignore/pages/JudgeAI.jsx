@@ -153,7 +153,7 @@ const JudgeAI = () => {
             <Navbar />
 
             {/* HERO SECTION */}
-            <section className="relative pt-32 pb-20 overflow-hidden">
+            <section className="relative pt-40 pb-20 overflow-hidden">
                 <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[1000px] h-[500px] bg-indigo-500/20 blur-[150px] rounded-full pointer-events-none mix-blend-screen"></div>
 
                 <div className="container mx-auto px-6 relative z-10 text-center">
