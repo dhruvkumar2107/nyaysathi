@@ -376,8 +376,8 @@ export default function CourtroomBattle() {
                         transition={{ delay: 0.1 }}
                         className="text-6xl md:text-8xl font-serif font-black text-white mb-6 leading-[1.05] tracking-tight"
                     >
-                        NyayCourt{' '}
-                        <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-400 via-orange-400 to-red-400 drop-shadow-[0_0_40px_rgba(251,191,36,0.6)]">
+                        NyayCourt<br className="md:hidden" />{' '}
+                        <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-400 via-orange-400 to-red-400 drop-shadow-[0_0_50px_rgba(251,191,36,0.6)]">
                             Battle
                         </span>
                     </motion.h1>
@@ -458,7 +458,7 @@ export default function CourtroomBattle() {
                                     value={caseData.caseTitle}
                                     onChange={e => setCaseData(p => ({ ...p, caseTitle: e.target.value }))}
                                     placeholder="e.g. Sharma vs. Kumar Builders Pvt. Ltd."
-                                    className="w-full bg-[#0a0f1e] border border-white/10 rounded-xl px-5 py-4 text-white placeholder-slate-700 outline-none focus:border-violet-500/40 transition text-base"
+                                    className="w-full bg-[#0a0f1e] !bg-midnight-950 border border-white/10 rounded-xl px-5 py-4 text-white placeholder-slate-700 outline-none focus:border-violet-500/40 transition text-base shadow-inner"
                                 />
                             </div>
 
@@ -479,7 +479,7 @@ export default function CourtroomBattle() {
                                     onChange={e => setCaseData(p => ({ ...p, caseDescription: e.target.value }))}
                                     rows={6}
                                     placeholder="Describe everything. Who did what, when, and why you believe you have a legal case..."
-                                    className="w-full bg-[#0a0f1e] border border-white/10 rounded-2xl px-5 py-4 text-white placeholder-slate-700 resize-none outline-none focus:border-violet-500/40 transition text-base leading-relaxed"
+                                    className="w-full bg-[#0a0f1e] !bg-midnight-950 border border-white/10 rounded-2xl px-5 py-4 text-white placeholder-slate-700 resize-none outline-none focus:border-violet-500/40 transition text-base leading-relaxed shadow-inner"
                                 />
                             </div>
 

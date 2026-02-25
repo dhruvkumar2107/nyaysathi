@@ -2,6 +2,7 @@
 export default {
   content: [
     "./src/**/*.{js,jsx,ts,tsx}",
+    "./legacy_ignore/**/*.{js,jsx,ts,tsx}",
     "./public/**/*.html",
   ],
   theme: {
