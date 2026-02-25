@@ -273,7 +273,7 @@ if (fs.existsSync(clientDist)) {
           <priority>1.0</priority>
         </url>
         <url>
-          <loc>${baseUrl}/marketplace</loc>
+          <loc>${baseUrl}/find-lawyers</loc>
           <changefreq>daily</changefreq>
           <priority>0.9</priority>
         </url>
@@ -344,7 +344,7 @@ if (fs.existsSync(clientDist)) {
         } catch (e) {
           // Fallback to default if DB fails or ID invalid
         }
-      } else if (req.originalUrl === "/marketplace") {
+      } else if (req.originalUrl === "/find-lawyers") {
         title = "Lawyer Marketplace | Find Top Legal Experts - NyayNow";
         description = "Browse and connect with verified lawyers across India. Filter by specialization, location, and experience.";
       } else if (req.originalUrl === "/assistant") {

@@ -11,6 +11,8 @@ const LegalResearch = () => {
     const [results, setResults] = useState([]);
     const [loading, setLoading] = useState(false);
     const [searched, setSearched] = useState(false);
+    const [source, setSource] = useState('Supreme Court');
+    const [dateRange, setDateRange] = useState('Past Year');
 
     const handleSearch = async (e) => {
         e.preventDefault();
@@ -19,7 +21,9 @@ const LegalResearch = () => {
         setLoading(true);
         setSearched(true);
         try {
-            const { data } = await axios.post('/api/ai/legal-research', { query });
+            const token = localStorage.getItem('token');
+            const headers = token ? { Authorization: `Bearer ${token}` } : {};
+            const { data } = await axios.post('/api/ai/legal-research', { query, source, dateRange }, { headers });
 
             if (data.cases) {
                 setResults(data.cases.map(c => ({
@@ -104,8 +108,14 @@ const LegalResearch = () => {
                             </h3>
                             <div className="space-y-2">
                                 {['Supreme Court', 'High Courts', 'Tribunals', 'Acts & Statutes'].map(f => (
-                                    <label key={f} className="flex items-center gap-3 text-slate-400 hover:text-white cursor-pointer group">
-                                        <div className="w-4 h-4 rounded border border-slate-600 group-hover:border-cyan-400 transition flex items-center justify-center"></div>
+                                    <label
+                                        key={f}
+                                        onClick={() => setSource(f)}
+                                        className={`flex items-center gap-3 cursor-pointer group transition-colors ${source === f ? 'text-cyan-400' : 'text-slate-400 hover:text-white'}`}
+                                    >
+                                        <div className={`w-4 h-4 rounded border transition-colors flex items-center justify-center ${source === f ? 'border-cyan-400 bg-cyan-400/20' : 'border-slate-600 group-hover:border-cyan-400'}`}>
+                                            {source === f && <div className="w-1.5 h-1.5 bg-cyan-400 rounded-full" />}
+                                        </div>
                                         {f}
                                     </label>
                                 ))}
@@ -115,8 +125,14 @@ const LegalResearch = () => {
                             <h3 className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-4">Date Range</h3>
                             <div className="space-y-2">
                                 {['Past Year', 'Past 5 Years', 'Past 10 Years', 'Legacy (< 2000)'].map(f => (
-                                    <label key={f} className="flex items-center gap-3 text-slate-400 hover:text-white cursor-pointer group">
-                                        <div className="w-4 h-4 rounded border border-slate-600 group-hover:border-cyan-400 transition flex items-center justify-center"></div>
+                                    <label
+                                        key={f}
+                                        onClick={() => setDateRange(f)}
+                                        className={`flex items-center gap-3 cursor-pointer group transition-colors ${dateRange === f ? 'text-indigo-400' : 'text-slate-400 hover:text-white'}`}
+                                    >
+                                        <div className={`w-4 h-4 rounded border transition-colors flex items-center justify-center ${dateRange === f ? 'border-indigo-400 bg-indigo-400/20' : 'border-slate-600 group-hover:border-indigo-400'}`}>
+                                            {dateRange === f && <div className="w-1.5 h-1.5 bg-indigo-400 rounded-full" />}
+                                        </div>
                                         {f}
                                     </label>
                                 ))}

@@ -25,20 +25,32 @@ const VoiceAssistant = () => {
     const historyEndRef = useRef(null);
 
     useEffect(() => {
-        if ("webkitSpeechRecognition" in window || "SpeechRecognition" in window) {
-            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        if (SpeechRecognition) {
             recognitionRef.current = new SpeechRecognition();
             recognitionRef.current.continuous = false;
             recognitionRef.current.interimResults = true;
 
             recognitionRef.current.onresult = (event) => {
-                const t = Array.from(event.results).map(r => r[0].transcript).join("");
+                const t = Array.from(event.results)
+                    .map(r => r[0].transcript)
+                    .join("");
                 setTranscript(t);
             };
 
             recognitionRef.current.onend = () => {
                 setIsListening(false);
             };
+
+            recognitionRef.current.onerror = (event) => {
+                console.error("Speech Recognition Error:", event.error);
+                setIsListening(false);
+                if (event.error === 'not-allowed') {
+                    toast.error("Microphone access denied. Please enable it in your browser.");
+                }
+            };
+        } else {
+            console.warn("Speech Recognition not supported in this browser.");
         }
     }, []);
 

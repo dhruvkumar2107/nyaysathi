@@ -442,14 +442,14 @@ export default function Home() {
 
               <div className="flex flex-col sm:flex-row gap-4">
                 <Link
-                  to="/courtroom-battle"
+                  href="/courtroom-battle"
                   className="group relative flex items-center justify-center gap-3 px-8 py-5 rounded-2xl bg-gradient-to-r from-amber-500 via-orange-500 to-red-500 text-white font-black text-base tracking-wide shadow-[0_0_50px_rgba(245,158,11,0.35)] hover:shadow-[0_0_80px_rgba(245,158,11,0.55)] transition-all duration-300 overflow-hidden active:scale-95"
                 >
                   ⚖️ Start AI Trial Now
                   <div className="absolute inset-0 bg-white/10 translate-y-full group-hover:translate-y-0 transition-transform duration-300" />
                 </Link>
                 <Link
-                  to="/courtroom-battle"
+                  href="/courtroom-battle"
                   className="flex items-center justify-center gap-2 px-8 py-5 rounded-2xl bg-white/5 border border-white/10 text-slate-300 font-bold text-base hover:bg-white/10 transition active:scale-95"
                 >
                   See how it works →
@@ -518,7 +518,7 @@ export default function Home() {
                   Predict win probability, identify risks, and formulate a ruthless winning strategy.
                 </p>
 
-                <Link to="/judge-ai" className="px-8 py-3 rounded-xl bg-red-50 text-red-600 border border-red-100 font-bold hover:bg-red-600 hover:text-white transition-all uppercase tracking-wider text-sm mt-auto">
+                <Link href="/judge-ai" className="px-8 py-3 rounded-xl bg-red-50 text-red-600 border border-red-100 font-bold hover:bg-red-600 hover:text-white transition-all uppercase tracking-wider text-sm mt-auto">
                   Launch Strategist
                 </Link>
               </div>
@@ -552,7 +552,7 @@ export default function Home() {
                   Get instant legal opinions, research complex topics, and draft notices conversationally.
                 </p>
 
-                <Link to="/assistant" className="px-8 py-3 rounded-xl bg-cyan-50 text-cyan-600 border border-cyan-100 font-bold hover:bg-cyan-600 hover:text-white transition-all uppercase tracking-wider text-sm mt-auto">
+                <Link href="/assistant" className="px-8 py-3 rounded-xl bg-cyan-50 text-cyan-600 border border-cyan-100 font-bold hover:bg-cyan-600 hover:text-white transition-all uppercase tracking-wider text-sm mt-auto">
                   Start Consultation
                 </Link>
               </div>
@@ -599,7 +599,7 @@ export default function Home() {
               desc="Gain direct access to the top 1% of India's legal minds. Our verified network connects you with expert advocates and legal consultants for high-stakes litigation and specialized advisory."
               icon={<Users className="text-white" size={18} />}
               color="from-amber-400 via-orange-500 to-red-500"
-              href="/marketplace"
+              href="/find-lawyers"
               badge="Exclusive"
               className="md:col-span-4"
               isLarge={false}

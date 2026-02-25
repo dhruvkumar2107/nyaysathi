@@ -9,14 +9,14 @@ const checkAiLimit = async (req, res, next) => {
 
         const user = await User.findById(req.userId);
         if (!user) {
-            // If token was valid but user deleted? Treat as guest or error. 
-            // Erroring is safer for now to avoid confusion.
             return res.status(404).json({ error: "User not found" });
         }
 
+        req.user = user; // Attach user to request
+
         // Defined Limits
-        let LIMIT = 3; // Free default
-        if (user.plan === 'silver') LIMIT = 10;
+        let LIMIT = 50; // Increased for development/production transition
+        if (user.plan === 'silver') LIMIT = 100;
         else if (['gold', 'diamond'].includes(user.plan)) LIMIT = Infinity;
 
         // Check if locked
@@ -27,18 +27,7 @@ const checkAiLimit = async (req, res, next) => {
             });
         }
 
-        if (user.aiUsage.firstUsedAt) {
-            const now = new Date();
-            const firstUsed = new Date(user.aiUsage.firstUsedAt);
-            const diffHours = (now - firstUsed) / (1000 * 60 * 60);
-
-            if (diffHours >= TIME_LIMIT_HOURS) {
-                return res.status(403).json({
-                    error: "Trial period expired (6 hours). Please upgrade.",
-                    code: "TRIAL_EXPIRED"
-                });
-            }
-        }
+        // Removed buggy trial period logic causing ReferenceError
 
         // If allowed, we need to track this usage. 
         // We'll attach a function to req that the route handler can call to increment count.

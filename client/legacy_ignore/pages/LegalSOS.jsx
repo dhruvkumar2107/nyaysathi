@@ -1,5 +1,5 @@
-'use client'
 import React, { useState, useRef } from 'react';
+import { Mic } from 'lucide-react';
 import Navbar from '../../src/components/Navbar';
 import Footer from '../../src/components/Footer';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -52,6 +52,23 @@ export default function LegalSOS() {
     const [firDetails, setFirDetails] = useState({ name: '', date: '', place: '', against: '' });
     const [loading, setLoading] = useState(false);
     const [firLoading, setFirLoading] = useState(false);
+    const recognitionRef = useRef(null);
+
+    const startVoiceInput = () => {
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        if (!SpeechRecognition) {
+            toast.error("Speech recognition not supported.");
+            return;
+        }
+        if (!recognitionRef.current) {
+            recognitionRef.current = new SpeechRecognition();
+            recognitionRef.current.continuous = false;
+            recognitionRef.current.interimResults = true;
+            recognitionRef.current.onresult = (e) => setSituation(e.results[0][0].transcript);
+        }
+        recognitionRef.current.start();
+        toast.success("Listening...");
+    };
     const [copied, setCopied] = useState(false);
     const textRef = useRef(null);
 
@@ -290,16 +307,21 @@ export default function LegalSOS() {
 
                             {/* Situation description */}
                             <div>
-                                <h2 className="text-white font-bold text-xl mb-4 flex items-center gap-2">
-                                    <AlertTriangle size={20} className="text-amber-400" />
-                                    Describe What's Happening
-                                </h2>
+                                <div className="flex justify-between items-center mb-4">
+                                    <h2 className="text-white font-bold text-xl flex items-center gap-2">
+                                        <AlertTriangle size={20} className="text-amber-400" />
+                                        Describe What's Happening
+                                    </h2>
+                                    <button onClick={startVoiceInput} className="text-slate-500 hover:text-red-400 transition flex items-center gap-1 text-[10px] font-bold uppercase tracking-wider">
+                                        <Mic size={14} /> Tap to Speak
+                                    </button>
+                                </div>
                                 <textarea
                                     value={situation}
                                     onChange={(e) => setSituation(e.target.value)}
                                     rows={5}
-                                    placeholder="e.g. Police came to my house at 10 PM claiming I'm involved in a fraud case. They did not show any warrant and want to take me to the station..."
-                                    className="w-full bg-white/[0.04] border border-white/10 rounded-2xl p-5 text-white placeholder-slate-600 resize-none outline-none focus:border-red-500/50 focus:shadow-[0_0_20px_rgba(239,68,68,0.1)] transition text-base leading-relaxed"
+                                    placeholder="e.g. Police came to my house at 10 PM claiming I'm involved in a fraud case..."
+                                    className="w-full bg-[#0a0f1e] border border-white/10 rounded-2xl p-5 text-white placeholder-slate-700 resize-none outline-none focus:border-red-500/50 focus:shadow-[0_0_20px_rgba(239,68,68,0.1)] transition text-base leading-relaxed"
                                 />
                                 <p className="text-slate-600 text-xs mt-2 text-right">{situation.length} / 2000 characters</p>
                             </div>
@@ -534,7 +556,7 @@ export default function LegalSOS() {
                             {/* Bottom CTA */}
                             <div className="grid md:grid-cols-2 gap-4">
                                 <a
-                                    href="/marketplace"
+                                    href="/find-lawyers"
                                     className="flex items-center justify-center gap-3 py-4 rounded-2xl bg-gradient-to-r from-indigo-600/80 to-purple-600/80 border border-indigo-500/30 text-white font-bold hover:opacity-90 transition shadow-[0_0_25px_rgba(99,102,241,0.2)] text-base"
                                 >
                                     <Scale size={20} /> Connect with a Verified Lawyer
@@ -555,6 +577,6 @@ export default function LegalSOS() {
                 </AnimatePresence>
             </div>
             <Footer />
-        </div>
+        </div >
     );
 }

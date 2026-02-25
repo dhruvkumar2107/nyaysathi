@@ -1,0 +1,31 @@
+On branch main
+Your branch is up to date with 'origin/main'.
+
+Changes not staged for commit:
+  (use "git add/rm <file>..." to update what will be committed)
+  (use "git restore <file>..." to discard changes in working directory)
+	modified:   client/legacy_ignore/pages/CourtroomBattle.jsx
+	modified:   client/legacy_ignore/pages/DraftingLab.jsx
+	modified:   client/legacy_ignore/pages/Home.jsx
+	modified:   client/legacy_ignore/pages/LegalResearch.jsx
+	modified:   client/legacy_ignore/pages/LegalSOS.jsx
+	modified:   client/legacy_ignore/pages/MootCourt.jsx
+	modified:   client/legacy_ignore/pages/VoiceAssistant.jsx
+	deleted:    client/src/app/marketplace/layout.js
+	deleted:    client/src/app/marketplace/page.js
+	modified:   client/src/components/Footer.jsx
+	modified:   client/src/components/Navbar.jsx
+	modified:   client/src/components/home/BentoGrid.jsx
+	modified:   server/index.js
+	modified:   server/middleware/checkAiLimit.js
+	modified:   server/routes/ai.js
+
+Untracked files:
+  (use "git add <file>..." to include in what will be committed)
+	client/src/app/find-lawyers/
+	git_branch_antigravity.txt
+	git_remote_antigravity.txt
+	git_status_antigravity.txt
+	git_status_ascii.txt
+
+no changes added to commit (use "git add" and/or "git commit -a")

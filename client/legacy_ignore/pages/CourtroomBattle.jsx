@@ -265,6 +265,33 @@ export default function CourtroomBattle() {
     const [activeRound, setActiveRound] = useState(-1);
     const [shownRounds, setShownRounds] = useState([]);
     const bottomRef = useRef(null);
+    const recognitionRef = useRef(null);
+
+    const startVoiceInput = (field) => {
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        if (!SpeechRecognition) {
+            toast.error("Speech recognition not supported in this browser.");
+            return;
+        }
+        if (!recognitionRef.current) {
+            recognitionRef.current = new SpeechRecognition();
+            recognitionRef.current.continuous = false;
+            recognitionRef.current.interimResults = true;
+        }
+
+        recognitionRef.current.onresult = (event) => {
+            const transcript = Array.from(event.results).map(r => r[0].transcript).join("");
+            setCaseData(prev => ({ ...prev, [field]: transcript }));
+        };
+
+        recognitionRef.current.onerror = (err) => {
+            console.error("Speech error:", err);
+            toast.error("Voice input failed. Please try manual typing.");
+        };
+
+        recognitionRef.current.start();
+        toast.success("Listening... Speak now.");
+    };
 
     // Progressive round reveal
     useEffect(() => {
@@ -297,14 +324,17 @@ export default function CourtroomBattle() {
         if (!caseData.caseDescription.trim()) return;
         setPhase('loading');
         try {
-            const { data } = await axios.post('/api/ai/courtroom-battle', caseData);
+            const token = localStorage.getItem('token');
+            const headers = token ? { Authorization: `Bearer ${token}` } : {};
+            const { data } = await axios.post('/api/ai/courtroom-battle', caseData, { headers });
             setResult(data);
             setPhase('trial');
             setShownRounds([]);
             setActiveRound(-1);
         } catch (err) {
-            toast.error('Court session failed. Please try again.');
+            console.error("Court Battle Submission Error:", err);
             setPhase('input');
+            toast.error(err.response?.data?.error || "Unable to reach the high court. Please try again.");
         }
     };
 
@@ -428,21 +458,28 @@ export default function CourtroomBattle() {
                                     value={caseData.caseTitle}
                                     onChange={e => setCaseData(p => ({ ...p, caseTitle: e.target.value }))}
                                     placeholder="e.g. Sharma vs. Kumar Builders Pvt. Ltd."
-                                    className="w-full bg-white/[0.04] border border-white/10 rounded-xl px-5 py-4 text-white placeholder-slate-700 outline-none focus:border-violet-500/40 transition text-base"
+                                    className="w-full bg-[#0a0f1e] border border-white/10 rounded-xl px-5 py-4 text-white placeholder-slate-700 outline-none focus:border-violet-500/40 transition text-base"
                                 />
                             </div>
 
                             {/* Facts */}
                             <div>
-                                <label className="block text-white font-bold text-base mb-2 flex items-center gap-2">
-                                    <BookOpen size={18} className="text-amber-400" /> Facts of the Case <span className="text-red-400">*</span>
+                                <label className="block text-white font-bold text-base mb-2 flex items-center justify-between gap-2">
+                                    <span className="flex items-center gap-2"><BookOpen size={18} className="text-amber-400" /> Facts of the Case <span className="text-red-400">*</span></span>
+                                    {/* Voice Trigger */}
+                                    <button
+                                        onClick={() => startVoiceInput('caseDescription')}
+                                        className="text-slate-500 hover:text-indigo-400 transition flex items-center gap-1 text-[10px] font-bold uppercase tracking-wider"
+                                    >
+                                        <Mic2 size={14} /> Tap to Speak
+                                    </button>
                                 </label>
                                 <textarea
                                     value={caseData.caseDescription}
                                     onChange={e => setCaseData(p => ({ ...p, caseDescription: e.target.value }))}
                                     rows={6}
-                                    placeholder="Describe everything. Who did what, when, and why you believe you have a legal case. The more details, the better the AI trial will be..."
-                                    className="w-full bg-white/[0.04] border border-white/10 rounded-2xl px-5 py-4 text-white placeholder-slate-700 resize-none outline-none focus:border-violet-500/40 transition text-base leading-relaxed"
+                                    placeholder="Describe everything. Who did what, when, and why you believe you have a legal case..."
+                                    className="w-full bg-[#0a0f1e] border border-white/10 rounded-2xl px-5 py-4 text-white placeholder-slate-700 resize-none outline-none focus:border-violet-500/40 transition text-base leading-relaxed"
                                 />
                             </div>
 
@@ -454,8 +491,8 @@ export default function CourtroomBattle() {
                                         rows={3}
                                         value={caseData.plaintiffSide}
                                         onChange={e => setCaseData(p => ({ ...p, plaintiffSide: e.target.value }))}
-                                        placeholder="What do you want? What's your legal claim?"
-                                        className="w-full bg-white/[0.03] border border-amber-500/20 rounded-xl px-4 py-3 text-white placeholder-slate-700 resize-none outline-none focus:border-amber-500/40 transition text-sm"
+                                        placeholder="What do you want?"
+                                        className="w-full bg-[#0a0f1e] border border-amber-500/20 rounded-xl px-4 py-3 text-white placeholder-slate-700 resize-none outline-none focus:border-amber-500/40 transition text-sm"
                                     />
                                 </div>
                                 <div>
@@ -465,7 +502,7 @@ export default function CourtroomBattle() {
                                         value={caseData.defenseSide}
                                         onChange={e => setCaseData(p => ({ ...p, defenseSide: e.target.value }))}
                                         placeholder="What argument might the other side make?"
-                                        className="w-full bg-white/[0.03] border border-indigo-500/20 rounded-xl px-4 py-3 text-white placeholder-slate-700 resize-none outline-none focus:border-indigo-500/40 transition text-sm"
+                                        className="w-full bg-[#0a0f1e] border border-indigo-500/20 rounded-xl px-4 py-3 text-white placeholder-slate-700 resize-none outline-none focus:border-indigo-500/40 transition text-sm"
                                     />
                                 </div>
                             </div>
@@ -570,15 +607,43 @@ export default function CourtroomBattle() {
                                 </button>
                             </div>
 
-                            {/* VS Bar */}
-                            <div className="flex items-center gap-3">
-                                <div className="flex-1 h-px bg-gradient-to-r from-amber-500/30 to-transparent" />
-                                <div className="flex items-center gap-4">
-                                    <span className="text-amber-400 font-black text-sm">PROSECUTION</span>
-                                    <span className="text-slate-600 font-serif text-xl">vs.</span>
-                                    <span className="text-indigo-400 font-black text-sm">DEFENSE</span>
+                            {/* VS Bar & Live Persuasion Indicator */}
+                            <div className="space-y-4">
+                                <div className="flex items-center gap-3">
+                                    <div className="flex-1 h-px bg-gradient-to-r from-amber-500/30 to-transparent" />
+                                    <div className="flex items-center gap-4">
+                                        <span className="text-amber-400 font-black text-sm">PROSECUTION</span>
+                                        <span className="text-slate-600 font-serif text-xl">vs.</span>
+                                        <span className="text-indigo-400 font-black text-sm">DEFENSE</span>
+                                    </div>
+                                    <div className="flex-1 h-px bg-gradient-to-l from-indigo-500/30 to-transparent" />
                                 </div>
-                                <div className="flex-1 h-px bg-gradient-to-l from-indigo-500/30 to-transparent" />
+
+                                {/* LIVE PERSUASION BAR */}
+                                <div className="bg-white/[0.02] border border-white/5 rounded-2xl p-4">
+                                    <div className="flex justify-between text-[10px] font-black uppercase tracking-widest mb-2 opacity-60">
+                                        <span className="text-amber-400 flex items-center gap-1"><Sparkles size={10} /> Persuasion Level</span>
+                                        <span className="text-indigo-400 flex items-center gap-1">Argument Strength <Sparkles size={10} /></span>
+                                    </div>
+                                    <div className="h-2 bg-white/5 rounded-full overflow-hidden border border-white/5 relative">
+                                        <motion.div
+                                            className="absolute inset-y-0 left-0 bg-gradient-to-r from-amber-500 to-amber-600"
+                                            animate={{ width: `${(result.verdict?.win_probability_plaintiff || 50)}%` }}
+                                            transition={{ duration: 2 }}
+                                        />
+                                        <motion.div
+                                            className="absolute inset-y-0 right-0 bg-gradient-to-l from-indigo-500 to-indigo-600"
+                                            animate={{ width: `${100 - (result.verdict?.win_probability_plaintiff || 50)}%` }}
+                                            transition={{ duration: 2 }}
+                                        />
+                                        {/* Center indicator */}
+                                        <motion.div
+                                            className="absolute top-0 bottom-0 w-1 bg-white shadow-[0_0_10px_white] z-10"
+                                            animate={{ left: `${(result.verdict?.win_probability_plaintiff || 50)}%` }}
+                                            transition={{ duration: 2 }}
+                                        />
+                                    </div>
+                                </div>
                             </div>
 
                             {/* Rounds */}

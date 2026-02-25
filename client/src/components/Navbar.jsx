@@ -57,7 +57,7 @@ export default function Navbar() {
     {
       label: "Network",
       items: [
-        { name: "Marketplace", href: "/marketplace", desc: "Verified Lawyers", icon: <Users className="text-gold-400" size={20} /> },
+        { name: "Find Lawyers", href: "/find-lawyers", desc: "Verified Lawyers", icon: <Users className="text-gold-400" size={20} /> },
         { name: "Nearby Help", href: "/nearby", desc: "Courts & Police", icon: <MapPin className="text-red-400" size={20} /> },
         { name: "Consultations", href: "/messages", desc: "Secure Video Calls", icon: <Video className="text-teal-400" size={20} /> },
         { name: "Pricing", href: "/pricing", desc: "Pro Plans", icon: <DollarSign className="text-green-400" size={20} /> },

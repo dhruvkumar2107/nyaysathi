@@ -55,7 +55,7 @@ const Footer = () => {
                         <FooterLink href="/judge-ai">Judge AI <span className="text-[10px] text-indigo-200 bg-indigo-500/20 px-1.5 py-0.5 rounded ml-2 font-bold">New</span></FooterLink>
                         <FooterLink href="/voice-assistant">NyayVoice</FooterLink>
                         <FooterLink href="/moot-court">Moot Court VR</FooterLink>
-                        <FooterLink href="/marketplace">Find Lawyers</FooterLink>
+                        <FooterLink href="/find-lawyers">Find Lawyers</FooterLink>
                     </FooterColumn>
 
                     <FooterColumn title="Resources">
@@ -96,14 +96,14 @@ const Footer = () => {
                     <p className="text-slate-500 text-sm font-medium">
                         © {new Date().getFullYear()} NyayNow Legal Tech Pvt Ltd. All rights reserved.
                     </p>
-                    <div className="flex gap-8 text-xs font-bold uppercase tracking-wider text-slate-400">
-                        <span className="flex items-center gap-2 hover:text-emerald-600 cursor-pointer transition">
+                    <div className="flex gap-8 text-xs font-bold uppercase tracking-wider text-slate-500">
+                        <span className="flex items-center gap-2 hover:text-emerald-500 cursor-pointer transition">
                             <span className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></span>
                             All Systems Operational
                         </span>
-                        <span className="hover:text-slate-900 cursor-pointer transition">Status</span>
-                        <span className="hover:text-slate-900 cursor-pointer transition">Twitter</span>
-                        <span className="hover:text-slate-900 cursor-pointer transition">Github</span>
+                        <span className="hover:text-slate-200 cursor-pointer transition">Status</span>
+                        <span className="hover:text-slate-200 cursor-pointer transition">Twitter</span>
+                        <span className="hover:text-slate-200 cursor-pointer transition">Github</span>
                     </div>
                 </div>
 
@@ -130,7 +130,7 @@ const FooterLink = ({ href, children }) => (
 );
 
 const SocialIcon = ({ path, label }) => (
-    <a href="#" className="w-10 h-10 rounded-full bg-slate-50 border border-slate-200 flex items-center justify-center text-slate-400 hover:bg-indigo-600 hover:text-white hover:border-indigo-600 transition-all duration-300 shadow-sm" aria-label={label}>
+    <a href="#" className="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-slate-400 hover:bg-indigo-600 hover:text-white hover:border-indigo-600 transition-all duration-300 shadow-sm" aria-label={label}>
         <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">{path}</svg>
     </a>
 );

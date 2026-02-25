@@ -18,11 +18,10 @@ if (!process.env.GEMINI_API_KEY) {
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || "missing_key");
 
 // Helper for Model Fallback
-// Helper for Model Fallback
 async function generateWithFallback(prompt) {
   const modelsToTry = [
+    "gemini-1.5-flash",    // High-speed fallback (often more reliable in current env)
     "gemini-1.5-pro",      // Primary (High Intelligence)
-    "gemini-1.5-flash",    // High-speed Fallback
     "gemini-pro"           // Legacy Fallback
   ];
 
@@ -48,22 +47,23 @@ async function generateWithFallback(prompt) {
 
   for (const modelName of modelsToTry) {
     try {
-      console.log(`Attempting AI with model: ${modelName}`);
+      console.log(`🔍 Attempting AI with model: ${modelName}`);
       const model = genAI.getGenerativeModel({
         model: modelName,
         systemInstruction: SYSTEM_PROMPT
       });
       const result = await model.generateContent(prompt);
-      return result; // Success
+      if (result && result.response) {
+        return result; // Success
+      }
+      throw new Error("Empty response from model");
     } catch (e) {
-      console.error(`❌ Model ${modelName} failed:`, e.message);
+      console.warn(`⚠️ Model ${modelName} failed:`, e.message);
       errors.push(`${modelName}: ${e.message}`);
-      // Loop continues to next model...
     }
   }
 
-  // Throw explicit error for the catch block below
-  throw new Error(errors.join(" | ") || "AI Service Unavailable");
+  throw new Error(`AI Service Unavailable: ${errors.join(" | ")}`);
 }
 
 /* ---------------- AI ASSISTANT (CHAT) ---------------- */
@@ -195,8 +195,8 @@ router.post("/agreement", verifyTokenOptional, checkAiLimit, async (req, res) =>
 
     const analysisData = JSON.parse(cleaned);
 
-    // PAYWALL LOGIC
-    if (req.user.plan === 'free') {
+    // PAYWALL LOGIC (Safe for guests)
+    if (req.user && req.user.plan === 'free') {
       analysisData.riskLevel = "🔒 Upgrade to Unlock";
       analysisData.missingClauses = ["🔒 Upgrade to view missing clauses"];
       analysisData.ambiguousClauses = ["🔒 Upgrade to view ambiguous clauses"];
@@ -565,21 +565,23 @@ router.post("/moot-court", verifyTokenOptional, checkAiLimit, async (req, res) =
 /* ---------------- LEGAL RESEARCH (SEMANTIC SEARCH) ---------------- */
 router.post("/legal-research", verifyTokenOptional, checkAiLimit, async (req, res) => {
   try {
-    const { query } = req.body;
+    const { query, source, dateRange } = req.body;
     if (!query) return res.status(400).json({ error: "Query required." });
 
     const prompt = `
       ACT AS A LEGAL RESEARCHER FOR THE SUPREME COURT OF INDIA.
       
       USER QUERY: "${query}"
+      RESEARCH SCOPE: ${source || "All Indian Courts"}
+      DATE RANGE FILTER: ${dateRange || "All Time"}
       
       TASK:
-      1. Identify core legal issues.
-      2. Find 3-5 RELEVANT cases (Prioritize BNS 2024 context).
+      1. Identify core legal issues related to the query within the specified scope.
+      2. Find 3-5 RELEVANT cases (Prioritize BNS 2024 context if applicable).
       3. For each case, provide:
          - Case Name & Citation
          - Ratio Decidendi
-         - Relevance.
+         - Relevance to the specified scope and date range.
       
       OUTPUT JSON STRICTLY:
       {
@@ -1069,6 +1071,13 @@ Generate this notice with complete professional legal language, proper recitals,
     res.status(500).json({ error: "Failed to generate legal notice. Please try again." });
   }
 });
+
+// STABILITY FIX: Ensure extractSections handles empty input
+function extractSections(text) {
+  if (!text) return [];
+  const matches = text.match(/(?:Section|Article|Order|Rule)\s+[\w\s,\/]+(?:of\s+the\s+[\w\s]+)?/gi) || [];
+  return [...new Set(matches)].slice(0, 3);
+}
 
 module.exports = router;
 

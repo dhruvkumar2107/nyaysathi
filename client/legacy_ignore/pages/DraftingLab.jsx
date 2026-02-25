@@ -6,7 +6,7 @@ import axios from 'axios';
 import toast from 'react-hot-toast';
 import ReactMarkdown from 'react-markdown';
 import SubscriptionModal from '../../src/components/SubscriptionModal';
-import { FileText, Search, Zap, AlertTriangle, CheckCircle, Download } from 'lucide-react';
+import { FileText, Search, Zap, AlertTriangle, CheckCircle, Download, Mic } from 'lucide-react';
 import Navbar from '../../src/components/Navbar';
 import Footer from '../../src/components/Footer';
 
@@ -25,6 +25,34 @@ const DraftingLab = () => {
     // ANALYSIS STATE
     const [analysisText, setAnalysisText] = useState('');
     const [analysisResult, setAnalysisResult] = useState(null);
+    const recognitionRef = useRef(null);
+
+    const startVoiceInput = (field) => {
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        if (!SpeechRecognition) {
+            toast.error("Speech recognition not supported in this browser.");
+            return;
+        }
+        if (!recognitionRef.current) {
+            recognitionRef.current = new SpeechRecognition();
+            recognitionRef.current.continuous = false;
+            recognitionRef.current.interimResults = true;
+        }
+
+        recognitionRef.current.onresult = (event) => {
+            const transcript = Array.from(event.results).map(r => r[0].transcript).join("");
+            if (activeTab === 'draft') setTerms(transcript);
+            else setAnalysisText(transcript);
+        };
+
+        recognitionRef.current.onerror = (err) => {
+            console.error("Speech error:", err);
+            toast.error("Voice input failed.");
+        };
+
+        recognitionRef.current.start();
+        toast.success("Listening...");
+    };
 
     /* ---------------- FREE TRIAL LOGIC ---------------- */
     const [showModal, setShowModal] = useState(false);
@@ -205,7 +233,12 @@ const DraftingLab = () => {
                                         />
                                     </div>
                                     <div className="space-y-2">
-                                        <label className="text-xs font-bold text-slate-400 uppercase tracking-wider">Key Terms / Instructions</label>
+                                        <label className="text-xs font-bold text-slate-400 uppercase tracking-wider flex justify-between items-center">
+                                            <span>Key Terms / Instructions</span>
+                                            <button type="button" onClick={() => startVoiceInput('terms')} className="text-slate-500 hover:text-indigo-400 transition flex items-center gap-1">
+                                                <Mic size={14} /> Tap to Speak
+                                            </button>
+                                        </label>
                                         <textarea
                                             value={terms}
                                             onChange={(e) => setTerms(e.target.value)}
@@ -231,7 +264,12 @@ const DraftingLab = () => {
                             ) : (
                                 <div className="space-y-6">
                                     <div className="space-y-2">
-                                        <label className="text-xs font-bold text-slate-400 uppercase tracking-wider">Paste Contract Text</label>
+                                        <label className="text-xs font-bold text-slate-400 uppercase tracking-wider flex justify-between items-center">
+                                            <span>Paste Contract Text</span>
+                                            <button type="button" onClick={() => startVoiceInput('analysisText')} className="text-slate-500 hover:text-emerald-400 transition flex items-center gap-1">
+                                                <Mic size={14} /> Tap to Speak
+                                            </button>
+                                        </label>
                                         <textarea
                                             value={analysisText}
                                             onChange={(e) => setAnalysisText(e.target.value)}

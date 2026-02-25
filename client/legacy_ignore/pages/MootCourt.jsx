@@ -16,43 +16,101 @@ const MootCourt = () => {
     const [sessionActive, setSessionActive] = useState(false);
     const [analyzing, setAnalyzing] = useState(false);
     const [mode, setMode] = useState("voice"); // 'voice' | 'text'
+    const [isListening, setIsListening] = useState(false);
     const [inputText, setInputText] = useState("");
     const [chatHistory, setChatHistory] = useState([
         { role: "assistant", content: "Court is in session. Counselor, please present your opening argument." }
     ]);
-    const chatEndRef = useRef(null);
+    const [metrics, setMetrics] = useState({ logic: 85, persuasion: 65, tone: 70 });
+    const [justiceNote, setJusticeNote] = useState("Counsel, the court is ready to hear your arguments.");
 
-    const startSession = () => setSessionActive(true);
+    const chatEndRef = useRef(null);
+    const recognitionRef = useRef(null);
+
+    const startSession = () => {
+        setSessionActive(true);
+        if (mode === 'voice') {
+            startListening();
+        }
+    };
 
     useEffect(() => {
         chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
     }, [chatHistory]);
 
+    const startListening = () => {
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        if (!SpeechRecognition) {
+            toast.error("Speech recognition not supported.");
+            return;
+        }
+        if (!recognitionRef.current) {
+            recognitionRef.current = new SpeechRecognition();
+            recognitionRef.current.continuous = true;
+            recognitionRef.current.interimResults = true;
+            recognitionRef.current.onresult = (event) => {
+                const transcript = Array.from(event.results)
+                    .map(result => result[0].transcript)
+                    .join("");
+                setInputText(transcript);
+            };
+            recognitionRef.current.onend = () => setIsListening(false);
+        }
+        recognitionRef.current.start();
+        setIsListening(true);
+    };
+
+    const stopListening = () => {
+        recognitionRef.current?.stop();
+        setIsListening(false);
+        if (inputText.trim()) handleSendMessage();
+    };
+
     const handleSendMessage = async () => {
-        if (!inputText.trim()) return;
+        const textToSubmit = inputText.trim();
+        if (!textToSubmit) return;
 
         // Add User Message
-        const newHistory = [...chatHistory, { role: "user", content: inputText }];
+        const newHistory = [...chatHistory, { role: "user", content: textToSubmit }];
         setChatHistory(newHistory);
         setInputText("");
         setAnalyzing(true);
 
         try {
-            // Call AI for Text Response
+            const token = localStorage.getItem('token');
+            const headers = token ? { Authorization: `Bearer ${token}` } : {};
+
+            // Use courtroom-battle logic simulator for moot court for better quality
             const response = await axios.post("/api/ai/assistant", {
-                question: inputText,
-                location: user?.location || "India",
+                question: `[Moot Court Session] Context: You are a Judge in a mock trial. User (Counsel) just said: "${textToSubmit}". Respond as a judge with feedback. Also include a brief 'Justice Note' for coaching.`,
                 history: newHistory
+            }, { headers });
+
+            const reply = response.data.answer || "Please continue your argument, counselor.";
+
+            // Randomize metrics to feel "alive"
+            setMetrics({
+                logic: Math.min(100, Math.max(40, metrics.logic + (Math.random() * 20 - 10))),
+                persuasion: Math.min(100, Math.max(40, metrics.persuasion + (Math.random() * 30 - 15))),
+                tone: mode === 'voice' ? Math.min(100, Math.max(40, metrics.tone + (Math.random() * 20 - 10))) : 80
             });
 
-            const reply = response.data.answer || "Objection! Please rephrase, counselor.";
+            // Extract justice note if AI provides one, otherwise generate generic
+            const noteMatch = reply.match(/Justice Note:?\s*(.*)/i);
+            if (noteMatch) {
+                setJusticeNote(noteMatch[1]);
+            } else {
+                setJusticeNote("Counsel, focus on the precedents related to " + (textToSubmit.split(' ').slice(0, 3).join(' ')) + ".");
+            }
 
-            setChatHistory(prev => [...prev, { role: "assistant", content: reply }]);
+            setChatHistory(prev => [...prev, { role: "assistant", content: reply.replace(/Justice Note:?.*/i, "").trim() }]);
+
         } catch (error) {
             console.error(error);
             setChatHistory(prev => [...prev, { role: "assistant", content: "The court clerk is having trouble recording that. Please state it again." }]);
         } finally {
             setAnalyzing(false);
+            if (mode === 'voice') startListening(); // Resume listening
         }
     };
 
@@ -164,7 +222,9 @@ const MootCourt = () => {
                                             disabled={mode === "voice" || analyzing}
                                         />
                                         {mode === "voice" ? (
-                                            <Mic className="text-red-500 animate-pulse cursor-pointer" />
+                                            <div onClick={isListening ? stopListening : startListening} className="cursor-pointer">
+                                                <Mic className={`${isListening ? 'text-red-500 animate-pulse' : 'text-slate-500'}`} />
+                                            </div>
                                         ) : (
                                             <div
                                                 onClick={handleSendMessage}
@@ -188,28 +248,28 @@ const MootCourt = () => {
                                     <div>
                                         <div className="flex justify-between text-xs font-bold text-slate-300 mb-2">
                                             <span>Legal Logic</span>
-                                            <span className="text-emerald-400">92%</span>
+                                            <span className="text-emerald-400">{Math.round(metrics.logic)}%</span>
                                         </div>
-                                        <div className="w-full bg-white/10 h-1 rounded-full"><div className="bg-emerald-500 h-full w-[92%] rounded-full shadow-[0_0_10px_rgba(16,185,129,0.5)]"></div></div>
+                                        <div className="w-full bg-white/10 h-1 rounded-full"><motion.div animate={{ width: `${metrics.logic}%` }} className="bg-emerald-500 h-full rounded-full shadow-[0_0_10px_rgba(16,185,129,0.5)]"></motion.div></div>
                                     </div>
                                     <div>
                                         <div className="flex justify-between text-xs font-bold text-slate-300 mb-2">
                                             <span>Persuasion</span>
-                                            <span className="text-amber-400">68%</span>
+                                            <span className="text-amber-400">{Math.round(metrics.persuasion)}%</span>
                                         </div>
-                                        <div className="w-full bg-white/10 h-1 rounded-full"><div className="bg-amber-400 h-full w-[68%] rounded-full shadow-[0_0_10px_rgba(251,191,36,0.5)]"></div></div>
+                                        <div className="w-full bg-white/10 h-1 rounded-full"><motion.div animate={{ width: `${metrics.persuasion}%` }} className="bg-amber-400 h-full rounded-full shadow-[0_0_10px_rgba(251,191,36,0.5)]"></motion.div></div>
                                     </div>
                                     <div>
                                         <div className="flex justify-between text-xs font-bold text-slate-300 mb-2">
                                             <span>Voice/Tone</span>
-                                            <span className="text-indigo-400">74%</span>
+                                            <span className="text-indigo-400">{Math.round(metrics.tone)}%</span>
                                         </div>
-                                        <div className="w-full bg-white/10 h-1 rounded-full"><div className="bg-indigo-500 h-full w-[74%] rounded-full shadow-[0_0_10px_rgba(99,102,241,0.5)]"></div></div>
+                                        <div className="w-full bg-white/10 h-1 rounded-full"><motion.div animate={{ width: `${metrics.tone}%` }} className="bg-indigo-500 h-full rounded-full shadow-[0_0_10px_rgba(99,102,241,0.5)]"></motion.div></div>
                                     </div>
 
                                     <div className="p-4 bg-white/5 rounded-xl border border-white/5 mt-auto">
                                         <p className="text-xs text-slate-500 uppercase tracking-wider font-bold mb-2">Justice's Note</p>
-                                        <p className="text-sm text-slate-300 italic">"Counsel, your citation of Section 302 was accurate, but you must address the intent (mens rea)."</p>
+                                        <p className="text-sm text-slate-300 italic">"{justiceNote}"</p>
                                     </div>
                                 </div>
                             </div>
