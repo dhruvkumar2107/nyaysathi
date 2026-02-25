@@ -11,12 +11,9 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Search, MapPin, Shield, Gavel, User, Navigation, Scan, X } from "lucide-react";
 
 // ICONS
-import icon from "leaflet/dist/images/marker-icon.png";
-import iconShadow from "leaflet/dist/images/marker-shadow.png";
-
 const DefaultIcon = L.icon({
-  iconUrl: icon,
-  shadowUrl: iconShadow,
+  iconUrl: 'https://unpkg.com/leaflet@1.7.1/dist/images/marker-icon.png',
+  shadowUrl: 'https://unpkg.com/leaflet@1.7.1/dist/images/marker-shadow.png',
   iconSize: [25, 41],
   iconAnchor: [12, 41]
 });
@@ -147,10 +144,8 @@ export default function Nearby() {
   );
 
   return (
-    <div className="min-h-screen bg-[#0c1220] relative overflow-hidden font-sans">
-      <div className="absolute top-0 left-0 w-full z-[1000]">
-        <Navbar />
-      </div>
+    <div className="h-screen w-full relative overflow-hidden font-sans">
+      <Navbar />
 
       {/* FLOATING SIDEBAR */}
       <motion.div
@@ -255,7 +250,7 @@ export default function Nearby() {
       </AnimatePresence>
 
       {/* MAP */}
-      <div className="w-full h-full z-0 block bg-slate-900">
+      <div className="absolute inset-0 z-0 bg-slate-900 pt-[80px]">
         {userLocation && (
           <MapContainer center={userLocation} zoom={13} scrollWheelZoom={true} className="h-full w-full outline-none" style={{ background: '#0f172a' }}>
             <TileLayer
@@ -298,7 +293,7 @@ export default function Nearby() {
             toast.success("Recalibrating Coordinates...");
           })
         }}
-        className="absolute bottom-10 right-10 z-[500] bg-indigo-600 text-white p-4 rounded-2xl shadow-2xl hover:bg-indigo-500 transition active:scale-95 border border-indigo-400/50"
+        className="fixed bottom-10 right-10 z-[500] bg-indigo-600 text-white p-4 rounded-2xl shadow-2xl hover:bg-indigo-500 transition active:scale-95 border border-indigo-400/50"
       >
         <Navigation size={24} />
       </button>

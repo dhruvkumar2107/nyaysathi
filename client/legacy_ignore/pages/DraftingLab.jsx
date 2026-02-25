@@ -147,7 +147,7 @@ const DraftingLab = () => {
     };
 
     return (
-        <div className="min-h-screen bg-[#020617] text-slate-400 font-sans pb-20 pt-36 px-6 selection:bg-indigo-500/30">
+        <div className="min-h-screen bg-[#020617] text-slate-400 font-sans pb-20 pt-[120px] px-4 md:px-8 selection:bg-indigo-500/30">
             <Navbar />
             <SubscriptionModal
                 isOpen={showModal}
@@ -155,7 +155,7 @@ const DraftingLab = () => {
                 featureName="Smart Drafting Lab"
             />
 
-            <div className="max-w-[1400px] mx-auto">
+            <div className="max-w-[1440px] mx-auto w-full">
                 {/* HEADER */}
                 <header className="mb-12 text-center relative">
                     <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-indigo-500/20 rounded-full blur-[100px] pointer-events-none mix-blend-screen"></div>
@@ -191,10 +191,10 @@ const DraftingLab = () => {
                     initial={{ opacity: 0, scale: 0.98 }}
                     animate={{ opacity: 1, scale: 1 }}
                     transition={{ duration: 0.3 }}
-                    className="grid grid-cols-1 lg:grid-cols-12 gap-8"
+                    className="grid grid-cols-1 xl:grid-cols-12 gap-8 items-start"
                 >
                     {/* LEFT COLUMN: INPUT */}
-                    <div className="lg:col-span-5 space-y-6">
+                    <div className="xl:col-span-4 space-y-6 w-full">
                         <div className="bg-[#0f172a] backdrop-blur-md rounded-3xl p-8 border border-white/10 shadow-2xl">
                             <div className="flex items-center gap-3 mb-6 pb-6 border-b border-white/5">
                                 <div className={`w-10 h-10 rounded-full flex items-center justify-center ${activeTab === 'draft' ? 'bg-indigo-500/10 text-indigo-400' : 'bg-emerald-500/10 text-emerald-400'}`}>
@@ -297,8 +297,8 @@ const DraftingLab = () => {
                     </div>
 
                     {/* RIGHT COLUMN: OUTPUT */}
-                    <div className="lg:col-span-7">
-                        <div className={`bg-[#0f172a] text-slate-300 rounded-3xl p-8 border border-white/10 shadow-2xl h-[800px] relative overflow-hidden flex flex-col ${!generatedContract && !analysisResult ? 'items-center justify-center' : ''}`}>
+                    <div className="xl:col-span-8 w-full">
+                        <div className={`bg-[#0f172a] text-slate-300 rounded-3xl p-8 border border-white/10 shadow-2xl min-h-[600px] lg:h-[calc(100vh-250px)] relative overflow-hidden flex flex-col ${!generatedContract && !analysisResult ? 'items-center justify-center' : ''}`}>
 
                             {!generatedContract && !analysisResult && !loading && (
                                 <div className="text-center opacity-40">
