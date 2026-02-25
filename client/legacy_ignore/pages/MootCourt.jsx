@@ -123,7 +123,7 @@ const MootCourt = () => {
             <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1589829085413-56de8ae18c73?q=80&w=2072&auto=format&fit=crop')] bg-cover bg-center opacity-5 pointer-events-none mix-blend-overlay"></div>
 
             {!sessionActive ? (
-                <div className="relative z-10 flex flex-col items-center justify-center min-h-screen text-center px-6 pt-24">
+                <div className="relative z-10 flex flex-col items-center justify-center min-h-screen text-center px-6 pt-52">
                     <div className="w-24 h-24 bg-white/5 rounded-full flex items-center justify-center backdrop-blur-md border border-white/10 mb-8 animate-pulse shadow-[0_0_50px_rgba(255,255,255,0.05)]">
                         <Gavel size={40} className="text-slate-300" />
                     </div>
@@ -159,7 +159,7 @@ const MootCourt = () => {
                     </p>
                 </div>
             ) : (
-                <div className="relative z-10 h-screen flex flex-col pt-16">
+                <div className="relative z-10 h-screen flex flex-col pt-[80px]">
                     {/* TOP BAR */}
                     <div className="h-16 border-b border-white/10 bg-[#0f172a]/80 backdrop-blur-md flex items-center justify-between px-6">
                         <div className="flex items-center gap-3">
