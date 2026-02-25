@@ -212,7 +212,7 @@ const DraftingLab = () => {
                                         <select
                                             value={contractType}
                                             onChange={(e) => setContractType(e.target.value)}
-                                            className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-slate-200 outline-none focus:border-indigo-500 hover:bg-white/10 transition appearance-none"
+                                            className="w-full bg-[#0a0f1e] !bg-midnight-950 border border-white/10 rounded-xl px-4 py-3 text-slate-200 outline-none focus:border-indigo-500 hover:bg-white/10 transition appearance-none shadow-inner"
                                         >
                                             <option className="bg-[#0f172a] text-slate-200">Non-Disclosure Agreement (NDA)</option>
                                             <option className="bg-[#0f172a] text-slate-200">Legal Service Proposal</option>
@@ -229,7 +229,7 @@ const DraftingLab = () => {
                                             value={parties}
                                             onChange={(e) => setParties(e.target.value)}
                                             placeholder="e.g., Company X and Mr. John Doe"
-                                            className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-slate-200 outline-none focus:border-indigo-500 hover:bg-white/10 transition placeholder:text-slate-600"
+                                            className="w-full bg-[#0a0f1e] !bg-midnight-950 border border-white/10 rounded-xl px-4 py-3 text-slate-200 outline-none focus:border-indigo-500 hover:bg-white/10 transition placeholder:text-slate-600 shadow-inner"
                                         />
                                     </div>
                                     <div className="space-y-2">
@@ -243,7 +243,7 @@ const DraftingLab = () => {
                                             value={terms}
                                             onChange={(e) => setTerms(e.target.value)}
                                             placeholder="e.g., 2 year duration, monthly salary 50k, 30 days notice period..."
-                                            className="w-full h-40 bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-slate-200 outline-none focus:border-indigo-500 hover:bg-white/10 transition placeholder:text-slate-600 resize-none custom-scrollbar"
+                                            className="w-full h-40 bg-[#0a0f1e] !bg-midnight-950 border border-white/10 rounded-xl px-4 py-3 text-slate-200 outline-none focus:border-indigo-500 hover:bg-white/10 transition placeholder:text-slate-600 resize-none custom-scrollbar shadow-inner"
                                         ></textarea>
                                     </div>
                                     <button
@@ -274,7 +274,7 @@ const DraftingLab = () => {
                                             value={analysisText}
                                             onChange={(e) => setAnalysisText(e.target.value)}
                                             placeholder="Paste the legal text here to check for loopholes..."
-                                            className="w-full h-[500px] bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-slate-200 outline-none focus:border-emerald-500 hover:bg-white/10 transition placeholder:text-slate-600 font-mono text-sm leading-relaxed custom-scrollbar"
+                                            className="w-full h-[500px] bg-[#0a0f1e] !bg-midnight-950 border border-white/10 rounded-xl px-4 py-3 text-slate-200 outline-none focus:border-emerald-500 hover:bg-white/10 transition placeholder:text-slate-600 font-mono text-sm leading-relaxed custom-scrollbar shadow-inner"
                                         ></textarea>
                                     </div>
                                     <button
