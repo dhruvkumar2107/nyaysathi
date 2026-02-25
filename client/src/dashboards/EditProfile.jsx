@@ -283,65 +283,89 @@ export default function EditProfile() {
                     </div>
 
                     {/* RIGHT COLUMN - PREVIEW CARD */}
-                    <div className={`lg:col-span-4 lg:sticky lg:top-24 h-fit ${previewMode ? 'lg:col-span-12 lg:fixed lg:inset-0 lg:z-50 lg:flex lg:items-center lg:justify-center lg:bg-black/80 lg:backdrop-blur-xl' : ''}`}>
-                        <div className={`bg-gradient-to-br from-[#0f172a] to-[#1e293b] rounded-[2.5rem] p-8 border border-white/10 shadow-2xl relative overflow-hidden ${previewMode ? 'w-full max-w-md scale-110' : ''}`}>
-                            {previewMode && <button onClick={() => setPreviewMode(false)} className="absolute top-4 right-4 text-white hover:text-red-400">Close Preview ✕</button>}
+                    <div className={`lg:col-span-4 lg:sticky lg:top-24 h-fit ${previewMode ? 'lg:col-span-12 lg:fixed lg:inset-0 lg:z-50 lg:flex lg:items-center lg:justify-center lg:bg-black/90 lg:backdrop-blur-2xl' : ''}`}>
+                        <div className={`bg-gradient-to-br from-[#0f172a] to-[#1e293b] rounded-[3rem] p-8 border border-white/10 shadow-[0_0_50px_rgba(0,0,0,0.5)] relative overflow-hidden transition-all duration-500 ${previewMode ? 'w-full max-w-md scale-110' : 'hover:shadow-indigo-500/10'}`}>
+                            {previewMode && (
+                                <button
+                                    onClick={() => setPreviewMode(false)}
+                                    className="absolute top-6 right-6 z-50 p-2 bg-white/10 rounded-full text-white hover:bg-red-500 transition-colors"
+                                >
+                                    ✕
+                                </button>
+                            )}
 
                             {/* Card Background Effects */}
-                            <div className="absolute top-0 left-0 w-full h-32 bg-gradient-to-r from-indigo-600 to-purple-600 opacity-80"></div>
-                            <div className="absolute top-24 left-1/2 -translate-x-1/2 p-1 bg-midnight-900 rounded-full">
-                                <div className="w-28 h-28 rounded-full bg-slate-800 border-4 border-midnight-900 overflow-hidden relative group">
+                            <div className="absolute top-0 left-0 w-full h-36 bg-gradient-to-r from-indigo-600 via-purple-600 to-indigo-600 opacity-90">
+                                <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')] opacity-20"></div>
+                            </div>
+
+                            <div className="relative mt-12 flex justify-center">
+                                <div className="w-32 h-32 rounded-full bg-slate-800 border-4 border-[#0f172a] overflow-hidden relative group shadow-2xl">
                                     {user?.profileImage ? (
                                         <img src={user.profileImage} alt={`${user.name}'s profile`} className="w-full h-full object-cover rounded-full" />
                                     ) : (
-                                        <div className="w-full h-full flex items-center justify-center text-4xl text-slate-600">👤</div>
+                                        <div className="w-full h-full flex items-center justify-center text-4xl text-slate-600 bg-slate-900 font-serif">
+                                            {userInitials}
+                                        </div>
                                     )}
-                                    <div className="absolute inset-0 bg-black/60 flex items-center justify-center opacity-0 group-hover:opacity-100 transition cursor-pointer">
-                                        <Upload size={24} className="text-white" />
-                                        <input type="file" className="absolute inset-0 opacity-0 cursor-pointer" onChange={handleFileUpload} />
+                                    <div className="absolute inset-0 bg-black/60 flex items-center justify-center opacity-0 group-hover:opacity-100 transition duration-300 cursor-pointer backdrop-blur-sm">
+                                        <div className="text-center">
+                                            <Upload size={20} className="text-white mx-auto mb-1" />
+                                            <span className="text-[10px] font-bold text-white uppercase tracking-wider">Update</span>
+                                        </div>
+                                        <input type="file" className="absolute inset-0 opacity-0 cursor-pointer" onChange={handleFileUpload} title="Change Profile Picture" />
                                     </div>
                                 </div>
+                                {user?.verified && (
+                                    <div className="absolute bottom-0 right-1/2 translate-x-16 bg-emerald-500 text-white p-1.5 rounded-full border-4 border-[#0f172a] shadow-lg" title="Verified Professional">
+                                        <CheckCircle size={14} />
+                                    </div>
+                                )}
                             </div>
 
-                            <div className="mt-20 text-center space-y-2">
-                                <h2 className="text-2xl font-bold text-white">{user?.name}</h2>
-                                <p className="text-indigo-400 text-sm font-medium">{formData.headline || "Legal Professional"}</p>
-                                <div className="flex items-center justify-center gap-2 text-slate-400 text-xs mt-2">
-                                    <MapPin size={12} /> {formData.location || "Location not set"}
+                            <div className="mt-6 text-center space-y-2">
+                                <h2 className="text-2xl font-bold text-white font-serif tracking-tight">{user?.name}</h2>
+                                <div className="inline-block px-3 py-1 bg-indigo-500/10 border border-indigo-500/20 rounded-full">
+                                    <p className="text-indigo-400 text-[10px] font-black uppercase tracking-[0.1em]">{formData.headline || "Legal Professional"}</p>
+                                </div>
+                                <div className="flex items-center justify-center gap-2 text-slate-500 text-xs mt-3 font-medium">
+                                    <MapPin size={12} className="text-indigo-500/50" /> {formData.location || "Location not set"}
                                 </div>
                             </div>
 
-                            <div className="mt-8 grid grid-cols-2 gap-4 border-t border-white/5 pt-6">
+                            <div className="mt-8 grid grid-cols-2 gap-4 border-y border-white/5 py-6">
+                                <div className="text-center border-r border-white/5">
+                                    <p className="text-2xl font-bold text-white mb-0.5">{formData.experience || "0"}</p>
+                                    <p className="text-[9px] text-slate-500 uppercase font-black tracking-[0.2em]">Years Exp</p>
+                                </div>
                                 <div className="text-center">
-                                    <p className="text-2xl font-bold text-white mb-1">{formData.experience || "0"}+</p>
-                                    <p className="text-[10px] text-slate-500 uppercase tracking-widest font-bold">Years Exp</p>
-                                </div>
-                                <div className="text-center border-l border-white/5">
-                                    <p className="text-2xl font-bold text-white mb-1">4.9</p>
-                                    <p className="text-[10px] text-slate-500 uppercase tracking-widest font-bold">Rating</p>
+                                    <p className="text-2xl font-bold text-indigo-400 mb-0.5">4.9</p>
+                                    <p className="text-[9px] text-slate-500 uppercase font-black tracking-[0.2em]">User Rating</p>
                                 </div>
                             </div>
 
-                            <div className="mt-8 space-y-4">
-                                <h4 className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-3">Professional Bio</h4>
-                                <p className="text-sm text-slate-300 leading-relaxed line-clamp-4">
-                                    {formData.bio || "No bio added yet."}
+                            <div className="mt-8 space-y-2">
+                                <h4 className="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] mb-4">Professional Bio</h4>
+                                <p className="text-sm text-slate-400 leading-relaxed line-clamp-4 font-medium italic">
+                                    "{formData.bio || "No professional biography has been established yet."}"
                                 </p>
                             </div>
 
                             <div className="mt-8 space-y-4">
-                                <h4 className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-3">Specialization</h4>
+                                <h4 className="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] mb-4">Core Specializations</h4>
                                 <div className="flex flex-wrap gap-2">
                                     {formData.specialization ? (
                                         formData.specialization.split(',').map((tag, i) => (
-                                            <span key={i} className="px-3 py-1 bg-indigo-500/20 text-indigo-300 rounded-lg text-xs font-bold border border-indigo-500/30">{tag.trim()}</span>
+                                            <span key={i} className="px-3 py-1.5 bg-indigo-500/5 text-indigo-400/80 rounded-xl text-[10px] font-bold border border-indigo-500/10 hover:bg-indigo-500/10 transition-colors">
+                                                {tag.trim()}
+                                            </span>
                                         ))
-                                    ) : <span className="text-slate-500 text-xs italic">No specialization added</span>}
+                                    ) : <span className="text-slate-600 text-[10px] font-medium italic">General Practice</span>}
                                 </div>
                             </div>
 
-                            <button className="w-full mt-8 py-3 bg-white text-midnight-900 font-bold rounded-xl shadow-lg hover:bg-slate-200 transition">
-                                Book Consultation (₹{formData.consultationFee || "0"}/hr)
+                            <button className="w-full mt-10 py-4 bg-white text-midnight-900 font-black rounded-2xl shadow-[0_10px_30px_rgba(255,255,255,0.1)] hover:scale-[1.02] transition-all active:scale-95 text-xs uppercase tracking-widest">
+                                Book Consultation (₹{formData.consultationFee || "500"}/hr)
                             </button>
 
                         </div>

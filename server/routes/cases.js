@@ -9,11 +9,12 @@ router.post("/", async (req, res) => {
 });
 // GET ALL CASES (With Filters)
 router.get("/", async (req, res) => {
-  const { postedBy, open } = req.query;
+  const { postedBy, open, lawyerId } = req.query;
   let query = {};
 
   if (postedBy) query.postedBy = postedBy;
   if (open === "true") query.acceptedBy = null;
+  if (lawyerId) query.lawyer = lawyerId;
 
   try {
     const cases = await Case.find(query).sort({ postedAt: -1 });

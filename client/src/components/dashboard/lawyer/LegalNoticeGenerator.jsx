@@ -184,46 +184,60 @@ export default function LegalNoticeGenerator() {
     const selectedType = NOTICE_TYPES.find(t => t.value === form.noticeType);
 
     return (
-        <div className="space-y-6">
-            {/* Header */}
-            <div className="bg-[#0f172a] rounded-3xl p-6 border border-white/10 shadow-xl relative overflow-hidden">
-                <div className="absolute inset-0 bg-gradient-to-r from-indigo-600/5 to-violet-600/5 pointer-events-none" />
-                <div className="absolute top-0 right-0 w-64 h-64 bg-indigo-600/5 rounded-full blur-3xl pointer-events-none" />
-                <div className="relative flex items-start justify-between">
-                    <div className="flex items-center gap-4">
-                        <div className="w-12 h-12 rounded-2xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center">
-                            <FileText className="text-indigo-400" size={24} />
+        <div className="space-y-8 relative">
+            {/* Ambient Background Glows */}
+            <div className="absolute top-0 left-1/4 w-96 h-96 bg-indigo-600/10 rounded-full blur-[120px] pointer-events-none" />
+            <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-purple-600/10 rounded-full blur-[120px] pointer-events-none" />
+
+            {/* Header Section */}
+            <div className="bg-gradient-to-br from-[#0f172a] via-[#111827] to-[#0f172a] rounded-[2.5rem] p-10 border border-white/10 shadow-2xl relative overflow-hidden group">
+                <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20 pointer-events-none" />
+                <div className="absolute top-0 right-0 w-1/2 h-full bg-gradient-to-l from-indigo-500/5 to-transparent pointer-events-none" />
+
+                <div className="relative flex flex-col md:flex-row md:items-center justify-between gap-8">
+                    <div className="flex items-center gap-6">
+                        <div className="w-16 h-16 rounded-2xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center shadow-inner group-hover:scale-110 transition-transform duration-500">
+                            <Sparkles className="text-indigo-400" size={32} />
                         </div>
                         <div>
-                            <h2 className="text-xl font-bold text-white flex items-center gap-2">
-                                Instant Legal Notice Generator
-                                <span className="text-xs px-2 py-0.5 bg-indigo-500/20 border border-indigo-500/30 rounded-full text-indigo-300 font-medium">AI-Powered</span>
-                            </h2>
-                            <p className="text-slate-500 text-sm mt-0.5">Generate court-ready legal notices in seconds. Export as PDF with signature slot.</p>
+                            <div className="flex items-center gap-3 mb-2">
+                                <h2 className="text-3xl font-bold text-white tracking-tight font-serif">Aethelgard AI</h2>
+                                <span className="px-3 py-1 bg-indigo-500/20 border border-indigo-500/30 rounded-full text-indigo-300 text-[10px] font-black uppercase tracking-[0.2em]">Quantum Drafting</span>
+                            </div>
+                            <p className="text-slate-500 text-sm max-w-xl leading-relaxed">Synthesize court-ready legal notices with high-precision AI. Automatically optimized for Indian Judicial Standards.</p>
                         </div>
                     </div>
 
                     {step === 2 && (
-                        <button
+                        <motion.button
+                            initial={{ opacity: 0, x: 20 }}
+                            animate={{ opacity: 1, x: 0 }}
                             onClick={() => { setStep(1); setGeneratedNotice(''); }}
-                            className="flex items-center gap-2 px-4 py-2 bg-white/5 border border-white/10 rounded-xl text-sm text-slate-400 hover:text-white hover:bg-white/10 transition"
+                            className="flex items-center gap-3 px-6 py-3 bg-white/5 border border-white/10 rounded-2xl text-sm font-bold text-slate-400 hover:text-white hover:bg-white/10 transition-all active:scale-95 shadow-lg shadow-black/20"
                         >
-                            <RotateCcw size={14} /> New Notice
-                        </button>
+                            <RotateCcw size={16} /> Reset Engine
+                        </motion.button>
                     )}
                 </div>
 
-                {/* Step Indicator */}
-                <div className="flex items-center gap-3 mt-6">
-                    {[{ n: 1, label: 'Fill Details' }, { n: 2, label: 'Review & Export' }].map(({ n, label }) => (
+                {/* Animated Step Indicator */}
+                <div className="flex items-center gap-4 mt-12">
+                    {[{ n: 1, label: 'Parameter Input' }, { n: 2, label: 'Neural Synthesis' }].map(({ n, label }) => (
                         <React.Fragment key={n}>
-                            <div className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-bold transition ${step >= n ? 'bg-indigo-500/20 text-indigo-300 border border-indigo-500/30' : 'bg-white/5 text-slate-600 border border-white/5'}`}>
-                                <span className={`w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-black ${step > n ? 'bg-emerald-500 text-white' : step === n ? 'bg-indigo-500 text-white' : 'bg-white/10 text-slate-600'}`}>
+                            <div className={`flex items-center gap-3 px-4 py-2 rounded-2xl text-xs font-bold transition-all duration-500 ${step >= n ? 'bg-indigo-600/10 text-indigo-300 border border-indigo-500/30 shadow-lg' : 'bg-white/5 text-slate-600 border border-transparent'}`}>
+                                <div className={`w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-black transition-all duration-500 ${step > n ? 'bg-emerald-500 text-white shadow-[0_0_15px_rgba(16,185,129,0.4)]' : step === n ? 'bg-indigo-600 text-white shadow-[0_0_15px_rgba(79,70,229,0.4)]' : 'bg-white/10 text-slate-600'}`}>
                                     {step > n ? '✓' : n}
-                                </span>
-                                {label}
+                                </div>
+                                <span className="uppercase tracking-[0.1em]">{label}</span>
                             </div>
-                            {n < 2 && <div className={`flex-1 h-px max-w-[60px] ${step > n ? 'bg-indigo-500/50' : 'bg-white/5'}`} />}
+                            {n < 2 && <div className={`flex-1 h-0.5 max-w-[100px] rounded-full overflow-hidden bg-white/5`}>
+                                <motion.div
+                                    initial={{ x: '-100%' }}
+                                    animate={{ x: step > n ? '0%' : '-100%' }}
+                                    transition={{ duration: 0.8 }}
+                                    className="w-full h-full bg-indigo-500 shadow-[0_0_10px_#6366f1]"
+                                />
+                            </div>}
                         </React.Fragment>
                     ))}
                 </div>
@@ -231,192 +245,210 @@ export default function LegalNoticeGenerator() {
 
             <AnimatePresence mode="wait">
                 {step === 1 ? (
-                    <motion.div key="form" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }} className="space-y-4">
+                    <motion.div key="form" initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, scale: 0.95 }} className="space-y-6">
 
-                        {/* Notice Type */}
-                        <div className="bg-[#0f172a] rounded-2xl p-6 border border-white/10">
-                            <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-3">Notice Type *</label>
-                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                                {NOTICE_TYPES.map(type => (
-                                    <button
-                                        key={type.value}
-                                        onClick={() => setForm(p => ({ ...p, noticeType: type.value }))}
-                                        className={`text-left px-4 py-3 rounded-xl border text-sm font-medium transition ${form.noticeType === type.value ? 'bg-indigo-500/15 border-indigo-500/50 text-indigo-300' : 'bg-white/3 border-white/8 text-slate-400 hover:border-white/20 hover:text-slate-200'}`}
-                                    >
-                                        {type.label}
-                                    </button>
-                                ))}
-                            </div>
-                        </div>
+                        {/* Bento Grid Form */}
+                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
 
-                        {/* Sender Details */}
-                        <div className="bg-[#0f172a] rounded-2xl p-6 border border-white/10">
-                            <h3 className="text-sm font-bold text-white mb-4 flex items-center gap-2"><Pen size={14} className="text-indigo-400" /> Sender (Advocate) Details</h3>
-                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                <div>
-                                    <label className="block text-xs text-slate-500 mb-1.5 font-medium">Full Name *</label>
-                                    <input name="senderName" value={form.senderName} onChange={handleChange} placeholder="Adv. Rajesh Kumar" className={FIELD_CLASS} />
-                                </div>
-                                <div>
-                                    <label className="block text-xs text-slate-500 mb-1.5 font-medium">Bar Council Enrolment No.</label>
-                                    <input name="senderBarCouncil" value={form.senderBarCouncil} onChange={handleChange} placeholder="MH/1234/2020" className={FIELD_CLASS} />
-                                </div>
-                                <div className="sm:col-span-2">
-                                    <label className="block text-xs text-slate-500 mb-1.5 font-medium">Office Address</label>
-                                    <input name="senderAddress" value={form.senderAddress} onChange={handleChange} placeholder="Chamber No. 12, District Court, Mumbai — 400001" className={FIELD_CLASS} />
+                            {/* Panel: Metadata */}
+                            <div className="bg-[#0f172a]/50 backdrop-blur-xl rounded-[2rem] p-8 border border-white/5 shadow-xl hover:border-indigo-500/20 transition-colors duration-500">
+                                <label className="block text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] mb-6">Select Legal Instrument</label>
+                                <div className="grid grid-cols-1 gap-3 max-h-[360px] overflow-y-auto custom-scrollbar pr-2">
+                                    {NOTICE_TYPES.map(type => (
+                                        <button
+                                            key={type.value}
+                                            onClick={() => setForm(p => ({ ...p, noticeType: type.value }))}
+                                            className={`text-left px-5 py-4 rounded-2xl border transition-all duration-300 group relative overflow-hidden ${form.noticeType === type.value ? 'bg-indigo-600/10 border-indigo-500/50 text-white shadow-lg' : 'bg-white/3 border-white/5 text-slate-400 hover:bg-white/5 hover:border-white/10 hover:text-slate-200'}`}
+                                        >
+                                            <div className="relative z-10 flex justify-between items-center">
+                                                <span className="text-sm font-bold tracking-tight">{type.label}</span>
+                                                {form.noticeType === type.value && <CheckCircle size={16} className="text-indigo-400" />}
+                                            </div>
+                                            {form.noticeType === type.value && <div className="absolute inset-0 bg-gradient-to-r from-indigo-500/5 to-transparent pointer-events-none" />}
+                                        </button>
+                                    ))}
                                 </div>
                             </div>
-                        </div>
 
-                        {/* Recipient Details */}
-                        <div className="bg-[#0f172a] rounded-2xl p-6 border border-white/10">
-                            <h3 className="text-sm font-bold text-white mb-4 flex items-center gap-2"><AlertCircle size={14} className="text-rose-400" /> Recipient (Noticee) Details</h3>
-                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                <div>
-                                    <label className="block text-xs text-slate-500 mb-1.5 font-medium">Full Name *</label>
-                                    <input name="recipientName" value={form.recipientName} onChange={handleChange} placeholder="ABC Enterprises / John Doe" className={FIELD_CLASS} />
+                            <div className="space-y-6">
+                                {/* Panel: Parties */}
+                                <div className="bg-[#0f172a]/50 backdrop-blur-xl rounded-[2rem] p-8 border border-white/5 shadow-xl">
+                                    <h3 className="text-sm font-bold text-white mb-6 flex items-center gap-3">
+                                        <div className="w-8 h-8 rounded-xl bg-emerald-500/10 flex items-center justify-center"><Pen size={14} className="text-emerald-400" /></div>
+                                        Protagonist & Antagonist
+                                    </h3>
+                                    <div className="space-y-6">
+                                        <div className="grid grid-cols-2 gap-4">
+                                            <div>
+                                                <label className="block text-[10px] font-black text-slate-500 uppercase tracking-[0.1em] mb-2 font-mono">Advocate Identity</label>
+                                                <input name="senderName" value={form.senderName} onChange={handleChange} placeholder="Adv. Rajesh Kumar" className={FIELD_CLASS} />
+                                            </div>
+                                            <div>
+                                                <label className="block text-[10px] font-black text-slate-500 uppercase tracking-[0.1em] mb-2 font-mono">Enrolment ID</label>
+                                                <input name="senderBarCouncil" value={form.senderBarCouncil} onChange={handleChange} placeholder="MH/1234/2020" className={FIELD_CLASS} />
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <label className="block text-[10px] font-black text-slate-500 uppercase tracking-[0.1em] mb-2 font-mono">Noticee (Recipient)</label>
+                                            <input name="recipientName" value={form.recipientName} onChange={handleChange} placeholder="Full Legal Name or Entity" className={FIELD_CLASS} />
+                                        </div>
+                                    </div>
                                 </div>
-                                <div>
-                                    <label className="block text-xs text-slate-500 mb-1.5 font-medium">Compliance Period (Days)</label>
-                                    <div className="flex gap-2">
-                                        {['7', '15', '30', '60'].map(d => (
+
+                                {/* Panel: Timeline */}
+                                <div className="bg-[#0f172a]/50 backdrop-blur-xl rounded-[2rem] p-8 border border-white/5 shadow-xl">
+                                    <h3 className="text-sm font-bold text-white mb-6 flex items-center gap-3">
+                                        <div className="w-8 h-8 rounded-xl bg-indigo-500/10 flex items-center justify-center"><AlertCircle size={14} className="text-indigo-400" /></div>
+                                        Deadline Matrix
+                                    </h3>
+                                    <div className="flex gap-2 p-1 bg-black/40 rounded-2xl border border-white/5">
+                                        {['7', '15', '30'].map(d => (
                                             <button
                                                 key={d}
                                                 onClick={() => setForm(p => ({ ...p, complianceDays: d }))}
-                                                className={`flex-1 py-2.5 rounded-lg text-sm font-bold border transition ${form.complianceDays === d ? 'bg-indigo-500/20 border-indigo-500/50 text-indigo-300' : 'bg-white/5 border-white/10 text-slate-500 hover:text-slate-300'}`}
+                                                className={`flex-1 py-3 rounded-xl text-xs font-black transition-all ${form.complianceDays === d ? 'bg-indigo-600 text-white shadow-xl shadow-indigo-600/20' : 'text-slate-500 hover:text-slate-300'}`}
                                             >
-                                                {d}d
+                                                {d} DAYS
                                             </button>
                                         ))}
                                     </div>
                                 </div>
-                                <div className="sm:col-span-2">
-                                    <label className="block text-xs text-slate-500 mb-1.5 font-medium">Address</label>
-                                    <input name="recipientAddress" value={form.recipientAddress} onChange={handleChange} placeholder="Flat 4B, XYZ Building, Andheri West, Mumbai — 400053" className={FIELD_CLASS} />
-                                </div>
                             </div>
                         </div>
 
-                        {/* Case Facts */}
-                        <div className="bg-[#0f172a] rounded-2xl p-6 border border-white/10">
-                            <h3 className="text-sm font-bold text-white mb-4 flex items-center gap-2"><FileText size={14} className="text-amber-400" /> Brief of the Matter</h3>
-                            <div className="space-y-4">
-                                <div>
-                                    <label className="block text-xs text-slate-500 mb-1.5 font-medium">Facts of the Case * <span className="text-slate-600">(Include dates, events, what went wrong)</span></label>
-                                    <textarea
-                                        name="facts"
-                                        value={form.facts}
-                                        onChange={handleChange}
-                                        rows={5}
-                                        placeholder="e.g. My client lent ₹5,00,000 to the noticee on 15/01/2025 via NEFT (ref: HDFC12345). The noticee issued a cheque no. 004567 dated 01/02/2025 which was dishonoured on 05/02/2025 citing 'insufficient funds'. Despite repeated requests, payment has not been made..."
-                                        className={`${FIELD_CLASS} resize-none leading-relaxed`}
-                                    />
-                                </div>
-                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                    <div>
-                                        <label className="block text-xs text-slate-500 mb-1.5 font-medium">Amount in Dispute (₹)</label>
-                                        <input name="amount" value={form.amount} onChange={handleChange} placeholder="500000" type="number" className={FIELD_CLASS} />
+                        {/* Facts Panel */}
+                        <div className="bg-[#0f172a]/50 backdrop-blur-xl rounded-[2.5rem] p-10 border border-white/10 shadow-2xl relative overflow-hidden">
+                            <h3 className="text-sm font-bold text-white mb-8 flex items-center gap-3">
+                                <div className="w-10 h-10 rounded-2xl bg-amber-500/10 flex items-center justify-center"><FileText size={18} className="text-amber-400" /></div>
+                                Evidence Repository & Facts
+                            </h3>
+                            <div className="space-y-8">
+                                <textarea
+                                    name="facts"
+                                    value={form.facts}
+                                    onChange={handleChange}
+                                    rows={6}
+                                    placeholder="Input core grievance details here. Specify dates, monetary values, and contractual breaches..."
+                                    className={`${FIELD_CLASS} bg-black/40 rounded-[1.5rem] p-8 border-white/10 text-lg leading-relaxed placeholder:text-slate-700 resize-none font-medium h-[240px] shadow-inner`}
+                                />
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                                    <div className="bg-black/20 p-6 rounded-2xl border border-white/5">
+                                        <label className="block text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] mb-3">Principal Amount (₹)</label>
+                                        <input name="amount" value={form.amount} onChange={handleChange} placeholder="0.00" type="number" className={`${FIELD_CLASS} text-2xl font-bold bg-transparent border-none p-0 focus:ring-0`} />
                                     </div>
-                                    <div>
-                                        <label className="block text-xs text-slate-500 mb-1.5 font-medium">Additional Clauses (optional)</label>
-                                        <input name="additionalClauses" value={form.additionalClauses} onChange={handleChange} placeholder="e.g. Claim for interest @18% p.a." className={FIELD_CLASS} />
+                                    <div className="bg-black/20 p-6 rounded-2xl border border-white/5">
+                                        <label className="block text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] mb-3">Special Stipulations</label>
+                                        <input name="additionalClauses" value={form.additionalClauses} onChange={handleChange} placeholder="e.g. Demand for Interest @ 18% p.a." className={`${FIELD_CLASS} bg-transparent border-none p-0 focus:ring-0`} />
                                     </div>
                                 </div>
                             </div>
                         </div>
 
-                        {/* Generate Button */}
-                        <motion.button
-                            onClick={handleGenerate}
-                            disabled={loading}
-                            whileHover={{ scale: 1.01 }}
-                            whileTap={{ scale: 0.99 }}
-                            className="w-full py-4 rounded-2xl bg-gradient-to-r from-indigo-600 to-violet-600 text-white font-bold text-base flex items-center justify-center gap-3 shadow-lg shadow-indigo-600/25 hover:shadow-indigo-600/40 transition disabled:opacity-60 disabled:cursor-not-allowed"
-                        >
-                            {loading ? (
-                                <>
-                                    <Loader2 className="animate-spin" size={20} />
-                                    Drafting your notice with AI...
-                                </>
-                            ) : (
-                                <>
-                                    <Sparkles size={20} />
-                                    Generate Legal Notice
-                                </>
-                            )}
-                        </motion.button>
+                        {/* Action Hub */}
+                        <div className="flex justify-center pt-8">
+                            <motion.button
+                                onClick={handleGenerate}
+                                disabled={loading}
+                                whileHover={{ scale: 1.02, y: -4 }}
+                                whileTap={{ scale: 0.98 }}
+                                className="relative group w-full max-w-lg"
+                            >
+                                <div className="absolute inset-0 bg-gradient-to-r from-indigo-500 to-purple-600 rounded-[2rem] blur-2xl opacity-40 group-hover:opacity-60 transition duration-500"></div>
+                                <div className="relative py-6 rounded-[2rem] bg-gradient-to-r from-indigo-600 via-indigo-500 to-purple-600 text-white font-black text-lg flex items-center justify-center gap-4 shadow-2xl border-t border-white/20">
+                                    {loading ? (
+                                        <>
+                                            <Loader2 className="animate-spin" size={24} />
+                                            NEURAL SYNTHESIS IN PROGRESS...
+                                        </>
+                                    ) : (
+                                        <>
+                                            <Sparkles size={24} className="animate-pulse" />
+                                            GENERATE LEGAL INSTRUMENT
+                                        </>
+                                    )}
+                                </div>
+                            </motion.button>
+                        </div>
                     </motion.div>
 
                 ) : (
-                    <motion.div key="preview" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }} className="space-y-4">
+                    <motion.div key="preview" initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0 }} className="space-y-8">
 
-                        {/* Action Bar */}
-                        <div className="bg-[#0f172a] rounded-2xl p-4 border border-white/10 flex flex-col sm:flex-row gap-3 items-stretch sm:items-center justify-between">
-                            <div className="flex items-center gap-3">
-                                <div className="w-8 h-8 rounded-lg bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center">
-                                    <CheckCircle className="text-emerald-400" size={16} />
+                        {/* Pro Control Bar */}
+                        <div className="bg-white/5 backdrop-blur-xl rounded-[2rem] p-6 border border-white/10 flex flex-col md:flex-row gap-6 items-center justify-between">
+                            <div className="flex items-center gap-4">
+                                <div className="w-14 h-14 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center shadow-inner">
+                                    <CheckCircle className="text-emerald-400" size={28} />
                                 </div>
-                                <div>
-                                    <p className="text-white font-bold text-sm">Notice Generated Successfully</p>
-                                    <p className="text-slate-500 text-xs">{form.noticeType.split('(')[0].trim()} • {form.complianceDays} days compliance</p>
+                                <div className="text-left">
+                                    <p className="text-white font-black uppercase tracking-wider text-sm">Synthesis Complete</p>
+                                    <p className="text-slate-500 text-xs font-medium">{form.noticeType.split('(')[0].trim()} • Secure Link Established</p>
                                 </div>
                             </div>
-                            <div className="flex gap-2">
+                            <div className="flex gap-4">
                                 <button
                                     onClick={() => setShowPreview(!showPreview)}
-                                    className="flex items-center gap-2 px-4 py-2 bg-white/5 border border-white/10 rounded-xl text-sm text-slate-400 hover:text-white hover:bg-white/10 transition font-medium"
+                                    className="flex items-center gap-3 px-6 py-3 bg-white/5 border border-white/10 rounded-2xl text-xs font-black text-slate-400 hover:text-white hover:bg-white/10 transition-all uppercase tracking-widest"
                                 >
-                                    {showPreview ? <EyeOff size={15} /> : <Eye size={15} />}
-                                    {showPreview ? 'Hide' : 'Preview'}
+                                    {showPreview ? <EyeOff size={16} /> : <Eye size={16} />}
+                                    {showPreview ? 'Hide Feed' : 'Holographic Preview'}
                                 </button>
                                 <motion.button
                                     onClick={handleDownloadPDF}
-                                    whileHover={{ scale: 1.02 }}
-                                    whileTap={{ scale: 0.98 }}
-                                    className="flex items-center gap-2 px-5 py-2 bg-gradient-to-r from-indigo-600 to-violet-600 text-white font-bold text-sm rounded-xl shadow-lg shadow-indigo-600/20 transition"
+                                    whileHover={{ scale: 1.05 }}
+                                    whileTap={{ scale: 0.95 }}
+                                    className="flex items-center gap-3 px-8 py-3 bg-gradient-to-r from-emerald-600 to-teal-600 text-white font-black text-xs rounded-2xl shadow-xl shadow-emerald-600/20 transition uppercase tracking-widest"
                                 >
-                                    <Download size={15} />
-                                    Download PDF
+                                    <Download size={16} /> Export Dossier
                                 </motion.button>
                             </div>
                         </div>
 
-                        {/* Notice Preview */}
+                        {/* Holo Preview */}
                         <AnimatePresence>
                             {showPreview && (
                                 <motion.div
-                                    initial={{ opacity: 0, height: 0 }}
-                                    animate={{ opacity: 1, height: 'auto' }}
-                                    exit={{ opacity: 0, height: 0 }}
-                                    className="overflow-hidden"
+                                    initial={{ opacity: 0, y: 20 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    exit={{ opacity: 0, y: 20 }}
+                                    className="relative"
                                 >
-                                    <div className="bg-[#0f172a] rounded-2xl border border-white/10 overflow-hidden">
-                                        {/* Preview Header — mimics document header */}
-                                        <div className="bg-indigo-700 px-6 py-3 flex justify-between items-center">
-                                            <span className="text-white font-bold text-sm tracking-wide">NYAYNOW LEGAL SERVICES</span>
-                                            <span className="text-indigo-200 text-xs">nyaynow.in | AI-Powered Legal Platform</span>
-                                        </div>
-                                        <div className="p-8">
-                                            <h2 className="text-2xl font-bold text-white text-center mb-1 font-serif">LEGAL NOTICE</h2>
-                                            <div className="w-full h-px bg-indigo-500/40 mb-6" />
-                                            <pre className="text-slate-300 text-sm leading-relaxed whitespace-pre-wrap font-sans">
-                                                {generatedNotice}
-                                            </pre>
+                                    <div className="absolute inset-0 bg-indigo-500/5 blur-[100px] pointer-events-none" />
+                                    <div className="bg-white rounded-[3px] border border-white/20 shadow-[0_0_100px_rgba(0,0,0,0.5)] overflow-hidden relative">
+                                        <div className="absolute top-0 right-0 p-8 opacity-5 font-black text-8xl pointer-events-none text-black select-none uppercase">CONFIDENTIAL</div>
 
-                                            {/* Signature Slot */}
-                                            <div className="mt-10 grid grid-cols-2 gap-6">
-                                                <div className="border border-dashed border-white/20 rounded-2xl p-5 bg-white/2">
-                                                    <p className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-8">Advocate Signature &amp; Seal</p>
-                                                    <div className="border-b border-white/20 mb-3" />
-                                                    <p className="text-slate-400 text-sm font-medium">{form.senderName}</p>
-                                                    {form.senderBarCouncil && <p className="text-slate-600 text-xs">Enrol. No: {form.senderBarCouncil}</p>}
+                                        {/* Physical Doc Header */}
+                                        <div className="bg-[#1e1b4b] px-10 py-4 flex justify-between items-center border-b border-black">
+                                            <span className="text-white font-black text-xs tracking-[0.2em]">NYAYNOW LEGAL COMMAND</span>
+                                            <span className="text-indigo-300 text-[10px] font-bold">SYSTEM_GEN_V2.0 // IND_JUD_STD</span>
+                                        </div>
+
+                                        <div className="p-16 md:p-24 bg-white text-slate-900 font-serif leading-loose">
+                                            <div className="text-center mb-16 border-b-2 border-slate-900 pb-8">
+                                                <h1 className="text-3xl font-black uppercase tracking-[0.4em] mb-2 text-slate-900">LEGAL NOTICE</h1>
+                                                <p className="italic text-slate-500 font-sans text-sm tracking-wide">Privileged and Confidential Communication</p>
+                                            </div>
+
+                                            <div className="prose prose-slate max-w-none prose-p:text-justify prose-p:text-lg prose-headings:mb-4">
+                                                <pre className="whitespace-pre-wrap font-serif text-slate-900 leading-[2.2] text-justify text-lg tracking-tight">
+                                                    {generatedNotice}
+                                                </pre>
+                                            </div>
+
+                                            {/* Signature Grid */}
+                                            <div className="mt-32 grid grid-cols-2 gap-20 pt-10 border-t border-slate-200">
+                                                <div>
+                                                    <div className="h-24 flex items-end mb-4 italic text-slate-300 text-sm">Seal & Authorization Required</div>
+                                                    <div className="h-px bg-slate-900 mb-3" />
+                                                    <p className="font-black text-sm uppercase tracking-wider">{form.senderName}</p>
+                                                    <p className="text-xs text-slate-500 font-sans font-bold uppercase tracking-widest mt-1">Advocate on Record</p>
+                                                    {form.senderBarCouncil && <p className="text-[10px] text-slate-400 font-sans mt-0.5">Enrolment: {form.senderBarCouncil}</p>}
                                                 </div>
-                                                <div className="border border-dashed border-white/20 rounded-2xl p-5 bg-white/2">
-                                                    <p className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Date of Notice</p>
-                                                    <p className="text-2xl font-bold text-white mt-4">
-                                                        {new Date().toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' })}
-                                                    </p>
-                                                    <p className="text-slate-600 text-xs mt-2">Compliance: {form.complianceDays} days</p>
+                                                <div className="text-right">
+                                                    <div className="h-24" />
+                                                    <p className="text-6xl font-black text-slate-100 mb-0 opacity-40 select-none">NYAYNOW</p>
+                                                    <div className="h-px bg-slate-200 mb-3" />
+                                                    <p className="font-bold text-sm text-slate-500 uppercase tracking-widest font-sans">Issued: {new Date().toLocaleDateString('en-GB', { day: '2-digit', month: 'long', year: 'numeric' })}</p>
                                                 </div>
                                             </div>
                                         </div>
@@ -425,17 +457,18 @@ export default function LegalNoticeGenerator() {
                             )}
                         </AnimatePresence>
 
-                        {/* Quick info cards */}
-                        <div className="grid grid-cols-3 gap-3">
+                        {/* Quick Insight Cards */}
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                             {[
-                                { label: 'Notice Type', value: form.noticeType.split('(')[0].trim(), icon: '📋' },
-                                { label: 'Recipient', value: form.recipientName, icon: '👤' },
-                                { label: 'Compliance', value: `${form.complianceDays} days`, icon: '⏰' },
-                            ].map(({ label, value, icon }) => (
-                                <div key={label} className="bg-[#0f172a] rounded-2xl p-4 border border-white/10">
-                                    <p className="text-lg mb-1">{icon}</p>
-                                    <p className="text-xs text-slate-600 uppercase font-bold tracking-wider">{label}</p>
-                                    <p className="text-slate-200 text-sm font-semibold truncate mt-0.5">{value || '—'}</p>
+                                { label: 'Instrument Class', value: form.noticeType.split('(')[0].trim(), icon: '📜', color: 'indigo' },
+                                { label: 'Primary Target', value: form.recipientName, icon: '👤', color: 'rose' },
+                                { label: 'Execution Window', value: `${form.complianceDays} Standard Days`, icon: '⚡', color: 'emerald' },
+                            ].map(({ label, value, icon, color }) => (
+                                <div key={label} className="bg-[#0f172a]/80 backdrop-blur-md rounded-[2rem] p-8 border border-white/5 shadow-xl hover:border-indigo-500/20 transition-all group overflow-hidden relative">
+                                    <div className={`absolute top-0 right-0 w-24 h-24 bg-${color}-500/5 rounded-full blur-2xl group-hover:scale-150 transition-transform duration-700`} />
+                                    <div className="text-3xl mb-6 transform group-hover:scale-125 group-hover:-rotate-12 transition-transform duration-500">{icon}</div>
+                                    <p className="text-[10px] text-slate-600 uppercase font-black tracking-[0.2em] mb-1">{label}</p>
+                                    <p className="text-white text-lg font-bold truncate tracking-tight">{value || 'NOT_SPECIFIED'}</p>
                                 </div>
                             ))}
                         </div>

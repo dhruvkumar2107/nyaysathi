@@ -28,6 +28,7 @@ export default function LawyerDashboard() {
   const router = useRouter();
   const [activeTab, setActiveTab] = useState("board");
   const [leads, setLeads] = useState([]);
+  const [acceptedCases, setAcceptedCases] = useState([]);
   const [appointments, setAppointments] = useState([]);
   const [invoices, setInvoices] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -39,6 +40,7 @@ export default function LawyerDashboard() {
       const uId = user._id || user.id;
       Promise.all([
         fetchLeads(),
+        fetchAcceptedCases(uId),
         fetchAppointments(uId),
         fetchInvoices(uId),
         axios.get(`/api/crm/insights?userId=${uId}`).then(res => setCrmData(res.data)).catch(err => null)
@@ -56,6 +58,17 @@ export default function LawyerDashboard() {
     } catch (err) {
       console.error("Leads Fetch Error:", err);
       setLeads([]);
+    }
+  };
+
+  const fetchAcceptedCases = async (userId) => {
+    try {
+      // Assuming lawyers are identified by ID in the 'lawyer' field of Case model
+      const res = await axios.get(`/api/cases?lawyerId=${userId}`);
+      setAcceptedCases(Array.isArray(res.data) ? res.data : []);
+    } catch (err) {
+      console.error("Accepted Cases Fetch Error:", err);
+      setAcceptedCases([]);
     }
   };
 
@@ -82,10 +95,15 @@ export default function LawyerDashboard() {
 
   const acceptLead = async (id, tier) => {
     if (!user.verified) return toast.error("Verification Required. Please complete your profile.");
+    const uId = user._id || user.id;
     try {
-      await axios.post(`/api/cases/${id}/accept`, { lawyerPhone: user.phone || user.email });
+      await axios.post(`/api/cases/${id}/accept`, {
+        lawyerPhone: user.phone || user.email,
+        lawyerId: uId
+      });
       toast.success("Lead Accepted! Client has been notified.");
       fetchLeads();
+      fetchAcceptedCases(uId);
     } catch (err) { toast.error("Failed to accept lead."); }
   };
 
@@ -225,7 +243,7 @@ export default function LawyerDashboard() {
                 {/* KANBAN BOARD */}
                 <div className="bg-[#0f172a] rounded-3xl p-6 border border-white/10 shadow-xl min-h-[500px]">
                   <h3 className="font-bold text-lg text-white mb-6">Case Lifecycle</h3>
-                  <KanbanBoard cases={leads.filter(l => l.acceptedBy)} onUpdate={fetchLeads} />
+                  <KanbanBoard cases={acceptedCases} onUpdate={() => fetchAcceptedCases(user._id || user.id)} />
                 </div>
 
                 {/* LEGAL REELS (PRO THEME) */}
