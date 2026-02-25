@@ -6,6 +6,7 @@ import Footer from "../../src/components/Footer";
 import { motion } from "framer-motion";
 import { Bell, Lock, Shield, User, Smartphone, Globe, Moon, Monitor, CreditCard, Settings2 } from "lucide-react";
 import toast from "react-hot-toast";
+import axios from "axios";
 
 export default function Settings() {
     const { user } = useAuth();
