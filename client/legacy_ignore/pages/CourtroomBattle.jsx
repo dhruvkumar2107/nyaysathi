@@ -351,7 +351,7 @@ export default function CourtroomBattle() {
             <Navbar />
 
             {/* ── HERO ─────────────────────────────────────────────────────────── */}
-            <div className="relative pt-28 pb-12 px-6 overflow-hidden">
+            <div className="relative pt-44 pb-12 px-6 overflow-hidden">
                 <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center_top,_rgba(109,40,217,0.25),_transparent_60%)]" />
                 <div className="absolute top-10 left-10 w-[600px] h-[400px] bg-violet-900/10 rounded-full blur-[120px]" />
                 <div className="absolute top-10 right-0 w-[400px] h-[400px] bg-amber-900/10 rounded-full blur-[120px]" />
@@ -374,10 +374,10 @@ export default function CourtroomBattle() {
                         initial={{ y: 30, opacity: 0 }}
                         animate={{ y: 0, opacity: 1 }}
                         transition={{ delay: 0.1 }}
-                        className="text-6xl md:text-8xl font-serif font-black text-white mb-4 leading-[1.05]"
+                        className="text-6xl md:text-8xl font-serif font-black text-white mb-6 leading-[1.05] tracking-tight"
                     >
                         NyayCourt{' '}
-                        <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-400 via-orange-400 to-red-400 drop-shadow-[0_0_30px_rgba(251,191,36,0.5)]">
+                        <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-400 via-orange-400 to-red-400 drop-shadow-[0_0_40px_rgba(251,191,36,0.6)]">
                             Battle
                         </span>
                     </motion.h1>
