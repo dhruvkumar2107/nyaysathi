@@ -147,7 +147,7 @@ const DraftingLab = () => {
     };
 
     return (
-        <div className="min-h-screen bg-[#020617] text-slate-400 font-sans pb-20 pt-[120px] px-4 md:px-8 selection:bg-indigo-500/30">
+        <div className="min-h-screen bg-[#020617] text-slate-400 font-sans pb-20 pt-[160px] px-4 md:px-8 selection:bg-indigo-500/30">
             <Navbar />
             <SubscriptionModal
                 isOpen={showModal}

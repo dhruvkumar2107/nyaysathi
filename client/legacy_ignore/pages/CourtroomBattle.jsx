@@ -351,7 +351,7 @@ export default function CourtroomBattle() {
             <Navbar />
 
             {/* ── HERO ─────────────────────────────────────────────────────────── */}
-            <div className="relative pt-44 pb-12 px-6 overflow-hidden">
+            <div className="relative pt-52 pb-12 px-6 overflow-hidden">
                 <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center_top,_rgba(109,40,217,0.25),_transparent_60%)]" />
                 <div className="absolute top-10 left-10 w-[600px] h-[400px] bg-violet-900/10 rounded-full blur-[120px]" />
                 <div className="absolute top-10 right-0 w-[400px] h-[400px] bg-amber-900/10 rounded-full blur-[120px]" />
