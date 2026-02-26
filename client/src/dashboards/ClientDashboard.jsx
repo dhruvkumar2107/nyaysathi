@@ -12,6 +12,7 @@ const CaseTimeline = dynamic(() => import("../components/dashboard/CaseTimeline"
 const CalendarWidget = dynamic(() => import("../components/dashboard/CalendarWidget"), { ssr: false });
 const TrustTimeline = dynamic(() => import("../components/dashboard/client/TrustTimeline"), { ssr: false });
 const LegalConfessionBooth = dynamic(() => import("../components/dashboard/client/LegalConfessionBooth"), { ssr: false });
+const BookingModal = dynamic(() => import("../components/dashboard/BookingModal"), { ssr: false });
 import io from "socket.io-client";
 import { motion, AnimatePresence } from "framer-motion";
 import toast from "react-hot-toast";
@@ -33,19 +34,67 @@ export default function ClientDashboard() {
   const [showPostModal, setShowPostModal] = useState(false);
   const [showProfileMenu, setShowProfileMenu] = useState(false);
 
+  const [connections, setConnections] = useState([]);
+  const [notifications, setNotifications] = useState([]);
+  const [showNotifications, setShowNotifications] = useState(false);
+  const [selectedLawyer, setSelectedLawyer] = useState(null);
+  const [showBookingModal, setShowBookingModal] = useState(false);
+
   useEffect(() => {
     if (user) {
+      const uId = user._id || user.id;
       Promise.all([
         fetchMyCases(),
         fetchPosts(),
         fetchInvoices(),
         fetchAppointments(),
-        fetchSuggestedLawyers()
+        fetchSuggestedLawyers(),
+        fetchConnections(uId),
+        fetchNotifications(uId)
       ]).finally(() => setLoading(false));
 
-      socket.emit("join_room", user._id || user.id);
+      socket.emit("join_room", uId);
+
+      socket.on("dashboard_alert", (notif) => {
+        setNotifications(prev => [notif, ...prev]);
+        toast.success("Alert: " + notif.message, { icon: '🔔' });
+      });
+
+      return () => {
+        socket.off("dashboard_alert");
+      }
     }
   }, [user]);
+
+  const fetchNotifications = async (uId) => {
+    try {
+      const res = await axios.get(`/api/notifications?userId=${uId}`);
+      setNotifications(res.data);
+    } catch (err) { console.error("Notif Error:", err); }
+  };
+
+  const fetchConnections = async (uId) => {
+    try {
+      const res = await axios.get(`/api/connections?userId=${uId}&status=all`);
+      setConnections(res.data);
+    } catch (err) {
+      console.error("Connections Fetch Error:", err);
+    }
+  };
+
+  const handleConnect = async (lawyerId) => {
+    try {
+      await axios.post("/api/connections", {
+        clientId: user._id || user.id,
+        lawyerId: lawyerId,
+        initiatedBy: user._id || user.id
+      });
+      toast.success("Connection request sent!");
+      fetchConnections(user._id || user.id);
+    } catch (err) {
+      toast.error(err.response?.data?.error || "Failed to connect");
+    }
+  };
 
   const fetchSuggestedLawyers = async () => {
     try {
@@ -99,7 +148,12 @@ export default function ClientDashboard() {
 
   const handlePostCase = async () => {
     try {
-      await axios.post("/api/cases", { ...newCase, postedBy: user.phone || user.email, postedAt: new Date() });
+      await axios.post("/api/cases", {
+        ...newCase,
+        client: user._id || user.id, // Real ID
+        postedBy: user.phone || user.email,
+        postedAt: new Date()
+      });
       setShowPostModal(false);
       fetchMyCases();
       toast.success("Legal Matter Posted Successfully!");
@@ -128,10 +182,11 @@ export default function ClientDashboard() {
             <NavItem icon="📊" label="Overview" active={activeTab === 'overview'} onClick={() => setActiveTab('overview')} />
             <NavItem icon="⚖️" label="My Matters" active={activeTab === 'cases'} onClick={() => setActiveTab('cases')} />
             <NavItem icon="📄" label="Documents" to="/agreements" />
+            <NavItem icon="💬" label="Messages" to="/messages" />
             <NavItem icon="💳" label="Payments" active={activeTab === 'invoices'} onClick={() => setActiveTab('invoices')} />
             <NavItem icon="📡" label="Legal Feed" active={activeTab === 'feed'} onClick={() => setActiveTab('feed')} />
             <div className="my-2 h-px bg-white/5" />
-            <NavItem icon="🎭" label="Confession Booth" active={activeTab === 'confessions'} onClick={() => setActiveTab('confessions')} badge="New" />
+            <NavItem icon="🎭" label="Confession Booth" active={activeTab === 'confessions'} onClick={() => setActiveTab('confessions')} />
           </div>
         </div>
 
@@ -180,141 +235,268 @@ export default function ClientDashboard() {
       <main className="pl-72 pt-8 pr-8 pb-8 min-h-screen">
 
         {/* HEADER */}
-        <header className="flex justify-between items-end mb-10 px-4">
+        <header className="flex justify-between items-end mb-10 px-4 relative">
           <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
             <p className="text-slate-500 text-[10px] font-black uppercase tracking-[0.2em] mb-3">{new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })}</p>
             <h1 className="text-4xl font-bold text-white leading-tight">
               Welcome back, <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 via-white to-cyan-400">{user.name?.split(' ')[0]}</span>
             </h1>
           </motion.div>
-          <button
-            onClick={() => setShowPostModal(true)}
-            className="bg-indigo-600 text-white px-6 py-3 rounded-xl font-bold text-sm hover:bg-indigo-500 transition flex items-center gap-2 shadow-lg shadow-indigo-500/20 border border-indigo-500/50"
-          >
-            <span>+</span> New Legal Matter
-          </button>
+          <div className="flex items-center gap-6">
+            {/* VIDEO CALL BUTTON (PRO) */}
+            <button
+              onClick={() => router.push('/video-call')}
+              className="px-4 py-2 bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 rounded-xl font-bold text-xs uppercase tracking-wider hover:bg-indigo-600 hover:text-white transition flex items-center gap-2"
+            >
+              <span className="w-2 h-2 bg-indigo-400 rounded-full animate-pulse shadow-[0_0_8px_#818cf8]"></span>
+              Secure Virtual Meeting
+            </button>
+
+            {/* NOTIFICATION BELL */}
+            <div className="relative">
+              <button
+                onClick={() => setShowNotifications(!showNotifications)}
+                className="p-3 bg-white/5 border border-white/10 rounded-xl text-slate-400 hover:text-white hover:bg-white/10 transition relative"
+              >
+                <span>🔔</span>
+                {notifications.filter(n => !n.read).length > 0 && (
+                  <span className="absolute -top-1 -right-1 w-4 h-4 bg-indigo-500 text-white text-[10px] flex items-center justify-center rounded-full font-bold animate-bounce">
+                    {notifications.filter(n => !n.read).length}
+                  </span>
+                )}
+              </button>
+
+              <AnimatePresence>
+                {showNotifications && (
+                  <motion.div
+                    initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                    animate={{ opacity: 1, y: 0, scale: 1 }}
+                    exit={{ opacity: 0, y: 10, scale: 0.95 }}
+                    className="absolute right-0 mt-4 w-80 bg-[#1e293b] border border-white/10 rounded-2xl shadow-2xl z-50 overflow-hidden origin-top-right"
+                  >
+                    <div className="p-4 border-b border-white/5 bg-gradient-to-r from-white/5 to-transparent flex justify-between items-center">
+                      <h4 className="text-[10px] font-black text-white uppercase tracking-widest">Pulse Notifications</h4>
+                      <button className="text-[10px] text-indigo-400 font-bold hover:underline">Mark read</button>
+                    </div>
+                    <div className="max-h-96 overflow-y-auto custom-scrollbar">
+                      {notifications.length === 0 ? (
+                        <div className="p-8 text-center opacity-30">
+                          <p className="text-[10px] font-black uppercase tracking-widest text-slate-500">No new alerts</p>
+                        </div>
+                      ) : (
+                        notifications.map(n => (
+                          <div key={n._id} className={`p-4 border-b border-white/5 last:border-0 hover:bg-white/5 transition cursor-pointer ${!n.read ? 'bg-indigo-500/5' : ''}`}>
+                            <p className="text-xs text-white leading-relaxed font-medium">{n.message}</p>
+                            <p className="text-[10px] text-slate-600 mt-2 font-bold uppercase tracking-wider">{new Date(n.createdAt).toLocaleTimeString()}</p>
+                          </div>
+                        ))
+                      )}
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
+
+            <button
+              onClick={() => setShowPostModal(true)}
+              className="bg-indigo-600 text-white px-6 py-3 rounded-xl font-bold text-sm hover:bg-indigo-500 transition flex items-center gap-2 shadow-lg shadow-indigo-500/20 border border-indigo-500/50"
+            >
+              <span>+</span> New Legal Matter
+            </button>
+          </div>
         </header>
 
         {/* BENTO GRID LAYOUT */}
         <div className="grid grid-cols-12 gap-6 px-4">
 
           {/* PRIMARY CONTENT (8 COLS) */}
-          <div className="col-span-8 space-y-6">
+          {activeTab === 'overview' && (
+            <div className="col-span-8 space-y-6">
 
-            {/* HERO CARD: ACTIVE CASE */}
-            <div className="bg-[#0f172a] rounded-3xl p-8 border border-white/10 shadow-xl relative overflow-hidden group">
-              <div className="absolute top-0 right-0 w-64 h-64 bg-indigo-600/10 rounded-full -translate-y-1/2 translate-x-1/2 blur-3xl opacity-50 pointer-events-none group-hover:bg-indigo-500/20 transition duration-1000"></div>
+              {/* HERO CARD: ACTIVE CASE */}
+              <div className="bg-[#0f172a] rounded-3xl p-8 border border-white/10 shadow-xl relative overflow-hidden group">
+                <div className="absolute top-0 right-0 w-64 h-64 bg-indigo-600/10 rounded-full -translate-y-1/2 translate-x-1/2 blur-3xl opacity-50 pointer-events-none group-hover:bg-indigo-500/20 transition duration-1000"></div>
 
-              <div className="relative z-10 flex justify-between items-start mb-8">
-                <div>
-                  <div className="flex items-center gap-3 mb-3">
-                    <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_10px_rgba(16,185,129,0.5)]"></span>
-                    <span className="text-xs font-bold uppercase tracking-widest text-emerald-400">Active Matter</span>
+                <div className="relative z-10 flex justify-between items-start mb-8">
+                  <div>
+                    <div className="flex items-center gap-3 mb-3">
+                      <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_10px_rgba(16,185,129,0.5)]"></span>
+                      <span className="text-xs font-bold uppercase tracking-widest text-emerald-400">Active Matter</span>
+                    </div>
+                    <h2 className="text-2xl font-bold text-white mb-2">
+                      {activeCase ? activeCase.title : "No Active Legal Matters"}
+                    </h2>
+                    <p className="text-slate-400 max-w-lg leading-relaxed">
+                      {activeCase ? activeCase.desc : "Post a new case to get started with our AI legal assistance and connect with top lawyers."}
+                    </p>
                   </div>
-                  <h2 className="text-2xl font-bold text-white mb-2">
-                    {activeCase ? activeCase.title : "No Active Legal Matters"}
-                  </h2>
-                  <p className="text-slate-400 max-w-lg leading-relaxed">
-                    {activeCase ? activeCase.desc : "Post a new case to get started with our AI legal assistance and connect with top lawyers."}
-                  </p>
-                </div>
-                {activeCase && <div className="text-right">
-                  <p className="text-xs text-slate-500 uppercase font-bold tracking-widest mb-1">Budget</p>
-                  <p className="text-3xl font-bold text-white">₹{activeCase.budget}</p>
-                </div>}
-              </div>
-
-              {
-                activeCase ? (
-                  <div className="bg-[#1e293b]/50 rounded-2xl p-6 border border-white/5">
-                    <TrustTimeline stage={activeCase.stage || 'New Lead'} />
-                  </div>
-                ) : (
-                  <div className="grid grid-cols-3 gap-4">
-                    <div className="p-4 bg-white/5 rounded-2xl border border-white/10 text-center hover:bg-white/10 hover:border-indigo-500/30 transition cursor-pointer group" onClick={() => setShowPostModal(true)}>
-                      <div className="text-2xl mb-2 group-hover:scale-110 transition">📝</div>
-                      <div className="font-bold text-sm text-white">Draft Contract</div>
-                    </div>
-                    {/* JUDGE AI MINI WIDGET */}
-                    <div className="p-4 bg-gradient-to-br from-indigo-900/50 to-purple-900/50 rounded-2xl border border-indigo-500/30 text-center hover:scale-105 transition cursor-pointer group relative overflow-hidden" onClick={() => router.push('/judge-ai')}>
-                      <div className="absolute inset-0 bg-indigo-500/10 animate-pulse"></div>
-                      <div className="relative z-10">
-                        <div className="text-2xl mb-2">⚖️</div>
-                        <div className="font-bold text-sm text-white">Judge AI Scan</div>
-                        <div className="text-[10px] text-indigo-300 mt-1">Check Win Probability</div>
-                      </div>
-                    </div>
-                    <div className="p-4 bg-white/5 rounded-2xl border border-white/10 text-center hover:bg-white/10 hover:border-indigo-500/30 transition cursor-pointer group" onClick={() => router.push('/marketplace')}>
-                      <div className="text-2xl mb-2 group-hover:scale-110 transition">🔍</div>
-                      <div className="font-bold text-sm text-white">Find Lawyer</div>
-                    </div>
-                  </div>
-                )
-              }
-            </div>
-
-            {/* REELS SECTION (PRO THEME) */}
-            <LegalReels />
-
-            {/* SECONDARY ROW: FEED & STATS */}
-            <div className="grid grid-cols-2 gap-6 mt-8">
-              {/* FEED SUMMARY */}
-              <div className="bg-[#0f172a] rounded-3xl p-6 border border-white/10 shadow-lg h-[400px] overflow-y-auto custom-scrollbar">
-                <h3 className="font-bold text-lg text-white mb-4 sticky top-0 bg-[#0f172a] pb-2 border-b border-white/10 z-10">Legal Pulse</h3>
-                <div className="space-y-4">
-                  {posts.slice(0, 5).map(post => (
-                    <div key={post._id} className="pb-4 border-b border-white/5 last:border-0 hover:bg-white/5 p-3 -mx-3 rounded-xl transition cursor-pointer">
-                      <div className="flex items-center gap-2 mb-2">
-                        <div className="w-6 h-6 rounded-full bg-indigo-500/20 flex items-center justify-center text-[10px] font-bold text-indigo-300">{post.author?.name?.[0]}</div>
-                        <span className="text-xs font-bold text-white">{post.author?.name}</span>
-                        <span className="text-[10px] text-slate-500">{new Date(post.createdAt).toLocaleDateString()}</span>
-                      </div>
-                      <p className="text-sm text-slate-400 line-clamp-2">{post.content}</p>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              {/* QUICK STATS & BOOKINGS */}
-              <div className="space-y-6">
-                <div className="bg-gradient-to-br from-indigo-900 to-[#0f172a] rounded-3xl p-6 text-white shadow-xl relative overflow-hidden border border-white/10">
-                  <div className="absolute top-0 right-0 w-32 h-32 bg-indigo-500 rounded-full blur-[60px] opacity-20"></div>
-                  <h3 className="font-bold text-lg mb-4 relative z-10">Financial Overview</h3>
-                  <div className="flex justify-between items-end relative z-10">
-                    <div>
-                      <p className="text-indigo-200 text-xs font-bold uppercase tracking-wider mb-1">Total Spent</p>
-                      <p className="text-3xl font-bold">₹{invoices.reduce((acc, i) => acc + (Number(i.amount) || 0), 0).toLocaleString()}</p>
-                    </div>
-                    <div className="text-right">
-                      <p className="text-indigo-200 text-xs font-bold uppercase tracking-wider mb-1">Pending</p>
-                      <p className="text-xl font-bold text-amber-400">₹{invoices.filter(i => i.status !== 'paid').reduce((acc, i) => acc + (Number(i.amount) || 0), 0).toLocaleString()}</p>
-                    </div>
-                  </div>
+                  {activeCase && <div className="text-right">
+                    <p className="text-xs text-slate-500 uppercase font-bold tracking-widest mb-1">Budget</p>
+                    <p className="text-3xl font-bold text-white">₹{activeCase.budget}</p>
+                  </div>}
                 </div>
 
-                <div className="bg-[#0f172a] rounded-3xl p-6 border border-white/10 shadow-lg flex-1">
-                  <h3 className="font-bold text-lg text-white mb-4">Upcoming Meetings</h3>
-                  {appointments.length === 0 ? (
-                    <p className="text-sm text-slate-500 text-center py-6">No meetings scheduled.</p>
+                {
+                  activeCase ? (
+                    <div className="bg-[#1e293b]/50 rounded-2xl p-6 border border-white/5">
+                      <TrustTimeline stage={activeCase.stage || 'New Lead'} />
+                    </div>
                   ) : (
-                    appointments.slice(0, 2).map(apt => (
-                      <div key={apt._id} className="flex items-center gap-3 mb-3 pb-3 border-b border-white/5 last:border-0 last:pb-0 last:mb-0">
-                        <div className="w-10 h-10 rounded-lg bg-indigo-500/10 text-indigo-400 flex flex-col items-center justify-center text-xs font-bold border border-indigo-500/20">
-                          <span>{new Date(apt.date).getDate()}</span>
-                          <span className="uppercase text-[8px]">{new Date(apt.date).toLocaleDateString('en-US', { month: 'short' })}</span>
+                    <div className="grid grid-cols-3 gap-4">
+                      <div className="p-4 bg-white/5 rounded-2xl border border-white/10 text-center hover:bg-white/10 hover:border-indigo-500/30 transition cursor-pointer group" onClick={() => setShowPostModal(true)}>
+                        <div className="text-2xl mb-2 group-hover:scale-110 transition">📝</div>
+                        <div className="font-bold text-sm text-white">Draft Contract</div>
+                      </div>
+                      {/* JUDGE AI MINI WIDGET */}
+                      <div className="p-4 bg-gradient-to-br from-indigo-900/50 to-purple-900/50 rounded-2xl border border-indigo-500/30 text-center hover:scale-105 transition cursor-pointer group relative overflow-hidden" onClick={() => router.push('/judge-ai')}>
+                        <div className="absolute inset-0 bg-indigo-500/10 animate-pulse"></div>
+                        <div className="relative z-10">
+                          <div className="text-2xl mb-2">⚖️</div>
+                          <div className="font-bold text-sm text-white">Judge AI Scan</div>
+                          <div className="text-[10px] text-indigo-300 mt-1">Check Win Probability</div>
                         </div>
-                        <div>
-                          <p className="text-sm font-bold text-white">{apt.lawyerName}</p>
-                          <p className="text-xs text-slate-500">{apt.slot}</p>
+                      </div>
+                      <div className="p-4 bg-white/5 rounded-2xl border border-white/10 text-center hover:bg-white/10 hover:border-indigo-500/30 transition cursor-pointer group" onClick={() => router.push('/marketplace')}>
+                        <div className="text-2xl mb-2 group-hover:scale-110 transition">🔍</div>
+                        <div className="font-bold text-sm text-white">Find Lawyer</div>
+                      </div>
+                    </div>
+                  )
+                }
+              </div>
+
+              {/* REELS SECTION (PRO THEME) */}
+              <LegalReels />
+
+              {/* SECONDARY ROW: FEED & STATS */}
+              <div className="grid grid-cols-2 gap-6 mt-8">
+                {/* FEED SUMMARY */}
+                <div className="bg-[#0f172a] rounded-3xl p-6 border border-white/10 shadow-lg h-[400px] overflow-y-auto custom-scrollbar">
+                  <h3 className="font-bold text-lg text-white mb-4 sticky top-0 bg-[#0f172a] pb-2 border-b border-white/10 z-10">Legal Pulse</h3>
+                  <div className="space-y-4">
+                    {posts.slice(0, 5).map(post => (
+                      <div key={post._id} className="pb-4 border-b border-white/5 last:border-0 hover:bg-white/5 p-3 -mx-3 rounded-xl transition cursor-pointer">
+                        <div className="flex items-center gap-2 mb-2">
+                          <div className="w-6 h-6 rounded-full bg-indigo-500/20 flex items-center justify-center text-[10px] font-bold text-indigo-300">{post.author?.name?.[0]}</div>
+                          <span className="text-xs font-bold text-white">{post.author?.name}</span>
+                          <span className="text-[10px] text-slate-500">{new Date(post.createdAt).toLocaleDateString()}</span>
+                        </div>
+                        <p className="text-sm text-slate-400 line-clamp-2">{post.content}</p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* QUICK STATS & BOOKINGS */}
+                <div className="space-y-6">
+                  <div className="bg-gradient-to-br from-indigo-900 to-[#0f172a] rounded-3xl p-6 text-white shadow-xl relative overflow-hidden border border-white/10">
+                    <div className="absolute top-0 right-0 w-32 h-32 bg-indigo-500 rounded-full blur-[60px] opacity-20"></div>
+                    <h3 className="font-bold text-lg mb-4 relative z-10">Financial Overview</h3>
+                    <div className="flex justify-between items-end relative z-10">
+                      <div>
+                        <p className="text-indigo-200 text-xs font-bold uppercase tracking-wider mb-1">Total Spent</p>
+                        <p className="text-3xl font-bold">₹{invoices.reduce((acc, i) => acc + (Number(i.amount) || 0), 0).toLocaleString()}</p>
+                      </div>
+                      <div className="text-right">
+                        <p className="text-indigo-200 text-xs font-bold uppercase tracking-wider mb-1">Pending</p>
+                        <p className="text-xl font-bold text-amber-400">₹{invoices.filter(i => i.status !== 'paid').reduce((acc, i) => acc + (Number(i.amount) || 0), 0).toLocaleString()}</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="bg-[#0f172a] rounded-3xl p-6 border border-white/10 shadow-lg flex-1">
+                    <h3 className="font-bold text-lg text-white mb-4">Upcoming Meetings</h3>
+                    {appointments.length === 0 ? (
+                      <p className="text-sm text-slate-500 text-center py-6">No meetings scheduled.</p>
+                    ) : (
+                      appointments.slice(0, 2).map(apt => (
+                        <div key={apt._id} className="flex items-center gap-3 mb-3 pb-3 border-b border-white/5 last:border-0 last:pb-0 last:mb-0">
+                          <div className="w-10 h-10 rounded-lg bg-indigo-500/10 text-indigo-400 flex flex-col items-center justify-center text-xs font-bold border border-indigo-500/20">
+                            <span>{new Date(apt.date).getDate()}</span>
+                            <span className="uppercase text-[8px]">{new Date(apt.date).toLocaleDateString('en-US', { month: 'short' })}</span>
+                          </div>
+                          <div>
+                            <p className="text-sm font-bold text-white">{apt.lawyerName}</p>
+                            <p className="text-xs text-slate-500">{apt.slot}</p>
+                          </div>
+                        </div>
+                      ))
+                    )}
+                  </div>
+                </div>
+              </div>
+
+            </div>
+          )}
+
+          {activeTab === 'cases' && (
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="col-span-8 space-y-6">
+              <div className="bg-[#0f172a] rounded-3xl p-8 border border-white/10 shadow-xl">
+                <h3 className="font-bold text-2xl text-white mb-8">Active Case Files</h3>
+                <div className="space-y-4">
+                  {myCases.length === 0 ? (
+                    <div className="py-20 text-center opacity-30">
+                      <p className="text-sm font-bold uppercase tracking-widest">No active litigation records</p>
+                    </div>
+                  ) : (
+                    myCases.map(c => (
+                      <div key={c._id} className="p-6 bg-white/5 rounded-2xl border border-white/5 flex justify-between items-center hover:bg-indigo-500/10 transition cursor-pointer group">
+                        <div className="flex items-center gap-4">
+                          <div className="w-12 h-12 rounded-xl bg-indigo-500/20 flex items-center justify-center text-xl">⚖️</div>
+                          <div>
+                            <h4 className="text-white font-bold group-hover:text-indigo-400 transition">{c.title}</h4>
+                            <p className="text-xs text-slate-500">{c.lawyerName || 'Awaiting Counsel'} • Updated {new Date(c.updatedAt || c.createdAt).toLocaleDateString()}</p>
+                          </div>
+                        </div>
+                        <div className="text-right">
+                          <span className={`text-[10px] font-bold uppercase px-2 py-1 rounded bg-indigo-500/10 text-indigo-400`}>{c.status || 'Active'}</span>
                         </div>
                       </div>
                     ))
                   )}
                 </div>
               </div>
-            </div>
+            </motion.div>
+          )}
 
-          </div>
+          {activeTab === 'invoices' && (
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-6">
+              <div className="bg-[#0f172a] rounded-3xl p-8 border border-white/10 shadow-xl">
+                <div className="flex justify-between items-center mb-8">
+                  <h3 className="font-bold text-2xl text-white">Payment Records</h3>
+                  <div className="text-right">
+                    <p className="text-xs text-slate-500 uppercase font-bold tracking-widest mb-1">Total Outstanding</p>
+                    <p className="text-2xl font-bold text-amber-400">₹{invoices.filter(i => i.status !== 'paid').reduce((acc, i) => acc + (Number(i.amount) || 0), 0).toLocaleString()}</p>
+                  </div>
+                </div>
+                <div className="space-y-4">
+                  {invoices.length === 0 ? (
+                    <div className="py-20 text-center">
+                      <p className="text-slate-500 font-bold uppercase tracking-widest">Safe vault is empty</p>
+                    </div>
+                  ) : (
+                    invoices.map(inv => (
+                      <div key={inv._id} className="p-6 bg-white/5 rounded-2xl border border-white/5 flex justify-between items-center hover:bg-white/10 transition">
+                        <div>
+                          <p className="text-white font-bold">Invoiced by {inv.lawyerName || 'Legal Counsel'}</p>
+                          <p className="text-xs text-slate-500">{new Date(inv.createdAt).toLocaleDateString()} • Ref: {inv._id.slice(-6)}</p>
+                        </div>
+                        <div className="flex items-center gap-6">
+                          <div className="text-right">
+                            <p className="text-xl font-bold text-white">₹{inv.amount}</p>
+                            <span className={`text-[10px] font-bold uppercase px-2 py-0.5 rounded ${inv.status === 'paid' ? 'bg-emerald-500/20 text-emerald-400' : 'bg-amber-500/20 text-amber-400'}`}>{inv.status}</span>
+                          </div>
+                          {inv.status !== 'paid' && (
+                            <button className="px-4 py-2 bg-indigo-600 text-white rounded-lg font-bold text-xs hover:bg-indigo-500 transition shadow-lg shadow-indigo-600/20">Pay Now</button>
+                          )}
+                        </div>
+                      </div>
+                    ))
+                  )}
+                </div>
+              </div>
+            </motion.div>
+          )}
 
           {/* CONFESSION BOOTH — Full Width */}
           {
@@ -338,20 +520,35 @@ export default function ClientDashboard() {
                 <div className="bg-[#0f172a] rounded-3xl p-6 border border-white/10 shadow-lg">
                   <h3 className="font-bold text-lg text-white mb-4">Recommended Counsel</h3>
                   <div className="space-y-4">
-                    {suggestedLawyers.map(l => (
-                      <div key={l._id} className="flex items-center gap-3 group cursor-pointer hover:bg-white/5 p-2 -mx-2 rounded-xl transition">
-                        <div className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center text-slate-400 font-bold text-sm group-hover:bg-indigo-600 group-hover:text-white transition">
-                          {l.name?.[0]}
+                    {suggestedLawyers.map(l => {
+                      const conn = connections.find(c => c._id === l._id);
+                      return (
+                        <div key={l._id} className="flex items-center gap-3 group cursor-pointer hover:bg-white/5 p-2 -mx-2 rounded-xl transition">
+                          <div className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center text-slate-400 font-bold text-sm group-hover:bg-indigo-600 group-hover:text-white transition">
+                            {l.name?.[0]}
+                          </div>
+                          <div className="flex-1" onClick={() => router.push(`/lawyer/${l._id}`)}>
+                            <h4 className="font-bold text-sm text-white group-hover:text-indigo-400 transition">{l.name}</h4>
+                            <p className="text-xs text-slate-500">{l.specialization || "Legal Expert"}</p>
+                          </div>
+                          {conn ? (
+                            <span className={`text-[10px] font-bold uppercase ${conn.connectionStatus === 'active' ? 'text-emerald-400' : 'text-amber-400'}`}>
+                              {conn.connectionStatus}
+                            </span>
+                          ) : (
+                            <button
+                              onClick={() => {
+                                setSelectedLawyer(l);
+                                setShowBookingModal(true);
+                              }}
+                              className="w-8 h-8 rounded-full border border-white/10 flex items-center justify-center text-slate-400 hover:border-indigo-500 hover:text-indigo-400 transition"
+                            >
+                              +
+                            </button>
+                          )}
                         </div>
-                        <div className="flex-1">
-                          <h4 className="font-bold text-sm text-white group-hover:text-indigo-400 transition">{l.name}</h4>
-                          <p className="text-xs text-slate-500">{l.specialization || "Legal Expert"}</p>
-                        </div>
-                        <button className="w-8 h-8 rounded-full border border-white/10 flex items-center justify-center text-slate-400 hover:border-indigo-500 hover:text-indigo-400 transition">
-                          +
-                        </button>
-                      </div>
-                    ))}
+                      );
+                    })}
                   </div>
                   <button onClick={() => router.push('/marketplace')} className="w-full mt-6 py-3 border border-white/10 rounded-xl text-xs font-bold uppercase tracking-wider text-slate-400 hover:bg-white/5 hover:text-white transition">
                     View Marketplace
@@ -390,6 +587,16 @@ export default function ClientDashboard() {
               </div>
             </motion.div>
           </div>
+        )
+      }
+
+      {
+        showBookingModal && selectedLawyer && (
+          <BookingModal
+            lawyer={selectedLawyer}
+            client={user}
+            onClose={() => setShowBookingModal(false)}
+          />
         )
       }
 

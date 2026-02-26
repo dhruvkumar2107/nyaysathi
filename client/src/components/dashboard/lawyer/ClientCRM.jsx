@@ -1,29 +1,42 @@
 import React, { useState, useEffect } from "react";
-import { Search, Filter, Phone, Mail, MoreVertical, FileText, Calendar, Loader2 } from "lucide-react";
-import { motion } from "framer-motion";
+import { Search, Filter, Phone, Mail, MoreVertical, FileText, Calendar, Loader2, CheckCircle, XCircle } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
 import axios from "axios";
 import { useAuth } from "../../../context/AuthContext";
+import toast from "react-hot-toast";
 
 export default function ClientCRM() {
     const { user } = useAuth();
     const [clients, setClients] = useState([]);
     const [loading, setLoading] = useState(true);
     const [search, setSearch] = useState("");
+    const [filterTab, setFilterTab] = useState("active"); // 'active', 'pending'
 
     useEffect(() => {
         if (user) {
             fetchClients();
         }
-    }, [user]);
+    }, [user, filterTab]);
 
     const fetchClients = async () => {
+        setLoading(true);
         try {
-            const res = await axios.get(`/api/connections?userId=${user._id || user.id}&status=active`);
+            const res = await axios.get(`/api/connections?userId=${user._id || user.id}&status=${filterTab}`);
             setClients(res.data);
         } catch (err) {
             console.error("CRM Fetch Error:", err);
         } finally {
             setLoading(false);
+        }
+    };
+
+    const handleUpdateStatus = async (connectionId, newStatus) => {
+        try {
+            await axios.put(`/api/connections/${connectionId}`, { status: newStatus });
+            toast.success(newStatus === 'active' ? "Connection established!" : "Request declined");
+            fetchClients();
+        } catch (err) {
+            toast.error("Process failed. Please try again.");
         }
     };
 
@@ -34,20 +47,38 @@ export default function ClientCRM() {
 
     return (
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-6">
-            <div className="flex justify-between items-center bg-[#0f172a] p-4 rounded-2xl border border-white/10">
-                <h3 className="text-xl font-bold text-white">Client Directory</h3>
-                <div className="flex gap-3">
-                    <div className="relative">
+            <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-[#0f172a] p-6 rounded-[2rem] border border-white/10 shadow-2xl">
+                <div>
+                    <h3 className="text-2xl font-black text-white tracking-tighter">Client Registry</h3>
+                    <div className="flex gap-4 mt-3">
+                        <button
+                            onClick={() => setFilterTab('active')}
+                            className={`text-[10px] font-black uppercase tracking-[0.2em] pb-1 border-b-2 transition ${filterTab === 'active' ? 'text-indigo-400 border-indigo-500' : 'text-slate-600 border-transparent'}`}
+                        >
+                            Secured Vault
+                        </button>
+                        <button
+                            onClick={() => setFilterTab('pending')}
+                            className={`text-[10px] font-black uppercase tracking-[0.2em] pb-1 border-b-2 transition ${filterTab === 'pending' ? 'text-indigo-400 border-indigo-500' : 'text-slate-600 border-transparent'}`}
+                        >
+                            Incoming Requests
+                            {filterTab !== 'pending' && clients.some(c => c.connectionStatus === 'pending') && <span className="ml-2 w-2 h-2 bg-indigo-500 rounded-full inline-block animate-pulse"></span>}
+                        </button>
+                    </div>
+                </div>
+
+                <div className="flex gap-3 w-full md:w-auto">
+                    <div className="relative flex-1 md:w-64">
                         <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500" size={16} />
                         <input
                             type="text"
-                            placeholder="Search clients..."
+                            placeholder="Search identities..."
                             value={search}
                             onChange={(e) => setSearch(e.target.value)}
-                            className="pl-10 pr-4 py-2 bg-white/5 border border-white/10 rounded-xl text-sm text-white focus:outline-none focus:border-indigo-500 transition"
+                            className="w-full pl-10 pr-4 py-3 bg-white/5 border border-white/5 rounded-2xl text-sm text-white focus:outline-none focus:border-indigo-500/50 transition"
                         />
                     </div>
-                    <button className="p-2 bg-white/5 border border-white/10 rounded-xl text-slate-400 hover:text-white hover:bg-white/10 transition">
+                    <button className="p-3 bg-white/5 border border-white/5 rounded-2xl text-slate-400 hover:text-white hover:bg-white/10 transition">
                         <Filter size={18} />
                     </button>
                 </div>
@@ -55,61 +86,106 @@ export default function ClientCRM() {
 
             <div className="grid grid-cols-1 gap-4">
                 {loading ? (
-                    <div className="flex flex-col items-center justify-center py-20 bg-[#0f172a] rounded-3xl border border-white/5">
-                        <Loader2 className="animate-spin text-indigo-500 mb-4" size={32} />
-                        <p className="text-slate-500 font-medium">Synchronizing Secure Database...</p>
+                    <div className="flex flex-col items-center justify-center py-24 bg-[#0f172a]/50 rounded-[2.5rem] border border-white/5 backdrop-blur-sm">
+                        <Loader2 className="animate-spin text-indigo-500 mb-4" size={40} />
+                        <p className="text-slate-500 font-bold uppercase tracking-[0.3em] text-xs">Accessing Neural Database...</p>
                     </div>
-                ) : filteredClients.map(client => (
-                    <div key={client._id} className="bg-[#0f172a] border border-white/10 rounded-2xl p-6 hover:border-indigo-500/30 transition group relative overflow-hidden">
-                        <div className="absolute top-0 right-0 w-32 h-32 bg-indigo-500/5 rounded-full -translate-y-1/2 translate-x-1/2 blur-2xl group-hover:bg-indigo-500/10 transition-colors" />
+                ) : (
+                    <AnimatePresence mode="popLayout">
+                        {filteredClients.map(client => (
+                            <motion.div
+                                layout
+                                key={client._id}
+                                initial={{ opacity: 0, scale: 0.98 }}
+                                animate={{ opacity: 1, scale: 1 }}
+                                exit={{ opacity: 0, scale: 0.98 }}
+                                className="bg-[#0f172a] border border-white/5 rounded-[2rem] p-8 hover:border-indigo-500/30 transition group relative overflow-hidden shadow-xl"
+                            >
+                                <div className="absolute top-0 right-0 w-48 h-48 bg-indigo-500/5 rounded-full -translate-y-1/2 translate-x-1/2 blur-[80px] pointer-events-none group-hover:bg-indigo-500/10 transition-colors duration-700" />
 
-                        <div className="flex justify-between items-start relative z-10">
-                            <div className="flex items-center gap-4">
-                                <div className="w-14 h-14 rounded-full bg-gradient-to-br from-indigo-600/20 to-purple-600/20 border border-white/10 flex items-center justify-center text-indigo-400 font-black text-xl shadow-inner">
-                                    {client.name?.[0]}
-                                </div>
-                                <div>
-                                    <h4 className="font-bold text-white text-lg tracking-tight">{client.name}</h4>
-                                    <div className="flex items-center gap-2 mt-1">
-                                        <span className="text-slate-500 text-xs font-medium uppercase tracking-wider">{client.location?.city || "Remote"}</span>
-                                        <span className="w-1 h-1 rounded-full bg-slate-700"></span>
-                                        <span className="text-indigo-400 text-xs font-bold">{client.plan || "Standard"} Client</span>
+                                <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6 relative z-10">
+                                    <div className="flex items-center gap-5">
+                                        <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-slate-800 to-slate-900 border border-white/10 flex items-center justify-center text-indigo-400 font-black text-2xl shadow-2xl group-hover:scale-105 transition duration-500">
+                                            {client.name?.[0]}
+                                        </div>
+                                        <div>
+                                            <h4 className="font-black text-white text-xl tracking-tighter">{client.name}</h4>
+                                            <div className="flex items-center gap-2 mt-2">
+                                                <span className="text-slate-500 text-[10px] font-black uppercase tracking-[0.15em]">{client.location?.city || "Remote Entity"}</span>
+                                                <span className="w-1 h-1 rounded-full bg-slate-700"></span>
+                                                <span className="text-indigo-400 text-[10px] font-black uppercase tracking-[0.15em]">{client.plan || "Standard"} Protocol</span>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div className="flex items-center gap-3 w-full lg:w-auto">
+                                        {filterTab === 'pending' ? (
+                                            <>
+                                                <button
+                                                    onClick={() => handleUpdateStatus(client.connectionId, 'active')}
+                                                    className="flex-1 lg:flex-none px-6 py-3 bg-emerald-500 text-white rounded-xl font-black text-[10px] uppercase tracking-[0.2em] shadow-lg shadow-emerald-500/20 hover:bg-emerald-400 transition flex items-center gap-2"
+                                                >
+                                                    <CheckCircle size={14} /> Accept Request
+                                                </button>
+                                                <button
+                                                    onClick={() => handleUpdateStatus(client.connectionId, 'rejected')}
+                                                    className="flex-1 lg:flex-none px-6 py-3 bg-white/5 border border-white/10 text-slate-400 rounded-xl font-black text-[10px] uppercase tracking-[0.2em] hover:bg-red-500/10 hover:text-red-400 transition flex items-center gap-2"
+                                                >
+                                                    <XCircle size={14} /> Decline
+                                                </button>
+                                            </>
+                                        ) : (
+                                            <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-indigo-500/5 text-indigo-400 border border-indigo-500/10 shadow-inner">
+                                                <div className="w-1.5 h-1.5 rounded-full bg-indigo-500 animate-pulse"></div>
+                                                <span className="text-[10px] font-black uppercase tracking-[0.15em]">Neural Link: Active</span>
+                                            </div>
+                                        )}
+                                        <button className="p-3 text-slate-500 hover:text-white hover:bg-white/5 rounded-xl transition">
+                                            <MoreVertical size={20} />
+                                        </button>
                                     </div>
                                 </div>
-                                <span className="px-3 py-1 rounded-lg text-[10px] font-black uppercase tracking-[0.15em] bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">Active</span>
-                            </div>
 
-                            <button className="p-2 text-slate-500 hover:text-white hover:bg-white/5 rounded-lg transition">
-                                <MoreVertical size={20} />
-                            </button>
-                        </div>
-
-                        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mt-8 pt-6 border-t border-white/5 relative z-10">
-                            <div className="flex items-center gap-3 text-slate-400 hover:text-white transition-colors cursor-pointer group/item">
-                                <div className="p-2 bg-white/5 rounded-lg group-hover/item:text-indigo-400 transition-colors"><Phone size={14} /></div>
-                                <span className="text-xs font-medium">{client.phone || "No contact"}</span>
-                            </div>
-                            <div className="flex items-center gap-3 text-slate-400 hover:text-white transition-colors cursor-pointer group/item">
-                                <div className="p-2 bg-white/5 rounded-lg group-hover/item:text-indigo-400 transition-colors"><Mail size={14} /></div>
-                                <span className="text-xs font-medium truncate max-w-[150px]">{client.email}</span>
-                            </div>
-                            <div className="flex items-center gap-3 text-slate-400 group/item">
-                                <div className="p-2 bg-white/5 rounded-lg group-hover/item:text-indigo-400 transition-colors"><Calendar size={14} /></div>
-                                <span className="text-xs font-medium text-slate-500 italic">Connected {new Date(client.createdAt || client.connectionDate || Date.now()).toLocaleDateString()}</span>
-                            </div>
-                            <div className="text-right">
-                                <button className="bg-indigo-600/10 text-indigo-400 px-4 py-2 rounded-xl text-xs font-black uppercase tracking-widest border border-indigo-500/20 hover:bg-indigo-600 hover:text-white transition-all">
-                                    Dossier
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                ))}
+                                <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mt-10 pt-8 border-t border-white/5 relative z-10">
+                                    <div className="flex items-center gap-4 text-slate-400 group/item">
+                                        <div className="p-3 bg-white/5 rounded-xl group-hover/item:bg-indigo-500/10 group-hover/item:text-indigo-400 transition-colors"><Phone size={16} /></div>
+                                        <div className="flex flex-col">
+                                            <span className="text-[8px] font-black uppercase tracking-widest text-slate-600">Secure Line</span>
+                                            <span className="text-xs font-bold text-white/80">{client.phone || "Encrypted"}</span>
+                                        </div>
+                                    </div>
+                                    <div className="flex items-center gap-4 text-slate-400 group/item">
+                                        <div className="p-3 bg-white/5 rounded-xl group-hover/item:bg-indigo-500/10 group-hover/item:text-indigo-400 transition-colors"><Mail size={16} /></div>
+                                        <div className="flex flex-col">
+                                            <span className="text-[8px] font-black uppercase tracking-widest text-slate-600">Encryption P0</span>
+                                            <span className="text-xs font-bold text-white/80 truncate max-w-[140px]">{client.email}</span>
+                                        </div>
+                                    </div>
+                                    <div className="flex items-center gap-4 text-slate-400 group/item">
+                                        <div className="p-3 bg-white/5 rounded-xl group-hover/item:bg-indigo-500/10 group-hover/item:text-indigo-400 transition-colors"><Calendar size={16} /></div>
+                                        <div className="flex flex-col">
+                                            <span className="text-[8px] font-black uppercase tracking-widest text-slate-600">Interaction Log</span>
+                                            <span className="text-xs font-bold text-white/80 italic">{new Date(client.createdAt || Date.now()).toLocaleDateString()}</span>
+                                        </div>
+                                    </div>
+                                    <div className="flex items-center justify-end">
+                                        <button className="px-6 py-3 bg-indigo-500/5 text-indigo-400 border border-indigo-500/20 rounded-xl text-[10px] font-black uppercase tracking-[0.2em] hover:bg-indigo-500 hover:text-white transition duration-500 group-hover:shadow-[0_0_20px_rgba(99,102,241,0.2)]">
+                                            Data Dossier
+                                        </button>
+                                    </div>
+                                </div>
+                            </motion.div>
+                        ))}
+                    </AnimatePresence>
+                )}
 
                 {!loading && filteredClients.length === 0 && (
-                    <div className="text-center py-20 bg-[#0f172a] rounded-3xl border border-white/5">
-                        <p className="text-slate-600 font-bold uppercase tracking-widest text-sm">No clients found in registry</p>
-                    </div>
+                    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-center py-24 bg-[#0f172a]/30 rounded-[2.5rem] border border-white/5 backdrop-blur-sm">
+                        <div className="w-16 h-16 bg-white/5 flex items-center justify-center rounded-full mx-auto mb-6 text-slate-600">
+                            <Search size={32} />
+                        </div>
+                        <p className="text-slate-600 font-black uppercase tracking-[0.3em] text-xs">No identities found in the current sector</p>
+                    </motion.div>
                 )}
             </div>
         </motion.div>

@@ -49,7 +49,7 @@ export default function LawyerProfileClient({ initialLawyer, lawyerId }) {
             await axios.post(`${process.env.NEXT_PUBLIC_API_URL || ""}/api/connections`, {
                 clientId: user._id || user.id,
                 lawyerId: lawyerId,
-                initiatedBy: user.role
+                initiatedBy: user._id || user.id
             })
             toast.success("Request sent successfully!")
             setConnection({ status: 'pending' })

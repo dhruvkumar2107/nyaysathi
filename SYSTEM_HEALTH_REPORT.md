@@ -1,4 +1,4 @@
-# NyayNow System Health Report - Feb 25, 2026
+![alt text](image.png)# NyayNow System Health Report - Feb 25, 2026
 
 ## Audit Overview
 A comprehensive audit of all application pages was conducted to ensure runtime stability and UI consistency.

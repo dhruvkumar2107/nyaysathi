@@ -23,19 +23,34 @@ router.get("/", async (req, res) => {
     res.status(500).json({ error: "Failed to fetch cases" });
   }
 });
+const Connection = require("../models/Connection");
+
 // LAWYER ACCEPTS CASE
 router.post("/:id/accept", async (req, res) => {
   const { id } = req.params;
-  const { lawyerPhone, lawyerId } = req.body; // Added lawyerId support
-  const updates = { acceptedBy: lawyerPhone, stage: 'Discovery' };
-  if (lawyerId) updates.lawyer = lawyerId;
+  const { lawyerPhone, lawyerId } = req.body;
 
-  const c = await Case.findByIdAndUpdate(
-    id,
-    updates,
-    { new: true }
-  );
-  res.json(c);
+  try {
+    const freshCase = await Case.findById(id);
+    if (!freshCase) return res.status(404).json({ error: "Case not found" });
+
+    const updates = { acceptedBy: lawyerPhone, stage: 'Discovery', lawyer: lawyerId };
+
+    // Auto-create Connection
+    if (freshCase.client && lawyerId) {
+      await Connection.findOneAndUpdate(
+        { clientId: freshCase.client, lawyerId: lawyerId },
+        { status: "active", initiatedBy: lawyerId },
+        { upsert: true, new: true }
+      );
+    }
+
+    const c = await Case.findByIdAndUpdate(id, updates, { new: true });
+    res.json(c);
+  } catch (err) {
+    console.error("Accept Lead Error:", err);
+    res.status(500).json({ error: "Failed to accept lead" });
+  }
 });
 
 // KANBAN STAGE UPDATE

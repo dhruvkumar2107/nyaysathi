@@ -23,6 +23,15 @@ export default function Messages() {
   const scrollRef = useRef(null);
   const [loading, setLoading] = useState(true);
 
+  // Join personal room for real-time delivery
+  useEffect(() => {
+    if (!user) return;
+    const myId = user._id || user.id;
+    if (myId) {
+      socket.emit("join_room", myId);
+    }
+  }, [user]);
+
   // 1. Fetch Connections
   useEffect(() => {
     if (user) {

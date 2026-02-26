@@ -31,6 +31,8 @@ export default function LawyerDashboard() {
   const [acceptedCases, setAcceptedCases] = useState([]);
   const [appointments, setAppointments] = useState([]);
   const [invoices, setInvoices] = useState([]);
+  const [notifications, setNotifications] = useState([]);
+  const [showNotifications, setShowNotifications] = useState(false);
   const [loading, setLoading] = useState(true);
   const [crmData, setCrmData] = useState(null);
   const [showProfileMenu, setShowProfileMenu] = useState(false);
@@ -43,13 +45,30 @@ export default function LawyerDashboard() {
         fetchAcceptedCases(uId),
         fetchAppointments(uId),
         fetchInvoices(uId),
+        fetchNotifications(uId),
         axios.get(`/api/crm/insights?userId=${uId}`).then(res => setCrmData(res.data)).catch(err => null)
       ]).finally(() => setLoading(false));
 
       socket.emit("join_room", uId);
       socket.emit("join_lawyer_pool");
+
+      socket.on("dashboard_alert", (notif) => {
+        setNotifications(prev => [notif, ...prev]);
+        toast.success("New Alert: " + notif.message, { icon: '🔔' });
+      });
+
+      return () => {
+        socket.off("dashboard_alert");
+      }
     }
   }, [user]);
+
+  const fetchNotifications = async (uId) => {
+    try {
+      const res = await axios.get(`/api/notifications?userId=${uId}`);
+      setNotifications(res.data);
+    } catch (err) { console.error("Notif Error:", err); }
+  };
 
   const fetchLeads = async () => {
     try {
@@ -126,10 +145,11 @@ export default function LawyerDashboard() {
             <NavItem icon="📊" label="Command Center" active={activeTab === 'board'} onClick={() => setActiveTab('board')} />
             <NavItem icon="⚡" label="Lead Pool" count={leads.length} active={activeTab === 'leads'} onClick={() => setActiveTab('leads')} />
             <NavItem icon="👥" label="Client CRM" active={activeTab === 'clients'} onClick={() => setActiveTab('clients')} />
+            <NavItem icon="💬" label="Messages" to="/messages" />
             <NavItem icon="📅" label="Calendar" to="/calendar" />
             <NavItem icon="📝" label="Invoices" active={activeTab === 'invoices'} onClick={() => setActiveTab('invoices')} />
             <div className="my-2 h-px bg-white/5" />
-            <NavItem icon="📜" label="Legal Notice Generator" active={activeTab === 'notices'} onClick={() => setActiveTab('notices')} badge="New" />
+            <NavItem icon="📜" label="Legal Notice Generator" active={activeTab === 'notices'} onClick={() => setActiveTab('notices')} />
           </div>
         </div>
 
@@ -178,14 +198,68 @@ export default function LawyerDashboard() {
       <main className="pl-72 pt-8 pr-8 pb-8 min-h-screen">
 
         {/* HEADER */}
-        <header className="flex justify-between items-end mb-10 px-4">
+        <header className="flex justify-between items-end mb-10 px-4 relative">
           <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
             <p className="text-slate-500 text-sm font-bold uppercase tracking-wider mb-2">Practice Overview</p>
             <h1 className="text-4xl font-bold text-white leading-tight">
               Command Center.
             </h1>
           </motion.div>
-          <div className="flex gap-4">
+          <div className="flex items-center gap-6">
+            {/* VIDEO CALL BUTTON */}
+            <button
+              onClick={() => router.push('/video-call')}
+              className="flex items-center gap-2 px-4 py-2 bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 rounded-xl font-bold text-xs uppercase tracking-wider hover:bg-emerald-500 hover:text-white transition group"
+            >
+              <span className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></span>
+              Virtual Courtroom
+            </button>
+
+            {/* NOTIFICATION BELL */}
+            <div className="relative">
+              <button
+                onClick={() => setShowNotifications(!showNotifications)}
+                className="p-3 bg-white/5 border border-white/10 rounded-xl text-slate-400 hover:text-white hover:bg-white/10 transition relative"
+              >
+                <span>🔔</span>
+                {notifications.filter(n => !n.read).length > 0 && (
+                  <span className="absolute -top-1 -right-1 w-4 h-4 bg-red-500 text-white text-[10px] flex items-center justify-center rounded-full font-bold animate-bounce">
+                    {notifications.filter(n => !n.read).length}
+                  </span>
+                )}
+              </button>
+
+              <AnimatePresence>
+                {showNotifications && (
+                  <motion.div
+                    initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                    animate={{ opacity: 1, y: 0, scale: 1 }}
+                    exit={{ opacity: 0, y: 10, scale: 0.95 }}
+                    className="absolute right-0 mt-4 w-80 bg-[#1e293b] border border-white/10 rounded-2xl shadow-2xl z-[100] overflow-hidden origin-top-right"
+                  >
+                    <div className="p-4 border-b border-white/5 flex justify-between items-center">
+                      <h4 className="text-sm font-bold text-white uppercase tracking-wider">Alerts</h4>
+                      <button className="text-[10px] text-indigo-400 font-bold hover:underline">Mark all read</button>
+                    </div>
+                    <div className="max-h-96 overflow-y-auto custom-scrollbar">
+                      {notifications.length === 0 ? (
+                        <div className="p-8 text-center opacity-30">
+                          <p className="text-xs font-bold uppercase">All quiet on the front</p>
+                        </div>
+                      ) : (
+                        notifications.map(n => (
+                          <div key={n._id} className={`p-4 border-b border-white/5 last:border-0 hover:bg-white/5 transition cursor-pointer ${!n.read ? 'bg-indigo-500/5' : ''}`}>
+                            <p className="text-xs text-white leading-relaxed">{n.message}</p>
+                            <p className="text-[10px] text-slate-500 mt-2">{new Date(n.createdAt).toLocaleTimeString()}</p>
+                          </div>
+                        ))
+                      )}
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
+
             <div className="text-right">
               <p className="text-xs font-bold uppercase tracking-wider text-slate-500 mb-1">Total Revenue</p>
               <p className="text-2xl font-bold text-white">₹{invoices.filter(i => i.status === 'paid').reduce((acc, i) => acc + (Number(i.amount) || 0), 0).toLocaleString()}</p>
@@ -248,6 +322,37 @@ export default function LawyerDashboard() {
 
                 {/* LEGAL REELS (PRO THEME) */}
                 <LegalReels />
+              </motion.div>
+            )}
+
+            {activeTab === 'invoices' && (
+              <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-6">
+                <div className="bg-[#0f172a] rounded-3xl p-8 border border-white/10 shadow-xl">
+                  <div className="flex justify-between items-center mb-8">
+                    <h3 className="font-bold text-2xl text-white">Financial Ledger</h3>
+                    <button className="px-6 py-3 bg-indigo-600 text-white rounded-xl font-bold text-sm hover:bg-indigo-500 transition">Generate New Invoice</button>
+                  </div>
+                  <div className="space-y-4">
+                    {invoices.length === 0 ? (
+                      <div className="py-20 text-center">
+                        <p className="text-slate-500 font-bold uppercase tracking-widest">No transaction history found</p>
+                      </div>
+                    ) : (
+                      invoices.map(inv => (
+                        <div key={inv._id} className="p-6 bg-white/5 rounded-2xl border border-white/5 flex justify-between items-center hover:bg-white/10 transition">
+                          <div>
+                            <p className="text-white font-bold">{inv.clientName || 'Private Client'}</p>
+                            <p className="text-xs text-slate-500">{new Date(inv.createdAt).toLocaleDateString()} • {inv.description}</p>
+                          </div>
+                          <div className="text-right">
+                            <p className="text-xl font-bold text-white">₹{inv.amount}</p>
+                            <span className={`text-[10px] font-bold uppercase px-2 py-0.5 rounded ${inv.status === 'paid' ? 'bg-emerald-500/20 text-emerald-400' : 'bg-amber-500/20 text-amber-400'}`}>{inv.status}</span>
+                          </div>
+                        </div>
+                      ))
+                    )}
+                  </div>
+                </div>
               </motion.div>
             )}
 
