@@ -76,23 +76,23 @@ const DraftingLab = () => {
 
         setLoading(true);
         try {
+            const token = localStorage.getItem('token');
+            const headers = token ? { Authorization: `Bearer ${token}` } : {};
             const { data } = await axios.post('/api/ai/draft-contract', {
                 type: contractType,
                 parties: parties,
                 terms: terms
-            }, {
-                headers: { Authorization: `Bearer ${localStorage.getItem('token')}` } // Optional now
-            });
+            }, { headers });
             setGeneratedContract(data.contract);
             toast.success("Draft generated successfully!");
 
-            if (!localStorage.getItem('token')) {
+            if (!token) {
                 localStorage.setItem('draftingUsed', 'true');
             }
 
         } catch (err) {
             console.error(err);
-            toast.error("Drafting failed.");
+            toast.error("Drafting failed. AI model timeout.");
         } finally {
             setLoading(false);
         }
@@ -131,16 +131,16 @@ const DraftingLab = () => {
 
         setLoading(true);
         try {
+            const token = localStorage.getItem('token');
+            const headers = token ? { Authorization: `Bearer ${token}` } : {};
             const { data } = await axios.post('/api/ai/agreement', {
                 text: analysisText
-            }, {
-                headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
-            });
+            }, { headers });
             setAnalysisResult(data);
             toast.success("Analysis complete!");
         } catch (err) {
             console.error(err);
-            toast.error("Analysis failed.");
+            toast.error("Analysis failed. Model timeout.");
         } finally {
             setLoading(false);
         }

@@ -9,6 +9,8 @@ import Footer from '../../src/components/Footer';
 const LegalResearch = () => {
     const [query, setQuery] = useState('');
     const [results, setResults] = useState([]);
+    const [summary, setSummary] = useState('');
+    const [statutes, setStatutes] = useState([]);
     const [loading, setLoading] = useState(false);
     const [searched, setSearched] = useState(false);
     const [source, setSource] = useState('Supreme Court');
@@ -30,17 +32,22 @@ const LegalResearch = () => {
                     title: c.name + " " + (c.citation || ""),
                     citation: c.citation,
                     summary: c.ratio || c.relevance,
-                    relevance: "High", // AI doesn't always return score, default to High
-                    tags: ["Supreme Court", "Judgment"]
+                    relevance: "High", 
+                    tags: [source, "Judgment"]
                 })));
+                setSummary(data.summary || "");
+                // Extract statutes from summary or ratio if possible, or leave as default
+                setStatutes(data.statutes || ["Relevant BNS Sections", "Constitutional Articles"]);
             } else {
                 setResults([]);
+                setSummary("");
             }
 
             setLoading(false);
 
         } catch (err) {
             console.error(err);
+            toast.error("Research failed. Our AI is overwhelmed.");
             setLoading(false);
         }
     };
@@ -190,14 +197,14 @@ const LegalResearch = () => {
                                 <BookOpen size={16} /> AI Research Summary
                             </h3>
                             <p className="text-xs text-slate-400 leading-relaxed mb-4">
-                                Based on your query, the consensus indicates that digital defamation follows the same liability principles as traditional media, but with added scrutiny under the IT Act, 2000.
+                                {summary || "Analyzing research data for high-level consensus..."}
                             </p>
                             <div className="w-full h-px bg-white/10 mb-4"></div>
                             <h4 className="text-xs font-bold text-white mb-2">Key Statutes</h4>
                             <ul className="space-y-1 text-xs text-slate-400">
-                                <li>• Section 499 IPC</li>
-                                <li>• Section 66A IT Act (Scrapped)</li>
-                                <li>• Shreya Singhal Case</li>
+                                {statutes.map((s, idx) => (
+                                    <li key={idx}>• {s}</li>
+                                ))}
                             </ul>
                         </div>
                     </div>

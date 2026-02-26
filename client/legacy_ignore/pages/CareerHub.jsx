@@ -72,7 +72,7 @@ const CareerHub = () => {
             const token = localStorage.getItem('token');
             const headers = token ? { Authorization: `Bearer ${token}` } : {};
 
-            const { data } = await axios.post('https://nyaynow.in/api/ai/career-mentor', {
+            const { data } = await axios.post('/api/ai/career-mentor', {
                 taskType: activeTask.task,
                 userSubmission: submission
             }, { headers });

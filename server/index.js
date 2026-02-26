@@ -58,14 +58,14 @@ app.use(helmet({
       scriptSrc: ["'self'", "'unsafe-inline'", "https://checkout.razorpay.com", "https://*.sentry.io"],
       styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com"],
       imgSrc: ["'self'", "data:", "https://res.cloudinary.com", "https://*.posthog.com"],
-      connectSrc: ["'self'", "https://*.sentry.io", "https://*.posthog.com", "https://*.algolia.net", "https://*.algolianet.com"],
+      connectSrc: ["'self'", "https://*.sentry.io", "https://*.posthog.com", "https://*.algolia.net", "https://*.algolianet.com", "wss://*.onrender.com", "https://*.onrender.com"],
       fontSrc: ["'self'", "https://fonts.gstatic.com"],
       objectSrc: ["'none'"],
       upgradeInsecureRequests: [],
     },
   },
   crossOriginResourcePolicy: { policy: "cross-origin" },
-  crossOriginOpenerPolicy: { policy: "same-origin" }, // Hardened to same-origin
+  crossOriginOpenerPolicy: { policy: "same-origin-allow-popups" }, // Changed to allow Google Login popups
   hsts: {
     maxAge: 31536000,
     includeSubDomains: true,

@@ -7,7 +7,7 @@ import axios from "axios";
 const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000/api";
 // We need the root URL for axios because calls include /api
 axios.defaults.baseURL = apiUrl.replace(/\/api$/, "");
-axios.defaults.timeout = 15000; // 15s timeout
+axios.defaults.timeout = 60000; // Increased to 60s for heavy AI tasks
 console.log("🔌 AUTH CONTEXT INITIALIZED. API BASE URL:", axios.defaults.baseURL);
 
 const AuthContext = createContext({
@@ -56,12 +56,24 @@ export function AuthProvider({ children }) {
 
   const register = async (userData) => {
     try {
-      await axios.post("/api/auth/register", userData);
-      // Do not auto-login. Pass control back to component to redirect.
+      const response = await axios.post("/api/auth/register", userData);
+      console.log("Registration response:", response.data);
       return { success: true };
     } catch (error) {
-      console.error("Registration failed:", error.response?.data?.message);
-      return { success: false, message: error.response?.data?.message || "Registration failed" };
+      console.error("Registration full error object:", error);
+      if (error.response) {
+        console.error("Registration error response data:", error.response.data);
+        console.error("Registration error response status:", error.response.status);
+      } else if (error.request) {
+        console.error("Registration error request:", error.request);
+      } else {
+        console.error("Registration error message:", error.message);
+      }
+      let msg = error.response?.data?.message || "Registration failed";
+      if (error.code === "ECONNABORTED") msg = "Server timeout. Please try again.";
+      else if (!error.response) msg = "Network error. Please check your connection or backend status.";
+      
+      return { success: false, message: msg };
     }
   };
   const loginWithToken = (user, token) => {

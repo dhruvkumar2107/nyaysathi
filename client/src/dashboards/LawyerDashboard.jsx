@@ -20,6 +20,25 @@ import io from "socket.io-client";
 import { motion, AnimatePresence } from "framer-motion";
 import toast from "react-hot-toast";
 import PremiumLoader from "../components/PremiumLoader";
+import { 
+  LayoutDashboard, 
+  Users, 
+  MessageSquare, 
+  Calendar, 
+  FileText, 
+  Gavel, 
+  Zap, 
+  Shield, 
+  Bell, 
+  TrendingUp, 
+  DollarSign, 
+  Briefcase,
+  ChevronDown,
+  LogOut,
+  Settings,
+  User as UserIcon,
+  Video
+} from "lucide-react";
 
 const socket = io(process.env.NEXT_PUBLIC_API_URL?.replace(/\/api$/, "") || "http://localhost:4000");
 
@@ -50,16 +69,21 @@ export default function LawyerDashboard() {
   useEffect(() => {
     if (user) {
       const uId = user._id || user.id;
-      Promise.all([
-        fetchLeads(),
-        fetchAcceptedCases(uId),
-        fetchAppointments(uId),
-        fetchInvoices(uId),
-        fetchNotifications(uId),
-        fetchConnections(uId),
-        fetchLawyers(),
-        axios.get(`/api/crm/insights?userId=${uId}`).then(res => setCrmData(res.data)).catch(err => null)
-      ]).finally(() => setLoading(false));
+      
+      // Load initial batch
+      fetchLeads();
+      fetchAcceptedCases(uId);
+      fetchAppointments(uId);
+      fetchInvoices(uId);
+      fetchNotifications(uId);
+      fetchConnections(uId);
+      fetchLawyers();
+      
+      // Async background load for heavy data
+      axios.get(`/api/crm/insights?userId=${uId}`)
+        .then(res => setCrmData(res.data))
+        .catch(err => null)
+        .finally(() => setLoading(false));
 
       socket.emit("join_room", uId);
       socket.emit("join_lawyer_pool");
@@ -149,6 +173,15 @@ export default function LawyerDashboard() {
       const res = await axios.get(`/api/connections?userId=${uId}&status=active`);
       setConnections(res.data);
     } catch (err) { console.error("Connections Error:", err); }
+  };
+
+  const handleEditProfile = () => {
+    router.push('/settings?tab=account');
+  };
+
+  const handleViewProfile = () => {
+    const uId = user._id || user.id;
+    router.push(`/lawyer/${uId}`);
   };
 
   const fetchLeads = async () => {
@@ -245,35 +278,43 @@ export default function LawyerDashboard() {
     <div className="min-h-screen bg-[#020617] font-sans text-slate-400 selection:bg-indigo-500/30">
 
       {/* SIDEBAR NAVIGATION (Fixed Left) */}
-      <aside className="fixed left-0 top-0 h-screen w-72 bg-[#0f172a] border-r border-white/10 flex flex-col z-50">
-        <div className="p-8 pb-4">
-          {/* LOGO REMOVED - ALREADY IN WORKSPACE CONTEXT */}
-          <div className="mb-6 invisible" />
+      <aside className="fixed left-0 top-0 h-screen w-64 bg-[#0f172a] border-r border-white/5 flex flex-col z-50">
+        <div className="p-6">
+          <div className="flex items-center gap-3 mb-10">
+            <div className="w-10 h-10 bg-indigo-600 rounded-xl flex items-center justify-center shadow-lg shadow-indigo-600/20">
+              <Gavel className="text-white w-6 h-6" />
+            </div>
+            <div>
+              <span className="text-white font-black text-xl tracking-tighter uppercase">Nyay<span className="text-indigo-500">Dash</span></span>
+              <p className="text-[10px] text-slate-500 font-bold uppercase tracking-[0.2em]">Counsel OS</p>
+            </div>
+          </div>
 
-          <div className="space-y-1">
-            <NavItem icon="📊" label="Command Center" active={activeTab === 'board'} onClick={() => setActiveTab('board')} />
-            <NavItem icon="⚡" label="Lead Pool" count={leads.length} active={activeTab === 'leads'} onClick={() => setActiveTab('leads')} />
-            <NavItem icon="👥" label="Client CRM" active={activeTab === 'clients'} onClick={() => setActiveTab('clients')} />
-            <NavItem icon="💬" label="Messages" to="/messages" />
-            <NavItem icon="📅" label="Calendar" to="/calendar" />
-            <NavItem icon="📝" label="Invoices" active={activeTab === 'invoices'} onClick={() => setActiveTab('invoices')} />
-            <div className="my-2 h-px bg-white/5" />
-            <NavItem icon="📜" label="Legal Notice Generator" active={activeTab === 'notices'} onClick={() => setActiveTab('notices')} />
+          <div className="space-y-1.5">
+            <NavItem icon={<LayoutDashboard size={18} />} label="Dashboard" active={activeTab === 'board'} onClick={() => setActiveTab('board')} />
+            <NavItem icon={<Zap size={18} />} label="Lead Pool" count={leads.length} active={activeTab === 'leads'} onClick={() => setActiveTab('leads')} />
+            <NavItem icon={<Users size={18} />} label="Client CRM" active={activeTab === 'clients'} onClick={() => setActiveTab('clients')} />
+            <NavItem icon={<MessageSquare size={18} />} label="Messages" to="/messages" />
+            <NavItem icon={<Calendar size={18} />} label="Calendar" to="/calendar" />
+            <NavItem icon={<DollarSign size={18} />} label="Financials" active={activeTab === 'invoices'} onClick={() => setActiveTab('invoices')} />
+            <div className="my-4 h-px bg-white/5 mx-2" />
+            <NavItem icon={<FileText size={18} />} label="AI Drafter" active={activeTab === 'notices'} onClick={() => setActiveTab('notices')} />
           </div>
         </div>
 
-        <div className="mt-auto p-8 pt-0 relative">
-          <div className="bg-[#1e293b]/50 rounded-xl p-4 border border-white/10 mb-6 backdrop-blur-sm cursor-pointer hover:bg-white/5 transition group" onClick={() => setShowProfileMenu(!showProfileMenu)}>
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-full bg-indigo-500/20 border border-indigo-500/30 flex items-center justify-center text-indigo-400 font-bold text-lg group-hover:scale-105 transition">
-                {user.name?.[0]}
-              </div>
-              <div className="flex-1">
-                <p className="text-white font-medium text-sm leading-none mb-1">{user.name}</p>
-                <p className="text-xs text-indigo-400 font-bold uppercase tracking-wider">{user.specialization || "Partner"}</p>
-              </div>
-              <div className={`text-slate-400 transform transition-transform ${showProfileMenu ? 'rotate-180' : ''}`}>▼</div>
+        <div className="mt-auto p-4 relative">
+          <div 
+            className="flex items-center gap-3 p-3 bg-white/5 border border-white/5 rounded-2xl cursor-pointer hover:bg-white/10 transition group" 
+            onClick={() => setShowProfileMenu(!showProfileMenu)}
+          >
+            <div className="w-10 h-10 rounded-full bg-gradient-to-br from-indigo-500 to-purple-500 flex items-center justify-center text-white font-bold text-sm shadow-inner group-hover:scale-105 transition duration-300">
+              {user.name?.[0]}
             </div>
+            <div className="flex-1 overflow-hidden">
+              <p className="text-white font-bold text-xs truncate">{user.name}</p>
+              <p className="text-[10px] text-indigo-400 font-black uppercase tracking-widest truncate">{user.specialization || "Partner"}</p>
+            </div>
+            <ChevronDown size={14} className={`text-slate-500 transform transition-transform duration-300 ${showProfileMenu ? 'rotate-180' : ''}`} />
           </div>
 
           <AnimatePresence>
@@ -282,19 +323,18 @@ export default function LawyerDashboard() {
                 initial={{ opacity: 0, y: 10, scale: 0.95 }}
                 animate={{ opacity: 1, y: 0, scale: 1 }}
                 exit={{ opacity: 0, y: 10, scale: 0.95 }}
-                className="absolute bottom-24 left-8 right-8 bg-[#1e293b] border border-white/10 rounded-xl shadow-2xl overflow-hidden z-50 origin-bottom"
+                className="absolute bottom-20 left-4 right-4 bg-[#1e293b] border border-white/10 rounded-2xl shadow-2xl overflow-hidden z-50 backdrop-blur-xl"
               >
                 <div className="p-2 space-y-1">
-                  <div className="px-3 py-2 text-xs font-bold text-slate-500 uppercase tracking-widest border-b border-white/5 mb-1">My Account</div>
-                  <Link href="/lawyer/profile/edit" className="flex items-center gap-3 px-3 py-2 text-sm text-slate-300 hover:bg-white/5 rounded-lg transition">
-                    <span>⚙️</span> Edit Profile
-                  </Link>
-                  <Link href="/settings" className="flex items-center gap-3 px-3 py-2 text-sm text-slate-300 hover:bg-white/5 rounded-lg transition">
-                    <span>🔒</span> Security
-                  </Link>
-                  <div className="h-px bg-white/5 my-1"></div>
-                  <button onClick={logout} className="w-full flex items-center gap-3 px-3 py-2 text-sm text-red-400 hover:bg-red-500/10 rounded-lg transition text-left">
-                    <span>🚪</span> Sign Out
+                  <button onClick={handleViewProfile} className="w-full flex items-center gap-3 px-3 py-2 text-xs font-bold text-slate-300 hover:bg-indigo-600/10 hover:text-indigo-400 rounded-xl transition text-left">
+                    <UserIcon size={14} /> Profile
+                  </button>
+                  <button onClick={handleEditProfile} className="w-full flex items-center gap-3 px-3 py-2 text-xs font-bold text-slate-300 hover:bg-indigo-600/10 hover:text-indigo-400 rounded-xl transition text-left">
+                    <Settings size={14} /> Settings
+                  </button>
+                  <div className="h-px bg-white/5 my-1 mx-2"></div>
+                  <button onClick={logout} className="w-full flex items-center gap-3 px-3 py-2 text-xs font-bold text-red-400 hover:bg-red-500/10 rounded-xl transition text-left">
+                    <LogOut size={14} /> Log Out
                   </button>
                 </div>
               </motion.div>
@@ -304,37 +344,39 @@ export default function LawyerDashboard() {
       </aside>
 
       {/* MAIN CONTENT AREA */}
-      <main className="pl-72 pt-8 pr-8 pb-8 min-h-screen">
+      <main className="pl-64 pt-6 pr-6 pb-6 min-h-screen">
 
         {/* HEADER */}
-        <header className="flex justify-between items-end mb-10 px-4 relative">
-          <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
-            <p className="text-slate-500 text-sm font-bold uppercase tracking-wider mb-2">Practice Overview</p>
-            <h1 className="text-4xl font-bold text-white leading-tight">
-              Command Center.
+        <header className="flex justify-between items-center mb-8 px-6">
+          <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }}>
+            <h1 className="text-3xl font-black text-white tracking-tight">
+              Command <span className="text-indigo-500">Center</span>.
             </h1>
+            <p className="text-slate-500 text-xs font-bold uppercase tracking-[0.2em] mt-1 flex items-center gap-2">
+              <span className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse shadow-[0_0_8px_rgba(16,185,129,0.5)]"></span>
+              Live Terminal 2.0.4
+            </p>
           </motion.div>
-          <div className="flex items-center gap-6">
+          
+          <div className="flex items-center gap-4">
             {/* VIDEO CALL BUTTON */}
             <button
               onClick={() => router.push('/video-call')}
-              className="flex items-center gap-2 px-4 py-2 bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 rounded-xl font-bold text-xs uppercase tracking-wider hover:bg-emerald-500 hover:text-white transition group"
+              className="flex items-center gap-2 px-5 py-2.5 bg-indigo-600 text-white rounded-2xl font-black text-[10px] uppercase tracking-widest hover:bg-indigo-500 hover:shadow-lg hover:shadow-indigo-500/20 transition-all duration-300 group active:scale-95"
             >
-              <span className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></span>
-              Virtual Courtroom
+              <Video size={14} className="group-hover:rotate-12 transition" />
+              Virtual Court
             </button>
 
             {/* NOTIFICATION BELL */}
             <div className="relative">
               <button
                 onClick={() => setShowNotifications(!showNotifications)}
-                className="p-3 bg-white/5 border border-white/10 rounded-xl text-slate-400 hover:text-white hover:bg-white/10 transition relative"
+                className="p-3 bg-white/5 border border-white/5 rounded-2xl text-slate-400 hover:text-white hover:bg-white/10 transition relative group"
               >
-                <span>🔔</span>
+                <Bell size={18} className="group-hover:rotate-12 transition" />
                 {notifications.filter(n => !n.read).length > 0 && (
-                  <span className="absolute -top-1 -right-1 w-4 h-4 bg-red-500 text-white text-[10px] flex items-center justify-center rounded-full font-bold animate-bounce">
-                    {notifications.filter(n => !n.read).length}
-                  </span>
+                  <span className="absolute top-2.5 right-2.5 w-2 h-2 bg-red-500 rounded-full animate-ping"></span>
                 )}
               </button>
 
@@ -344,26 +386,26 @@ export default function LawyerDashboard() {
                     initial={{ opacity: 0, y: 10, scale: 0.95 }}
                     animate={{ opacity: 1, y: 0, scale: 1 }}
                     exit={{ opacity: 0, y: 10, scale: 0.95 }}
-                    className="absolute right-0 mt-4 w-80 bg-[#1e293b] border border-white/10 rounded-2xl shadow-2xl z-[100] overflow-hidden origin-top-right"
+                    className="absolute right-0 mt-4 w-80 bg-[#1e293b]/90 backdrop-blur-2xl border border-white/10 rounded-3xl shadow-2xl z-[100] overflow-hidden origin-top-right ring-1 ring-white/10"
                   >
-                    <div className="p-4 border-b border-white/5 flex justify-between items-center">
-                      <h4 className="text-sm font-bold text-white uppercase tracking-wider">Alerts</h4>
-                      <button onClick={handleMarkAllRead} className="text-[10px] text-indigo-400 font-bold hover:underline">Mark all read</button>
+                    <div className="p-5 border-b border-white/5 flex justify-between items-center bg-white/5">
+                      <h4 className="text-[10px] font-black text-white uppercase tracking-widest">Alert Pulse</h4>
+                      <button onClick={handleMarkAllRead} className="text-[9px] text-indigo-400 font-bold hover:underline tracking-tighter uppercase">Clear All</button>
                     </div>
-                    <div className="max-h-96 overflow-y-auto custom-scrollbar">
+                    <div className="max-h-[400px] overflow-y-auto custom-scrollbar">
                       {notifications.length === 0 ? (
-                        <div className="p-8 text-center opacity-30">
-                          <p className="text-xs font-bold uppercase">All quiet on the front</p>
+                        <div className="p-10 text-center opacity-30">
+                          <p className="text-[10px] font-black uppercase tracking-widest">No Active Alerts</p>
                         </div>
                       ) : (
                         notifications.map(n => (
                           <div
                             key={n._id}
                             onClick={() => handleNotificationClick(n)}
-                            className={`p-4 border-b border-white/5 last:border-0 hover:bg-white/5 transition cursor-pointer ${!n.read ? 'bg-indigo-500/5' : ''}`}
+                            className={`p-5 border-b border-white/5 last:border-0 hover:bg-white/5 transition cursor-pointer ${!n.read ? 'bg-indigo-500/5' : ''}`}
                           >
-                            <p className="text-xs text-white leading-relaxed">{n.message}</p>
-                            <p className="text-[10px] text-slate-500 mt-2">{new Date(n.createdAt).toLocaleTimeString()}</p>
+                            <p className="text-xs text-slate-300 leading-relaxed font-medium">{n.message}</p>
+                            <p className="text-[9px] text-slate-600 mt-2 font-bold uppercase tracking-wider">{new Date(n.createdAt).toLocaleTimeString()}</p>
                           </div>
                         ))
                       )}
@@ -373,9 +415,11 @@ export default function LawyerDashboard() {
               </AnimatePresence>
             </div>
 
+            <div className="h-10 w-px bg-white/10 mx-2" />
+
             <div className="text-right">
-              <p className="text-xs font-bold uppercase tracking-wider text-slate-500 mb-1">Total Revenue</p>
-              <p className="text-2xl font-bold text-white">₹{invoices.filter(i => i.status === 'paid').reduce((acc, i) => acc + (Number(i.amount) || 0), 0).toLocaleString()}</p>
+              <p className="text-[10px] font-black uppercase tracking-widest text-slate-500 mb-0.5">Revenue Net</p>
+              <p className="text-xl font-black text-white tracking-tighter">₹{invoices.filter(i => i.status === 'paid').reduce((acc, i) => acc + (Number(i.amount) || 0), 0).toLocaleString()}</p>
             </div>
           </div>
         </header>
@@ -388,34 +432,62 @@ export default function LawyerDashboard() {
 
             {activeTab === 'board' && (
               <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-6">
-                {/* ANALYTICS WIDGET (NEW) */}
-                <div className="bg-[#0f172a] rounded-3xl p-6 border border-white/10 shadow-xl">
-                  <div className="flex justify-between items-center mb-6">
-                    <h3 className="font-bold text-lg text-white">Performance Analytics</h3>
-                    <select className="bg-white/5 border border-white/10 text-xs rounded-lg px-2 py-1 text-slate-400">
-                      <option>Last 30 Days</option>
-                      <option>Last 6 Months</option>
+                
+                {/* PRACTICE OVERVIEW CARDS */}
+                <div className="grid grid-cols-3 gap-4">
+                  <StatCard 
+                    label="Active Matters" 
+                    value={acceptedCases.length} 
+                    sub="Ongoing lifecycle" 
+                    icon={<Briefcase className="text-indigo-400" size={20} />} 
+                    color="indigo"
+                  />
+                  <StatCard 
+                    label="Pending Leads" 
+                    value={leads.length} 
+                    sub="Action required" 
+                    icon={<Zap className="text-amber-400" size={20} />} 
+                    color="amber"
+                  />
+                  <StatCard 
+                    label="Today's Agenda" 
+                    value={appointments.length} 
+                    sub="Virtual court sessions" 
+                    icon={<Calendar className="text-emerald-400" size={20} />} 
+                    color="emerald"
+                  />
+                </div>
+
+                {/* ANALYTICS WIDGET */}
+                <div className="bg-[#0f172a] rounded-[2rem] p-8 border border-white/5 shadow-2xl relative overflow-hidden group">
+                  <div className="absolute top-0 right-0 w-64 h-64 bg-indigo-500/5 blur-[80px] rounded-full -mr-20 -mt-20 group-hover:bg-indigo-500/10 transition duration-700"></div>
+                  <div className="flex justify-between items-center mb-8 relative z-10">
+                    <div>
+                      <h3 className="font-black text-xl text-white tracking-tight">Performance Analytics</h3>
+                      <p className="text-[10px] text-slate-500 font-bold uppercase tracking-widest mt-1">Growth & Conversion Metrics</p>
+                    </div>
+                    <select className="bg-white/5 border border-white/10 text-[10px] font-black uppercase tracking-widest rounded-xl px-4 py-2 text-slate-400 outline-none focus:border-indigo-500 transition">
+                      <option>Quarterly</option>
+                      <option>Monthly</option>
                     </select>
                   </div>
-                  <div className="h-64 w-full">
+                  <div className="h-64 w-full relative z-10">
                     <ResponsiveContainer width="100%" height="100%">
                       <AreaChart data={crmData?.analytics || []}>
                         <defs>
                           <linearGradient id="colorRevenue" x1="0" y1="0" x2="0" y2="1">
-                            <stop offset="5%" stopColor="#8884d8" stopOpacity={0.8} />
-                            <stop offset="95%" stopColor="#8884d8" stopOpacity={0} />
-                          </linearGradient>
-                          <linearGradient id="colorLeads" x1="0" y1="0" x2="0" y2="1">
-                            <stop offset="5%" stopColor="#82ca9d" stopOpacity={0.8} />
-                            <stop offset="95%" stopColor="#82ca9d" stopOpacity={0} />
+                            <stop offset="5%" stopColor="#6366f1" stopOpacity={0.3} />
+                            <stop offset="95%" stopColor="#6366f1" stopOpacity={0} />
                           </linearGradient>
                         </defs>
-                        <XAxis dataKey="name" tick={{ fill: '#64748b', fontSize: 10 }} axisLine={false} tickLine={false} />
-                        <YAxis tick={{ fill: '#64748b', fontSize: 10 }} axisLine={false} tickLine={false} />
+                        <XAxis dataKey="name" tick={{ fill: '#475569', fontSize: 10, fontWeight: 700 }} axisLine={false} tickLine={false} dy={10} />
+                        <YAxis tick={{ fill: '#475569', fontSize: 10, fontWeight: 700 }} axisLine={false} tickLine={false} />
                         <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#1e293b" />
-                        <Tooltip contentStyle={{ backgroundColor: '#1e293b', borderColor: '#334155', borderRadius: '8px' }} itemStyle={{ color: '#f8fafc', fontSize: '12px' }} />
-                        <Area type="monotone" dataKey="revenue" stroke="#8884d8" fillOpacity={1} fill="url(#colorRevenue)" strokeWidth={2} name="Revenue (₹)" />
-                        <Area type="monotone" dataKey="leads" stroke="#82ca9d" fillOpacity={1} fill="url(#colorLeads)" strokeWidth={2} name="New Leads" />
+                        <Tooltip 
+                          contentStyle={{ backgroundColor: '#0f172a', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '1rem', boxShadow: '0 25px 50px -12px rgba(0,0,0,0.5)' }} 
+                          itemStyle={{ color: '#fff', fontSize: '10px', fontWeight: 900, textTransform: 'uppercase' }} 
+                        />
+                        <Area type="monotone" dataKey="revenue" stroke="#6366f1" fillOpacity={1} fill="url(#colorRevenue)" strokeWidth={3} name="Revenue" />
                       </AreaChart>
                     </ResponsiveContainer>
                   </div>
@@ -423,18 +495,31 @@ export default function LawyerDashboard() {
 
                 {/* INTELLIGENCE PANEL */}
                 <div className="grid grid-cols-2 gap-6">
-                  {crmData && <WorkloadMonitor workload={crmData.workload} />}
-                  {crmData && <CaseIntelligencePanel insights={crmData.caseInsights} />}
+                  {crmData ? (
+                    <>
+                      <WorkloadMonitor workload={crmData.workload} />
+                      <CaseIntelligencePanel insights={crmData.caseInsights} />
+                    </>
+                  ) : (
+                    <div className="col-span-2 h-48 bg-white/5 animate-pulse rounded-[2rem]"></div>
+                  )}
                 </div>
 
                 {/* KANBAN BOARD */}
-                <div className="bg-[#0f172a] rounded-3xl p-6 border border-white/10 shadow-xl min-h-[500px]">
-                  <h3 className="font-bold text-lg text-white mb-6">Case Lifecycle</h3>
+                <div className="bg-[#0f172a] rounded-[2rem] p-8 border border-white/5 shadow-2xl">
+                  <div className="flex justify-between items-center mb-8">
+                    <div>
+                      <h3 className="font-black text-xl text-white tracking-tight">Case Lifecycle</h3>
+                      <p className="text-[10px] text-slate-500 font-bold uppercase tracking-widest mt-1">Operational Pipeline</p>
+                    </div>
+                    <div className="flex gap-2">
+                      <div className="w-2 h-2 bg-indigo-500 rounded-full animate-pulse"></div>
+                      <div className="w-2 h-2 bg-slate-700 rounded-full"></div>
+                      <div className="w-2 h-2 bg-slate-700 rounded-full"></div>
+                    </div>
+                  </div>
                   <KanbanBoard cases={acceptedCases} onUpdate={() => fetchAcceptedCases(user._id || user.id)} />
                 </div>
-
-                {/* LEGAL REELS (PRO THEME) */}
-                <LegalReels />
               </motion.div>
             )}
 
@@ -494,7 +579,7 @@ export default function LawyerDashboard() {
                     <p className="text-slate-400 text-sm mb-4 bg-black/20 p-3 rounded-lg border border-white/5 line-clamp-2">{lawyer.bio || "Secure professional profile data."}</p>
                     <div className="flex gap-3">
                       <button onClick={() => router.push(`/messages?chatId=${lawyer._id}`)} className="flex-1 bg-indigo-600 text-white py-3 rounded-lg font-bold text-xs uppercase tracking-wider hover:bg-indigo-500 transition shadow-lg shadow-indigo-500/20">Connect</button>
-                      <button onClick={() => router.push(`/lawyer-profile/${lawyer._id}`)} className="flex-1 bg-white/5 border border-white/10 text-slate-300 py-3 rounded-lg font-bold text-xs uppercase tracking-wider hover:bg-white/10 transition">View Dossier</button>
+                      <button onClick={() => router.push(`/lawyer/${lawyer._id}`)} className="flex-1 bg-white/5 border border-white/10 text-slate-300 py-3 rounded-lg font-bold text-xs uppercase tracking-wider hover:bg-white/10 transition">View Dossier</button>
                     </div>
                   </div>
                 ))}
@@ -515,28 +600,73 @@ export default function LawyerDashboard() {
           {activeTab !== 'notices' && (
             <div className="col-span-4 space-y-6">
               {/* CALENDAR */}
-              <div className="bg-[#0f172a] rounded-3xl p-4 border border-white/10 shadow-lg h-[380px] overflow-hidden">
-                <CalendarWidget user={user} />
+              <div className="bg-[#0f172a] rounded-[2rem] p-6 border border-white/5 shadow-2xl relative overflow-hidden group">
+                <div className="absolute top-0 left-0 w-32 h-32 bg-indigo-500/5 blur-[50px] rounded-full -ml-10 -mt-10"></div>
+                <div className="relative z-10 h-[340px]">
+                  <CalendarWidget user={user} />
+                </div>
               </div>
 
               {/* UPCOMING MEETINGS */}
-              <div className="bg-[#0f172a] rounded-3xl p-6 border border-white/10 shadow-lg">
-                <h3 className="font-bold text-lg text-white mb-4">Agenda</h3>
-                {appointments.length === 0 ? <p className="text-xs text-slate-500">No meetings scheduled.</p> : (
-                  <div className="space-y-3">
+              <div className="bg-[#0f172a] rounded-[2rem] p-8 border border-white/5 shadow-2xl">
+                <div className="flex items-center gap-3 mb-6">
+                  <div className="p-2 bg-emerald-500/10 rounded-lg text-emerald-400">
+                    <Calendar size={16} />
+                  </div>
+                  <h3 className="font-black text-lg text-white tracking-tight">Today's Agenda</h3>
+                </div>
+                {appointments.length === 0 ? (
+                  <div className="py-10 text-center opacity-30 border-2 border-dashed border-white/5 rounded-2xl">
+                    <p className="text-[10px] font-black uppercase tracking-widest">No Scheduled Briefings</p>
+                  </div>
+                ) : (
+                  <div className="space-y-4">
                     {appointments.slice(0, 3).map(apt => (
-                      <div key={apt._id} className="p-3 bg-white/5 rounded-xl border border-white/10 flex items-center justify-between">
-                        <div>
-                          <p className="font-bold text-xs text-white">{apt.clientId?.name || "Client"}</p>
-                          <p className="text-[10px] text-slate-500">{new Date(apt.date).toLocaleDateString()} • {apt.slot}</p>
+                      <div key={apt._id} className="p-4 bg-white/5 rounded-2xl border border-white/5 flex items-center justify-between hover:bg-white/10 transition group">
+                        <div className="flex items-center gap-3">
+                          <div className="w-8 h-8 rounded-full bg-white/5 flex items-center justify-center text-[10px] font-bold text-slate-400">
+                            {apt.clientId?.name?.[0] || "C"}
+                          </div>
+                          <div>
+                            <p className="font-black text-xs text-white leading-none mb-1">{apt.clientId?.name || "Private Client"}</p>
+                            <p className="text-[9px] text-slate-500 font-bold uppercase tracking-tighter">{apt.slot}</p>
+                          </div>
                         </div>
                         {apt.status === 'confirmed' ? (
-                          <button onClick={() => window.open(`${window.location.origin}/meet/${apt._id}`, "_blank")} className="bg-purple-500/20 text-purple-300 px-3 py-1 rounded-md text-[10px] font-bold border border-purple-500/30 hover:bg-purple-500/30 transition">Join</button>
-                        ) : <span className="bg-amber-500/20 text-amber-300 px-3 py-1 rounded-md text-[10px] font-bold uppercase border border-amber-500/30">Pending</span>}
+                          <button 
+                            onClick={() => window.open(`${window.location.origin}/meet/${apt._id}`, "_blank")} 
+                            className="bg-indigo-600/10 text-indigo-400 px-4 py-2 rounded-xl text-[9px] font-black uppercase tracking-widest border border-indigo-500/20 hover:bg-indigo-600 hover:text-white transition shadow-lg shadow-indigo-500/10"
+                          >
+                            Join
+                          </button>
+                        ) : (
+                          <span className="text-[8px] font-black uppercase tracking-widest text-amber-500/60 px-3 py-1 bg-amber-500/5 rounded-lg border border-amber-500/10">Pending</span>
+                        )}
                       </div>
                     ))}
                   </div>
                 )}
+              </div>
+
+              {/* RECENT ACTIVITY FEED (NEW) */}
+              <div className="bg-[#0f172a] rounded-[2rem] p-8 border border-white/5 shadow-2xl">
+                <div className="flex items-center gap-3 mb-6">
+                  <div className="p-2 bg-purple-500/10 rounded-lg text-purple-400">
+                    <Zap size={16} />
+                  </div>
+                  <h3 className="font-black text-lg text-white tracking-tight">Recent Pulse</h3>
+                </div>
+                <div className="space-y-6 relative before:absolute before:left-[11px] before:top-2 before:bottom-2 before:w-0.5 before:bg-white/5">
+                  {notifications.slice(0, 4).map((n, idx) => (
+                    <div key={idx} className="relative pl-8 group">
+                      <div className="absolute left-0 top-1.5 w-6 h-6 rounded-full bg-[#0f172a] border-2 border-white/10 flex items-center justify-center z-10 group-hover:border-indigo-500 transition duration-300">
+                        <div className="w-1.5 h-1.5 rounded-full bg-slate-600 group-hover:bg-indigo-500 transition duration-300"></div>
+                      </div>
+                      <p className="text-[11px] text-slate-400 leading-relaxed font-medium group-hover:text-slate-200 transition">{n.message}</p>
+                      <p className="text-[8px] text-slate-600 mt-1 font-black uppercase tracking-widest">{new Date(n.createdAt).toLocaleTimeString()}</p>
+                    </div>
+                  ))}
+                </div>
               </div>
             </div>
           )}
@@ -596,14 +726,49 @@ function NavItem({ icon, label, to, count, active, onClick, badge }) {
   return (
     <div
       onClick={handleClick}
-      className={`flex items-center justify-between px-4 py-3 rounded-xl cursor-pointer transition-all duration-300 ${active ? 'bg-indigo-600/10 text-indigo-400 border border-indigo-500/20 shadow-inner font-bold' : 'text-slate-400 hover:text-white hover:bg-white/5'}`}
+      className={`flex items-center justify-between px-4 py-3 rounded-2xl cursor-pointer transition-all duration-300 group ${
+        active 
+          ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-600/20' 
+          : 'text-slate-500 hover:text-slate-200 hover:bg-white/5'
+      }`}
     >
       <div className="flex items-center gap-3">
-        <span className="text-xl opacity-80">{icon}</span>
-        <span className="text-sm tracking-wide font-medium">{label}</span>
+        <span className={`transition-transform duration-300 ${active ? 'scale-110' : 'group-hover:scale-110'}`}>
+          {icon}
+        </span>
+        <span className={`text-xs font-bold uppercase tracking-widest ${active ? 'opacity-100' : 'opacity-60 group-hover:opacity-100'}`}>
+          {label}
+        </span>
       </div>
-      {count !== undefined && <span className="text-[10px] font-bold bg-indigo-500 text-white px-2 py-0.5 rounded-md shadow-lg shadow-indigo-500/40">{count}</span>}
-      {badge && <span className="text-[9px] font-black bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 px-2 py-0.5 rounded-md uppercase tracking-wider">{badge}</span>}
+      {count !== undefined && (
+        <span className={`text-[10px] font-black px-2 py-0.5 rounded-lg ${
+          active ? 'bg-white/20 text-white' : 'bg-indigo-500/10 text-indigo-400 group-hover:bg-indigo-500 group-hover:text-white'
+        } transition-colors`}>
+          {count}
+        </span>
+      )}
     </div>
   )
+}
+
+function StatCard({ label, value, sub, icon, color }) {
+  const colors = {
+    indigo: "bg-indigo-500/10 text-indigo-400 border-indigo-500/20 shadow-indigo-500/10",
+    amber: "bg-amber-500/10 text-amber-400 border-amber-500/20 shadow-amber-500/10",
+    emerald: "bg-emerald-500/10 text-emerald-400 border-emerald-500/20 shadow-emerald-500/10"
+  };
+
+  return (
+    <div className={`p-6 rounded-[2rem] border ${colors[color]} shadow-xl transition-all duration-300 hover:scale-[1.02] cursor-default group`}>
+      <div className="flex justify-between items-start mb-4">
+        <div className="p-3 bg-white/5 rounded-2xl group-hover:rotate-12 transition duration-500">
+          {icon}
+        </div>
+        <TrendingUp size={14} className="opacity-30" />
+      </div>
+      <p className="text-[10px] font-black uppercase tracking-widest opacity-60 mb-1">{label}</p>
+      <h4 className="text-3xl font-black text-white tracking-tighter">{value}</h4>
+      <p className="text-[9px] font-bold uppercase tracking-tighter opacity-40 mt-1">{sub}</p>
+    </div>
+  );
 }

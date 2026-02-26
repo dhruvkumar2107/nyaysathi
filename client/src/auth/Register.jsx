@@ -24,14 +24,15 @@ export default function Register() {
   const router = useRouter();
   const { register, loginWithToken } = useAuth();
 
-  const [role, setRole] = useState("client");
   const [formData, setFormData] = useState({
     name: "",
     email: "",
     password: "",
+    confirmPassword: "",
     age: "",
     sex: "",
     phone: "",
+    role: "client",
     specialization: "",
     experience: "",
     barCouncilId: "",
@@ -39,7 +40,8 @@ export default function Register() {
     isStudent: false,
     studentRollNumber: "",
     verified: false,
-    consent: false
+    consent: false,
+    idCardImage: ""
   });
 
 
@@ -59,30 +61,18 @@ export default function Register() {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleFileChange = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      setFormData({ ...formData, idCardImage: file });
-      setIdCardPreview(URL.createObjectURL(file));
-    }
-  };
-
-  const toggleStudent = (val) => {
-    setFormData({ ...formData, isStudent: val, barCouncilId: "", studentRollNumber: "" });
-  };
-
   const handleRegister = async () => {
-    const { name, email, password, phone, specialization, experience, barCouncilId, age, sex } = formData;
+    const { name, email, password, confirmPassword, phone, role, specialization, experience, barCouncilId, age, sex } = formData;
 
     if (!name || !email || !password || !phone) return toast.error("Please fill all required fields");
+    if (password !== confirmPassword) return toast.error("Passwords do not match");
     if (!formData.consent) return toast.error("Please acknowledge the legal disclosure to continue.");
     if (!PHONE_REGEX.test(phone)) return toast.error("Invalid Indian Phone Number");
 
     if (role === "lawyer") {
-      if (!selectedCity) return toast.error("Please select a city");
+      if (!selectedCity && !formData.location) return toast.error("Please select a city");
       if (!formData.isStudent && !formData.barCouncilId) return toast.error("Bar Council ID is required");
       if (formData.isStudent && !formData.studentRollNumber) return toast.error("Student Roll Number is required");
-      // Check for ID Image instead of Verification
       if (!formData.idCardImage) return toast.error("Please upload your ID Card / Bar Council Cert");
     }
 
@@ -90,10 +80,12 @@ export default function Register() {
 
     try {
       const userData = {
-        role,
-        plan: "silver",
-        location: selectedCity,
         ...formData,
+        plan: "silver",
+        location: {
+            city: selectedCity || formData.location || "Remote",
+            state: "India"
+        },
         verificationStatus: formData.verified ? "verified" : "pending"
       };
 
@@ -119,11 +111,11 @@ export default function Register() {
     try {
       const res = await axios.post("/api/auth/google", {
         token: credentialResponse.credential,
-        role: role
+        role: formData.role
       });
       loginWithToken(res.data.user, res.data.token);
       toast.success("Welcome to NyayNow!");
-      router.push(role === 'lawyer' ? "/lawyer/dashboard" : "/client/dashboard");
+      router.push(formData.role === 'lawyer' ? "/lawyer/dashboard" : "/client/dashboard");
     } catch (err) {
       toast.error("Google Signup Failed");
     } finally {
@@ -178,7 +170,6 @@ export default function Register() {
             <p className="text-slate-400 text-sm mt-1">Join thousands of legal professionals.</p>
           </div>
 
-          {/* ROLE SELECTOR */}
           <div className="flex gap-4 p-1 bg-midnight-950/50 rounded-2xl border border-white/5 backdrop-blur-sm">
             {[
               { id: 'client', label: 'Client', icon: '👤' },
