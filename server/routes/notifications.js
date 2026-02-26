@@ -1,8 +1,22 @@
 const express = require("express");
 const router = express.Router();
 const Message = require("../models/Message");
-const User = require("../models/User"); // Add User model to fetch phone number
-const { sendWhatsApp } = require("../utils/sms"); // Import WhatsApp utility
+const User = require("../models/User"); 
+const Notification = require("../models/Notification");
+const { sendWhatsApp } = require("../utils/sms"); 
+
+// GET /api/notifications?userId=...
+router.get("/", async (req, res) => {
+    try {
+        const { userId } = req.query;
+        if (!userId) return res.status(400).json({ error: "Missing userId" });
+        const notifications = await Notification.find({ userId }).sort({ createdAt: -1 }).limit(50);
+        res.json(notifications);
+    } catch (err) {
+        console.error("Fetch Notifications Error:", err);
+        res.status(500).json({ error: "Server Error" });
+    }
+});
 
 // POST /api/notifications/send-whatsapp
 // Manually trigger a WhatsApp alert (e.g., when a new case is assigned or urgent message received)
@@ -47,6 +61,27 @@ router.get("/unread", async (req, res) => {
         res.json({ count: unreadCount });
     } catch (err) {
         console.error("Notifications Error:", err);
+        res.status(500).json({ error: "Server Error" });
+    }
+});
+
+// PUT /api/notifications/:id/read
+router.put("/:id/read", async (req, res) => {
+    try {
+        await Notification.findByIdAndUpdate(req.params.id, { read: true });
+        res.json({ success: true });
+    } catch (err) {
+        res.status(500).json({ error: "Server Error" });
+    }
+});
+
+// PUT /api/notifications/mark-all-read
+router.put("/mark-all-read", async (req, res) => {
+    try {
+        const { userId } = req.body;
+        await Notification.updateMany({ userId, read: false }, { read: true });
+        res.json({ success: true });
+    } catch (err) {
         res.status(500).json({ error: "Server Error" });
     }
 });

@@ -12,10 +12,15 @@ router.post("/", async (req, res) => {
     }
 });
 
-// Get Invoices for a Lawyer
+// Get Invoices
 router.get("/", async (req, res) => {
     try {
-        const invoices = await Invoice.find({ lawyerId: req.query.lawyerId }).sort({ createdAt: -1 });
+        const { lawyerId, clientId } = req.query;
+        let query = {};
+        if (lawyerId) query.lawyerId = lawyerId;
+        if (clientId) query.clientId = clientId;
+
+        const invoices = await Invoice.find(query).sort({ createdAt: -1 });
         res.json(invoices);
     } catch (err) {
         res.status(500).json({ error: "Failed to fetch invoices" });

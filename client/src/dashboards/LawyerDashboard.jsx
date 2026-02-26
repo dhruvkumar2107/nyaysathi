@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import axios from "axios";
 import { useAuth } from "../context/AuthContext";
 import dynamic from 'next/dynamic';
@@ -26,7 +26,8 @@ const socket = io(process.env.NEXT_PUBLIC_API_URL?.replace(/\/api$/, "") || "htt
 export default function LawyerDashboard() {
   const { user, logout } = useAuth();
   const router = useRouter();
-  const [activeTab, setActiveTab] = useState("board");
+  const searchParams = useSearchParams();
+  const [activeTab, setActiveTab] = useState(searchParams.get("tab") || "board");
   const [leads, setLeads] = useState([]);
   const [acceptedCases, setAcceptedCases] = useState([]);
   const [appointments, setAppointments] = useState([]);
@@ -36,6 +37,15 @@ export default function LawyerDashboard() {
   const [loading, setLoading] = useState(true);
   const [crmData, setCrmData] = useState(null);
   const [showProfileMenu, setShowProfileMenu] = useState(false);
+  const [showInvoiceModal, setShowInvoiceModal] = useState(false);
+  const [newInvoice, setNewInvoice] = useState({ clientId: "", amount: "", description: "" });
+  const [connections, setConnections] = useState([]);
+  const [lawyers, setLawyers] = useState([]);
+
+  useEffect(() => {
+    const tab = searchParams.get("tab");
+    if (tab) setActiveTab(tab);
+  }, [searchParams]);
 
   useEffect(() => {
     if (user) {
@@ -46,6 +56,8 @@ export default function LawyerDashboard() {
         fetchAppointments(uId),
         fetchInvoices(uId),
         fetchNotifications(uId),
+        fetchConnections(uId),
+        fetchLawyers(),
         axios.get(`/api/crm/insights?userId=${uId}`).then(res => setCrmData(res.data)).catch(err => null)
       ]).finally(() => setLoading(false));
 
@@ -57,8 +69,49 @@ export default function LawyerDashboard() {
         toast.success("New Alert: " + notif.message, { icon: '🔔' });
       });
 
+      socket.on("incoming_lead", (payload) => {
+        toast((t) => (
+          <div className="flex flex-col gap-3">
+            <div className="flex items-center gap-2">
+              <span className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></span>
+              <span className="font-bold text-sm">Instant Consult Request</span>
+            </div>
+            <p className="text-xs text-slate-600">Client: {payload.clientName}</p>
+            <div className="flex gap-2">
+              <button
+                onClick={() => {
+                  socket.emit("accept_consult", {
+                    lawyerId: uId,
+                    clientId: payload.clientId,
+                    lawyerName: user.name
+                  });
+                  toast.dismiss(t.id);
+                }}
+                className="bg-indigo-600 text-white px-3 py-1 rounded text-[10px] font-bold uppercase"
+              >
+                Accept
+              </button>
+              <button
+                onClick={() => toast.dismiss(t.id)}
+                className="bg-slate-200 text-slate-600 px-3 py-1 rounded text-[10px] font-bold uppercase"
+              >
+                Ignore
+              </button>
+            </div>
+          </div>
+        ), { duration: 10000, position: 'top-right' });
+      });
+
+      socket.on("consult_start", (payload) => {
+        if (payload.role === "lawyer") {
+          router.push(`/meet/${payload.meetingId}`);
+        }
+      });
+
       return () => {
         socket.off("dashboard_alert");
+        socket.off("incoming_lead");
+        socket.off("consult_start");
       }
     }
   }, [user]);
@@ -68,6 +121,34 @@ export default function LawyerDashboard() {
       const res = await axios.get(`/api/notifications?userId=${uId}`);
       setNotifications(res.data);
     } catch (err) { console.error("Notif Error:", err); }
+  };
+
+  const handleMarkAllRead = async () => {
+    try {
+      const uId = user._id || user.id;
+      await axios.put("/api/notifications/mark-all-read", { userId: uId });
+      setNotifications(prev => prev.map(n => ({ ...n, read: true })));
+    } catch (err) { console.error(err); }
+  };
+
+  const handleNotificationClick = async (notif) => {
+    try {
+      if (!notif.read) {
+        await axios.put(`/api/notifications/${notif._id}/read`);
+        setNotifications(prev => prev.map(n => n._id === notif._id ? { ...n, read: true } : n));
+      }
+      if (notif.link) {
+        router.push(notif.link);
+        setShowNotifications(false);
+      }
+    } catch (err) { console.error(err); }
+  };
+
+  const fetchConnections = async (uId) => {
+    try {
+      const res = await axios.get(`/api/connections?userId=${uId}&status=active`);
+      setConnections(res.data);
+    } catch (err) { console.error("Connections Error:", err); }
   };
 
   const fetchLeads = async () => {
@@ -109,6 +190,34 @@ export default function LawyerDashboard() {
     } catch (err) {
       console.error("Invoices Fetch Error:", err);
       setInvoices([]);
+    }
+  };
+
+  const fetchLawyers = async () => {
+    try {
+      const res = await axios.get("/api/lawyers");
+      setLawyers(Array.isArray(res.data.lawyers) ? res.data.lawyers : []);
+    } catch (err) {
+      console.error("Lawyers Fetch Error:", err);
+      setLawyers([]);
+    }
+  };
+
+  const handleCreateInvoice = async () => {
+    try {
+      const uId = user._id || user.id;
+      const client = connections.find(c => c._id === newInvoice.clientId);
+      await axios.post("/api/invoices", {
+        ...newInvoice,
+        lawyerId: uId,
+        lawyerName: user.name,
+        clientName: client?.name || "Client"
+      });
+      toast.success("Invoice generated!");
+      setShowInvoiceModal(false);
+      fetchInvoices(uId);
+    } catch (err) {
+      toast.error("Failed to generate invoice");
     }
   };
 
@@ -239,7 +348,7 @@ export default function LawyerDashboard() {
                   >
                     <div className="p-4 border-b border-white/5 flex justify-between items-center">
                       <h4 className="text-sm font-bold text-white uppercase tracking-wider">Alerts</h4>
-                      <button className="text-[10px] text-indigo-400 font-bold hover:underline">Mark all read</button>
+                      <button onClick={handleMarkAllRead} className="text-[10px] text-indigo-400 font-bold hover:underline">Mark all read</button>
                     </div>
                     <div className="max-h-96 overflow-y-auto custom-scrollbar">
                       {notifications.length === 0 ? (
@@ -248,7 +357,11 @@ export default function LawyerDashboard() {
                         </div>
                       ) : (
                         notifications.map(n => (
-                          <div key={n._id} className={`p-4 border-b border-white/5 last:border-0 hover:bg-white/5 transition cursor-pointer ${!n.read ? 'bg-indigo-500/5' : ''}`}>
+                          <div
+                            key={n._id}
+                            onClick={() => handleNotificationClick(n)}
+                            className={`p-4 border-b border-white/5 last:border-0 hover:bg-white/5 transition cursor-pointer ${!n.read ? 'bg-indigo-500/5' : ''}`}
+                          >
                             <p className="text-xs text-white leading-relaxed">{n.message}</p>
                             <p className="text-[10px] text-slate-500 mt-2">{new Date(n.createdAt).toLocaleTimeString()}</p>
                           </div>
@@ -330,7 +443,7 @@ export default function LawyerDashboard() {
                 <div className="bg-[#0f172a] rounded-3xl p-8 border border-white/10 shadow-xl">
                   <div className="flex justify-between items-center mb-8">
                     <h3 className="font-bold text-2xl text-white">Financial Ledger</h3>
-                    <button className="px-6 py-3 bg-indigo-600 text-white rounded-xl font-bold text-sm hover:bg-indigo-500 transition">Generate New Invoice</button>
+                    <button onClick={() => setShowInvoiceModal(true)} className="px-6 py-3 bg-indigo-600 text-white rounded-xl font-bold text-sm hover:bg-indigo-500 transition">Generate New Invoice</button>
                   </div>
                   <div className="space-y-4">
                     {invoices.length === 0 ? (
@@ -360,40 +473,32 @@ export default function LawyerDashboard() {
 
             {activeTab === 'leads' && (
               <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-4">
-                <h3 className="font-bold text-lg text-white mb-2">Available Opportunities</h3>
-                {leads.map(lead => (
-                  <div key={lead._id} className="bg-[#0f172a] border border-white/10 rounded-2xl p-6 hover:shadow-lg hover:border-indigo-500/50 transition group relative overflow-hidden">
+                <h3 className="font-bold text-lg text-white mb-2">Available Professionals</h3>
+                {lawyers.map(lawyer => (
+                  <div key={lawyer._id} className="bg-[#0f172a] border border-white/10 rounded-2xl p-6 hover:shadow-lg hover:border-indigo-500/50 transition group relative overflow-hidden">
                     <div className="flex justify-between items-start mb-2">
-                      <div>
-                        <span className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wide ${lead.tier === 'diamond' ? 'bg-purple-500/20 text-purple-300' : lead.tier === 'gold' ? 'bg-amber-500/20 text-amber-300' : 'bg-slate-700/50 text-slate-300'}`}>{lead.tier || 'Standard'}</span>
-                        <h4 className="font-bold text-lg text-white mt-2 group-hover:text-indigo-400 transition">{lead.title}</h4>
+                      <div className="flex items-center gap-4">
+                        <div className="w-12 h-12 rounded-xl bg-indigo-500/20 flex items-center justify-center text-indigo-400 font-bold">
+                          {lawyer.name?.[0]}
+                        </div>
+                        <div>
+                          <h4 className="font-bold text-lg text-white group-hover:text-indigo-400 transition">{lawyer.name}</h4>
+                          <p className="text-xs text-slate-500 font-bold uppercase tracking-wider">{lawyer.specialization || "Legal Expert"}</p>
+                        </div>
                       </div>
                       <div className="text-right">
-                        <div className="text-xl font-bold text-white">₹{lead.budget}</div>
+                        <div className="text-xl font-bold text-white">₹{lawyer.consultationFee || "0"}/hr</div>
+                        <span className="text-[10px] text-slate-500 font-bold uppercase tracking-widest">{lawyer.location?.city || "Remote"}</span>
                       </div>
                     </div>
-                    <p className="text-slate-400 text-sm mb-4 bg-black/20 p-3 rounded-lg border border-white/5">{lead.desc}</p>
+                    <p className="text-slate-400 text-sm mb-4 bg-black/20 p-3 rounded-lg border border-white/5 line-clamp-2">{lawyer.bio || "Secure professional profile data."}</p>
                     <div className="flex gap-3">
-                      <button onClick={() => acceptLead(lead._id, lead.tier)} className="flex-1 bg-indigo-600 text-white py-3 rounded-lg font-bold text-xs uppercase tracking-wider hover:bg-indigo-500 transition shadow-lg shadow-indigo-500/20">Accept Case</button>
-
-                      <button
-                        onClick={() => {
-                          if (user.plan !== 'gold') {
-                            toast.error("Upgrade to Gold to use AI Drafts");
-                          } else {
-                            router.push(`/drafting?type=proposal&title=${encodeURIComponent(lead.title)}&budget=${lead.budget}`);
-                          }
-                        }}
-                        className="flex-1 bg-gradient-to-r from-purple-600 to-pink-600 text-white py-3 rounded-lg font-bold text-xs uppercase tracking-wider hover:scale-105 transition shadow-lg shadow-purple-500/20 flex items-center justify-center gap-2"
-                      >
-                        <span className="text-lg">✨</span> Draft Proposal
-                      </button>
-
-                      <button className="px-6 py-3 border border-white/10 font-bold text-xs uppercase tracking-wider text-slate-500 rounded-lg hover:bg-white/5 hover:text-white transition">Pass</button>
+                      <button onClick={() => router.push(`/messages?chatId=${lawyer._id}`)} className="flex-1 bg-indigo-600 text-white py-3 rounded-lg font-bold text-xs uppercase tracking-wider hover:bg-indigo-500 transition shadow-lg shadow-indigo-500/20">Connect</button>
+                      <button onClick={() => router.push(`/lawyer-profile/${lawyer._id}`)} className="flex-1 bg-white/5 border border-white/10 text-slate-300 py-3 rounded-lg font-bold text-xs uppercase tracking-wider hover:bg-white/10 transition">View Dossier</button>
                     </div>
                   </div>
                 ))}
-                {leads.length === 0 && <p className="text-center text-slate-500 py-10">No active leads available.</p>}
+                {lawyers.length === 0 && <p className="text-center text-slate-500 py-10">No professional entities found in the vault.</p>}
               </motion.div>
             )}
 
@@ -438,6 +543,44 @@ export default function LawyerDashboard() {
 
         </div>
       </main>
+
+      {/* INVOICE MODAL */}
+      <AnimatePresence>
+        {showInvoiceModal && (
+          <div className="fixed inset-0 z-[200] flex items-center justify-center p-4">
+            <div className="absolute inset-0 bg-black/60 backdrop-blur-md" onClick={() => setShowInvoiceModal(false)}></div>
+            <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.95 }} className="bg-[#0f172a] border border-white/10 rounded-3xl p-8 max-w-lg w-full relative z-10 shadow-2xl">
+              <h3 className="font-bold text-2xl text-white mb-6">Generate Invoice</h3>
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1">Select Client</label>
+                  <select
+                    className="w-full p-4 bg-black/20 border border-white/10 rounded-xl outline-none focus:border-indigo-500 text-white transition"
+                    value={newInvoice.clientId}
+                    onChange={e => setNewInvoice({ ...newInvoice, clientId: e.target.value })}
+                  >
+                    <option value="">Select a client</option>
+                    {connections.map(c => (
+                      <option key={c._id} value={c._id}>{c.name}</option>
+                    ))}
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1">Description</label>
+                  <input type="text" className="w-full p-4 bg-black/20 border border-white/10 rounded-xl outline-none focus:border-indigo-500 text-white transition placeholder-slate-600" placeholder="e.g. Consultation Fee" value={newInvoice.description} onChange={e => setNewInvoice({ ...newInvoice, description: e.target.value })} />
+                </div>
+                <div>
+                  <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1">Amount (INR)</label>
+                  <input type="number" className="w-full p-4 bg-black/20 border border-white/10 rounded-xl outline-none focus:border-indigo-500 text-white transition placeholder-slate-600" placeholder="2000" value={newInvoice.amount} onChange={e => setNewInvoice({ ...newInvoice, amount: e.target.value })} />
+                </div>
+                <button onClick={handleCreateInvoice} className="w-full py-4 bg-indigo-600 text-white font-bold rounded-xl hover:bg-indigo-500 transition shadow-lg shadow-indigo-500/25 mt-2">
+                  Send Invoice
+                </button>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
 
     </div>
   );

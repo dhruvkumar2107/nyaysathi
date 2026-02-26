@@ -13,8 +13,8 @@ const socket = io(process.env.NEXT_PUBLIC_API_URL?.replace("/api", "") || "http:
 
 export default function Messages() {
   const { user } = useAuth();
-  const [searchParams] = useSearchParams();
-  const chatIdParam = searchParams.get("chatId");
+  const searchParams = useSearchParams();
+  const chatIdParam = searchParams ? searchParams.get("chatId") : null;
 
   const [chatList, setChatList] = useState([]);
   const [activeChat, setActiveChat] = useState(null);

@@ -111,7 +111,7 @@ export default function EditProfile() {
     };
 
     return (
-        <div className="min-h-screen bg-midnight-900 font-sans text-slate-200 selection:bg-indigo-500/30">
+        <div className="min-h-screen bg-midnight-950 font-sans text-slate-200 selection:bg-indigo-500/30">
             <div className="max-w-7xl mx-auto px-6 py-12">
 
                 <header className="flex flex-col md:flex-row justify-between items-end mb-10 pb-6 border-b border-white/10">

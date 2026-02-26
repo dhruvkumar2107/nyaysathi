@@ -1,11 +1,27 @@
-﻿const express = require("express");
+const express = require("express");
 const router = express.Router();
 const Case = require("../models/Case");
+const User = require("../models/User");
+
 // CREATE CASE
 router.post("/", async (req, res) => {
-  const c = new Case(req.body);
-  await c.save();
-  res.json(c);
+  try {
+    const c = new Case(req.body);
+    await c.save();
+
+    // Broadcast to all lawyers in the pool
+    if (req.io) {
+      req.io.to("lawyer_pool").emit("dashboard_alert", {
+        message: `New Legal Matter: ${c.title}`,
+        type: 'lead',
+        link: '/leads'
+      });
+    }
+
+    res.json(c);
+  } catch (err) {
+    res.status(500).json({ error: "Failed to post case" });
+  }
 });
 // GET ALL CASES (With Filters)
 router.get("/", async (req, res) => {
@@ -57,7 +73,21 @@ router.post("/:id/accept", async (req, res) => {
 router.patch("/:id/stage", async (req, res) => {
   try {
     const { stage } = req.body;
-    const c = await Case.findByIdAndUpdate(req.params.id, { stage }, { new: true });
+    const c = await Case.findByIdAndUpdate(req.params.id, { stage }, { new: true }).populate('client');
+    
+    // Notify the client about stage change
+    if (c && c.client && req.io) {
+      const Notification = require("../models/Notification");
+      const notif = new Notification({
+        userId: c.client._id,
+        message: `Case Update: Your matter "${c.title}" has moved to ${stage}`,
+        type: 'case',
+        link: '/dashboard'
+      });
+      await notif.save();
+      req.io.to(c.client._id.toString()).emit("dashboard_alert", notif);
+    }
+    
     res.json(c);
   } catch (err) {
     res.status(500).json({ error: "Failed to update stage" });

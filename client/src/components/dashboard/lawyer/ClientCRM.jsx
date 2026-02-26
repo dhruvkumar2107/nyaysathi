@@ -11,12 +11,22 @@ export default function ClientCRM() {
     const [loading, setLoading] = useState(true);
     const [search, setSearch] = useState("");
     const [filterTab, setFilterTab] = useState("active"); // 'active', 'pending'
+    const [pendingCount, setPendingCount] = useState(0);
 
     useEffect(() => {
         if (user) {
             fetchClients();
+            fetchPendingCount();
         }
     }, [user, filterTab]);
+
+    const fetchPendingCount = async () => {
+        try {
+            const uId = user._id || user.id;
+            const res = await axios.get(`/api/connections?userId=${uId}&status=pending`);
+            setPendingCount(res.data.length);
+        } catch (err) { console.error(err); }
+    };
 
     const fetchClients = async () => {
         setLoading(true);
@@ -62,7 +72,7 @@ export default function ClientCRM() {
                             className={`text-[10px] font-black uppercase tracking-[0.2em] pb-1 border-b-2 transition ${filterTab === 'pending' ? 'text-indigo-400 border-indigo-500' : 'text-slate-600 border-transparent'}`}
                         >
                             Incoming Requests
-                            {filterTab !== 'pending' && clients.some(c => c.connectionStatus === 'pending') && <span className="ml-2 w-2 h-2 bg-indigo-500 rounded-full inline-block animate-pulse"></span>}
+                            {pendingCount > 0 && <span className="ml-2 px-1.5 py-0.5 bg-indigo-500 text-white text-[8px] rounded-full animate-pulse">{pendingCount}</span>}
                         </button>
                     </div>
                 </div>

@@ -1,4 +1,4 @@
-﻿const express = require("express");
+const express = require("express");
 const { GoogleGenerativeAI } = require("@google/generative-ai");
 const router = express.Router();
 const multer = require("multer");
@@ -267,7 +267,30 @@ router.post("/case-analysis", verifyTokenOptional, checkAiLimit, async (req, res
   }
 });
 
-/* ---------------- LEGAL NOTICE GENERATOR ---------------- */
+/* ---------------- LEGAL NOTICE GENERATOR (LEGACY) ---------------- */
+router.post("/legal-notice", verifyTokenOptional, checkAiLimit, async (req, res) => {
+  try {
+    const { noticeType, senderName, senderAddress, recipientName, recipientAddress, facts, complianceDays } = req.body;
+    
+    const prompt = `
+      You are a senior advocate in India. Draft a formal "${noticeType}".
+      Sender: ${senderName}, ${senderAddress}
+      Recipient: ${recipientName}, ${recipientAddress}
+      Facts: ${facts}
+      Compliance: ${complianceDays} days.
+      
+      Format as Markdown. Include professional legal citations where applicable.
+    `;
+
+    const result = await generateWithFallback(prompt);
+    const response = await result.response;
+    res.json({ notice: response.text() });
+  } catch (err) {
+    res.status(500).json({ error: "Failed to generate notice" });
+  }
+});
+
+/* ---------------- LEGAL NOTICE GENERATOR (NEW) ---------------- */
 /* ---------------- LEGAL NOTICE GENERATOR ---------------- */
 router.post("/draft-notice", verifyTokenOptional, checkAiLimit, async (req, res) => {
   try {

@@ -9,11 +9,35 @@ import toast from "react-hot-toast";
 import axios from "axios";
 
 export default function Settings() {
-    const { user } = useAuth();
+    const { user, updateUser } = useAuth();
     const [activeTab, setActiveTab] = useState('account');
 
     const [notifications, setNotifications] = useState(user?.settings?.notifications || { email: true, push: true, marketing: false });
     const [privacy, setPrivacy] = useState(user?.settings?.privacy || { profileVisible: true, showStatus: true });
+
+    // For editing profile fields
+    const [formData, setFormData] = useState({
+        name: user?.name || "",
+        email: user?.email || "",
+        phone: user?.phone || "",
+        location: user?.location || "",
+        bio: user?.bio || "",
+        specialization: user?.specialization || ""
+    });
+
+    const handleFormChange = (e) => {
+        setFormData({ ...formData, [e.target.name]: e.target.value });
+    };
+
+    const handleSaveProfile = async () => {
+        try {
+            const { data } = await axios.put(`/api/users/${user._id || user.id}`, formData);
+            updateUser(data);
+            toast.success("Profile updated successfully");
+        } catch (err) {
+            toast.error("Failed to update profile");
+        }
+    };
 
     const tabs = [
         { id: 'account', label: 'My Account', icon: <User size={18} /> },
@@ -117,12 +141,36 @@ export default function Settings() {
                                     <div className="grid md:grid-cols-2 gap-6">
                                         <div className="space-y-2">
                                             <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">Display Name</label>
-                                            <input value={user?.name || ""} disabled className="w-full bg-black/20 border border-white/10 rounded-xl px-4 py-3 text-slate-400 cursor-not-allowed" />
+                                            <input name="name" value={formData.name} onChange={handleFormChange} className="w-full bg-black/20 border border-white/10 rounded-xl px-4 py-3 text-white outline-none focus:border-indigo-500 transition" />
                                         </div>
                                         <div className="space-y-2">
                                             <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">Email Address</label>
-                                            <input value={user?.email || ""} disabled className="w-full bg-black/20 border border-white/10 rounded-xl px-4 py-3 text-slate-400 cursor-not-allowed" />
+                                            <input name="email" value={formData.email} onChange={handleFormChange} className="w-full bg-black/20 border border-white/10 rounded-xl px-4 py-3 text-white outline-none focus:border-indigo-500 transition" />
                                         </div>
+                                        <div className="space-y-2">
+                                            <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">Phone</label>
+                                            <input name="phone" value={formData.phone} onChange={handleFormChange} className="w-full bg-black/20 border border-white/10 rounded-xl px-4 py-3 text-white outline-none focus:border-indigo-500 transition" />
+                                        </div>
+                                        <div className="space-y-2">
+                                            <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">Location</label>
+                                            <input name="location" value={formData.location} onChange={handleFormChange} className="w-full bg-black/20 border border-white/10 rounded-xl px-4 py-3 text-white outline-none focus:border-indigo-500 transition" />
+                                        </div>
+                                        {user?.role === 'lawyer' && (
+                                            <div className="md:col-span-2 space-y-2">
+                                                <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">Specialization</label>
+                                                <input name="specialization" value={formData.specialization} onChange={handleFormChange} className="w-full bg-black/20 border border-white/10 rounded-xl px-4 py-3 text-white outline-none focus:border-indigo-500 transition" placeholder="e.g. Criminal Law, Corporate Law" />
+                                            </div>
+                                        )}
+                                        <div className="md:col-span-2 space-y-2">
+                                            <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">Bio</label>
+                                            <textarea name="bio" value={formData.bio} onChange={handleFormChange} className="w-full bg-black/20 border border-white/10 rounded-xl px-4 py-3 text-white outline-none focus:border-indigo-500 transition h-32 resize-none" />
+                                        </div>
+                                    </div>
+
+                                    <div className="flex justify-end pt-4">
+                                        <button onClick={handleSaveProfile} className="px-8 py-3 bg-indigo-600 text-white font-bold rounded-xl hover:bg-indigo-500 transition shadow-lg shadow-indigo-600/20">
+                                            Save Profile
+                                        </button>
                                     </div>
 
                                     <div className="pt-4">

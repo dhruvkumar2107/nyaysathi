@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import axios from "axios";
 import { useAuth } from "../context/AuthContext";
 import dynamic from 'next/dynamic';
@@ -23,12 +23,19 @@ const socket = io(process.env.NEXT_PUBLIC_API_URL?.replace(/\/api$/, "") || "htt
 export default function ClientDashboard() {
   const { user, logout } = useAuth();
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [loading, setLoading] = useState(true);
   const [activeCases, setActiveCases] = useState([]);
   const [invoices, setInvoices] = useState([]);
   const [appointments, setAppointments] = useState([]);
   const [suggestedLawyers, setSuggestedLawyers] = useState([]);
-  const [activeTab, setActiveTab] = useState('overview'); // 'overview', 'cases', 'feed'
+  const [activeTab, setActiveTab] = useState(searchParams.get("tab") || 'overview'); // 'overview', 'cases', 'feed'
+
+  useEffect(() => {
+    const tab = searchParams.get("tab");
+    if (tab) setActiveTab(tab);
+  }, [searchParams]);
+
   const [posts, setPosts] = useState([]);
   const [newCase, setNewCase] = useState({ title: "", desc: "", budget: "" });
   const [showPostModal, setShowPostModal] = useState(false);
@@ -39,6 +46,7 @@ export default function ClientDashboard() {
   const [showNotifications, setShowNotifications] = useState(false);
   const [selectedLawyer, setSelectedLawyer] = useState(null);
   const [showBookingModal, setShowBookingModal] = useState(false);
+  const [showInstantModal, setShowInstantModal] = useState(false);
 
   useEffect(() => {
     if (user) {
@@ -60,8 +68,16 @@ export default function ClientDashboard() {
         toast.success("Alert: " + notif.message, { icon: '🔔' });
       });
 
+      socket.on("consult_start", (payload) => {
+        if (payload.role === "client") {
+          toast.success(`Lawyer ${payload.lawyerName} accepted your consult! Redirecting...`, { duration: 5000 });
+          router.push(`/meet/${payload.meetingId}`);
+        }
+      });
+
       return () => {
         socket.off("dashboard_alert");
+        socket.off("consult_start");
       }
     }
   }, [user]);
@@ -73,13 +89,32 @@ export default function ClientDashboard() {
     } catch (err) { console.error("Notif Error:", err); }
   };
 
+  const handleMarkAllRead = async () => {
+    try {
+      const uId = user._id || user.id;
+      await axios.put("/api/notifications/mark-all-read", { userId: uId });
+      setNotifications(prev => prev.map(n => ({ ...n, read: true })));
+    } catch (err) { console.error(err); }
+  };
+
+  const handleNotificationClick = async (notif) => {
+    try {
+      if (!notif.read) {
+        await axios.put(`/api/notifications/${notif._id}/read`);
+        setNotifications(prev => prev.map(n => n._id === notif._id ? { ...n, read: true } : n));
+      }
+      if (notif.link) {
+        router.push(notif.link);
+        setShowNotifications(false);
+      }
+    } catch (err) { console.error(err); }
+  };
+
   const fetchConnections = async (uId) => {
     try {
       const res = await axios.get(`/api/connections?userId=${uId}&status=all`);
       setConnections(res.data);
-    } catch (err) {
-      console.error("Connections Fetch Error:", err);
-    }
+    } catch (err) { console.error("Connections Error:", err); }
   };
 
   const handleConnect = async (lawyerId) => {
@@ -158,6 +193,15 @@ export default function ClientDashboard() {
       fetchMyCases();
       toast.success("Legal Matter Posted Successfully!");
     } catch (err) { toast.error("Failed to post case. Please try again."); }
+  };
+
+  const handleInstantConsult = () => {
+    socket.emit("request_instant_consult", {
+      clientId: user._id || user.id,
+      clientName: user.name,
+      category: "General Legal"
+    });
+    setShowInstantModal(true);
   };
 
   if (loading || !user) return <PremiumLoader text="Loading Workspace..." />;
@@ -245,7 +289,7 @@ export default function ClientDashboard() {
           <div className="flex items-center gap-6">
             {/* VIDEO CALL BUTTON (PRO) */}
             <button
-              onClick={() => router.push('/video-call')}
+              onClick={handleInstantConsult}
               className="px-4 py-2 bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 rounded-xl font-bold text-xs uppercase tracking-wider hover:bg-indigo-600 hover:text-white transition flex items-center gap-2"
             >
               <span className="w-2 h-2 bg-indigo-400 rounded-full animate-pulse shadow-[0_0_8px_#818cf8]"></span>
@@ -276,7 +320,7 @@ export default function ClientDashboard() {
                   >
                     <div className="p-4 border-b border-white/5 bg-gradient-to-r from-white/5 to-transparent flex justify-between items-center">
                       <h4 className="text-[10px] font-black text-white uppercase tracking-widest">Pulse Notifications</h4>
-                      <button className="text-[10px] text-indigo-400 font-bold hover:underline">Mark read</button>
+                      <button onClick={handleMarkAllRead} className="text-[10px] text-indigo-400 font-bold hover:underline">Mark read</button>
                     </div>
                     <div className="max-h-96 overflow-y-auto custom-scrollbar">
                       {notifications.length === 0 ? (
@@ -285,7 +329,11 @@ export default function ClientDashboard() {
                         </div>
                       ) : (
                         notifications.map(n => (
-                          <div key={n._id} className={`p-4 border-b border-white/5 last:border-0 hover:bg-white/5 transition cursor-pointer ${!n.read ? 'bg-indigo-500/5' : ''}`}>
+                          <div 
+                            key={n._id} 
+                            onClick={() => handleNotificationClick(n)}
+                            className={`p-4 border-b border-white/5 last:border-0 hover:bg-white/5 transition cursor-pointer ${!n.read ? 'bg-indigo-500/5' : ''}`}
+                          >
                             <p className="text-xs text-white leading-relaxed font-medium">{n.message}</p>
                             <p className="text-[10px] text-slate-600 mt-2 font-bold uppercase tracking-wider">{new Date(n.createdAt).toLocaleTimeString()}</p>
                           </div>
@@ -415,10 +463,18 @@ export default function ClientDashboard() {
                             <span>{new Date(apt.date).getDate()}</span>
                             <span className="uppercase text-[8px]">{new Date(apt.date).toLocaleDateString('en-US', { month: 'short' })}</span>
                           </div>
-                          <div>
-                            <p className="text-sm font-bold text-white">{apt.lawyerName}</p>
+                          <div className="flex-1">
+                            <p className="text-sm font-bold text-white">{apt.lawyerName || apt.lawyerId?.name || "Legal Counsel"}</p>
                             <p className="text-xs text-slate-500">{apt.slot}</p>
                           </div>
+                          {(apt.status === 'confirmed' || apt.status === 'active') && (
+                            <button 
+                              onClick={() => router.push(`/meet/${apt._id}`)}
+                              className="px-3 py-1 bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 rounded-lg text-[10px] font-bold uppercase hover:bg-emerald-500 hover:text-white transition"
+                            >
+                              Join
+                            </button>
+                          )}
                         </div>
                       ))
                     )}
@@ -537,11 +593,9 @@ export default function ClientDashboard() {
                             </span>
                           ) : (
                             <button
-                              onClick={() => {
-                                setSelectedLawyer(l);
-                                setShowBookingModal(true);
-                              }}
+                              onClick={() => handleConnect(l._id)}
                               className="w-8 h-8 rounded-full border border-white/10 flex items-center justify-center text-slate-400 hover:border-indigo-500 hover:text-indigo-400 transition"
+                              title="Send Connection Request"
                             >
                               +
                             </button>
@@ -599,6 +653,35 @@ export default function ClientDashboard() {
           />
         )
       }
+
+      {/* INSTANT CONSULT MODAL */}
+      <AnimatePresence>
+        {showInstantModal && (
+          <div className="fixed inset-0 z-[200] flex items-center justify-center p-4">
+            <div className="absolute inset-0 bg-black/60 backdrop-blur-md" onClick={() => setShowInstantModal(false)}></div>
+            <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.9 }} className="bg-[#0f172a] border border-white/10 rounded-3xl p-10 max-w-md w-full relative z-10 shadow-2xl text-center">
+              <div className="mb-6 relative mx-auto w-24 h-24">
+                <div className="absolute inset-0 bg-indigo-500 blur-[30px] opacity-20 animate-pulse"></div>
+                <div className="relative bg-white/5 border border-white/10 w-24 h-24 rounded-full flex items-center justify-center text-4xl shadow-inner">⚖️</div>
+              </div>
+              <h3 className="font-bold text-2xl text-white mb-3">Broadcasting Secure Uplink</h3>
+              <p className="text-slate-400 text-sm mb-8 leading-relaxed">
+                We are alerting our network of verified legal professionals. Stay on this screen; the first available expert will connect with you shortly.
+              </p>
+              <div className="flex flex-col gap-4">
+                <div className="flex justify-center gap-2 mb-2">
+                  <motion.div animate={{ scale: [1, 1.2, 1], opacity: [0.3, 1, 0.3] }} transition={{ repeat: Infinity, duration: 1.5 }} className="w-2 h-2 bg-indigo-500 rounded-full" />
+                  <motion.div animate={{ scale: [1, 1.2, 1], opacity: [0.3, 1, 0.3] }} transition={{ repeat: Infinity, duration: 1.5, delay: 0.5 }} className="w-2 h-2 bg-indigo-500 rounded-full" />
+                  <motion.div animate={{ scale: [1, 1.2, 1], opacity: [0.3, 1, 0.3] }} transition={{ repeat: Infinity, duration: 1.5, delay: 1 }} className="w-2 h-2 bg-indigo-500 rounded-full" />
+                </div>
+                <button onClick={() => setShowInstantModal(false)} className="py-3 px-6 border border-white/10 rounded-xl text-slate-500 font-bold hover:text-white hover:bg-white/5 transition">
+                  Cancel Request
+                </button>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
 
     </div>
   );

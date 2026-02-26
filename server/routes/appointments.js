@@ -2,6 +2,20 @@ const express = require("express");
 const router = express.Router();
 const Appointment = require("../models/Appointment");
 const User = require("../models/User");
+const Notification = require("../models/Notification");
+
+// Helper to create notification and emit socket event
+const createNotification = async (io, userId, message, type, link) => {
+    try {
+        const notif = new Notification({ userId, message, type, link });
+        await notif.save();
+        if (io) {
+            io.to(userId.toString()).emit("dashboard_alert", notif);
+        }
+    } catch (err) {
+        console.error("Notification Creation Error:", err);
+    }
+};
 
 // POST /api/appointments
 // Book an appointment
@@ -24,6 +38,17 @@ router.post("/", async (req, res) => {
         });
 
         await appointment.save();
+
+        // Notify the lawyer
+        const client = await User.findById(clientId);
+        await createNotification(
+            req.io,
+            lawyerId,
+            `New appointment request from ${client?.name || "a client"} on ${date} at ${slot}`,
+            "appointment",
+            "/calendar"
+        );
+
         res.json(appointment);
     } catch (err) {
         console.error(err);
@@ -59,7 +84,19 @@ router.put("/:id", async (req, res) => {
             req.params.id,
             { status, meetingLink },
             { new: true }
-        );
+        ).populate("lawyerId", "name");
+
+        if (updated) {
+            // Notify the client
+            await createNotification(
+                req.io,
+                updated.clientId,
+                `Your appointment with ${updated.lawyerId?.name} has been ${status}`,
+                "appointment",
+                "/dashboard"
+            );
+        }
+
         res.json(updated);
     } catch (err) {
         console.error(err);

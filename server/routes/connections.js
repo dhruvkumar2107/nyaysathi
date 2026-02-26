@@ -2,6 +2,20 @@ const express = require("express");
 const router = express.Router();
 const Connection = require("../models/Connection");
 const User = require("../models/User");
+const Notification = require("../models/Notification");
+
+// Helper to create notification and emit socket event
+const createNotification = async (io, userId, message, type, link) => {
+    try {
+        const notif = new Notification({ userId, message, type, link });
+        await notif.save();
+        if (io) {
+            io.to(userId.toString()).emit("dashboard_alert", notif);
+        }
+    } catch (err) {
+        console.error("Notification Creation Error:", err);
+    }
+};
 
 // GET /api/connections?userId=...
 // Fetch all active connections for a user
@@ -53,10 +67,9 @@ router.post("/", async (req, res) => {
         const existing = await Connection.findOne({ clientId, lawyerId });
         if (existing) {
             if (existing.status === "active") return res.status(400).json({ error: "Already connected" });
-            if (existing.status === "pending") return res.status(400).json({ error: "Request already sending" });
+            if (existing.status === "pending") return res.status(400).json({ error: "Request already pending" });
         }
 
-        // Create "pending" request
         const newConn = new Connection({
             clientId,
             lawyerId,
@@ -65,6 +78,23 @@ router.post("/", async (req, res) => {
         });
 
         await newConn.save();
+
+        // Notify the recipient
+        const recipientId = initiatedBy === clientId ? lawyerId : clientId;
+        const initiator = await User.findById(initiatedBy);
+        const recipient = await User.findById(recipientId);
+        
+        // Link to dashboard with correct tab
+        const link = recipient.role === 'lawyer' ? "/lawyer/dashboard?tab=clients" : "/client/dashboard";
+
+        await createNotification(
+            req.io,
+            recipientId,
+            `New connection request from ${initiator?.name || "someone"}`,
+            "connection",
+            link
+        );
+
         res.json(newConn);
     } catch (err) {
         console.error(err);
@@ -77,11 +107,33 @@ router.post("/", async (req, res) => {
 router.put("/:id", async (req, res) => {
     try {
         const { status } = req.body; // active, rejected
-        const connection = await Connection.findByIdAndUpdate(
-            req.params.id,
-            { status },
-            { new: true }
+        const connection = await Connection.findById(req.params.id);
+        if (!connection) return res.status(404).json({ error: "Connection not found" });
+
+        const oldStatus = connection.status;
+        connection.status = status;
+        await connection.save();
+
+        // Notify the initiator (the one who sent the request)
+        const initiatorId = connection.initiatedBy;
+        const responderId = connection.clientId.toString() === initiatorId.toString() ? connection.lawyerId : connection.clientId;
+        
+        const initiator = await User.findById(initiatorId);
+        const responder = await User.findById(responderId);
+        
+        let link = "/messages";
+        if (status !== 'active') {
+            link = initiator.role === 'lawyer' ? "/lawyer/dashboard" : "/client/dashboard";
+        }
+
+        await createNotification(
+            req.io,
+            initiatorId,
+            `Connection request ${status} by ${responder?.name || "the other party"}`,
+            "connection",
+            link
         );
+
         res.json(connection);
     } catch (err) {
         console.error("Update Connection Error:", err);

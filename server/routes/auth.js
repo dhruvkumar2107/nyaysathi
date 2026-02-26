@@ -399,4 +399,17 @@ router.get("/test-login-force", async (req, res) => {
   }
 });
 
+// Update Profile
+router.put("/update-profile", async (req, res) => {
+  try {
+    const { _id, ...updates } = req.body;
+    const user = await User.findByIdAndUpdate(_id, updates, { new: true });
+    if (!user) return res.status(404).json({ message: "User not found" });
+    res.json(user);
+  } catch (err) {
+    console.error("Update Profile Error:", err);
+    res.status(500).json({ message: "Failed to update profile" });
+  }
+});
+
 module.exports = router;
