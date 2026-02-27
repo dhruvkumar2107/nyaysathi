@@ -204,6 +204,32 @@ app.get("/healthz", (req, res) => {
   res.json({ ok: true });
 });
 
+// DEBUG ENDPOINT: List all registered routes
+app.get("/api/debug-routes", (req, res) => {
+  const routes = [];
+  app._router.stack.forEach((middleware) => {
+    if (middleware.route) {
+      // Direct route
+      routes.push(`${Object.keys(middleware.route.methods).join(", ").toUpperCase()} ${middleware.route.path}`);
+    } else if (middleware.name === "router") {
+      // Router middleware
+      const base = middleware.regexp.toString()
+        .replace("/^\\", "")
+        .replace("\\/?(?=\\/|$)/i", "")
+        .replace(/\\\//g, "/");
+
+      middleware.handle.stack.forEach((handler) => {
+        if (handler.route) {
+          const path = handler.route.path;
+          const methods = Object.keys(handler.route.methods).join(", ").toUpperCase();
+          routes.push(`${methods} ${base}${path}`);
+        }
+      });
+    }
+  });
+  res.json({ count: routes.length, routes });
+});
+
 /* ================= ROUTE LOADER ================= */
 function loadRoute(url, file) {
   try {
