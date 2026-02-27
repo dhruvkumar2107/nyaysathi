@@ -138,10 +138,9 @@ const JudgeAI = () => {
                 toast.success("Strategic Analysis Complete");
             }
         } catch (err) {
-            console.error(err);
-            toast.error("AI Overload. Using Fallback Analysis.");
-            // Fallback Mock
-            toast.error("AI Analysis failed. Please try again.");
+            console.error("❌ AI Error Details:", err.response?.data || err.message);
+            const errorMsg = err.response?.data?.details || err.response?.data?.error || "AI Overload. Please try again.";
+            toast.error(errorMsg);
             setResult(null);
         } finally {
             setAnalyzing(false);

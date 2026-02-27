@@ -38,6 +38,9 @@ async function generateWithFallback(prompt, systemInstruction = DEFAULT_SYSTEM_P
     ];
 
     const errors = [];
+    console.log(`🔍 generateWithFallback called. Prompt Length: ${prompt.length}. Instruction Length: ${systemInstruction.length}`);
+    console.log(`🔍 Prompt Prefix: ${prompt.substring(0, 100)}...`);
+
     for (const modelName of modelsToTry) {
         try {
             console.log(`🤖 Attempting GenAI with ${modelName}...`);
