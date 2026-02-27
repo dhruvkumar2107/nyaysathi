@@ -2,9 +2,7 @@ const express = require("express");
 const router = express.Router();
 const Confession = require("../models/Confession");
 const verifyToken = require("../middleware/authMiddleware");
-const { GoogleGenerativeAI } = require("@google/generative-ai");
-
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || "missing_key");
+const { generateWithFallback } = require("../utils/aiUtils");
 
 // Helper: AI preliminary analysis
 async function getAIAnalysis(title, body, category) {
@@ -30,8 +28,7 @@ Respond in this exact format (short and punchy, max 200 words):
 Keep it practical, cite actual section numbers, no fluff.`;
 
     try {
-        const model = genAI.getGenerativeModel({ model: "gemini-2.5-pro" });
-        const result = await model.generateContent(prompt);
+        const result = await generateWithFallback(prompt);
         return result.response.text();
     } catch (err) {
         return "Our AI is currently unavailable. A lawyer from the community will respond shortly.";

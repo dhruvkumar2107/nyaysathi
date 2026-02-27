@@ -111,9 +111,32 @@ User Situation:
 
 
 def call_gemini(prompt):
-    model = genai.GenerativeModel("gemini-2.5-pro")
-    response = model.generate_content(prompt)
-    return response.text
+    models_to_try = [
+        "gemini-2.5-pro",
+        "gemini-2.0-flash",
+        "gemini-1.5-pro",
+        "gemini-1.5-flash"
+    ]
+    
+    errors = []
+    for model_name in models_to_try:
+        try:
+            print(f"📡 Python Service: Attempting with {model_name}...")
+            model = genai.GenerativeModel(model_name)
+            response = model.generate_content(prompt)
+            if response and response.text:
+                print(f"✅ Python Service: Success with {model_name}")
+                return response.text
+        except Exception as e:
+            print(f"❌ Python Service: Error with {model_name}: {str(e)}")
+            errors.append(f"{model_name}: {str(e)}")
+            
+    # If all fail, return a JSON error
+    return json.dumps({
+        "answer": f"AI Service Exhausted. Details: {' | '.join(errors)}",
+        "related_questions": [], 
+        "intent": "error"
+    })
 
 
 def extract_json_from_text(text):

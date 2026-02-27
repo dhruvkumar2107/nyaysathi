@@ -2,10 +2,7 @@ const express = require("express");
 const router = express.Router();
 const verifyToken = require("../middleware/authMiddleware");
 
-// Initialize Gemini
-const { GoogleGenerativeAI } = require("@google/generative-ai");
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-const model = genAI.getGenerativeModel({ model: "gemini-2.5-pro" });
+const { generateWithFallback } = require("../utils/aiUtils");
 
 // REALISTIC AI CASE GENERATOR
 router.get("/search", verifyToken, async (req, res) => {
@@ -45,7 +42,7 @@ router.get("/search", verifyToken, async (req, res) => {
             }
         `;
 
-        const result = await model.generateContent(prompt);
+        const result = await generateWithFallback(prompt);
         const response = await result.response;
         let text = response.text();
 

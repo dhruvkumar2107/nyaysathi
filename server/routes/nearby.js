@@ -3,10 +3,7 @@ const { GoogleGenerativeAI } = require("@google/generative-ai");
 const router = express.Router();
 const fs = require('fs');
 
-// Initialize Gemini
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-// Use 2.5-flash as it proved successful for Chat
-const model = genAI.getGenerativeModel({ model: "gemini-2.5-pro" });
+const { generateWithFallback } = require("../utils/aiUtils");
 
 /* ---------------- NEARBY SERVICES (Smart AI Search) ---------------- */
 router.get("/", async (req, res) => {
@@ -37,7 +34,7 @@ router.get("/", async (req, res) => {
       Strict JSON format. Do not hallucinate generic names like "City Police Station". Use real station names if possible.
     `;
 
-    const result = await model.generateContent(prompt);
+    const result = await generateWithFallback(prompt);
     const response = await result.response;
     const text = response.text();
 
