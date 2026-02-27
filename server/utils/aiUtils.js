@@ -32,10 +32,9 @@ TONE: Elite, Authoritative, Strategically minded, and Decisive.`;
  */
 async function generateWithFallback(prompt, systemInstruction = DEFAULT_SYSTEM_PROMPT) {
     const modelsToTry = [
-        "gemini-2.5-pro",      // Primary Model
-        "gemini-2.0-flash",    // High-performance fallback
-        "gemini-1.5-pro",      // Stable Pro fallback
-        "gemini-1.5-flash"     // High-speed fallback
+        "gemini-1.5-pro",      // Primary Model
+        "gemini-1.5-flash",    // High-performance fallback
+        "gemini-2.0-flash-exp" // Experimental fallback
     ];
 
     console.log(`🤖 AI Request Received. Fallback Queue: ${modelsToTry.join(", ")}`);
@@ -74,10 +73,9 @@ async function generateWithFallback(prompt, systemInstruction = DEFAULT_SYSTEM_P
  */
 async function generateMultimodalWithFallback(parts) {
     const modelsToTry = [
-        "gemini-2.5-pro",
-        "gemini-2.0-flash",
         "gemini-1.5-pro",
-        "gemini-1.5-flash"
+        "gemini-1.5-flash",
+        "gemini-2.0-flash-exp"
     ];
 
     for (const modelName of modelsToTry) {
