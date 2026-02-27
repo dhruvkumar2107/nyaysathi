@@ -9,7 +9,7 @@ import PaywallModal from "../../src/components/PaywallModal";
 import Navbar from "../../src/components/Navbar";
 import Footer from "../../src/components/Footer";
 import { useAuth } from "../../src/context/AuthContext";
-import { toast } from "react-hot-toast";
+// Duplicate import removed
 import { motion, AnimatePresence } from "framer-motion";
 import { FileText, Shield, AlertTriangle, CheckCircle, Zap, Search, Upload } from "lucide-react";
 

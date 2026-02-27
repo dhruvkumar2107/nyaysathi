@@ -10,7 +10,7 @@ import {
     MapPin, ChevronRight, Loader2, CheckCircle2, ArrowRight,
     Siren, Scale, BookOpen, Zap, Lock, Download, RotateCcw
 } from 'lucide-react';
-import { toast } from 'react-hot-toast';
+// Duplicate import removed
 
 // ─── Emergency categories ───────────────────────────────────────────────────
 const EMERGENCY_TYPES = [

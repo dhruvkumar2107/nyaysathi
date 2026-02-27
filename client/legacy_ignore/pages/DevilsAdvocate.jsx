@@ -6,7 +6,7 @@ import Footer from '../../src/components/Footer';
 import { useAuth } from '../../src/context/AuthContext';
 import { useRouter } from 'next/navigation';
 import axios from 'axios';
-import { Toaster, toast } from 'react-hot-toast';
+import { Toaster } from 'react-hot-toast';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const DevilsAdvocate = () => {
