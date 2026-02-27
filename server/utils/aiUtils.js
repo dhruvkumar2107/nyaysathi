@@ -41,18 +41,28 @@ async function generateWithFallback(prompt, systemInstruction = DEFAULT_SYSTEM_P
     for (const modelName of modelsToTry) {
         try {
             console.log(`🤖 Attempting GenAI with ${modelName}...`);
-            const model = genAI.getGenerativeModel({ model: modelName });
+            const model = genAI.getGenerativeModel({
+                model: modelName,
+                systemInstruction: systemInstruction
+            });
 
             const chatResult = await model.generateContent(prompt);
             const response = await chatResult.response;
 
-            // Safety Check: If blocked by safety filters, response.text() throws
-            if (response.candidates && response.candidates.length > 0) {
-                console.log(`✅ Success with ${modelName}`);
-                return chatResult;
-            } else {
-                throw new Error("Response blocked by safety filters or no candidates returned.");
+            // Safety Check: Ensure we have candidates and a valid response
+            if (response && response.candidates && response.candidates.length > 0) {
+                // Peek at the text to ensure it doesn't throw
+                try {
+                    const text = response.text();
+                    if (text) {
+                        console.log(`✅ Success with ${modelName}`);
+                        return chatResult;
+                    }
+                } catch (pe) {
+                    console.error(`⚠️ Peek Error with ${modelName}:`, pe.message);
+                }
             }
+            throw new Error("Empty response or blocked by safety filters.");
         } catch (err) {
             console.error(`❌ Error with ${modelName}:`, err.message);
             errors.push(`${modelName}: ${err.message}`);

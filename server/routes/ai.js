@@ -19,7 +19,25 @@ router.get("/health", (req, res) => {
   });
 });
 
-// Helper and SYSTEM_PROMPT removed and moved to utils/aiUtils.js
+// Helper to safely parse JSON from Gemini's markdown response
+function safeJsonParse(text, routeName) {
+  try {
+    // Remove markdown code blocks
+    let cleaned = text.replace(/```json/g, "").replace(/```/g, "").trim();
+
+    // Isolate JSON object
+    const start = cleaned.indexOf('{');
+    const end = cleaned.lastIndexOf('}');
+    if (start !== -1 && end !== -1) {
+      cleaned = cleaned.substring(start, end + 1);
+    }
+
+    return JSON.parse(cleaned);
+  } catch (err) {
+    console.error(`❌ JSON Parse Error in ${routeName}. Raw text:`, text.substring(0, 500));
+    throw new Error(`Failed to parse AI response in ${routeName}: ${err.message}`);
+  }
+}
 
 /* ---------------- AI ASSISTANT (CHAT) ---------------- */
 router.post("/assistant", verifyTokenOptional, checkAiLimit, async (req, res) => {
@@ -141,15 +159,7 @@ router.post("/agreement", verifyTokenOptional, checkAiLimit, async (req, res) =>
     const result = await generateWithFallback(prompt);
     const response = await result.response;
     const rawText = response.text();
-
-    let cleaned = rawText.replace(/```json/g, "").replace(/```/g, "").trim();
-    const firstBrace = cleaned.indexOf('{');
-    const lastBrace = cleaned.lastIndexOf('}');
-    if (firstBrace !== -1 && lastBrace !== -1) {
-      cleaned = cleaned.substring(firstBrace, lastBrace + 1);
-    }
-
-    const analysisData = JSON.parse(cleaned);
+    const analysisData = safeJsonParse(rawText, "Agreement Analysis");
 
     // PAYWALL LOGIC (Safe for guests)
     if (req.user && req.user.plan === 'free') {
@@ -196,26 +206,9 @@ router.post("/case-analysis", verifyTokenOptional, checkAiLimit, async (req, res
     `;
 
     const result = await generateWithFallback(prompt);
-    const response = await result.response;
     const rawText = response.text();
-
-    let cleaned = rawText.replace(/```json/g, "").replace(/```/g, "").trim();
-    const firstBrace = cleaned.indexOf('{');
-    const lastBrace = cleaned.lastIndexOf('}');
-    if (firstBrace !== -1 && lastBrace !== -1) {
-      cleaned = cleaned.substring(firstBrace, lastBrace + 1);
-    }
-
-    try {
-      const json = JSON.parse(cleaned);
-      res.json(json);
-    } catch (e) {
-      res.json({
-        summary: "Could not parse analysis.",
-        laws: [],
-        advice: "Please try again with a clearer description."
-      });
-    }
+    const json = safeJsonParse(rawText, "Case Analysis");
+    res.json(json);
 
   } catch (err) {
     console.error("Gemini Case Analysis Error:", err.message);
@@ -330,15 +323,25 @@ router.post("/predict-outcome", verifyTokenOptional, checkAiLimit, async (req, r
     const response = await result.response;
     let text = response.text();
 
-    // Clean JSON
+    // Remove markdown code blocks if present
     text = text.replace(/```json/g, "").replace(/```/g, "").trim();
+
+    // Attempt to isolate the JSON object if there is surrounding text
     const jsonStart = text.indexOf('{');
     const jsonEnd = text.lastIndexOf('}');
     if (jsonStart !== -1 && jsonEnd !== -1) {
       text = text.substring(jsonStart, jsonEnd + 1);
     }
 
-    res.json(JSON.parse(text));
+    try {
+      const parsed = safeJsonParse(text, "Predict Outcome");
+      res.json(parsed);
+    } catch (parseErr) {
+      res.status(500).json({
+        error: "Failed to parse AI response. Try again.",
+        details: parseErr.message
+      });
+    }
 
   } catch (err) {
     console.error("Judge AI Error:", err.message);
@@ -429,16 +432,7 @@ router.post("/analyze-case-file", verifyToken, checkAiLimit, upload.single("file
     const result = await generateWithFallback(prompt);
     const response = await result.response;
     let text = response.text();
-
-    // Clean JSON
-    text = text.replace(/```json/g, "").replace(/```/g, "").trim();
-    const jsonStart = text.indexOf('{');
-    const jsonEnd = text.lastIndexOf('}');
-    if (jsonStart !== -1 && jsonEnd !== -1) {
-      text = text.substring(jsonStart, jsonEnd + 1);
-    }
-
-    res.json(JSON.parse(text));
+    res.json(safeJsonParse(text, "Case File Analysis"));
 
   } catch (err) {
     console.error("Judge AI Pro Error:", err.message);
@@ -725,11 +719,7 @@ router.post("/legal-sos", verifyTokenOptional, async (req, res) => {
     const result = await generateWithFallback(prompt);
     const response = await result.response;
     let text = response.text();
-    text = text.replace(/```json/g, "").replace(/```/g, "").trim();
-    const s = text.indexOf('{');
-    const e = text.lastIndexOf('}');
-    if (s !== -1 && e !== -1) text = text.substring(s, e + 1);
-    res.json(JSON.parse(text));
+    res.json(safeJsonParse(text, "Legal SOS"));
   } catch (err) {
     console.error("Legal SOS Error:", err.message);
     res.status(500).json({ error: "Emergency analysis failed. Please try again." });
@@ -923,11 +913,8 @@ router.post("/courtroom-battle", verifyTokenOptional, async (req, res) => {
 
     const verdictResult = await generateWithFallback(verdictPrompt, JUDGE_PERSONA);
     const response = await verdictResult.response;
-    let verdictText = response.text().trim();
-    verdictText = verdictText.replace(/```json/g, "").replace(/```/g, "").trim();
-    const vs = verdictText.indexOf('{');
-    const ve = verdictText.lastIndexOf('}');
-    const verdict = JSON.parse(verdictText.substring(vs, ve + 1));
+    let verdictText = response.text();
+    const verdict = safeJsonParse(verdictText, "Courtroom Battle Verdict");
 
     res.json({
       case_title: caseTitle || "The Instant Case",
