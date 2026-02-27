@@ -9,26 +9,17 @@ function log(msg) {
 // Clear previous log
 fs.writeFileSync(logFile, '');
 
+const dotenv = require('dotenv');
+dotenv.config();
+
 async function listModels() {
     log("📂 CWD: " + process.cwd());
 
-    const envPath = path.join(process.cwd(), '.env');
-    log("🔎 Looking for .env at: " + envPath);
-
-    if (!fs.existsSync(envPath)) {
-        log("❌ .env file NOT FOUND!");
+    const apiKey = process.env.GEMINI_API_KEY;
+    if (!apiKey) {
+        log("❌ GEMINI_API_KEY not found in environment!");
         return;
     }
-
-    const envContent = fs.readFileSync(envPath, 'utf8');
-    const match = envContent.match(/GEMINI_API_KEY=(.*)/);
-
-    if (!match || !match[1]) {
-        log("❌ GEMINI_API_KEY not found in .env file content!");
-        return;
-    }
-
-    const apiKey = match[1].trim();
     log("✅ API Key found (Length: " + apiKey.length + ")");
 
     const url = `https://generativelanguage.googleapis.com/v1beta/models?key=${apiKey}`;

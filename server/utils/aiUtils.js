@@ -32,9 +32,10 @@ TONE: Elite, Authoritative, Strategically minded, and Decisive.`;
  */
 async function generateWithFallback(prompt, systemInstruction = DEFAULT_SYSTEM_PROMPT) {
     const modelsToTry = [
-        "gemini-1.5-flash",    // High-performance, higher free quota
-        "gemini-1.5-pro",      // Primary Power Model
-        "gemini-2.0-flash-exp" // Experimental fallback
+        "gemini-flash-latest", // Discovered alias
+        "gemini-2.5-flash",    // Discovered bleeding edge
+        "gemini-2.0-flash",    // Discovered bleeding edge
+        "gemini-pro-latest"    // Discovered alias
     ];
 
     const errors = [];
@@ -85,9 +86,8 @@ async function generateWithFallback(prompt, systemInstruction = DEFAULT_SYSTEM_P
  */
 async function generateMultimodalWithFallback(parts) {
     const modelsToTry = [
-        "gemini-1.5-pro",
-        "gemini-1.5-flash",
-        "gemini-2.0-flash-exp"
+        "gemini-2.5-pro",
+        "gemini-2.0-flash"
     ];
 
     for (const modelName of modelsToTry) {
