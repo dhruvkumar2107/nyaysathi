@@ -38,7 +38,7 @@ export function BentoGrid() {
                         desc="Gain direct access to the top 1% of India's legal minds. Our verified network connects you with expert advocates."
                         icon={<Users className="text-white" size={18} />}
                         color="from-amber-400 via-orange-500 to-red-500"
-                        href="/find-lawyers"
+                        href="/marketplace"
                         badge="Exclusive"
                         className="md:col-span-4"
                     />

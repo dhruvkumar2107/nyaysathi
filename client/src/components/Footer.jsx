@@ -56,7 +56,7 @@ const Footer = () => {
                         <FooterLink href="/judge-ai">Judge AI <span className="text-[10px] text-indigo-200 bg-indigo-500/20 px-1.5 py-0.5 rounded ml-2 font-bold">New</span></FooterLink>
                         <FooterLink href="/voice-assistant">NyayVoice</FooterLink>
                         <FooterLink href="/moot-court">Moot Court VR</FooterLink>
-                        <FooterLink href="/find-lawyers">Find Lawyers</FooterLink>
+                        <FooterLink href="/marketplace">Find Lawyers</FooterLink>
                     </FooterColumn>
 
                     <FooterColumn title="Resources">

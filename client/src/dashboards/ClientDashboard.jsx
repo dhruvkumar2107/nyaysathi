@@ -51,7 +51,7 @@ export default function ClientDashboard() {
   useEffect(() => {
     if (user) {
       const uId = user._id || user.id;
-      
+
       // Load initial batch
       fetchMyCases();
       fetchPosts();
@@ -228,7 +228,7 @@ export default function ClientDashboard() {
           <div className="space-y-1 mt-8">
             <NavItem icon="📊" label="Overview" active={activeTab === 'overview'} onClick={() => setActiveTab('overview')} />
             <NavItem icon="⚖️" label="My Matters" active={activeTab === 'cases'} onClick={() => setActiveTab('cases')} />
-            <NavItem icon="🔍" label="Find Lawyer" to="/find-lawyers" />
+            <NavItem icon="🔍" label="Find Lawyer" to="/marketplace" />
             <NavItem icon="📄" label="Documents" to="/agreements" />
             <NavItem icon="💬" label="Messages" to="/messages" />
             <NavItem icon="💳" label="Payments" active={activeTab === 'invoices'} onClick={() => setActiveTab('invoices')} />
@@ -333,8 +333,8 @@ export default function ClientDashboard() {
                         </div>
                       ) : (
                         notifications.map(n => (
-                          <div 
-                            key={n._id} 
+                          <div
+                            key={n._id}
                             onClick={() => handleNotificationClick(n)}
                             className={`p-4 border-b border-white/5 last:border-0 hover:bg-white/5 transition cursor-pointer ${!n.read ? 'bg-indigo-500/5' : ''}`}
                           >
@@ -408,7 +408,7 @@ export default function ClientDashboard() {
                           <div className="text-[10px] text-indigo-300 mt-1">Check Win Probability</div>
                         </div>
                       </div>
-                      <div className="p-4 bg-white/5 rounded-2xl border border-white/10 text-center hover:bg-white/10 hover:border-indigo-500/30 transition cursor-pointer group" onClick={() => router.push('/find-lawyers')}>
+                      <div className="p-4 bg-white/5 rounded-2xl border border-white/10 text-center hover:bg-white/10 hover:border-indigo-500/30 transition cursor-pointer group" onClick={() => router.push('/marketplace')}>
                         <div className="text-2xl mb-2 group-hover:scale-110 transition">🔍</div>
                         <div className="font-bold text-sm text-white">Find Lawyer</div>
                       </div>
@@ -477,7 +477,7 @@ export default function ClientDashboard() {
                             <p className="text-xs text-slate-500">{apt.slot}</p>
                           </div>
                           {(apt.status === 'confirmed' || apt.status === 'active') && (
-                            <button 
+                            <button
                               onClick={() => router.push(`/meet/${apt._id}`)}
                               className="px-3 py-1 bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 rounded-lg text-[10px] font-bold uppercase hover:bg-emerald-500 hover:text-white transition"
                             >
@@ -531,7 +531,7 @@ export default function ClientDashboard() {
                   <h3 className="font-bold text-2xl text-white tracking-tight">Legal Pulse</h3>
                   <button onClick={() => setShowPostModal(true)} className="px-6 py-3 bg-indigo-600 text-white rounded-xl font-bold text-sm hover:bg-indigo-500 transition shadow-lg shadow-indigo-500/20">Post Update</button>
                 </div>
-                
+
                 <div className="space-y-6">
                   {posts.length === 0 ? (
                     <div className="py-20 text-center opacity-30">
@@ -549,7 +549,7 @@ export default function ClientDashboard() {
                         </div>
                       </div>
                       <p className="text-slate-300 text-sm leading-relaxed mb-4">{post.content}</p>
-                      
+
                       {post.mediaUrl && (
                         <div className="rounded-xl overflow-hidden mb-4 border border-white/10 bg-black/40">
                           {post.type === 'reel' || post.mediaUrl.endsWith('.mp4') ? (
@@ -582,15 +582,15 @@ export default function ClientDashboard() {
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="col-span-8 space-y-6">
               <div className="bg-[#0f172a] rounded-3xl p-8 border border-white/10 shadow-xl relative overflow-hidden">
                 <div className="absolute top-0 right-0 w-64 h-64 bg-indigo-500/5 blur-[80px] rounded-full -mr-20 -mt-20 pointer-events-none"></div>
-                
+
                 <div className="flex justify-between items-center mb-8 relative z-10">
                   <div>
                     <h3 className="font-bold text-2xl text-white tracking-tight">Financial Records</h3>
                     <p className="text-[10px] text-slate-500 font-black uppercase tracking-widest mt-1">Safe Vault & Transaction Ledger</p>
                   </div>
                   <div className="text-right">
-                      <p className="text-[10px] text-slate-500 font-black uppercase tracking-widest mb-1">Total Outstanding</p>
-                      <p className="text-2xl font-black text-white tracking-tighter">₹{invoices.filter(i => i.status !== 'paid').reduce((acc, i) => acc + (Number(i.amount) || 0), 0).toLocaleString()}</p>
+                    <p className="text-[10px] text-slate-500 font-black uppercase tracking-widest mb-1">Total Outstanding</p>
+                    <p className="text-2xl font-black text-white tracking-tighter">₹{invoices.filter(i => i.status !== 'paid').reduce((acc, i) => acc + (Number(i.amount) || 0), 0).toLocaleString()}</p>
                   </div>
                 </div>
 
@@ -604,25 +604,25 @@ export default function ClientDashboard() {
                       <div key={inv._id} className="p-6 bg-white/5 rounded-2xl border border-white/5 flex justify-between items-center hover:bg-white/10 transition group">
                         <div className="flex items-center gap-4">
                           <div className={`w-12 h-12 rounded-xl flex items-center justify-center font-bold text-sm ${inv.status === 'paid' ? 'bg-emerald-500/10 text-emerald-400' : 'bg-amber-500/10 text-amber-400'}`}>
-                              {inv.status === 'paid' ? '✓' : '₹'}
+                            {inv.status === 'paid' ? '✓' : '₹'}
                           </div>
                           <div>
-                              <p className="text-white font-bold text-sm">{inv.lawyerName || 'Legal Counsel'}</p>
-                              <p className="text-[10px] text-slate-500 font-bold uppercase tracking-widest">{new Date(inv.createdAt).toLocaleDateString()} • {inv.description || `Ref: ${inv._id.slice(-6)}`}</p>
+                            <p className="text-white font-bold text-sm">{inv.lawyerName || 'Legal Counsel'}</p>
+                            <p className="text-[10px] text-slate-500 font-bold uppercase tracking-widest">{new Date(inv.createdAt).toLocaleDateString()} • {inv.description || `Ref: ${inv._id.slice(-6)}`}</p>
                           </div>
                         </div>
                         <div className="text-right">
                           <p className="text-xl font-black text-white tracking-tight mb-1">₹{inv.amount}</p>
                           <div className="flex items-center gap-3">
-                              <span className={`text-[9px] font-black uppercase tracking-widest px-2 py-0.5 rounded-lg border ${inv.status === 'paid' ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' : 'bg-amber-500/10 text-amber-400 border-amber-500/20'}`}>{inv.status}</span>
-                              {inv.status !== 'paid' && (
-                                  <button 
-                                      onClick={() => router.push(`/payment/${inv._id}`)}
-                                      className="text-[9px] font-black uppercase tracking-widest text-indigo-400 hover:text-white hover:bg-indigo-600 px-3 py-1 rounded-lg border border-indigo-500/30 transition"
-                                  >
-                                      Pay Now
-                                  </button>
-                              )}
+                            <span className={`text-[9px] font-black uppercase tracking-widest px-2 py-0.5 rounded-lg border ${inv.status === 'paid' ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' : 'bg-amber-500/10 text-amber-400 border-amber-500/20'}`}>{inv.status}</span>
+                            {inv.status !== 'paid' && (
+                              <button
+                                onClick={() => router.push(`/payment/${inv._id}`)}
+                                className="text-[9px] font-black uppercase tracking-widest text-indigo-400 hover:text-white hover:bg-indigo-600 px-3 py-1 rounded-lg border border-indigo-500/30 transition"
+                              >
+                                Pay Now
+                              </button>
+                            )}
                           </div>
                         </div>
                       </div>
