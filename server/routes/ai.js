@@ -98,6 +98,7 @@ router.post("/assistant", verifyTokenOptional, checkAiLimit, async (req, res) =>
     res.status(500).json({
       answer: `**System Error**: ${errorMessage}\n\n*Technical Details: ${err.message}*`,
       error: err.message,
+      stack: process.env.NODE_ENV === 'development' ? err.stack : undefined,
       related_questions: [],
       intent: "error"
     });
@@ -155,7 +156,7 @@ router.post("/agreement", verifyTokenOptional, checkAiLimit, async (req, res) =>
 
   } catch (err) {
     console.error("Gemini Agreement Error:", err.message);
-    res.status(500).json({ error: "Failed to analyze agreement" });
+    res.status(500).json({ error: "Failed to analyze agreement", details: err.message });
   }
 });
 
@@ -208,7 +209,7 @@ router.post("/case-analysis", verifyTokenOptional, checkAiLimit, async (req, res
 
   } catch (err) {
     console.error("Gemini Case Analysis Error:", err.message);
-    res.status(500).json({ error: "Failed to analyze case" });
+    res.status(500).json({ error: "Failed to analyze case", details: err.message });
   }
 });
 
@@ -231,7 +232,7 @@ router.post("/legal-notice", verifyTokenOptional, checkAiLimit, async (req, res)
     const response = await result.response;
     res.json({ notice: response.text() });
   } catch (err) {
-    res.status(500).json({ error: "Failed to generate notice" });
+    res.status(500).json({ error: "Failed to generate notice", details: err.message });
   }
 });
 
@@ -272,7 +273,7 @@ router.post("/draft-notice", verifyTokenOptional, checkAiLimit, async (req, res)
 
   } catch (err) {
     console.error("Gemini Notice Error:", err.message);
-    res.status(500).json({ error: "Failed to draft notice" });
+    res.status(500).json({ error: "Failed to draft notice", details: err.message });
   }
 });
 
@@ -331,7 +332,7 @@ router.post("/predict-outcome", verifyTokenOptional, checkAiLimit, async (req, r
 
   } catch (err) {
     console.error("Judge AI Error:", err.message);
-    res.status(500).json({ error: "Failed to predict outcome. Try again." });
+    res.status(500).json({ error: "Failed to predict outcome. Try again.", details: err.message });
   }
 });
 
