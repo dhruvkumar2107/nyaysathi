@@ -139,7 +139,7 @@ const JudgeAI = () => {
             }
         } catch (err) {
             console.error("❌ AI Error Details:", err.response?.data || err.message);
-            const errorMsg = err.response?.data?.details || err.response?.data?.error || "AI Overload. Please try again.";
+            const errorMsg = err.response?.data?.details || err.response?.data?.message || err.response?.data?.error || "AI Overload. Please try again.";
             toast.error(errorMsg);
             setResult(null);
         } finally {
