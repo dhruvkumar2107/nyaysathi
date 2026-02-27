@@ -32,28 +32,27 @@ TONE: Elite, Authoritative, Strategically minded, and Decisive.`;
  */
 async function generateWithFallback(prompt, systemInstruction = DEFAULT_SYSTEM_PROMPT) {
     const modelsToTry = [
-        "gemini-1.5-pro",      // Primary Model
-        "gemini-1.5-flash",    // High-performance fallback
+        "gemini-1.5-flash",    // High-performance, higher free quota
+        "gemini-1.5-pro",      // Primary Power Model
         "gemini-2.0-flash-exp" // Experimental fallback
     ];
 
-    console.log(`🤖 AI Request Received. Fallback Queue: ${modelsToTry.join(", ")}`);
     const errors = [];
-
     for (const modelName of modelsToTry) {
         try {
-            console.log(`📡 Attempting generation with model: ${modelName}...`);
-            const model = genAI.getGenerativeModel({
-                model: modelName,
-                systemInstruction: systemInstruction
-            });
-            const result = await model.generateContent(prompt);
+            console.log(`🤖 Attempting GenAI with ${modelName}...`);
+            const model = genAI.getGenerativeModel({ model: modelName });
 
-            if (result && result.response) {
+            const chatResult = await model.generateContent(prompt);
+            const response = await chatResult.response;
+
+            // Safety Check: If blocked by safety filters, response.text() throws
+            if (response.candidates && response.candidates.length > 0) {
                 console.log(`✅ Success with ${modelName}`);
-                return result;
+                return chatResult;
+            } else {
+                throw new Error("Response blocked by safety filters or no candidates returned.");
             }
-            throw new Error("Empty response from model");
         } catch (err) {
             console.error(`❌ Error with ${modelName}:`, err.message);
             errors.push(`${modelName}: ${err.message}`);

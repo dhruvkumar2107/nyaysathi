@@ -9,6 +9,16 @@ const verifyToken = require("../middleware/authMiddleware");
 const verifyTokenOptional = require("../middleware/verifyTokenOptional");
 const checkAiLimit = require("../middleware/checkAiLimit");
 
+// Health check to verify AI config on server
+router.get("/health", (req, res) => {
+  const hasKey = !!process.env.GEMINI_API_KEY;
+  res.json({
+    status: "ok",
+    ai_configured: hasKey,
+    key_prefix: hasKey ? process.env.GEMINI_API_KEY.substring(0, 4) + "****" : "missing"
+  });
+});
+
 // Helper and SYSTEM_PROMPT removed and moved to utils/aiUtils.js
 
 /* ---------------- AI ASSISTANT (CHAT) ---------------- */
