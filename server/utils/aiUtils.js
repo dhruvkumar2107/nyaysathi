@@ -38,8 +38,8 @@ async function generateWithFallback(prompt, systemInstruction = DEFAULT_SYSTEM_P
     ];
 
     const errors = [];
-    console.log(`🔍 generateWithFallback called. Prompt Length: ${prompt.length}. Instruction Length: ${systemInstruction.length}`);
-    console.log(`🔍 Prompt Prefix: ${prompt.substring(0, 100)}...`);
+    console.log(`🔍 generateWithFallback called. Prompt Length: ${prompt?.length || 0}. Instruction Length: ${systemInstruction?.length || 0}`);
+    console.log(`🔍 Prompt Prefix: ${prompt?.substring(0, 100) || "none"}...`);
 
     for (const modelName of modelsToTry) {
         try {

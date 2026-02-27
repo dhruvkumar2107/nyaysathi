@@ -206,6 +206,7 @@ router.post("/case-analysis", verifyTokenOptional, checkAiLimit, async (req, res
     `;
 
     const result = await generateWithFallback(prompt);
+    const response = await result.response;
     const rawText = response.text();
     const json = safeJsonParse(rawText, "Case Analysis");
     res.json(json);

@@ -242,9 +242,13 @@ loadRoute("/api/confessions", "./routes/confessions"); // ANONYMOUS CONFESSION B
 
 // Custom Sentry Error Handler (Compatible with all versions)
 app.use((err, req, res, next) => {
-  console.error("❌ Sentry Caught Error:", err);
+  console.error("❌ Global Error Caught at", req.originalUrl, ":", err);
   Sentry.captureException(err);
-  res.status(500).json({ error: "Internal Server Error" });
+  res.status(500).json({
+    error: "Internal Server Error",
+    message: err.message,
+    path: req.originalUrl
+  });
 });
 
 /* ================= STATIC ================= */
