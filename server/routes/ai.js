@@ -1,3 +1,4 @@
+const express = require("express");
 const { GoogleGenerativeAI } = require("@google/generative-ai");
 const { generateWithFallback, DEFAULT_SYSTEM_PROMPT: SYSTEM_PROMPT } = require("../utils/aiUtils");
 const router = express.Router();
