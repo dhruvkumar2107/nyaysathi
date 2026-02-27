@@ -4,6 +4,7 @@ import { Copy, ThumbsUp, ThumbsDown, Send, Paperclip, Mic, Plus } from "lucide-r
 import ReactMarkdown from "react-markdown";
 import { motion, AnimatePresence } from "framer-motion";
 import axios from "axios";
+import toast from "react-hot-toast";
 import Navbar from "../../src/components/Navbar";
 
 export default function Assistant() {
@@ -43,33 +44,31 @@ export default function Assistant() {
   };
 
   const handleSend = async () => {
-    if (!input.trim()) return;
-    const newMsg = { role: "user", text: input };
-    setMessages((prev) => [...prev, newMsg]);
+    if (!input.trim() || isLoading) return;
+
+    const userMessage = { role: "user", text: input };
+    setMessages((prev) => [...prev, userMessage]);
+    const currentInput = input;
+    const currentHistory = messages;
     setInput("");
     setIsLoading(true);
 
     try {
       const token = localStorage.getItem("token");
       const headers = token ? { Authorization: `Bearer ${token}` } : {};
-
-      const res = await axios.post("/api/ai/assistant", {
-        question: input,
-        history: messages.slice(-5).map(m => ({ role: m.role, content: m.text }))
+      const { data } = await axios.post("/api/ai/assistant", {
+        question: currentInput,
+        history: currentHistory.map(m => ({
+          role: m.role === "model" ? "assistant" : "user",
+          content: m.text
+        }))
       }, { headers });
 
-      const aiResponse = res.data.answer;
-
-      setMessages((prev) => [
-        ...prev,
-        { role: "model", text: aiResponse },
-      ]);
-    } catch (error) {
-      console.error(error);
-      setMessages((prev) => [
-        ...prev,
-        { role: "model", text: "⚠️ System Error: Unable to reach the Legal AI Council. Please try again later." },
-      ]);
+      const assistantMessage = { role: "model", text: data.answer || data.message };
+      setMessages((prev) => [...prev, assistantMessage]);
+    } catch (err) {
+      console.error(err);
+      toast.error(err.response?.data?.message || "Assistant is busy. Try again.");
     } finally {
       setIsLoading(false);
     }

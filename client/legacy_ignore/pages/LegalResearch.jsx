@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import axios from 'axios';
+import toast from 'react-hot-toast';
 import { Search, BookOpen, Scale, FileText, ArrowRight, Filter } from 'lucide-react';
 import Navbar from '../../src/components/Navbar';
 import Footer from '../../src/components/Footer';
@@ -57,9 +58,9 @@ const LegalResearch = () => {
             <Navbar />
 
             {/* HERO / SEARCH SECTION */}
-            <div className={`transition-all duration-700 ease-in-out ${searched ? 'pt-36 pb-12' : 'min-h-screen flex flex-col justify-center items-center -mt-20'}`}>
+            <div className={`transition-all duration-700 ease-in-out ${searched ? 'pt-36 pb-12' : 'min-h-[70vh] flex flex-col justify-center items-center'}`}>
 
-                <div className={`w-full max-w-4xl px-6 relative z-10 ${searched ? '' : 'text-center'}`}>
+                <div className={`w-full max-w-4xl px-6 relative z-10 ${searched ? '' : 'text-center mx-auto'}`}>
 
                     {!searched && (
                         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="mb-12">

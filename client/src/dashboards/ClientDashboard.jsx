@@ -51,17 +51,18 @@ export default function ClientDashboard() {
   useEffect(() => {
     if (user) {
       const uId = user._id || user.id;
-      Promise.all([
-        fetchMyCases(),
-        fetchPosts(),
-        fetchInvoices(),
-        fetchAppointments(),
-        fetchSuggestedLawyers(),
-        fetchConnections(uId),
-        fetchNotifications(uId)
-      ]).finally(() => setLoading(false));
+      
+      // Load initial batch
+      fetchMyCases();
+      fetchPosts();
+      fetchInvoices();
+      fetchAppointments();
+      fetchSuggestedLawyers();
+      fetchConnections(uId);
+      fetchNotifications(uId);
 
       socket.emit("join_room", uId);
+      setLoading(false); // Move to non-blocking load
 
       socket.on("dashboard_alert", (notif) => {
         setNotifications(prev => [notif, ...prev]);
@@ -159,6 +160,8 @@ export default function ClientDashboard() {
     }
   };
 
+  const myCases = activeCases; // Map activeCases to myCases for compatibility
+
   const fetchInvoices = async () => {
     try {
       const uId = user._id || user.id;
@@ -225,6 +228,7 @@ export default function ClientDashboard() {
           <div className="space-y-1 mt-8">
             <NavItem icon="📊" label="Overview" active={activeTab === 'overview'} onClick={() => setActiveTab('overview')} />
             <NavItem icon="⚖️" label="My Matters" active={activeTab === 'cases'} onClick={() => setActiveTab('cases')} />
+            <NavItem icon="🔍" label="Find Lawyer" to="/find-lawyers" />
             <NavItem icon="📄" label="Documents" to="/agreements" />
             <NavItem icon="💬" label="Messages" to="/messages" />
             <NavItem icon="💳" label="Payments" active={activeTab === 'invoices'} onClick={() => setActiveTab('invoices')} />
@@ -404,7 +408,7 @@ export default function ClientDashboard() {
                           <div className="text-[10px] text-indigo-300 mt-1">Check Win Probability</div>
                         </div>
                       </div>
-                      <div className="p-4 bg-white/5 rounded-2xl border border-white/10 text-center hover:bg-white/10 hover:border-indigo-500/30 transition cursor-pointer group" onClick={() => router.push('/marketplace')}>
+                      <div className="p-4 bg-white/5 rounded-2xl border border-white/10 text-center hover:bg-white/10 hover:border-indigo-500/30 transition cursor-pointer group" onClick={() => router.push('/find-lawyers')}>
                         <div className="text-2xl mb-2 group-hover:scale-110 transition">🔍</div>
                         <div className="font-bold text-sm text-white">Find Lawyer</div>
                       </div>
@@ -420,9 +424,14 @@ export default function ClientDashboard() {
               <div className="grid grid-cols-2 gap-6 mt-8">
                 {/* FEED SUMMARY */}
                 <div className="bg-[#0f172a] rounded-3xl p-6 border border-white/10 shadow-lg h-[400px] overflow-y-auto custom-scrollbar">
-                  <h3 className="font-bold text-lg text-white mb-4 sticky top-0 bg-[#0f172a] pb-2 border-b border-white/10 z-10">Legal Pulse</h3>
+                  <div className="flex justify-between items-center mb-4 sticky top-0 bg-[#0f172a] pb-2 border-b border-white/10 z-10">
+                    <h3 className="font-bold text-lg text-white">Legal Pulse</h3>
+                    <button onClick={() => setActiveTab('feed')} className="text-[10px] font-black text-indigo-400 uppercase tracking-widest hover:underline">View All</button>
+                  </div>
                   <div className="space-y-4">
-                    {posts.slice(0, 5).map(post => (
+                    {posts.length === 0 ? (
+                      <p className="text-center text-slate-500 py-10 text-xs">No pulse activity detected.</p>
+                    ) : posts.slice(0, 5).map(post => (
                       <div key={post._id} className="pb-4 border-b border-white/5 last:border-0 hover:bg-white/5 p-3 -mx-3 rounded-xl transition cursor-pointer">
                         <div className="flex items-center gap-2 mb-2">
                           <div className="w-6 h-6 rounded-full bg-indigo-500/20 flex items-center justify-center text-[10px] font-bold text-indigo-300">{post.author?.name?.[0]}</div>
@@ -490,12 +499,12 @@ export default function ClientDashboard() {
               <div className="bg-[#0f172a] rounded-3xl p-8 border border-white/10 shadow-xl">
                 <h3 className="font-bold text-2xl text-white mb-8">Active Case Files</h3>
                 <div className="space-y-4">
-                  {myCases.length === 0 ? (
+                  {activeCases.length === 0 ? (
                     <div className="py-20 text-center opacity-30">
                       <p className="text-sm font-bold uppercase tracking-widest">No active litigation records</p>
                     </div>
                   ) : (
-                    myCases.map(c => (
+                    activeCases.map(c => (
                       <div key={c._id} className="p-6 bg-white/5 rounded-2xl border border-white/5 flex justify-between items-center hover:bg-indigo-500/10 transition cursor-pointer group">
                         <div className="flex items-center gap-4">
                           <div className="w-12 h-12 rounded-xl bg-indigo-500/20 flex items-center justify-center text-xl">⚖️</div>
@@ -515,36 +524,106 @@ export default function ClientDashboard() {
             </motion.div>
           )}
 
-          {activeTab === 'invoices' && (
-            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-6">
+          {activeTab === 'feed' && (
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="col-span-8 space-y-6">
               <div className="bg-[#0f172a] rounded-3xl p-8 border border-white/10 shadow-xl">
                 <div className="flex justify-between items-center mb-8">
-                  <h3 className="font-bold text-2xl text-white">Payment Records</h3>
+                  <h3 className="font-bold text-2xl text-white tracking-tight">Legal Pulse</h3>
+                  <button onClick={() => setShowPostModal(true)} className="px-6 py-3 bg-indigo-600 text-white rounded-xl font-bold text-sm hover:bg-indigo-500 transition shadow-lg shadow-indigo-500/20">Post Update</button>
+                </div>
+                
+                <div className="space-y-6">
+                  {posts.length === 0 ? (
+                    <div className="py-20 text-center opacity-30">
+                      <p className="text-sm font-bold uppercase tracking-widest text-slate-500">The legal feed is currently silent.</p>
+                    </div>
+                  ) : posts.map(post => (
+                    <div key={post._id} className="p-6 bg-white/5 rounded-2xl border border-white/5 hover:bg-white/10 transition group">
+                      <div className="flex items-center gap-4 mb-4">
+                        <div className="w-10 h-10 rounded-full bg-indigo-500/20 flex items-center justify-center text-sm font-bold text-indigo-400 border border-indigo-500/30 shadow-inner">
+                          {post.author?.name?.[0] || 'U'}
+                        </div>
+                        <div>
+                          <p className="text-white font-bold text-sm leading-none mb-1">{post.author?.name}</p>
+                          <p className="text-[10px] text-slate-500 font-bold uppercase tracking-widest">{new Date(post.createdAt).toLocaleDateString()} • {post.author?.role}</p>
+                        </div>
+                      </div>
+                      <p className="text-slate-300 text-sm leading-relaxed mb-4">{post.content}</p>
+                      
+                      {post.mediaUrl && (
+                        <div className="rounded-xl overflow-hidden mb-4 border border-white/10 bg-black/40">
+                          {post.type === 'reel' || post.mediaUrl.endsWith('.mp4') ? (
+                            <video src={`${process.env.NEXT_PUBLIC_API_URL?.replace(/\/api$/, "") || "http://localhost:4000"}${post.mediaUrl}`} controls className="w-full max-h-[400px] object-contain" />
+                          ) : (
+                            <img src={`${process.env.NEXT_PUBLIC_API_URL?.replace(/\/api$/, "") || "http://localhost:4000"}${post.mediaUrl}`} className="w-full object-cover" alt="Post media" />
+                          )}
+                        </div>
+                      )}
+
+                      <div className="flex items-center gap-6 pt-4 border-t border-white/5">
+                        <button className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-slate-500 hover:text-indigo-400 transition">
+                          <span>❤️</span> {post.likes?.length || 0} Likes
+                        </button>
+                        <button className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-slate-500 hover:text-indigo-400 transition">
+                          <span>💬</span> {post.comments?.length || 0} Comments
+                        </button>
+                        <button className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-slate-500 hover:text-indigo-400 transition ml-auto">
+                          <span>📤</span> Share
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </motion.div>
+          )}
+
+          {activeTab === 'invoices' && (
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="col-span-8 space-y-6">
+              <div className="bg-[#0f172a] rounded-3xl p-8 border border-white/10 shadow-xl relative overflow-hidden">
+                <div className="absolute top-0 right-0 w-64 h-64 bg-indigo-500/5 blur-[80px] rounded-full -mr-20 -mt-20 pointer-events-none"></div>
+                
+                <div className="flex justify-between items-center mb-8 relative z-10">
+                  <div>
+                    <h3 className="font-bold text-2xl text-white tracking-tight">Financial Records</h3>
+                    <p className="text-[10px] text-slate-500 font-black uppercase tracking-widest mt-1">Safe Vault & Transaction Ledger</p>
+                  </div>
                   <div className="text-right">
-                    <p className="text-xs text-slate-500 uppercase font-bold tracking-widest mb-1">Total Outstanding</p>
-                    <p className="text-2xl font-bold text-amber-400">₹{invoices.filter(i => i.status !== 'paid').reduce((acc, i) => acc + (Number(i.amount) || 0), 0).toLocaleString()}</p>
+                      <p className="text-[10px] text-slate-500 font-black uppercase tracking-widest mb-1">Total Outstanding</p>
+                      <p className="text-2xl font-black text-white tracking-tighter">₹{invoices.filter(i => i.status !== 'paid').reduce((acc, i) => acc + (Number(i.amount) || 0), 0).toLocaleString()}</p>
                   </div>
                 </div>
-                <div className="space-y-4">
+
+                <div className="space-y-4 relative z-10">
                   {invoices.length === 0 ? (
-                    <div className="py-20 text-center">
-                      <p className="text-slate-500 font-bold uppercase tracking-widest">Safe vault is empty</p>
+                    <div className="py-20 text-center border-2 border-dashed border-white/5 rounded-3xl opacity-30">
+                      <p className="text-[10px] font-black uppercase tracking-widest text-slate-500">Your safe vault is currently empty.</p>
                     </div>
                   ) : (
                     invoices.map(inv => (
-                      <div key={inv._id} className="p-6 bg-white/5 rounded-2xl border border-white/5 flex justify-between items-center hover:bg-white/10 transition">
-                        <div>
-                          <p className="text-white font-bold">Invoiced by {inv.lawyerName || 'Legal Counsel'}</p>
-                          <p className="text-xs text-slate-500">{new Date(inv.createdAt).toLocaleDateString()} • Ref: {inv._id.slice(-6)}</p>
-                        </div>
-                        <div className="flex items-center gap-6">
-                          <div className="text-right">
-                            <p className="text-xl font-bold text-white">₹{inv.amount}</p>
-                            <span className={`text-[10px] font-bold uppercase px-2 py-0.5 rounded ${inv.status === 'paid' ? 'bg-emerald-500/20 text-emerald-400' : 'bg-amber-500/20 text-amber-400'}`}>{inv.status}</span>
+                      <div key={inv._id} className="p-6 bg-white/5 rounded-2xl border border-white/5 flex justify-between items-center hover:bg-white/10 transition group">
+                        <div className="flex items-center gap-4">
+                          <div className={`w-12 h-12 rounded-xl flex items-center justify-center font-bold text-sm ${inv.status === 'paid' ? 'bg-emerald-500/10 text-emerald-400' : 'bg-amber-500/10 text-amber-400'}`}>
+                              {inv.status === 'paid' ? '✓' : '₹'}
                           </div>
-                          {inv.status !== 'paid' && (
-                            <button className="px-4 py-2 bg-indigo-600 text-white rounded-lg font-bold text-xs hover:bg-indigo-500 transition shadow-lg shadow-indigo-600/20">Pay Now</button>
-                          )}
+                          <div>
+                              <p className="text-white font-bold text-sm">{inv.lawyerName || 'Legal Counsel'}</p>
+                              <p className="text-[10px] text-slate-500 font-bold uppercase tracking-widest">{new Date(inv.createdAt).toLocaleDateString()} • {inv.description || `Ref: ${inv._id.slice(-6)}`}</p>
+                          </div>
+                        </div>
+                        <div className="text-right">
+                          <p className="text-xl font-black text-white tracking-tight mb-1">₹{inv.amount}</p>
+                          <div className="flex items-center gap-3">
+                              <span className={`text-[9px] font-black uppercase tracking-widest px-2 py-0.5 rounded-lg border ${inv.status === 'paid' ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' : 'bg-amber-500/10 text-amber-400 border-amber-500/20'}`}>{inv.status}</span>
+                              {inv.status !== 'paid' && (
+                                  <button 
+                                      onClick={() => router.push(`/payment/${inv._id}`)}
+                                      className="text-[9px] font-black uppercase tracking-widest text-indigo-400 hover:text-white hover:bg-indigo-600 px-3 py-1 rounded-lg border border-indigo-500/30 transition"
+                                  >
+                                      Pay Now
+                                  </button>
+                              )}
+                          </div>
                         </div>
                       </div>
                     ))

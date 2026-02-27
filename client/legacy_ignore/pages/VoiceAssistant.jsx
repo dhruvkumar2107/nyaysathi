@@ -1,11 +1,12 @@
 'use client'
 import React, { useState, useEffect, useRef } from "react";
+import toast from 'react-hot-toast';
 import Navbar from "../../src/components/Navbar";
 import Footer from "../../src/components/Footer";
 import { motion, AnimatePresence } from "framer-motion";
 import { Mic, MicOff, Volume2, VolumeX, Sparkles, Zap, MessageCircle, ChevronRight } from "lucide-react";
 import axios from "axios";
-import { toast } from "react-hot-toast";
+// Redundant import removed
 
 const SUGGESTED = [
     "What are my rights if a shopkeeper refuses to give a bill?",

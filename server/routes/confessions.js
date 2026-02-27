@@ -30,7 +30,7 @@ Respond in this exact format (short and punchy, max 200 words):
 Keep it practical, cite actual section numbers, no fluff.`;
 
     try {
-        const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+        const model = genAI.getGenerativeModel({ model: "gemini-2.5-pro" });
         const result = await model.generateContent(prompt);
         return result.response.text();
     } catch (err) {

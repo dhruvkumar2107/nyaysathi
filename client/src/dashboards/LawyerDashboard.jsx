@@ -297,6 +297,7 @@ export default function LawyerDashboard() {
             <NavItem icon={<MessageSquare size={18} />} label="Messages" to="/messages" />
             <NavItem icon={<Calendar size={18} />} label="Calendar" to="/calendar" />
             <NavItem icon={<DollarSign size={18} />} label="Financials" active={activeTab === 'invoices'} onClick={() => setActiveTab('invoices')} />
+            <NavItem icon={<MessageSquare size={18} />} label="Legal Feed" active={activeTab === 'feed'} onClick={() => setActiveTab('feed')} />
             <div className="my-4 h-px bg-white/5 mx-2" />
             <NavItem icon={<FileText size={18} />} label="AI Drafter" active={activeTab === 'notices'} onClick={() => setActiveTab('notices')} />
           </div>
@@ -519,6 +520,28 @@ export default function LawyerDashboard() {
                     </div>
                   </div>
                   <KanbanBoard cases={acceptedCases} onUpdate={() => fetchAcceptedCases(user._id || user.id)} />
+                </div>
+              </motion.div>
+            )}
+
+            {activeTab === 'feed' && (
+              <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="col-span-8 space-y-6">
+                <div className="bg-[#0f172a] rounded-[2rem] p-8 border border-white/5 shadow-2xl relative overflow-hidden">
+                  <div className="flex justify-between items-center mb-8 relative z-10">
+                    <div>
+                      <h3 className="font-black text-2xl text-white tracking-tight">Legal Pulse</h3>
+                      <p className="text-[10px] text-slate-500 font-bold uppercase tracking-widest mt-1">Community Insights & Intelligence</p>
+                    </div>
+                    <button className="px-6 py-3 bg-indigo-600 text-white rounded-xl font-black text-[10px] uppercase tracking-widest hover:bg-indigo-500 transition shadow-lg shadow-indigo-500/20">Broadcast Update</button>
+                  </div>
+                  
+                  <div className="space-y-6 relative z-10">
+                    <LegalReels />
+                    {/* Placeholder for posts logic if needed, or reuse LegalReels */}
+                    <div className="py-10 text-center border-2 border-dashed border-white/5 rounded-[2rem]">
+                      <p className="text-[10px] font-black uppercase tracking-widest text-slate-600">The pulse is synchronizing...</p>
+                    </div>
+                  </div>
                 </div>
               </motion.div>
             )}

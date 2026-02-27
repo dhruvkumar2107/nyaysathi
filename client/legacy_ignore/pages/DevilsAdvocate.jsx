@@ -1,5 +1,6 @@
 'use client'
 import React, { useState } from 'react';
+import toast from 'react-hot-toast';
 import Navbar from '../../src/components/Navbar';
 import Footer from '../../src/components/Footer';
 import { useAuth } from '../../src/context/AuthContext';

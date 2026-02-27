@@ -4,10 +4,11 @@ import io from "socket.io-client";
 import { useAuth } from "../../src/context/AuthContext";
 import Navbar from "../../src/components/Navbar";
 import Footer from "../../src/components/Footer";
-import { Mic, MicOff, Video, VideoOff, MessageSquare, Gavel, Users, User, ArrowRight, Keyboard } from "lucide-react";
+import { Mic, MicOff, Video, VideoOff, MessageSquare, Gavel, Users, User, ArrowRight, Keyboard, Send, Loader2 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import axios from "axios";
-import { toast } from "react-hot-toast";
+import toast from "react-hot-toast";
+import ReactMarkdown from "react-markdown";
 
 // Connect to backend (Voice Socket)
 const socket = io(process.env.NEXT_PUBLIC_API_URL?.replace(/\/api$/, "") || "http://localhost:4000");
@@ -19,6 +20,7 @@ const MootCourt = () => {
     const [mode, setMode] = useState("voice"); // 'voice' | 'text'
     const [isListening, setIsListening] = useState(false);
     const [inputText, setInputText] = useState("");
+    const [isThinking, setIsThinking] = useState(false);
     const [chatHistory, setChatHistory] = useState([
         { role: "assistant", content: "Court is in session. Counselor, please present your opening argument." }
     ]);
@@ -69,22 +71,23 @@ const MootCourt = () => {
 
     const handleSendMessage = async () => {
         const textToSubmit = inputText.trim();
-        if (!textToSubmit) return;
+        if (!textToSubmit || analyzing || isThinking) return;
 
         // Add User Message
         const newHistory = [...chatHistory, { role: "user", content: textToSubmit }];
         setChatHistory(newHistory);
         setInputText("");
+        setIsThinking(true);
         setAnalyzing(true);
 
         try {
             const token = localStorage.getItem('token');
             const headers = token ? { Authorization: `Bearer ${token}` } : {};
 
-            // Use courtroom-battle logic simulator for moot court for better quality
+            // Use assistant route but with specific prompt for moot court
             const response = await axios.post("/api/ai/assistant", {
                 question: `[Moot Court Session] Context: You are a Judge in a mock trial. User (Counsel) just said: "${textToSubmit}". Respond as a judge with feedback. Also include a brief 'Justice Note' for coaching.`,
-                history: newHistory
+                history: newHistory.map(m => ({ role: m.role, content: m.content }))
             }, { headers });
 
             const reply = response.data.answer || "Please continue your argument, counselor.";
@@ -96,21 +99,21 @@ const MootCourt = () => {
                 tone: mode === 'voice' ? Math.min(100, Math.max(40, metrics.tone + (Math.random() * 20 - 10))) : 80
             });
 
-            // Extract justice note if AI provides one, otherwise generate generic
-            const noteMatch = reply.match(/Justice Note:?\s*(.*)/i);
+            const noteMatch = reply.match(/Justice Note:?\s*([\s\S]*)/i);
             if (noteMatch) {
-                setJusticeNote(noteMatch[1]);
+                setJusticeNote(noteMatch[1].trim());
             } else {
                 setJusticeNote("Counsel, focus on the precedents related to " + (textToSubmit.split(' ').slice(0, 3).join(' ')) + ".");
             }
 
-            setChatHistory(prev => [...prev, { role: "assistant", content: reply.replace(/Justice Note:?.*/i, "").trim() }]);
+            setChatHistory(prev => [...prev, { role: "assistant", content: reply.replace(/\[?Justice Note:?[\s\S]*/i, "").trim() }]);
 
         } catch (error) {
             console.error(error);
             setChatHistory(prev => [...prev, { role: "assistant", content: "The court clerk is having trouble recording that. Please state it again." }]);
         } finally {
             setAnalyzing(false);
+            setIsThinking(false);
             if (mode === 'voice') startListening(); // Resume listening
         }
     };
@@ -183,34 +186,44 @@ const MootCourt = () => {
 
                                 {/* AI JUDGE VISUALIZATION */}
                                 <div className="text-center relative z-10 transition duration-500 scale-110">
-                                    <div className={`w-40 h-40 bg-gradient-to-br from-indigo-500/10 to-purple-500/10 rounded-full mx-auto mb-6 flex items-center justify-center border border-white/10 shadow-[0_0_80px_rgba(99,102,241,0.15)] relative ${analyzing ? 'animate-pulse' : ''}`}>
-                                        <div className="absolute inset-0 bg-indigo-500/5 rounded-full animate-ping opacity-20" />
-                                        <User size={80} className="text-indigo-300 relative z-10 drop-shadow-[0_0_15px_rgba(165,180,252,0.5)]" />
+                                    <div className={`w-40 h-40 bg-gradient-to-br from-indigo-500/10 to-purple-500/10 rounded-full mx-auto mb-6 flex items-center justify-center border border-white/10 shadow-[0_0_80px_rgba(99,102,241,0.15)] relative ${isThinking ? 'animate-pulse scale-110' : ''}`}>
+                                        <div className={`absolute inset-0 bg-indigo-500/5 rounded-full ${isThinking ? 'animate-ping' : ''} opacity-20`} />
+                                        <User size={80} className={`text-indigo-300 relative z-10 drop-shadow-[0_0_15px_rgba(165,180,252,0.5)] ${isThinking ? 'text-indigo-400' : ''}`} />
                                     </div>
                                     <h3 className="text-3xl font-serif font-black text-white tracking-tight">Hon. AI Justice</h3>
                                     <p className="text-indigo-400 font-black text-[10px] uppercase tracking-[0.3em] mt-3 bg-indigo-500/10 border border-indigo-500/20 px-4 py-1.5 rounded-full inline-block">
-                                        {analyzing ? "Deliberating Verdict..." : "Court in Session"}
+                                        {isThinking ? "Deliberating Verdict..." : "Court in Session"}
                                     </p>
                                 </div>
                             </div>
 
-                            {/* USER CONTROLS & TRANSCRIPT */}
+                            {/* TRANSCRIPT / CHAT (FULLY FUNCTIONAL) */}
                             <div className="h-80 bg-[#0f172a]/80 backdrop-blur-xl rounded-3xl border border-white/10 p-6 flex flex-col shadow-lg">
                                 {/* CHAT HISTORY */}
                                 <div className="flex-1 overflow-y-auto mb-4 space-y-4 pr-2 custom-scrollbar">
                                     {chatHistory.map((msg, idx) => (
                                         <div key={idx} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
                                             <div className={`max-w-[80%] rounded-2xl px-5 py-3 text-sm leading-relaxed ${msg.role === 'user'
-                                                ? 'bg-indigo-600 text-white rounded-br-none'
-                                                : 'bg-white/10 text-slate-300 rounded-bl-none border border-white/5'
+                                                ? 'bg-indigo-600 text-white rounded-br-none shadow-lg'
+                                                : 'bg-[#1e293b] text-slate-200 rounded-bl-none border border-white/10 shadow-sm'
                                                 }`}>
-                                                <span className="block text-xs font-bold opacity-50 mb-1 uppercase tracking-wider">
-                                                    {msg.role === 'user' ? 'Defense Counsel' : 'Hon. Justice'}
+                                                <span className={`block text-[10px] font-black opacity-50 mb-1 uppercase tracking-widest ${msg.role === 'user' ? 'text-indigo-200' : 'text-indigo-400'}`}>
+                                                    {msg.role === 'user' ? 'Defense Counsel' : 'Hon. AI Justice'}
                                                 </span>
-                                                {msg.content}
+                                                <div className="prose prose-invert prose-sm max-w-none">
+                                                    <ReactMarkdown>{msg.content}</ReactMarkdown>
+                                                </div>
                                             </div>
                                         </div>
                                     ))}
+                                    {isThinking && (
+                                        <div className="flex justify-start">
+                                            <div className="bg-[#1e293b] rounded-2xl px-5 py-3 border border-white/10 flex items-center gap-3">
+                                                <Loader2 size={14} className="text-indigo-400 animate-spin" />
+                                                <span className="text-[10px] font-black uppercase tracking-widest text-slate-500">Justice is deliberating...</span>
+                                            </div>
+                                        </div>
+                                    )}
                                     <div ref={chatEndRef}></div>
                                 </div>
 

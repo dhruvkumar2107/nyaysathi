@@ -18,15 +18,44 @@ if (!process.env.GEMINI_API_KEY) {
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || "missing_key");
 
 // Helper for Model Fallback
-async function generateWithFallback(prompt) {
+async function generateWithFallback(prompt, systemInstruction = SYSTEM_PROMPT) {
   const modelsToTry = [
-    "gemini-1.5-flash",    // High-speed fallback (often more reliable in current env)
-    "gemini-1.5-pro",      // Primary (High Intelligence)
-    "gemini-pro"           // Legacy Fallback
+    "gemini-2.5-pro",      // User insisted on 2.5 Pro
+    "gemini-2.0-flash",    // High-performance fallback
+    "gemini-1.5-pro",      // Stable Pro model
+    "gemini-1.5-flash"     // High-speed fallback
   ];
 
-  const SYSTEM_PROMPT = `You are 'NyayNow', an elite Senior Supreme Court Advocate and Legal Intelligence Engine in India. 
-            
+  console.log(`🤖 AI Request Received. Fallback Queue: ${modelsToTry.join(", ")}`);
+  const errors = [];
+
+  for (const modelName of modelsToTry) {
+    try {
+      console.log(`📡 Attempting generation with model: ${modelName}...`);
+      const model = genAI.getGenerativeModel({
+        model: modelName,
+        systemInstruction: systemInstruction
+      });
+      const result = await model.generateContent(prompt);
+
+      if (result && result.response) {
+        console.log(`✅ Success with ${modelName}`);
+        return result;
+      }
+      throw new Error("Empty response from model");
+    } catch (err) {
+      console.error(`❌ Error with ${modelName}:`, err.message);
+      errors.push(`${modelName}: ${err.message}`);
+      // If it's the last model, throw the consolidated error
+      if (modelName === modelsToTry[modelsToTry.length - 1]) {
+        throw new Error(`AI Service Unavailable: ${errors.join(" | ")}`);
+      }
+    }
+  }
+}
+
+const SYSTEM_PROMPT = `You are 'NyayNow', an elite Senior Supreme Court Advocate and Legal Intelligence Engine in India.
+
             YOUR MISSION: To provide bulletproof, citation-backed legal intelligence while strictly avoiding the "Unauthorized Practice of Law" by clarifying that you provide information, not legal advice for court filing.
 
             LEGAL GROUNDING (2024 STANDARDS):
@@ -36,35 +65,12 @@ async function generateWithFallback(prompt) {
 
             ELITE RULES OF ENGAGEMENT:
             1. **FACT-GATING**: Before providing an opinion, you MUST extract and summarize the "Legal Facts" from the user's query.
-            2. **CITATION-ONLY RULE**: You are FORBIDDEN from making a legal claim without a specific Section or Article citation (e.g., "Under Section 302 of BNS..."). 
+            2. **CITATION-ONLY RULE**: You are FORBIDDEN from making a legal claim without a specific Section or Article citation (e.g., "Under Section 302 of BNS...").
             3. **HALLUCINATION BLOCK**: If you are unsure of the specific section or law, you MUST state "A specific section reference is required here, consult a NyayNow verified lawyer" rather than guessing.
             4. **BNS vs IPC CROSS-REF**: When citing a new BNS section, briefly mention its IPC equivalent for user clarity (e.g., "Section 103 BNS (Formerly Sec 302 IPC)").
             5. **NO GENERIC FLUFF**: Avoid saying "The law is a complex web...". Be sharp, incisive, and direct.
 
             TONE: Elite, Authoritative, Strategically minded, and Decisive.`;
-
-  const errors = [];
-
-  for (const modelName of modelsToTry) {
-    try {
-      console.log(`🔍 Attempting AI with model: ${modelName}`);
-      const model = genAI.getGenerativeModel({
-        model: modelName,
-        systemInstruction: SYSTEM_PROMPT
-      });
-      const result = await model.generateContent(prompt);
-      if (result && result.response) {
-        return result; // Success
-      }
-      throw new Error("Empty response from model");
-    } catch (e) {
-      console.warn(`⚠️ Model ${modelName} failed:`, e.message);
-      errors.push(`${modelName}: ${e.message}`);
-    }
-  }
-
-  throw new Error(`AI Service Unavailable: ${errors.join(" | ")}`);
-}
 
 /* ---------------- AI ASSISTANT (CHAT) ---------------- */
 router.post("/assistant", verifyTokenOptional, checkAiLimit, async (req, res) => {
@@ -271,7 +277,7 @@ router.post("/case-analysis", verifyTokenOptional, checkAiLimit, async (req, res
 router.post("/legal-notice", verifyTokenOptional, checkAiLimit, async (req, res) => {
   try {
     const { noticeType, senderName, senderAddress, recipientName, recipientAddress, facts, complianceDays } = req.body;
-    
+
     const prompt = `
       You are a senior advocate in India. Draft a formal "${noticeType}".
       Sender: ${senderName}, ${senderAddress}
@@ -859,10 +865,6 @@ router.post("/courtroom-battle", verifyTokenOptional, async (req, res) => {
     `;
 
     async function callAgent(persona, role, instruction, priorTranscript) {
-      const model = genAI.getGenerativeModel({
-        model: "gemini-1.5-flash",
-        systemInstruction: persona,
-      });
       const prompt = `
         ${caseContext}
 
@@ -881,8 +883,9 @@ router.post("/courtroom-battle", verifyTokenOptional, async (req, res) => {
         6. End with a 1-line punch statement.
         7. Return ONLY the courtroom speech. No meta-commentary.
       `;
-      const result = await model.generateContent(prompt);
-      return result.response.text().trim();
+      const result = await generateWithFallback(prompt, persona);
+      const response = await result.response;
+      return response.text().trim();
     }
 
     // ── Run 5 rounds sequentially ────────────────────────────────────────────
@@ -968,9 +971,9 @@ router.post("/courtroom-battle", verifyTokenOptional, async (req, res) => {
       }
     `;
 
-    const verdictModel = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
-    const verdictResult = await verdictModel.generateContent(verdictPrompt);
-    let verdictText = verdictResult.response.text().trim();
+    const verdictResult = await generateWithFallback(verdictPrompt, JUDGE_PERSONA);
+    const response = await verdictResult.response;
+    let verdictText = response.text().trim();
     verdictText = verdictText.replace(/```json/g, "").replace(/```/g, "").trim();
     const vs = verdictText.indexOf('{');
     const ve = verdictText.lastIndexOf('}');

@@ -1,8 +1,7 @@
 'use client'
 import { useState } from "react";
+import toast from "react-hot-toast";
 import axios from "axios";
-import { useAuth } from "../../src/context/AuthContext";
-import { toast } from "react-hot-toast";
 import Link from "next/link";
 import Navbar from "../../src/components/Navbar";
 import Footer from "../../src/components/Footer";

@@ -98,7 +98,7 @@ router.post("/verify-id", async (req, res) => {
 
         // 2. Prepare Gemini
         const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-        const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+        const model = genAI.getGenerativeModel({ model: "gemini-2.5-pro" });
 
         const prompt = "This is an image of a Lawyer's Bar Council ID Card. Analyze it. 1. Is this a valid Indian Bar Council ID? 2. Extract the Name. 3. Extract the Bar Council ID Number (e.g. MAH/1234/2020). 4. Return JSON: { valid: boolean, name: string, idNumber: string, reason: string }";
 

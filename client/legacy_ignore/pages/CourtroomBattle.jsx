@@ -4,7 +4,7 @@ import Navbar from '../../src/components/Navbar';
 import Footer from '../../src/components/Footer';
 import { motion, AnimatePresence } from 'framer-motion';
 import axios from 'axios';
-import { toast } from 'react-hot-toast';
+import toast from 'react-hot-toast';
 import {
     Gavel, Scale, Shield, ChevronRight, Loader2,
     BookOpen, Mic2, Star, RotateCcw, ChevronDown, Sparkles

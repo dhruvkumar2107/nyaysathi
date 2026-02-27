@@ -139,7 +139,7 @@ export default function AIAssistant() {
                                     End-to-End Encrypted
                                 </p>
                                 <p className="text-[9px] text-indigo-400 font-black uppercase tracking-widest">
-                                    NyayNow AI 2.0
+                                    NyayNow AI 2.5
                                 </p>
                             </div>
                         </div>

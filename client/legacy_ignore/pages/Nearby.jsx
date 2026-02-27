@@ -73,30 +73,39 @@ export default function Nearby() {
   const [showAR, setShowAR] = useState(false);
 
   useEffect(() => {
-    if (!navigator.geolocation) {
-      toast.error("Geolocation is not supported");
-      setLoading(false);
-      return;
-    }
-
-    navigator.geolocation.getCurrentPosition(
-      async (position) => {
-        const { latitude, longitude } = position.coords;
-        setUserLocation([latitude, longitude]);
-        await fetchRealData(latitude, longitude);
+    const fetchLocation = () => {
+      if (!navigator.geolocation) {
+        toast.error("Geolocation is not supported");
         setLoading(false);
-        toast.success("Location Triangulated. Systems Online.");
-      },
-      (error) => {
-        console.error(error);
-        toast.error("GPS Signal Weak. Falling back to default.");
-        const defLat = 28.6139;
-        const defLon = 77.2090;
-        setUserLocation([defLat, defLon]);
-        fetchRealData(defLat, defLon);
-        setLoading(false);
+        return;
       }
-    );
+
+      navigator.geolocation.getCurrentPosition(
+        async (position) => {
+          const { latitude, longitude } = position.coords;
+          setUserLocation([latitude, longitude]);
+          await fetchRealData(latitude, longitude);
+          setLoading(false);
+          toast.success("Location Triangulated. Systems Online.");
+        },
+        (error) => {
+          console.error("Location error:", error);
+          if (error.code === 1) {
+            toast.error("Location permission denied. Using New Delhi as default.");
+          } else {
+            toast.error("GPS Signal Weak. Falling back to default.");
+          }
+          const defLat = 28.6139;
+          const defLon = 77.2090;
+          setUserLocation([defLat, defLon]);
+          fetchRealData(defLat, defLon);
+          setLoading(false);
+        },
+        { enableHighAccuracy: true, timeout: 5000, maximumAge: 0 }
+      );
+    };
+
+    fetchLocation();
   }, []);
 
   const fetchRealData = async (lat, lon) => {

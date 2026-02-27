@@ -1,4 +1,6 @@
 'use client'
+import { useState } from 'react';
+import toast from 'react-hot-toast';
 import React from 'react';
 import { motion } from 'framer-motion';
 import { ArrowRight, Sparkles, BookOpen, TrendingUp, Scale, Bell } from 'lucide-react';
