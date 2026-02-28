@@ -6,7 +6,6 @@ import { LegalSOSSection } from "../components/home/LegalSOSSection"
 import { ComparisonSection } from "../components/home/ComparisonSection"
 import { BentoGrid } from "../components/home/BentoGrid"
 import HeroSection from "../components/home/HeroSection"
-import HeroSection from "../components/home/HeroSection"
 
 export default function Home() {
     return (
