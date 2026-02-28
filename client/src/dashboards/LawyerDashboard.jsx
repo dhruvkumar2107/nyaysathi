@@ -20,18 +20,18 @@ import io from "socket.io-client";
 import { motion, AnimatePresence } from "framer-motion";
 import toast from "react-hot-toast";
 import PremiumLoader from "../components/PremiumLoader";
-import { 
-  LayoutDashboard, 
-  Users, 
-  MessageSquare, 
-  Calendar, 
-  FileText, 
-  Gavel, 
-  Zap, 
-  Shield, 
-  Bell, 
-  TrendingUp, 
-  DollarSign, 
+import {
+  LayoutDashboard,
+  Users,
+  MessageSquare,
+  Calendar,
+  FileText,
+  Gavel,
+  Zap,
+  Shield,
+  Bell,
+  TrendingUp,
+  DollarSign,
   Briefcase,
   ChevronDown,
   LogOut,
@@ -69,7 +69,7 @@ export default function LawyerDashboard() {
   useEffect(() => {
     if (user) {
       const uId = user._id || user.id;
-      
+
       // Load initial batch
       fetchLeads();
       fetchAcceptedCases(uId);
@@ -78,7 +78,7 @@ export default function LawyerDashboard() {
       fetchNotifications(uId);
       fetchConnections(uId);
       fetchLawyers();
-      
+
       // Async background load for heavy data
       axios.get(`/api/crm/insights?userId=${uId}`)
         .then(res => setCrmData(res.data))
@@ -304,8 +304,8 @@ export default function LawyerDashboard() {
         </div>
 
         <div className="mt-auto p-4 relative">
-          <div 
-            className="flex items-center gap-3 p-3 bg-white/5 border border-white/5 rounded-2xl cursor-pointer hover:bg-white/10 transition group" 
+          <div
+            className="flex items-center gap-3 p-3 bg-white/5 border border-white/5 rounded-2xl cursor-pointer hover:bg-white/10 transition group"
             onClick={() => setShowProfileMenu(!showProfileMenu)}
           >
             <div className="w-10 h-10 rounded-full bg-gradient-to-br from-indigo-500 to-purple-500 flex items-center justify-center text-white font-bold text-sm shadow-inner group-hover:scale-105 transition duration-300">
@@ -353,12 +353,8 @@ export default function LawyerDashboard() {
             <h1 className="text-3xl font-black text-white tracking-tight">
               Command <span className="text-indigo-500">Center</span>.
             </h1>
-            <p className="text-slate-500 text-xs font-bold uppercase tracking-[0.2em] mt-1 flex items-center gap-2">
-              <span className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse shadow-[0_0_8px_rgba(16,185,129,0.5)]"></span>
-              Live Terminal 2.0.4
-            </p>
           </motion.div>
-          
+
           <div className="flex items-center gap-4">
             {/* VIDEO CALL BUTTON */}
             <button
@@ -433,28 +429,28 @@ export default function LawyerDashboard() {
 
             {activeTab === 'board' && (
               <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-6">
-                
+
                 {/* PRACTICE OVERVIEW CARDS */}
                 <div className="grid grid-cols-3 gap-4">
-                  <StatCard 
-                    label="Active Matters" 
-                    value={acceptedCases.length} 
-                    sub="Ongoing lifecycle" 
-                    icon={<Briefcase className="text-indigo-400" size={20} />} 
+                  <StatCard
+                    label="Active Matters"
+                    value={acceptedCases.length}
+                    sub="Ongoing lifecycle"
+                    icon={<Briefcase className="text-indigo-400" size={20} />}
                     color="indigo"
                   />
-                  <StatCard 
-                    label="Pending Leads" 
-                    value={leads.length} 
-                    sub="Action required" 
-                    icon={<Zap className="text-amber-400" size={20} />} 
+                  <StatCard
+                    label="Pending Leads"
+                    value={leads.length}
+                    sub="Action required"
+                    icon={<Zap className="text-amber-400" size={20} />}
                     color="amber"
                   />
-                  <StatCard 
-                    label="Today's Agenda" 
-                    value={appointments.length} 
-                    sub="Virtual court sessions" 
-                    icon={<Calendar className="text-emerald-400" size={20} />} 
+                  <StatCard
+                    label="Today's Agenda"
+                    value={appointments.length}
+                    sub="Virtual court sessions"
+                    icon={<Calendar className="text-emerald-400" size={20} />}
                     color="emerald"
                   />
                 </div>
@@ -484,9 +480,9 @@ export default function LawyerDashboard() {
                         <XAxis dataKey="name" tick={{ fill: '#475569', fontSize: 10, fontWeight: 700 }} axisLine={false} tickLine={false} dy={10} />
                         <YAxis tick={{ fill: '#475569', fontSize: 10, fontWeight: 700 }} axisLine={false} tickLine={false} />
                         <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#1e293b" />
-                        <Tooltip 
-                          contentStyle={{ backgroundColor: '#0f172a', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '1rem', boxShadow: '0 25px 50px -12px rgba(0,0,0,0.5)' }} 
-                          itemStyle={{ color: '#fff', fontSize: '10px', fontWeight: 900, textTransform: 'uppercase' }} 
+                        <Tooltip
+                          contentStyle={{ backgroundColor: '#0f172a', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '1rem', boxShadow: '0 25px 50px -12px rgba(0,0,0,0.5)' }}
+                          itemStyle={{ color: '#fff', fontSize: '10px', fontWeight: 900, textTransform: 'uppercase' }}
                         />
                         <Area type="monotone" dataKey="revenue" stroke="#6366f1" fillOpacity={1} fill="url(#colorRevenue)" strokeWidth={3} name="Revenue" />
                       </AreaChart>
@@ -534,7 +530,7 @@ export default function LawyerDashboard() {
                     </div>
                     <button className="px-6 py-3 bg-indigo-600 text-white rounded-xl font-black text-[10px] uppercase tracking-widest hover:bg-indigo-500 transition shadow-lg shadow-indigo-500/20">Broadcast Update</button>
                   </div>
-                  
+
                   <div className="space-y-6 relative z-10">
                     <LegalReels />
                     {/* Placeholder for posts logic if needed, or reuse LegalReels */}
@@ -656,8 +652,8 @@ export default function LawyerDashboard() {
                           </div>
                         </div>
                         {apt.status === 'confirmed' ? (
-                          <button 
-                            onClick={() => window.open(`${window.location.origin}/meet/${apt._id}`, "_blank")} 
+                          <button
+                            onClick={() => window.open(`${window.location.origin}/meet/${apt._id}`, "_blank")}
                             className="bg-indigo-600/10 text-indigo-400 px-4 py-2 rounded-xl text-[9px] font-black uppercase tracking-widest border border-indigo-500/20 hover:bg-indigo-600 hover:text-white transition shadow-lg shadow-indigo-500/10"
                           >
                             Join
@@ -749,11 +745,10 @@ function NavItem({ icon, label, to, count, active, onClick, badge }) {
   return (
     <div
       onClick={handleClick}
-      className={`flex items-center justify-between px-4 py-3 rounded-2xl cursor-pointer transition-all duration-300 group ${
-        active 
-          ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-600/20' 
+      className={`flex items-center justify-between px-4 py-3 rounded-2xl cursor-pointer transition-all duration-300 group ${active
+          ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-600/20'
           : 'text-slate-500 hover:text-slate-200 hover:bg-white/5'
-      }`}
+        }`}
     >
       <div className="flex items-center gap-3">
         <span className={`transition-transform duration-300 ${active ? 'scale-110' : 'group-hover:scale-110'}`}>
@@ -764,9 +759,8 @@ function NavItem({ icon, label, to, count, active, onClick, badge }) {
         </span>
       </div>
       {count !== undefined && (
-        <span className={`text-[10px] font-black px-2 py-0.5 rounded-lg ${
-          active ? 'bg-white/20 text-white' : 'bg-indigo-500/10 text-indigo-400 group-hover:bg-indigo-500 group-hover:text-white'
-        } transition-colors`}>
+        <span className={`text-[10px] font-black px-2 py-0.5 rounded-lg ${active ? 'bg-white/20 text-white' : 'bg-indigo-500/10 text-indigo-400 group-hover:bg-indigo-500 group-hover:text-white'
+          } transition-colors`}>
           {count}
         </span>
       )}

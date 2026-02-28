@@ -73,6 +73,9 @@ export default function Navbar() {
     },
   ];
 
+  const isDashboard = pathname?.startsWith('/lawyer') || pathname?.startsWith('/client') || pathname?.startsWith('/admin');
+  if (isDashboard) return null;
+
   return (
     <>
       <nav className={`fixed top-0 w-full z-[9999] transition-all duration-500 border-b ${scrolled ? "bg-[#020617]/90 backdrop-blur-3xl border-white/10 h-[70px] py-2" : "bg-transparent border-transparent h-[90px] py-4"}`}>
@@ -126,7 +129,7 @@ export default function Navbar() {
                             </div>
                             <div>
                               <div className="text-white font-bold text-[14px] group-hover:text-blue-400 transition tracking-tight">{item.name}</div>
-                              <div className="text-slate-500 text-[11px] font-medium tracking-tight mt-0.5">{item.desc}</div>
+                              <div className="text-slate-400 group-hover:text-blue-300/80 text-[10.5px] font-bold uppercase tracking-widest mt-1.5 transition-colors duration-300">{item.desc}</div>
                             </div>
                           </Link>
                         ))}
@@ -222,7 +225,7 @@ export default function Navbar() {
                         <div className="text-blue-400 w-10 h-10 rounded-xl bg-blue-500/10 flex items-center justify-center">{item.icon}</div>
                         <div>
                           <div className="text-white font-bold text-[15px] tracking-tight">{item.name}</div>
-                          <div className="text-slate-500 text-[12px] tracking-tight font-medium mt-0.5">{item.desc}</div>
+                          <div className="text-slate-400 text-[11px] font-bold uppercase tracking-widest mt-1.5">{item.desc}</div>
                         </div>
                       </Link>
                     ))}

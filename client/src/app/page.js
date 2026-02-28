@@ -6,14 +6,13 @@ import { LegalSOSSection } from "../components/home/LegalSOSSection"
 import { ComparisonSection } from "../components/home/ComparisonSection"
 import { BentoGrid } from "../components/home/BentoGrid"
 import HeroSection from "../components/home/HeroSection"
-import OnboardingSection from "../components/home/OnboardingSection"
+import HeroSection from "../components/home/HeroSection"
 
 export default function Home() {
     return (
         <div className="min-h-screen bg-[#0c1220] font-sans text-slate-400 selection:bg-indigo-500/30 pt-20">
 
             <HeroSection />
-            <OnboardingSection />
 
             {/* TRUST MARQUEE */}
             <section className="py-20 border-y border-white/5 bg-[#020617] relative overflow-hidden">
