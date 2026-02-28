@@ -1,5 +1,4 @@
 import React from "react"
-import Navbar from "../../components/Navbar"
 import Footer from "../../components/Footer"
 import Image from "next/image"
 import MarketplaceClient from "../../components/marketplace/MarketplaceClient"
@@ -29,7 +28,6 @@ export default async function MarketplacePage() {
 
     return (
         <div className="min-h-screen bg-[#020617] font-sans text-slate-400 pb-20 selection:bg-indigo-500/30">
-            <Navbar />
 
             {/* HEADER */}
             <div className="bg-[#0f172a] text-white pt-32 pb-24 relative overflow-hidden text-center border-b border-white/5">

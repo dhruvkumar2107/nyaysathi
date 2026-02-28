@@ -62,12 +62,14 @@ export const metadata = {
 
 import Providers from '../components/Providers'
 import AIAssistant from '../components/AIAssistant'
+import Navbar from '../components/Navbar'
 
 export default function RootLayout({ children }) {
     return (
         <html lang="en">
             <body className={`${inter.variable} ${jakarta.variable} font-sans`}>
                 <Providers>
+                    <Navbar />
                     {children}
                     <Toaster position="bottom-right" />
                     <AIAssistant />

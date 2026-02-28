@@ -28,7 +28,13 @@ export default function Login() {
     setLoading(false);
     if (res.success) {
       toast.success("Welcome back!");
-      router.push(res.user.role === "lawyer" ? "/lawyer/dashboard" : "/client/dashboard");
+      // Lawyer profile check
+      if (res.user.role === 'lawyer' && (!res.user.specialization || !res.user.bio || !res.user.phone)) {
+        toast.error("Please complete your professional profile first.");
+        router.push("/settings");
+      } else {
+        router.push(res.user.role === "lawyer" ? "/lawyer/dashboard" : "/client/dashboard");
+      }
     } else {
       toast.error(res.message);
     }
@@ -46,7 +52,15 @@ export default function Login() {
       } else {
         loginWithToken(res.data.user, res.data.token);
         toast.success("Login Successful!");
-        router.push(res.data.user.role === 'lawyer' ? "/lawyer/dashboard" : "/client/dashboard");
+
+        // Lawyer profile check
+        const user = res.data.user;
+        if (user.role === 'lawyer' && (!user.specialization || !user.bio || !user.phone)) {
+          toast.error("Almost there! Please complete your profile.");
+          router.push("/settings");
+        } else {
+          router.push(user.role === 'lawyer' ? "/lawyer/dashboard" : "/client/dashboard");
+        }
       }
     } catch (err) {
       toast.error("Google Login Failed");
@@ -59,9 +73,16 @@ export default function Login() {
     try {
       const res = await axios.post("/api/auth/google", { token: googleData, role: selectedRole });
       loginWithToken(res.data.user, res.data.token);
-      toast.success(`Welcome!`);
-      router.push(selectedRole === 'lawyer' ? "/lawyer/dashboard" : "/client/dashboard");
-    } catch (err) { toast.error("Reg Failed"); }
+      toast.success(`Welcome to NyayNow!`);
+
+      // If lawyer, always go to settings first to pick city and specialization
+      if (selectedRole === 'lawyer') {
+        toast.success("Lets complete your professional setup.");
+        router.push("/settings");
+      } else {
+        router.push("/client/dashboard");
+      }
+    } catch (err) { toast.error("Registration Failed"); }
     finally { setLoading(false); setShowRoleModal(false); }
   };
 

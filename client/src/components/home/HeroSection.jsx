@@ -4,77 +4,115 @@ import React from "react"
 import Link from "next/link"
 import { motion } from "framer-motion"
 import { useAuth } from "../../context/AuthContext"
-import Image from "next/image"
+import { ShieldCheck, ChevronRight, Lock } from "lucide-react"
 
 export default function HeroSection() {
     const { user } = useAuth()
 
     return (
-        <section className="relative pt-40 pb-32 lg:pt-56 lg:pb-48 overflow-hidden text-center">
-            <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-indigo-500/10 via-[#0c1220] to-[#0c1220] pointer-events-none" />
-            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[1100px] h-[700px] bg-indigo-500/10 rounded-full blur-[140px] pointer-events-none" />
-            <div className="absolute bottom-0 right-1/4 w-[600px] h-[600px] bg-violet-600/10 rounded-full blur-[130px] pointer-events-none" />
-            <div className="absolute inset-0 opacity-[0.03] mix-blend-overlay pointer-events-none">
-                <Image src="/noise.svg" alt="" fill className="object-cover" />
+        <section className="relative pt-32 pb-24 lg:pt-52 lg:pb-40 overflow-hidden text-center bg-[#020617]">
+            {/* ULTRA-PREMIUM MESH GRADIENT */}
+            <div className="absolute inset-0 pointer-events-none overflow-hidden">
+                <div className="absolute top-[-10%] left-[-10%] w-[60%] h-[60%] bg-blue-600/10 rounded-full blur-[120px] animate-pulse transition-all duration-[10s]" />
+                <div className="absolute bottom-[10%] right-[-5%] w-[50%] h-[50%] bg-indigo-500/10 rounded-full blur-[100px] animate-pulse delay-1000 transition-all duration-[8s]" />
+                <div className="absolute top-[20%] right-[10%] w-[40%] h-[40%] bg-emerald-500/5 rounded-full blur-[140px] animate-pulse delay-700 transition-all duration-[12s]" />
+                <div className="absolute bottom-[-10%] left-[20%] w-[45%] h-[45%] bg-blue-400/5 rounded-full blur-[130px] animate-pulse delay-300 transition-all duration-[15s]" />
+
+                {/* HAIRLINE GRID */}
+                <div className="absolute inset-0 bg-[url('/grid.svg')] bg-center [mask-image:radial-gradient(ellipse_at_center,transparent_20%,black)] opacity-20" />
             </div>
 
-            <div className="relative z-10 max-w-5xl mx-auto px-6">
+            <div className="relative z-10 max-w-7xl mx-auto px-6">
+                {/* TRUST BADGE */}
                 <motion.div
-                    initial={{ opacity: 0, scale: 0.9 }}
+                    initial={{ opacity: 0, scale: 0.95 }}
                     animate={{ opacity: 1, scale: 1 }}
-                    transition={{ duration: 0.8, ease: "easeOut" }}
-                    className="inline-flex items-center gap-3 px-5 py-2 rounded-full bg-white/5 border border-white/10 text-gold-400 text-[10px] font-black uppercase tracking-[0.25em] mb-10 backdrop-blur-xl shadow-sm"
+                    transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
+                    className="inline-flex items-center gap-2.5 px-4 py-1.5 rounded-full bg-white/5 border border-white/10 text-blue-400 text-[11px] font-bold uppercase tracking-[0.2em] mb-12 backdrop-blur-3xl shadow-2xl"
                 >
-                    <span className="flex h-2 w-2 rounded-full bg-gold-500 animate-pulse shadow-[0_0_10px_#fbbf24]" />
-                    Free for Every Indian Citizen
+                    <ShieldCheck size={14} className="text-blue-500" />
+                    <span>Institutional Grade Legal AI</span>
+                    <span className="w-1 h-1 rounded-full bg-white/20 mx-1" />
+                    <span className="text-slate-500">v2.0 Beta</span>
                 </motion.div>
 
-                <motion.h1
-                    initial={{ opacity: 0, y: 30 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.8, delay: 0.1, ease: "easeOut" }}
-                    className="text-5xl md:text-7xl font-serif font-black text-white mb-6 leading-[0.95] tracking-tight"
-                >
-                    Justice shouldn't
-                    <br />
-                    <span className="text-transparent bg-clip-text bg-gradient-to-r from-gold-400 via-yellow-500 to-amber-600">
-                        be a luxury.
-                    </span>
-                </motion.h1>
+                {/* MASSIVE TITLES */}
+                <div className="mb-10 relative">
+                    <motion.h1
+                        initial={{ opacity: 0, y: 40 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 1.2, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
+                        className="text-6xl md:text-8xl lg:text-[110px] font-bold text-white mb-6 leading-[0.9] tracking-[-0.04em]"
+                    >
+                        Justice for <br className="hidden md:block" />
+                        <span className="text-transparent bg-clip-text bg-gradient-to-b from-white via-white to-white/40">
+                            every citizen.
+                        </span>
+                    </motion.h1>
 
-                <motion.p
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.8, delay: 0.2 }}
-                    className="text-base md:text-xl text-slate-400 max-w-2xl mx-auto mb-12 font-light leading-relaxed tracking-wide"
-                >
-                    NyayNow puts the full power of the Indian legal system in your pocket. <br className="hidden md:block" />
-                    Designed for the <span className="text-white font-bold">1.4 billion</span> who deserve access to justice.
-                </motion.p>
+                    <motion.div
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 1, delay: 0.4, ease: [0.16, 1, 0.3, 1] }}
+                        className="max-w-2xl mx-auto"
+                    >
+                        <p className="text-lg md:text-2xl text-slate-400 font-medium leading-relaxed tracking-tight">
+                            NyayNow is India's most advanced legal intelligence platform. Built for the <span className="text-white font-bold underline decoration-blue-500 underline-offset-8">vanguard</span> of modern law.
+                        </p>
+                    </motion.div>
+                </div>
 
+                {/* BIG TECH CTAS */}
                 <motion.div
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.8, delay: 0.3 }}
-                    className="flex flex-col sm:flex-row items-center justify-center gap-5"
+                    transition={{ duration: 1, delay: 0.6, ease: [0.16, 1, 0.3, 1] }}
+                    className="flex flex-col sm:flex-row items-center justify-center gap-6"
                 >
                     <Link
                         href={!user ? "/register" : (user.role === "lawyer" ? "/lawyer/dashboard" : "/client/dashboard")}
-                        className="group relative w-full sm:w-auto px-12 py-5 rounded-2xl text-midnight-950 font-black text-lg bg-gradient-to-r from-gold-400 to-yellow-600 hover:shadow-[0_0_40px_rgba(212,175,55,0.3)] transition-all duration-300 active:scale-95 overflow-hidden"
-                        aria-label={!user ? "Get Started for Free" : "Go to Dashboard"}
+                        className="group relative w-full sm:w-auto px-10 py-5 rounded-2xl bg-white text-[#020617] font-bold text-lg hover:scale-[1.02] active:scale-[0.98] transition-all duration-300 shadow-[0_20px_40px_rgba(255,255,255,0.1)] flex items-center justify-center gap-2 overflow-hidden"
                     >
-                        <span className="relative z-10 flex items-center justify-center gap-2">
-                            ✦ {!user ? "Get Started Free" : "Enter Command Center"}
+                        <span className="relative z-10">
+                            {!user ? "Start for Free" : "Command Center"}
                         </span>
-                        <div className="absolute inset-0 bg-white/20 -translate-x-full group-hover:translate-x-full transition-transform duration-1000" />
+                        <ChevronRight size={20} className="relative z-10 group-hover:translate-x-1 transition-transform" />
+                        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/40 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000" />
                     </Link>
+
                     <Link
                         href="/legal-sos"
-                        className="w-full sm:w-auto px-10 py-5 rounded-2xl font-bold text-base text-white bg-white/5 border border-white/10 hover:bg-white/10 hover:border-red-500/40 transition-all duration-300 active:scale-95 flex items-center justify-center gap-2 shadow-sm"
-                        aria-label="Activate Legal SOS for Emergency Assistance"
+                        className="w-full sm:w-auto px-10 py-5 rounded-2xl bg-[#0F172A] border border-white/10 text-white font-bold text-lg hover:bg-white/5 hover:border-red-500/50 transition-all duration-300 flex items-center justify-center gap-3 active:scale-[0.98] group"
                     >
-                        🚨 Legal SOS
+                        <div className="relative flex h-3 w-3">
+                            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75" />
+                            <span className="relative inline-flex rounded-full h-3 w-3 bg-red-600 shadow-[0_0_10px_rgba(220,38,38,0.5)]" />
+                        </div>
+                        <span>Activate Legal SOS</span>
                     </Link>
+                </motion.div>
+
+                {/* BOTTOM TRUST SIGNAL */}
+                <motion.div
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ duration: 1.5, delay: 1 }}
+                    className="mt-20 flex items-center justify-center gap-8 text-slate-500 text-xs font-bold uppercase tracking-[0.3em] overflow-hidden whitespace-nowrap opacity-50"
+                >
+                    <div className="flex items-center gap-2 group cursor-default hover:text-blue-400 transition-colors">
+                        <Lock size={12} />
+                        <span>256-Bit Encryption</span>
+                    </div>
+                    <div className="w-1.5 h-1.5 rounded-full bg-slate-800" />
+                    <div className="flex items-center gap-2 group cursor-default hover:text-emerald-400 transition-colors">
+                        <ShieldCheck size={12} />
+                        <span>BCI Compliant</span>
+                    </div>
+                    <div className="w-1.5 h-1.5 rounded-full bg-slate-800" />
+                    <div className="flex items-center gap-2 group cursor-default hover:text-amber-400 transition-colors">
+                        <span className="text-base leading-none italic font-serif">A+</span>
+                        <span>Global Rating</span>
+                    </div>
                 </motion.div>
             </div>
         </section>

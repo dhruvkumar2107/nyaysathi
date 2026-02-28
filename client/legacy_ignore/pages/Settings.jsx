@@ -4,13 +4,24 @@ import { useAuth } from "../../src/context/AuthContext";
 import Navbar from "../../src/components/Navbar";
 import Footer from "../../src/components/Footer";
 import { motion } from "framer-motion";
-import { Bell, Lock, Shield, User, Smartphone, Globe, Moon, Monitor, CreditCard, Settings2 } from "lucide-react";
+import { Bell, Lock, Shield, User, Smartphone, Globe, Moon, Monitor, CreditCard, Settings2, Search } from "lucide-react";
 import toast from "react-hot-toast";
 import axios from "axios";
 
 export default function Settings() {
     const { user, updateUser } = useAuth();
     const [activeTab, setActiveTab] = useState('account');
+
+    const INDIAN_CITIES = [
+        "Mumbai", "Delhi", "Bengaluru", "Hyderabad", "Ahmedabad", "Chennai", "Kolkata", "Pune", "Jaipur", "Surat",
+        "Lucknow", "Kanpur", "Nagpur", "Indore", "Thane", "Bhopal", "Visakhapatnam", "Pimpri-Chinchwad", "Patna", "Vadodara",
+        "Ghaziabad", "Ludhiana", "Agra", "Nashik", "Faridabad", "Meerut", "Rajkot", "Kalyan-Dombivli", "Vasai-Virar", "Varanasi",
+        "Srinagar", "Aurangabad", "Dhanbad", "Amritsar", "Navi Mumbai", "Allahabad", "Howrah", "Ranchi", "Gwalior", "Jabalpur",
+        "Coimbatore", "Vijayawada", "Jodhpur", "Madurai", "Raipur", "Kota", "Chandigarh", "Guwahati", "Solapur", "Hubli-Dharwad"
+    ];
+
+    const [citySearch, setCitySearch] = useState("");
+    const [showCityDropdown, setShowCityDropdown] = useState(false);
 
     const [notifications, setNotifications] = useState(user?.settings?.notifications || { email: true, push: true, marketing: false });
     const [privacy, setPrivacy] = useState(user?.settings?.privacy || { profileVisible: true, showStatus: true });
@@ -34,6 +45,10 @@ export default function Settings() {
             const { data } = await axios.put(`/api/users/${user._id || user.id}`, formData);
             updateUser(data);
             toast.success("Profile updated successfully");
+
+            // Redirect to dashboard after save
+            const dashboardPath = user.role === 'admin' ? '/admin' : (user.role === 'lawyer' ? '/lawyer/dashboard' : '/client/dashboard');
+            window.location.href = dashboardPath;
         } catch (err) {
             toast.error("Failed to update profile");
         }
@@ -151,9 +166,45 @@ export default function Settings() {
                                             <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">Phone</label>
                                             <input name="phone" value={formData.phone} onChange={handleFormChange} className="w-full bg-black/20 border border-white/10 rounded-xl px-4 py-3 text-white outline-none focus:border-indigo-500 transition" />
                                         </div>
-                                        <div className="space-y-2">
+                                        <div className="space-y-2 relative">
                                             <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">Location</label>
-                                            <input name="location" value={formData.location} onChange={handleFormChange} className="w-full bg-black/20 border border-white/10 rounded-xl px-4 py-3 text-white outline-none focus:border-indigo-500 transition" />
+                                            <div className="relative">
+                                                <input
+                                                    name="location"
+                                                    value={citySearch || formData.location}
+                                                    onChange={(e) => {
+                                                        setCitySearch(e.target.value);
+                                                        setShowCityDropdown(true);
+                                                        setFormData({ ...formData, location: e.target.value });
+                                                    }}
+                                                    onFocus={() => setShowCityDropdown(true)}
+                                                    className="w-full bg-black/20 border border-white/10 rounded-xl px-4 py-3 text-white outline-none focus:border-indigo-500 transition pl-10"
+                                                    placeholder="Search city..."
+                                                />
+                                                <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500" size={16} />
+                                            </div>
+
+                                            {showCityDropdown && citySearch && (
+                                                <div className="absolute z-50 w-full mt-2 py-2 bg-[#1a1f2e] border border-white/10 rounded-xl shadow-2xl max-h-48 overflow-y-auto backdrop-blur-xl">
+                                                    {INDIAN_CITIES.filter(c => c.toLowerCase().includes(citySearch.toLowerCase())).map(city => (
+                                                        <button
+                                                            key={city}
+                                                            type="button"
+                                                            className="w-full text-left px-4 py-2 text-sm text-slate-300 hover:bg-white/5 hover:text-white transition"
+                                                            onClick={() => {
+                                                                setFormData({ ...formData, location: city });
+                                                                setCitySearch(city);
+                                                                setShowCityDropdown(false);
+                                                            }}
+                                                        >
+                                                            {city}
+                                                        </button>
+                                                    ))}
+                                                    {INDIAN_CITIES.filter(c => c.toLowerCase().includes(citySearch.toLowerCase())).length === 0 && (
+                                                        <div className="px-4 py-2 text-xs text-slate-500 italic">No cities found. Type to add custom.</div>
+                                                    )}
+                                                </div>
+                                            )}
                                         </div>
                                         {user?.role === 'lawyer' && (
                                             <div className="md:col-span-2 space-y-2">

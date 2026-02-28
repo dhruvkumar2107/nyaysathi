@@ -1,6 +1,5 @@
 import React from "react"
 import LawyerProfileClient from "../../../components/lawyer/LawyerProfileClient"
-import Navbar from "../../../components/Navbar"
 import Footer from "../../../components/Footer"
 
 async function getLawyer(id) {
@@ -43,8 +42,7 @@ export default async function LawyerProfilePage({ params }) {
 
     if (!lawyer) {
         return (
-            <div className="min-h-screen bg-[#020617] flex flex-col items-center justify-center text-white">
-                <Navbar />
+            <div className="min-h-screen bg-[#020617] flex flex-col items-center justify-center text-white pt-20">
                 <h1 className="text-3xl font-bold">Lawyer Not Found</h1>
                 <p className="text-slate-400 mt-4">The profile you are looking for does not exist or has been removed.</p>
                 <Footer />
@@ -53,8 +51,7 @@ export default async function LawyerProfilePage({ params }) {
     }
 
     return (
-        <main className="min-h-screen bg-[#020617]">
-            <Navbar />
+        <main className="min-h-screen bg-[#020617] pt-20">
             <LawyerProfileClient initialLawyer={lawyer} lawyerId={params.id} />
             <Footer />
         </main>
