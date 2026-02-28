@@ -1,8 +1,8 @@
 'use client'
 
-import React from "react"
+import React, { useRef, useState } from "react"
 import Link from "next/link"
-import { motion } from "framer-motion"
+import { motion, useSpring, useMotionValue } from "framer-motion"
 import { useAuth } from "../../context/AuthContext"
 import { ShieldCheck, ChevronRight, Lock } from "lucide-react"
 
@@ -69,27 +69,31 @@ export default function HeroSection() {
                     transition={{ duration: 1, delay: 0.6, ease: [0.16, 1, 0.3, 1] }}
                     className="flex flex-col sm:flex-row items-center justify-center gap-6"
                 >
-                    <Link
-                        href={!user ? "/register" : (user.role === "lawyer" ? "/lawyer/dashboard" : "/client/dashboard")}
-                        className="group relative w-full sm:w-auto px-10 py-5 rounded-2xl bg-white text-[#020617] font-bold text-lg hover:scale-[1.02] active:scale-[0.98] transition-all duration-300 shadow-[0_20px_40px_rgba(255,255,255,0.1)] flex items-center justify-center gap-2 overflow-hidden"
-                    >
-                        <span className="relative z-10">
-                            {!user ? "Start for Free" : "Command Center"}
-                        </span>
-                        <ChevronRight size={20} className="relative z-10 group-hover:translate-x-1 transition-transform" />
-                        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/40 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000" />
-                    </Link>
+                    <MagneticButton>
+                        <Link
+                            href={!user ? "/register" : (user.role === "lawyer" ? "/lawyer/dashboard" : "/client/dashboard")}
+                            className="group relative w-full sm:w-auto px-10 py-5 rounded-2xl bg-white text-[#020617] font-bold text-lg hover:scale-[1.02] active:scale-[0.98] transition-all duration-300 shadow-[0_20px_40px_rgba(255,255,255,0.1)] flex items-center justify-center gap-2 overflow-hidden"
+                        >
+                            <span className="relative z-10">
+                                {!user ? "Start for Free" : "Command Center"}
+                            </span>
+                            <ChevronRight size={20} className="relative z-10 group-hover:translate-x-1 transition-transform" />
+                            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/40 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000" />
+                        </Link>
+                    </MagneticButton>
 
-                    <Link
-                        href="/legal-sos"
-                        className="w-full sm:w-auto px-10 py-5 rounded-2xl bg-[#0F172A] border border-white/10 text-white font-bold text-lg hover:bg-white/5 hover:border-red-500/50 transition-all duration-300 flex items-center justify-center gap-3 active:scale-[0.98] group"
-                    >
-                        <div className="relative flex h-3 w-3">
-                            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75" />
-                            <span className="relative inline-flex rounded-full h-3 w-3 bg-red-600 shadow-[0_0_10px_rgba(220,38,38,0.5)]" />
-                        </div>
-                        <span>Activate Legal SOS</span>
-                    </Link>
+                    <MagneticButton>
+                        <Link
+                            href="/legal-sos"
+                            className="w-full sm:w-auto px-10 py-5 rounded-2xl bg-[#0F172A] border border-white/10 text-white font-bold text-lg hover:bg-white/5 hover:border-red-500/50 transition-all duration-300 flex items-center justify-center gap-3 active:scale-[0.98] group"
+                        >
+                            <div className="relative flex h-3 w-3">
+                                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75" />
+                                <span className="relative inline-flex rounded-full h-3 w-3 bg-red-600 shadow-[0_0_10px_rgba(220,38,38,0.5)]" />
+                            </div>
+                            <span>Activate Legal SOS</span>
+                        </Link>
+                    </MagneticButton>
                 </motion.div>
 
                 {/* BOTTOM TRUST SIGNAL */}
@@ -116,5 +120,36 @@ export default function HeroSection() {
                 </motion.div>
             </div>
         </section>
+    )
+}
+
+function MagneticButton({ children }) {
+    const ref = useRef(null)
+    const [position, setPosition] = useState({ x: 0, y: 0 })
+
+    const handleMouse = (e) => {
+        const { clientX, clientY } = e
+        const { height, width, left, top } = ref.current.getBoundingClientRect()
+        const middleX = clientX - (left + width / 2)
+        const middleY = clientY - (top + height / 2)
+        setPosition({ x: middleX * 0.2, y: middleY * 0.2 })
+    }
+
+    const reset = () => {
+        setPosition({ x: 0, y: 0 })
+    }
+
+    const { x, y } = position
+
+    return (
+        <motion.div
+            ref={ref}
+            onMouseMove={handleMouse}
+            onMouseLeave={reset}
+            animate={{ x, y }}
+            transition={{ type: "spring", stiffness: 150, damping: 15, mass: 0.1 }}
+        >
+            {children}
+        </motion.div>
     )
 }

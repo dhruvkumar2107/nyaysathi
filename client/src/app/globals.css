@@ -77,8 +77,13 @@ h6 {
 ═══════════════════════════════════════════════════════════ */
 
 @keyframes marquee {
-  0% { transform: translateX(0); }
-  100% { transform: translateX(-100%); }
+  0% {
+    transform: translateX(0);
+  }
+
+  100% {
+    transform: translateX(-100%);
+  }
 }
 
 .animate-marquee {
@@ -109,5 +114,16 @@ h6 {
 
 /* Hairline borders */
 .border-hairline {
-    border-width: 0.5px;
+  border-width: 0.5px;
+}
+
+/* Noise Texture Overlay */
+.noise-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  pointer-events: none;
+  opacity: 0.015;
+  background-image: url("https://res.cloudinary.com/dzt69gj98/image/upload/v1700000000/noise_okv2nx.png");
+  mix-blend-mode: overlay;
 }

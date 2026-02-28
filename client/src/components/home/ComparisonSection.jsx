@@ -3,7 +3,7 @@
 import React from "react"
 import Link from "next/link"
 import { motion } from "framer-motion"
-import { Brain, Gavel, ArrowRight, Shield } from "lucide-react"
+import { Brain, Gavel, ArrowRight, Shield, Lock } from "lucide-react"
 
 export function ComparisonSection() {
     return (
@@ -32,7 +32,13 @@ export function ComparisonSection() {
                     </motion.h2>
                 </div>
 
-                <div className="grid lg:grid-cols-2 gap-8 lg:gap-px bg-white/5 border border-white/5 rounded-[40px] overflow-hidden">
+                <motion.div
+                    initial={{ opacity: 0, y: 40 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true, amount: 0.2 }}
+                    transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
+                    className="grid lg:grid-cols-2 gap-8 lg:gap-px bg-white/5 border border-white/5 rounded-[40px] overflow-hidden"
+                >
                     {/* STRATEGIC MODULE */}
                     <Link href="/judge-ai" className="group relative bg-[#030712] p-12 md:p-20 hover:bg-slate-900/40 transition-all duration-700">
                         <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-600 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
@@ -100,7 +106,7 @@ export function ComparisonSection() {
                             </div>
                         </div>
                     </Link>
-                </div>
+                </motion.div>
 
                 {/* TRUST BAND */}
                 <div className="mt-20 flex flex-wrap items-center justify-center gap-12 text-[#94a3b8] font-bold text-[10px] uppercase tracking-[0.4em]">

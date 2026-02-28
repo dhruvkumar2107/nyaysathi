@@ -63,12 +63,17 @@ export const metadata = {
 import Providers from '../components/Providers'
 import AIAssistant from '../components/AIAssistant'
 import Navbar from '../components/Navbar'
+import EliteCursor from '../components/EliteCursor'
+import ScrollProgress from '../components/ScrollProgress'
 
 export default function RootLayout({ children }) {
     return (
         <html lang="en">
-            <body className={`${inter.variable} ${jakarta.variable} font-sans`}>
+            <body className={`${inter.variable} ${jakarta.variable} font-sans relative`}>
+                <div className="noise-overlay" />
                 <Providers>
+                    <EliteCursor />
+                    <ScrollProgress />
                     <Navbar />
                     {children}
                     <Toaster position="bottom-right" />

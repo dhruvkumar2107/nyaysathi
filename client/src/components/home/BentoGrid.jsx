@@ -83,58 +83,85 @@ function BentoCard({ title, desc, icon, color, href, badge, className, isLarge }
     const divRef = useRef(null)
     const [position, setPosition] = useState({ x: 0, y: 0 })
     const [opacity, setOpacity] = useState(0)
+    const [rotate, setRotate] = useState({ x: 0, y: 0 })
 
     const handleMouseMove = (e) => {
         if (!divRef.current) return
         const rect = divRef.current.getBoundingClientRect()
-        setPosition({ x: e.clientX - rect.left, y: e.clientY - rect.top })
+
+        const x = e.clientX - rect.left
+        const y = e.clientY - rect.top
+        setPosition({ x, y })
+
+        const centerX = rect.width / 2
+        const centerY = rect.height / 2
+        const rotateX = (y - centerY) / 20
+        const rotateY = (centerX - x) / 20
+        setRotate({ x: rotateX, y: rotateY })
+    }
+
+    const handleMouseLeave = () => {
+        setOpacity(0)
+        setRotate({ x: 0, y: 0 })
     }
 
     return (
-        <Link
-            ref={divRef}
-            onMouseMove={handleMouseMove}
-            onMouseEnter={() => setOpacity(1)}
-            onMouseLeave={() => setOpacity(0)}
-            href={href}
-            className={`relative group bg-[#030712] border border-white/5 rounded-[32px] ${isLarge ? 'p-12 md:p-16' : 'p-8'} overflow-hidden hover:border-blue-500/20 transition-all duration-700 flex flex-col focus:outline-none focus:ring-2 focus:ring-blue-500/50 ${className}`}
+        <motion.div
+            style={{
+                perspective: 1000
+            }}
+            className={className}
         >
-            {/* SPOTLIGHT */}
-            <div
-                className="pointer-events-none absolute -inset-px transition-opacity duration-300"
-                style={{
-                    opacity,
-                    background: `radial-gradient(600px circle at ${position.x}px ${position.y}px, rgba(59, 130, 246, 0.08), transparent 40%)`,
+            <Link
+                ref={divRef}
+                onMouseMove={handleMouseMove}
+                onMouseEnter={() => setOpacity(1)}
+                onMouseLeave={handleMouseLeave}
+                href={href}
+                animate={{
+                    rotateX: rotate.x,
+                    rotateY: rotate.y
                 }}
-            />
+                transition={{ type: "spring", stiffness: 300, damping: 30 }}
+                className={`relative group bg-[#030712] border border-white/5 rounded-[32px] ${isLarge ? 'p-12 md:p-16' : 'p-8'} overflow-hidden hover:border-blue-500/20 transition-all duration-700 flex flex-col h-full focus:outline-none focus:ring-2 focus:ring-blue-500/50`}
+            >
+                {/* SPOTLIGHT */}
+                <div
+                    className="pointer-events-none absolute -inset-px transition-opacity duration-300"
+                    style={{
+                        opacity,
+                        background: `radial-gradient(600px circle at ${position.x}px ${position.y}px, rgba(59, 130, 246, 0.08), transparent 40%)`,
+                    }}
+                />
 
-            <div className={`absolute -top-24 -right-24 w-80 h-80 bg-gradient-to-br ${color} blur-[120px] opacity-[0.03] group-hover:opacity-[0.1] transition-opacity duration-1000`} />
+                <div className={`absolute -top-24 -right-24 w-80 h-80 bg-gradient-to-br ${color} blur-[120px] opacity-[0.03] group-hover:opacity-[0.1] transition-opacity duration-1000`} />
 
-            <div className="relative z-10 flex flex-col h-full">
-                <div className="flex items-start justify-between mb-8">
-                    <div className={`w-12 h-12 rounded-2xl bg-gradient-to-br ${color} flex items-center justify-center shadow-2xl group-hover:scale-110 transition-transform duration-500 border border-white/10`}>
-                        {React.cloneElement(icon, { size: 24 })}
+                <div className="relative z-10 flex flex-col h-full">
+                    <div className="flex items-start justify-between mb-8">
+                        <div className={`w-12 h-12 rounded-2xl bg-gradient-to-br ${color} flex items-center justify-center shadow-2xl group-hover:scale-110 transition-transform duration-500 border border-white/10`}>
+                            {React.cloneElement(icon, { size: 24 })}
+                        </div>
+                        {badge && (
+                            <span className="px-3 py-1 rounded-md bg-white/5 border border-white/10 text-[9px] font-black uppercase tracking-[0.2em] text-slate-500 group-hover:text-blue-400 transition-colors">
+                                {badge}
+                            </span>
+                        )}
                     </div>
-                    {badge && (
-                        <span className="px-3 py-1 rounded-md bg-white/5 border border-white/10 text-[9px] font-black uppercase tracking-[0.2em] text-slate-500 group-hover:text-blue-400 transition-colors">
-                            {badge}
-                        </span>
-                    )}
-                </div>
 
-                <div className="mt-auto">
-                    <h3 className={`${isLarge ? 'text-3xl' : 'text-xl'} font-bold text-white mb-3 tracking-tight group-hover:text-blue-400 transition-colors duration-500`}>
-                        {title}
-                    </h3>
-                    <p className={`text-slate-500 ${isLarge ? 'text-lg max-w-md' : 'text-sm'} leading-relaxed font-medium group-hover:text-slate-300 transition-colors`}>
-                        {desc}
-                    </p>
+                    <div className="mt-auto">
+                        <h3 className={`${isLarge ? 'text-3xl' : 'text-xl'} font-bold text-white mb-3 tracking-tight group-hover:text-blue-400 transition-colors duration-500`}>
+                            {title}
+                        </h3>
+                        <p className={`text-slate-500 ${isLarge ? 'text-lg max-w-md' : 'text-sm'} leading-relaxed font-medium group-hover:text-slate-300 transition-colors`}>
+                            {desc}
+                        </p>
 
-                    <div className="mt-8 flex items-center gap-2 text-white/20 font-black text-[10px] uppercase tracking-[0.3em] group-hover:text-blue-500 group-hover:gap-4 transition-all duration-500">
-                        Explore <ChevronRight size={14} />
+                        <div className="mt-8 flex items-center gap-2 text-white/20 font-black text-[10px] uppercase tracking-[0.3em] group-hover:text-blue-500 group-hover:gap-4 transition-all duration-500">
+                            Explore <ChevronRight size={14} />
+                        </div>
                     </div>
                 </div>
-            </div>
-        </Link>
+            </Link>
+        </motion.div>
     )
 }
