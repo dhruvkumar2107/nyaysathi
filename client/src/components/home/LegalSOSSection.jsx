@@ -28,12 +28,12 @@ export function LegalSOSSection() {
                         </div>
 
                         <h2 className="text-5xl md:text-7xl font-bold text-white mb-8 tracking-tighter leading-[1.1]">
-                            60 Seconds from <br />
-                            <span className="text-transparent bg-clip-text bg-gradient-to-r from-red-600 to-rose-500">Crisis to Control.</span>
+                            The Unique <br />
+                            <span className="text-transparent bg-clip-text bg-gradient-to-r from-red-600 to-rose-500">Legal SOS Game-Changer.</span>
                         </h2>
 
                         <p className="text-slate-400 text-lg md:text-xl leading-relaxed mb-12 max-w-lg font-medium">
-                            Hit SOS to activate our rapid-response engine. Get immediate rights analysis, an AI-drafted FIR, and an elite advocate connection instantly.
+                            Democratizing legal protection through instant, multi-dialect crisis response. Get immediate rights analysis in your language, an AI-drafted FIR, and an elite advocate connection in 60 seconds.
                         </p>
 
                         <div className="flex flex-col sm:flex-row gap-5">

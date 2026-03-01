@@ -32,12 +32,12 @@ export function BentoGrid() {
                         isLarge={true}
                     />
                     <BentoCard
-                        title="NyayVoice"
-                        desc="Natural language AI in 14+ Indian dialects."
+                        title="NyayVoice AI"
+                        desc="Democratizing law in 14+ Indian dialects. Breaking the English barrier for 1.4B people."
                         icon={<Mic className="text-white" size={20} />}
                         color="from-cyan-500 via-blue-500 to-indigo-500"
                         href="/voice-assistant"
-                        badge="Multi-Lingual"
+                        badge="Every Language"
                         className="md:col-span-4 md:row-span-1"
                     />
                     <BentoCard

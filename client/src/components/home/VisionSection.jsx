@@ -27,14 +27,14 @@ export default function VisionSection() {
             desc: "Neural network simulations to predict case outcomes and refine complex legal arguments."
         },
         {
-            icon: <Shield className="text-amber-400" size={24} />,
-            title: "BCI Integrated",
-            desc: "Every professional undergoes multi-factor ID verification via the Bar Council of India protocol."
+            icon: <Globe className="text-cyan-400" size={24} />,
+            title: "NyayVoice AI",
+            desc: "Democratizing legal access via every Indian dialect. Breaking the English barrier for 1.4B people."
         },
         {
-            icon: <Globe className="text-cyan-400" size={24} />,
-            title: "Intelligent Search",
-            desc: "Semantic search across 5M+ judicial precedents and simplified legislation for all citizens."
+            icon: <Shield className="text-red-500" size={24} />,
+            title: "Legal SOS",
+            desc: "A unique game-changer for instant crisis response. From incident to elite counsel in 60 seconds."
         }
     ]
 

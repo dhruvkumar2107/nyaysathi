@@ -42,22 +42,25 @@ export default function HeroSection() {
                         initial={{ opacity: 0, y: 40 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 1.2, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
-                        className="text-6xl md:text-8xl lg:text-[110px] font-bold text-white mb-6 leading-[0.9] tracking-[-0.04em]"
+                        className="text-4xl md:text-6xl lg:text-[85px] font-bold text-white mb-8 leading-[1.1] tracking-[-0.04em]"
                     >
-                        Justice for <br className="hidden md:block" />
                         <span className="text-transparent bg-clip-text bg-gradient-to-b from-white via-white to-white/40">
-                            every citizen.
+                            Get Clear, Instant Legal Help <br />
                         </span>
+                        <span className="text-blue-500 italic">In Your Language.</span>
                     </motion.h1>
 
                     <motion.div
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 1, delay: 0.4, ease: [0.16, 1, 0.3, 1] }}
-                        className="max-w-2xl mx-auto"
+                        className="max-w-3xl mx-auto space-y-6"
                     >
                         <p className="text-lg md:text-2xl text-slate-400 font-medium leading-relaxed tracking-tight">
-                            NyayNow is India's most advanced legal intelligence platform. Built for the <span className="text-white font-bold underline decoration-blue-500 underline-offset-8">vanguard</span> of modern law.
+                            NyayNow democratizes justice through <span className="text-white border-b border-blue-500/50">Multi-Dialect AI</span>. Built for citizens searching for clarity and the <span className="text-white">vanguard</span> of modern law.
+                        </p>
+                        <p className="text-blue-400/80 text-xs font-black uppercase tracking-[0.3em] pb-4">
+                            Supercharge Your Practice with Tools Trusted by India's Top Advocates
                         </p>
                     </motion.div>
                 </div>
