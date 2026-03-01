@@ -39,7 +39,7 @@ export default function VisionSection() {
     ]
 
     return (
-        <section className="py-40 bg-[#020617] relative overflow-hidden">
+        <section className="py-24 bg-[#020617] relative overflow-hidden">
             {/* Subtle Gradient background */}
             <div className="absolute inset-0 pointer-events-none opacity-20">
                 <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-blue-500/10 blur-[160px] rounded-full" />

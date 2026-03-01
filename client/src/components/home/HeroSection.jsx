@@ -10,7 +10,7 @@ export default function HeroSection() {
     const { user } = useAuth()
 
     return (
-        <section className="relative pt-32 pb-24 lg:pt-52 lg:pb-40 overflow-hidden text-center bg-[#020617]">
+        <section className="relative pt-24 pb-16 lg:pt-36 lg:pb-24 overflow-hidden text-center bg-[#020617]">
             {/* ULTRA-PREMIUM MESH GRADIENT */}
             <div className="absolute inset-0 pointer-events-none overflow-hidden">
                 <div className="absolute top-[-10%] left-[-10%] w-[60%] h-[60%] bg-blue-600/10 rounded-full blur-[120px] animate-pulse transition-all duration-[10s]" />

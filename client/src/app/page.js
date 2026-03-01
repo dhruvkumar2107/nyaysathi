@@ -10,7 +10,7 @@ import VisionSection from "../components/home/VisionSection"
 
 export default function Home() {
     return (
-        <div className="min-h-screen bg-[#0c1220] font-sans text-slate-400 selection:bg-indigo-500/30 pt-20">
+        <div className="min-h-screen bg-[#0c1220] font-sans text-slate-400 selection:bg-indigo-500/30">
 
             <HeroSection />
             <VisionSection />
@@ -42,7 +42,7 @@ export default function Home() {
             </section>
 
             {/* DYNAMIC STATS */}
-            <section className="py-32 relative overflow-hidden bg-[#020617]">
+            <section className="py-20 relative overflow-hidden bg-[#020617]">
                 <div className="absolute inset-0 opacity-[0.4] bg-[radial-gradient(circle_at_50%_50%,rgba(59,130,246,0.05)_0%,transparent_50%)]" />
                 <div className="max-w-7xl mx-auto px-6 relative z-10">
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-12 lg:gap-24">
