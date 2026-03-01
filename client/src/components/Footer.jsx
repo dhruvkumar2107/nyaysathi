@@ -1,139 +1,192 @@
-import Link from 'next/link';
-import Image from 'next/image';
-import { motion } from 'framer-motion';
+'use client'
+
+import React from 'react'
+import Link from 'next/link'
+import Image from 'next/image'
+import { motion } from 'framer-motion'
+import {
+    Twitter,
+    Linkedin,
+    Instagram,
+    Github,
+    Mail,
+    ArrowUpRight,
+    ShieldCheck,
+    Lock,
+    Globe,
+    Zap,
+    Scale
+} from 'lucide-react'
 
 const Footer = () => {
-    return (
-        <footer className="bg-[#0c1220] border-t border-white/5 text-slate-400 font-sans pt-24 pb-12 relative overflow-hidden">
+    const currentYear = new Date().getFullYear()
 
-            {/* Background Glow */}
-            <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[800px] h-[300px] bg-indigo-500/[0.03] blur-[120px] rounded-full pointer-events-none"></div>
+    return (
+        <footer className="bg-[#020617] border-t border-white/5 text-slate-400 font-sans pt-32 pb-12 relative overflow-hidden">
+            {/* ULTRA-PREMIUM MESH GRADIENT */}
+            <div className="absolute inset-0 pointer-events-none overflow-hidden opacity-30">
+                <div className="absolute bottom-[-10%] left-[-10%] w-[60%] h-[60%] bg-blue-600/10 rounded-full blur-[120px]" />
+                <div className="absolute bottom-[-5%] right-[-5%] w-[40%] h-[40%] bg-indigo-500/10 rounded-full blur-[100px]" />
+                <div className="absolute top-[20%] left-[30%] w-[30%] h-[30%] bg-blue-400/5 rounded-full blur-[140px]" />
+            </div>
 
             <div className="container mx-auto px-6 max-w-[1400px] relative z-10">
 
                 {/* TOP SECTION: BRAND & NEWSLETTER */}
-                <div className="flex flex-col lg:flex-row justify-between items-start gap-12 mb-20">
-                    <div className="max-w-md">
-                        <Link href="/" className="inline-flex items-center gap-3 mb-6 group" aria-label="NyayNow Home">
+                <div className="grid lg:grid-cols-12 gap-16 mb-24">
+                    <div className="lg:col-span-5">
+                        <Link href="/" className="inline-flex items-center gap-3 mb-8 group" aria-label="NyayNow Home">
                             <div className="relative">
-                                <div className="absolute inset-0 bg-gold-400 blur-[15px] opacity-10 group-hover:opacity-30 transition duration-500"></div>
-                                <Image src="/logo.png" alt="NyayNow Logo" width={40} height={40} className="relative object-contain hover:scale-105 transition duration-300 drop-shadow-[0_0_8px_rgba(212,175,55,0.2)]" />
+                                <div className="absolute inset-0 bg-blue-500 blur-[20px] opacity-0 group-hover:opacity-40 transition-all duration-700"></div>
+                                <div className="relative w-12 h-12 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center group-hover:scale-110 transition-transform duration-500 shadow-2xl">
+                                    <Image src="/logo.png" alt="NyayNow Logo" width={32} height={32} className="object-contain" />
+                                </div>
                             </div>
-                            <span className="text-2xl font-bold text-white tracking-tight group-hover:text-gold-400 transition-colors">NyayNow</span>
+                            <span className="text-3xl font-bold text-white tracking-tighter group-hover:text-blue-400 transition-colors">NyayNow</span>
                         </Link>
-                        <p className="text-slate-400 text-lg leading-relaxed mb-8">
-                            The operating system for the Indian Justice System. We are democratizing legal intelligence for 1.4 billion people with AI.
+                        <p className="text-slate-400 text-xl leading-relaxed mb-10 max-w-md font-medium tracking-tight">
+                            The operating system for the <span className="text-white">Indian Justice System</span>. Democratizing legal intelligence through institutional-grade AI.
                         </p>
                         <div className="flex gap-4">
-                            <SocialIcon path="M24 4.557c-.883.392-1.832.656-2.828.775 1.017-.609 1.798-1.574 2.165-2.724-.951.564-2.005.974-3.127 1.195-.897-.957-2.178-1.555-3.594-1.555-3.179 0-5.515 2.966-4.797 6.045-4.091-.205-7.719-2.165-10.148-5.144-1.29 2.213-.669 5.108 1.523 6.574-.806-.026-1.566-.247-2.229-.616-.054 2.281 1.581 4.415 3.949 4.89-.693.188-1.452.232-2.224.084.626 1.956 2.444 3.379 4.6 3.419-2.07 1.623-4.678 2.348-7.29 2.04 2.179 1.397 4.768 2.212 7.548 2.212 9.142 0 14.307-7.721 13.995-14.646.962-.695 1.797-1.562 2.457-2.549z" label="Twitter" />
-                            <SocialIcon path="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z" label="LinkedIn" />
-                            <SocialIcon path="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z" label="Instagram" />
+                            <SocialButton icon={<Twitter size={20} />} label="Twitter" />
+                            <SocialButton icon={<Linkedin size={20} />} label="LinkedIn" />
+                            <SocialButton icon={<Instagram size={20} />} label="Instagram" />
+                            <SocialButton icon={<Github size={20} />} label="Github" />
                         </div>
                     </div>
 
-                    <div className="w-full lg:w-auto bg-white/5 border border-white/10 rounded-2xl p-8 shadow-sm">
-                        <h4 className="text-lg font-bold text-white mb-2">Stay ahead of the curve.</h4>
-                        <p className="text-sm text-slate-400 mb-6 max-w-xs">
-                            Get the latest updates on Supreme Court judgments and new AI features.
-                        </p>
-                        <form className="flex gap-2">
-                            <input
-                                type="email"
-                                placeholder="Enter your email"
-                                className="bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-white placeholder:text-slate-500 text-sm focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 w-full"
-                            />
-                            <button className="bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-6 py-3 rounded-lg text-sm transition shadow-lg shadow-indigo-600/10">
-                                Subscribe
-                            </button>
-                        </form>
+                    <div className="lg:col-span-7 flex flex-col justify-center">
+                        <div className="relative p-1 rounded-[32px] bg-gradient-to-b from-white/10 to-transparent">
+                            <div className="bg-[#030712] rounded-[30px] p-8 md:p-12 relative overflow-hidden group">
+                                <div className="absolute top-0 right-0 w-64 h-64 bg-blue-600/5 blur-[80px] rounded-full -translate-y-1/2 translate-x-1/2 group-hover:bg-blue-600/10 transition-colors duration-1000" />
+
+                                <div className="relative z-10 flex flex-col md:flex-row items-center gap-10">
+                                    <div className="flex-1">
+                                        <h4 className="text-2xl font-bold text-white mb-3 tracking-tight">Stay ahead of the curve.</h4>
+                                        <p className="text-slate-500 text-sm font-medium leading-relaxed">
+                                            Weekly insights on Supreme Court judgments and <br className="hidden md:block" /> revolutionary AI features delivered to your inbox.
+                                        </p>
+                                    </div>
+                                    <form className="w-full md:w-auto flex flex-col sm:flex-row gap-3">
+                                        <input
+                                            type="email"
+                                            placeholder="admiralty@nyaynow.in"
+                                            className="bg-white/5 border border-white/10 rounded-2xl px-6 py-4 text-white placeholder:text-slate-600 text-sm focus:outline-none focus:border-blue-500/50 transition-all w-full md:w-64"
+                                        />
+                                        <button className="bg-white text-[#020617] font-black px-8 py-4 rounded-2xl text-xs uppercase tracking-[0.2em] hover:bg-blue-500 hover:text-white transition-all duration-500 shadow-xl active:scale-95">
+                                            Join Now
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
                 {/* LINKS GRID */}
-                <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-10 mb-24">
-                    <FooterColumn title="Product">
-                        <FooterLink href="/assistant">AI Assistant</FooterLink>
-                        <FooterLink href="/judge-ai">Judge AI <span className="text-[10px] text-indigo-200 bg-indigo-500/20 px-1.5 py-0.5 rounded ml-2 font-bold">New</span></FooterLink>
+                <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-12 border-t border-white/5 pt-24 mb-24">
+                    <FooterColumn title="Intelligence">
+                        <FooterLink href="/assistant">Legal Assistant</FooterLink>
+                        <FooterLink href="/judge-ai">Judge AI <Badge color="bg-blue-500/20 text-blue-400">Pro</Badge></FooterLink>
                         <FooterLink href="/voice-assistant">NyayVoice</FooterLink>
-                        <FooterLink href="/moot-court">Moot Court VR</FooterLink>
-                        <FooterLink href="/marketplace">Find Lawyers</FooterLink>
+                        <FooterLink href="/moot-court">Simulation VR</FooterLink>
+                        <FooterLink href="/research">Precedent Engine</FooterLink>
                     </FooterColumn>
 
-                    <FooterColumn title="Resources">
-                        <FooterLink href="/research">Legal Research</FooterLink>
+                    <FooterColumn title="Enterprise">
                         <FooterLink href="/drafting">Drafting Lab</FooterLink>
-                        <FooterLink href="/agreements">Agreement Analyzer</FooterLink>
-                        <FooterLink href="/ecourts">E-Courts Status</FooterLink>
-                        <FooterLink href="/blog">Blog & Insights</FooterLink>
+                        <FooterLink href="/agreements">Risk Audit</FooterLink>
+                        <FooterLink href="/compliances">Compliance Hub</FooterLink>
+                        <FooterLink href="/ecourts">Court Analytics</FooterLink>
+                        <Badge color="bg-emerald-500/10 text-emerald-500 border border-emerald-500/20" className="mt-4">ISO 27001 Certified</Badge>
                     </FooterColumn>
 
-                    <FooterColumn title="Company">
-                        <FooterLink href="/about">About Us</FooterLink>
-                        <FooterLink href="/careers">Careers <span className="text-[10px] text-emerald-300 bg-emerald-500/20 px-1.5 py-0.5 rounded ml-2 font-bold">Hiring</span></FooterLink>
-                        <FooterLink href="/contact">Contact Support</FooterLink>
-                        <FooterLink href="/partners">Partners</FooterLink>
-                        <FooterLink href="/press">Press Kit</FooterLink>
-                    </FooterColumn>
-
-                    <FooterColumn title="Use Cases">
-                        <FooterLink href="/lawyer/dashboard">For Law Firms</FooterLink>
-                        <FooterLink href="/client/dashboard">For Individuals</FooterLink>
+                    <FooterColumn title="Network">
+                        <FooterLink href="/marketplace">Elite Directory</FooterLink>
+                        <FooterLink href="/lawyer/dashboard">For Advocates</FooterLink>
+                        <FooterLink href="/client/dashboard">For Citizens</FooterLink>
                         <FooterLink href="/career">For Students</FooterLink>
-                        <FooterLink href="/enterprises">For Enterprises</FooterLink>
                         <FooterLink href="/judiciary">For Judiciary</FooterLink>
                     </FooterColumn>
 
-                    <FooterColumn title="Legal">
-                        <FooterLink href="/terms">Terms of Service</FooterLink>
-                        <FooterLink href="/privacy">Privacy Policy</FooterLink>
-                        <FooterLink href="/security">Security</FooterLink>
-                        <FooterLink href="/help">Help Center</FooterLink>
-                        <span className="text-yellow-400 text-xs font-bold border border-yellow-500/30 bg-yellow-500/10 px-3 py-1 rounded-full uppercase inline-block mt-2">Startup India</span>
+                    <FooterColumn title="Foundation">
+                        <FooterLink href="/about">Our Vision</FooterLink>
+                        <FooterLink href="/careers">Careers <Badge color="bg-white/5 text-slate-500">8 Open Roles</Badge></FooterLink>
+                        <FooterLink href="/press">Media Kit</FooterLink>
+                        <FooterLink href="/contact">Support</FooterLink>
+                        <FooterLink href="/partners">Integrations</FooterLink>
+                    </FooterColumn>
+
+                    <FooterColumn title="Compliance">
+                        <FooterLink href="/terms">Protocol</FooterLink>
+                        <FooterLink href="/privacy">Privacy Matrix</FooterLink>
+                        <FooterLink href="/security">Security Shell</FooterLink>
+                        <div className="mt-6 flex flex-col gap-4">
+                            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-orange-500/10 border border-orange-500/20 text-orange-500 text-[10px] font-black uppercase tracking-widest">
+                                Startup India
+                            </div>
+                            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-blue-500/10 border border-blue-500/20 text-blue-500 text-[10px] font-black uppercase tracking-widest">
+                                BCI Compliant
+                            </div>
+                        </div>
                     </FooterColumn>
                 </div>
 
                 {/* BOTTOM BAR */}
-                <div className="pt-8 border-t border-slate-100 flex flex-col md:flex-row justify-between items-center gap-6">
-                    <p className="text-slate-500 text-sm font-medium">
-                        © {new Date().getFullYear()} NyayNow Legal Tech Pvt Ltd. All rights reserved.
-                    </p>
-                    <div className="flex gap-8 text-xs font-bold uppercase tracking-wider text-slate-500">
-                        <span className="flex items-center gap-2 hover:text-emerald-500 cursor-pointer transition">
-                            <span className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></span>
-                            All Systems Operational
-                        </span>
-                        <span className="hover:text-slate-200 cursor-pointer transition">Status</span>
-                        <span className="hover:text-slate-200 cursor-pointer transition">Twitter</span>
-                        <span className="hover:text-slate-200 cursor-pointer transition">Github</span>
+                <div className="pt-12 border-t border-white/5 flex flex-col lg:flex-row justify-between items-center gap-8">
+                    <div className="flex flex-col md:flex-row items-center gap-6 text-slate-500 text-xs font-bold uppercase tracking-[0.2em]">
+                        <p>© {currentYear} NyayNow Legal Tech Pvt Ltd.</p>
+                        <div className="hidden md:block w-1 h-1 rounded-full bg-slate-800" />
+                        <p>Made with Precision in India</p>
+                    </div>
+
+                    <div className="flex flex-wrap justify-center gap-10 text-[10px] font-black uppercase tracking-[0.3em] text-slate-600">
+                        <div className="flex items-center gap-2 group cursor-default">
+                            <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_10px_rgba(16,185,129,0.5)]" />
+                            <span className="group-hover:text-emerald-500 transition-colors">Systems Secure</span>
+                        </div>
+                        <Link href="/status" className="hover:text-white transition-colors">Infrastructure</Link>
+                        <Link href="/security" className="hover:text-white transition-colors">Architecture</Link>
+                        <Link href="/roadmap" className="hover:text-white transition-colors">Deployment</Link>
                     </div>
                 </div>
 
             </div>
         </footer>
-    );
-};
+    )
+}
 
 const FooterColumn = ({ title, children }) => (
-    <div className="flex flex-col gap-4">
-        <h3 className="font-bold text-white uppercase tracking-wider text-sm">{title}</h3>
-        <ul className="flex flex-col gap-3">
+    <div className="flex flex-col gap-6">
+        <h3 className="font-black text-white uppercase tracking-[0.3em] text-[10px]">{title}</h3>
+        <ul className="flex flex-col gap-4">
             {children}
         </ul>
     </div>
-);
+)
 
 const FooterLink = ({ href, children }) => (
     <li>
-        <Link href={href} className="text-sm hover:text-indigo-600 transition-colors duration-200 flex items-center">
+        <Link href={href} className="text-[15px] font-medium text-slate-500 hover:text-white transition-all duration-300 flex items-center group">
             {children}
+            <ArrowUpRight size={12} className="ml-1 opacity-0 group-hover:opacity-100 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all duration-300 text-blue-500" />
         </Link>
     </li>
-);
+)
 
-const SocialIcon = ({ path, label }) => (
-    <a href="#" className="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-slate-400 hover:bg-indigo-600 hover:text-white hover:border-indigo-600 transition-all duration-300 shadow-sm" aria-label={label}>
-        <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">{path}</svg>
-    </a>
-);
+const Badge = ({ children, color, className = "" }) => (
+    <span className={`text-[9px] font-black px-1.5 py-0.5 rounded-md uppercase tracking-widest ml-1.5 ${color} ${className}`}>
+        {children}
+    </span>
+)
 
-export default Footer;
+const SocialButton = ({ icon, label }) => (
+    <button
+        className="w-12 h-12 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center text-slate-500 hover:bg-blue-600/10 hover:text-blue-400 hover:border-blue-500/30 hover:-translate-y-1 transition-all duration-500 shadow-2xl"
+        aria-label={label}
+    >
+        {icon}
+    </button>
+)
+
+export default Footer
