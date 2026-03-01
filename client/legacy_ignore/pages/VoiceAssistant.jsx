@@ -4,9 +4,26 @@ import toast from 'react-hot-toast';
 import Navbar from "../../src/components/Navbar";
 import Footer from "../../src/components/Footer";
 import { motion, AnimatePresence } from "framer-motion";
-import { Mic, MicOff, Volume2, VolumeX, Sparkles, Zap, MessageCircle, ChevronRight } from "lucide-react";
+import { Mic, MicOff, Volume2, VolumeX, Sparkles, Zap, MessageCircle, ChevronRight, Globe } from "lucide-react";
 import axios from "axios";
 // Redundant import removed
+
+const LANGUAGES = [
+    { code: 'en-IN', name: 'English (India)', native: 'English' },
+    { code: 'hi-IN', name: 'Hindi', native: 'हिन्दी' },
+    { code: 'bn-IN', name: 'Bengali', native: 'বাংলা' },
+    { code: 'te-IN', name: 'Telugu', native: 'తెలుగు' },
+    { code: 'mr-IN', name: 'Marathi', native: 'मराठी' },
+    { code: 'ta-IN', name: 'Tamil', native: 'தமிழ்' },
+    { code: 'gu-IN', name: 'Gujarati', native: 'ગુજરાતી' },
+    { code: 'kn-IN', name: 'Kannada', native: 'ಕನ್ನಡ' },
+    { code: 'ml-IN', name: 'Malayalam', native: 'മലയാളം' },
+    { code: 'pa-IN', name: 'Punjabi', native: 'ਪੰਜਾਬੀ' },
+    { code: 'ur-PK', name: 'Urdu', native: 'اردو' },
+    { code: 'es-ES', name: 'Spanish', native: 'Español' },
+    { code: 'fr-FR', name: 'French', native: 'Français' },
+    { code: 'de-DE', name: 'German', native: 'Deutsch' },
+];
 
 const SUGGESTED = [
     "What are my rights if a shopkeeper refuses to give a bill?",
@@ -22,6 +39,7 @@ const VoiceAssistant = () => {
     const [speaking, setSpeaking] = useState(false);
     const [loading, setLoading] = useState(false);
     const [history, setHistory] = useState([]);
+    const [selectedLang, setSelectedLang] = useState({ code: 'en-IN', name: 'English (India)', native: 'English' });
     const recognitionRef = useRef(null);
     const synthRef = useRef(typeof window !== 'undefined' ? window.speechSynthesis : null);
     const historyEndRef = useRef(null);
@@ -32,6 +50,7 @@ const VoiceAssistant = () => {
             recognitionRef.current = new SpeechRecognition();
             recognitionRef.current.continuous = false;
             recognitionRef.current.interimResults = true;
+            recognitionRef.current.lang = selectedLang.code;
 
             recognitionRef.current.onresult = (event) => {
                 const t = Array.from(event.results)
@@ -57,6 +76,12 @@ const VoiceAssistant = () => {
     }, []);
 
     useEffect(() => {
+        if (recognitionRef.current) {
+            recognitionRef.current.lang = selectedLang.code;
+        }
+    }, [selectedLang]);
+
+    useEffect(() => {
         historyEndRef.current?.scrollIntoView({ behavior: "smooth" });
     }, [history]);
 
@@ -70,7 +95,10 @@ const VoiceAssistant = () => {
         try {
             const token = localStorage.getItem("token");
             const headers = token ? { Authorization: `Bearer ${token}` } : {};
-            const res = await axios.post("/api/ai/assistant", { question: userMsg }, { headers });
+            const res = await axios.post("/api/ai/assistant", {
+                question: userMsg,
+                language: selectedLang.name
+            }, { headers });
             const reply = res.data.answer || "I can connect you with a qualified lawyer for this.";
             setResponse(reply);
             setHistory(prev => [...prev, { role: "ai", text: reply }]);
@@ -89,6 +117,7 @@ const VoiceAssistant = () => {
         if (synthRef.current) {
             synthRef.current.cancel();
             const utterance = new SpeechSynthesisUtterance(text);
+            utterance.lang = selectedLang.code;
             utterance.rate = 0.9;
             utterance.onstart = () => setSpeaking(true);
             utterance.onend = () => setSpeaking(false);
@@ -129,13 +158,37 @@ const VoiceAssistant = () => {
                     {/* LEFT — ORB + STATUS */}
                     <div className="flex-1 flex flex-col items-center justify-center px-6 py-12 lg:py-0">
 
-                        {/* Badge */}
                         <motion.div
                             initial={{ opacity: 0, y: -10 }}
                             animate={{ opacity: 1, y: 0 }}
-                            className="flex items-center gap-2 px-4 py-1.5 bg-indigo-500/10 border border-indigo-500/20 rounded-full text-indigo-400 text-xs font-bold uppercase tracking-widest mb-8"
+                            className="flex flex-wrap justify-center gap-3 mb-8"
                         >
-                            <Sparkles size={12} /> NyayVoice — AI Legal Assistant
+                            <div className="flex items-center gap-2 px-4 py-1.5 bg-indigo-500/10 border border-indigo-500/20 rounded-full text-indigo-400 text-xs font-bold uppercase tracking-widest">
+                                <Sparkles size={12} /> NyayVoice — AI Legal Assistant
+                            </div>
+
+                            {/* PREMIUM LANGUAGE SELECTOR */}
+                            <div className="relative group">
+                                <div className="flex items-center gap-2 px-4 py-1.5 bg-white/5 border border-white/10 rounded-full text-slate-300 text-xs font-bold transition-all hover:border-indigo-500/50 cursor-pointer">
+                                    <Globe size={12} className="text-indigo-400" />
+                                    {selectedLang.native}
+                                    <ChevronRight size={10} className="rotate-90 group-hover:text-indigo-400 transition-colors" />
+                                </div>
+                                <div className="absolute top-full left-1/2 -translate-x-1/2 mt-2 w-48 max-h-64 overflow-y-auto bg-[#030712] border border-white/10 rounded-2xl p-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-[100] shadow-2xl custom-scrollbar">
+                                    {LANGUAGES.map((lang) => (
+                                        <button
+                                            key={lang.code}
+                                            onClick={() => setSelectedLang(lang)}
+                                            className={`w-full text-left px-4 py-2 rounded-xl text-xs font-bold transition-colors mb-1 ${selectedLang.code === lang.code ? 'bg-indigo-600 text-white' : 'text-slate-400 hover:bg-white/5 hover:text-white'}`}
+                                        >
+                                            <div className="flex justify-between items-center">
+                                                <span>{lang.name}</span>
+                                                <span className="opacity-50 font-normal">{lang.native}</span>
+                                            </div>
+                                        </button>
+                                    ))}
+                                </div>
+                            </div>
                         </motion.div>
 
                         {/* Dynamic Title */}
