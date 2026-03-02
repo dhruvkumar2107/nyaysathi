@@ -9,7 +9,7 @@ export default function VisionSection() {
         {
             icon: <Search className="text-blue-500" size={24} />,
             title: "Discovery Engine",
-            desc: "Access the top 1% of Indian legal professionals through proprietary matching and verified success metrics."
+            desc: "Access verified Indian legal professionals through proprietary matching and verified credentials."
         },
         {
             icon: <Lock className="text-indigo-400" size={24} />,
@@ -34,7 +34,7 @@ export default function VisionSection() {
         {
             icon: <Shield className="text-red-500" size={24} />,
             title: "Legal SOS",
-            desc: "A unique game-changer for instant crisis response. From incident to elite counsel in 60 seconds."
+            desc: "A unique crisis response feature for immediate triage. From incident to professional counsel in moments."
         }
     ]
 

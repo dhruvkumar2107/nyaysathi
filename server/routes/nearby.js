@@ -18,7 +18,6 @@ router.get("/", async (req, res) => {
 
     const locationContext = (lat && lon) ? `Coordinates (${lat}, ${lon})` : `Bengaluru, India`;
 
-    fs.appendFileSync('nearby_debug.log', `Request: ${locationContext}, Query: ${q}\n`);
 
     const prompt = `
       The user is at ${locationContext} or searching for "${q}".
@@ -38,7 +37,6 @@ router.get("/", async (req, res) => {
     const response = await result.response;
     const text = response.text();
 
-    fs.appendFileSync('nearby_debug.log', `AI Response: ${text}\n----------------\n`);
 
     let cleaned = text.replace(/```json/g, "").replace(/```/g, "").trim();
     const firstBrace = cleaned.indexOf('[');
@@ -122,7 +120,6 @@ router.get("/", async (req, res) => {
 
     } catch (dbErr) {
       console.error("DB Fetch Error:", dbErr.message);
-      fs.appendFileSync('nearby_debug.log', `DB ERROR: ${dbErr.message}\n`);
     }
 
     res.json(locations);

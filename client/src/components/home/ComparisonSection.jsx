@@ -28,7 +28,7 @@ export function ComparisonSection() {
                         transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
                         className="text-5xl md:text-7xl font-bold text-white mb-8 tracking-tighter leading-tight"
                     >
-                        One Purpose. <br /><span className="text-transparent bg-clip-text bg-gradient-to-b from-white to-white/40">Total Legal Superiority.</span>
+                        One Purpose. <br /><span className="text-transparent bg-clip-text bg-gradient-to-b from-white to-white/40">Comprehensive Legal Intelligence.</span>
                     </motion.h2>
                 </div>
 

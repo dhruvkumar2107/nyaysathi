@@ -6,7 +6,7 @@ const verifyToken = require("../middleware/authMiddleware");
 // GET /api/messages/:userId -> Get conversation with specific user
 router.get("/:otherUserId", verifyToken, async (req, res) => {
   try {
-    const myId = req.user.id;
+    const myId = req.userId;
     const otherId = req.params.otherUserId;
 
     // Generate conversation ID (sorted to ensure uniqueness per pair)
@@ -27,7 +27,7 @@ router.get("/:otherUserId", verifyToken, async (req, res) => {
 router.post("/send", verifyToken, async (req, res) => {
   try {
     const { recipientId, content } = req.body;
-    const myId = req.user.id;
+    const myId = req.userId;
 
     const conversationId = [myId, recipientId].sort().join("-");
 

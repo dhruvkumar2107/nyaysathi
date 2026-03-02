@@ -51,13 +51,13 @@ router.post("/assistant", verifyTokenOptional, checkAiLimit, async (req, res) =>
       CURRENT DATE: ${new Date().toISOString()}
       RANDOM SEED: ${Math.random()}
       
-      ACT AS A SENIOR ADVOCATE OF THE SUPREME COURT OF INDIA (NyayNow).
+      ACT AS THE NYAYNOW AI LEGAL ANALYSIS ENGINE.
       
       YOUR PERSONA:
-      - You are an elite legal mind, similar to Harish Salve or Ram Jethmalani.
-      - Your tone is **Authoritative, Precise, Professional, and Empathetic**.
-      - You NEVER give generic advice. You cite specific Sections, Articles, and Case Laws.
-      - You speak with the weight of the law ("It is my considered legal opinion...", "Under Section...").
+      - You are a highly advanced legal intelligence system programmed with Indian Law (BNS 2024).
+      - Your tone is **Analytical, Precise, and Neutral**.
+      - You provide legal information by citing specific Sections, Articles, and Case Laws.
+      - You clarify that you are a machine learning model, not a human lawyer.
       
       USER CONTEXT:
       Location: ${location || "India"}
@@ -96,7 +96,7 @@ router.post("/assistant", verifyTokenOptional, checkAiLimit, async (req, res) =>
     const response = await result.response;
     const text = response.text();
 
-    console.log("🔍 Raw AI Response:", text); // Debugging Log
+    // console.log("🔍 Raw AI Response:", text); // Redacted for DPDP Act Compliance
 
     // ROBUST PARSING (REGEX)
     const answerMatch = text.match(/\[ANSWER\]([\s\S]*?)\[\/ANSWER\]/);
@@ -223,7 +223,7 @@ router.post("/legal-notice", verifyTokenOptional, checkAiLimit, async (req, res)
     const { noticeType, senderName, senderAddress, recipientName, recipientAddress, facts, complianceDays } = req.body;
 
     const prompt = `
-      You are a senior advocate in India. Draft a formal "${noticeType}".
+      You are an automated legal drafting engine. Draft a formal "${noticeType}".
       Sender: ${senderName}, ${senderAddress}
       Recipient: ${recipientName}, ${recipientAddress}
       Facts: ${facts}
@@ -251,7 +251,7 @@ router.post("/draft-notice", verifyTokenOptional, checkAiLimit, async (req, res)
     const noticeType = type || "General Legal Notice";
 
     const prompt = `
-      You are a senior advocate in India. Draft a formal "${noticeType}".
+      You are an automated legal drafting engine. Draft a formal "${noticeType}".
       Language: ${lang}
       
       Details:
@@ -289,7 +289,7 @@ router.post("/predict-outcome", verifyTokenOptional, checkAiLimit, async (req, r
     console.log(`📑 /predict-outcome requested for: ${caseTitle || "Unnamed Case"}`);
 
     const prompt = `
-      ACT AS A SENIOR JUDGE OF THE SUPREME COURT OF INDIA.
+      ACT AS THE NYAYNOW JUDICIAL PREDICTION ENGINE.
       Verify the user's case details:
       - Title: "${caseTitle}"
       - Type: "${caseType}"
@@ -367,7 +367,7 @@ router.post("/draft-contract", verifyToken, checkAiLimit, async (req, res) => {
     const { type, parties, terms } = req.body;
 
     const prompt = `
-      You are an expert indian legal drafter.
+      You are an automated legal drafting engine.
       Draft a legally binding **${type}** under Indian Law.
       
       **PARTIES**:
@@ -414,7 +414,7 @@ router.post("/analyze-case-file", verifyToken, checkAiLimit, upload.single("file
     const truncatedText = caseText.substring(0, 100000);
 
     const prompt = `
-      ACT AS A SENIOR HIGH COURT JUDGE & FORENSIC EXPERT.
+      ACT AS THE NYAYNOW FORENSIC CASE ANALYSIS ENGINE.
       Analyze the provided Case File (Extracted Text).
       
       CASE TEXT:
@@ -459,7 +459,7 @@ router.post("/devils-advocate", verifyToken, checkAiLimit, async (req, res) => {
     if (!argument) return res.status(400).json({ error: "Argument required" });
 
     const prompt = `
-      ACT AS A RUTHLESS SENIOR OPPOSING COUNSEL. 
+      ACT AS THE NYAYNOW ADVERSARIAL ANALYSIS ENGINE (Devil's Advocate Mode). 
       The user is the defense lawyer. They have just made this argument:
       "${argument}"
 
@@ -503,7 +503,7 @@ router.post("/moot-court", verifyTokenOptional, checkAiLimit, async (req, res) =
     if (!transcript) return res.status(400).json({ error: "Transcript required." });
 
     const prompt = `
-      ACT AS A SUPREME COURT JUDGE AND LEGAL MENTOR.
+      ACT AS THE NYAYNOW MOOT COURT EVALUATION ENGINE.
       
       CONTEXT:
       The user is a law student arguing a case in a Moot Court.
@@ -604,7 +604,7 @@ router.post("/career-mentor", verifyTokenOptional, checkAiLimit, async (req, res
     if (!userSubmission) return res.status(400).json({ error: "Submission required." });
 
     const prompt = `
-      ACT AS A SENIOR PARTNER AT A TOP LAW FIRM.
+      ACT AS THE NYAYNOW CAREER DEVELOPMENT ENGINE.
       You are grading a virtual internship task submitted by a law student.
       
       Task: "${taskType}"
@@ -645,7 +645,7 @@ router.post("/judge-profile", verifyTokenOptional, checkAiLimit, async (req, res
     if (!name) return res.status(400).json({ error: "Judge name is required" });
 
     const prompt = `
-      ACT AS A LEGAL HISTORIAN AND ANALYST.
+      ACT AS THE NYAYNOW JUDICIAL ANALYTICS ENGINE.
       Generate a professional judicial profile for:
       Name: "${name}"
       Court: "${court || "High Court/Supreme Court of India"}"
@@ -695,7 +695,7 @@ router.post("/legal-sos", verifyTokenOptional, async (req, res) => {
     if (!situation) return res.status(400).json({ error: "Situation description required" });
 
     const prompt = `
-      ACT AS AN ELITE CRISIS LEGAL ADVISOR OF INDIA. A person is in a LEGAL EMERGENCY right now.
+      ACT AS THE NYAYNOW EMERGENCY TRIAGE ENGINE.
 
       EMERGENCY TYPE: "${emergencyType}"
       LANGUAGE FOR RESPONSE: ${language || "English"}
@@ -747,7 +747,7 @@ router.post("/fir-generator", verifyTokenOptional, async (req, res) => {
     const { name, date, place, against } = complaintDetails || {};
 
     const prompt = `
-      ACT AS A SENIOR POLICE OFFICER AND LEGAL DRAFTER IN INDIA.
+      ACT AS THE NYAYNOW LEGAL DRAFTING ENGINE.
       Draft a formal First Information Report (FIR) in ${language || "English"}.
 
       COMPLAINANT DETAILS:
@@ -804,9 +804,9 @@ router.post("/courtroom-battle", verifyTokenOptional, async (req, res) => {
     if (!caseDescription) return res.status(400).json({ error: "Case description required" });
 
     // ── AI Personas ─────────────────────────────────────────────────────────
-    const PLAINTIFF_PERSONA = `You are Adv. Vikram Anand, a senior Supreme Court advocate known for aggressive, evidence-based prosecution. You represent the PLAINTIFF/PROSECUTION side. You cite specific Indian laws (BNS, IPC, BNSS, CPC) and real case precedents. You are sharp, persuasive, and relentless. Courtroom diction only.`;
-    const DEFENSE_PERSONA = `You are Adv. Priya Rathore, a legendary defense lawyer known for dismantling prosecution arguments with surgical precision. You expertly exploit legal loopholes and protect constitutional rights. You cite specific Indian laws and case laws. You are brilliant, calm, and devastating in your rebuttals. Courtroom diction only.`;
-    const JUDGE_PERSONA = `You are Hon. Justice Ramesh Krishnamurthy, a no-nonsense Supreme Court judge with 30 years of experience. You are neutral, deeply learned, and cut through weak arguments instantly. You ask piercing questions and give crisp judicial observations. You cite specific constitutional provisions. Courtroom diction only.`;
+    const PLAINTIFF_PERSONA = `You are NyayNow AI Analysis Engine (Prosecution), a senior legal analysis agent known for aggressive, evidence-based prosecution. You represent the PLAINTIFF/PROSECUTION side. You cite specific Indian laws (BNS, IPC, BNSS, CPC) and real case precedents. You are sharp, persuasive, and relentless. Courtroom diction only.`;
+    const DEFENSE_PERSONA = `You are NyayNow AI Analysis Engine (Defense), a legendary defense analysis agent known for dismantling prosecution arguments with surgical precision. You expertly exploit legal loopholes and protect constitutional rights. You cite specific Indian laws and case laws. You are brilliant, calm, and devastating in your rebuttals. Courtroom diction only.`;
+    const JUDGE_PERSONA = `You are NyayNow AI Analysis Engine (Simulation Judge), a no-nonsense simulation judge with years of data-driven experience. You are neutral, deeply learned, and cut through weak arguments instantly. You ask piercing questions and give crisp judicial observations. You cite specific constitutional provisions. Courtroom diction only.`;
 
     const caseContext = `
       CASE TITLE: "${caseTitle || "The Instant Case"}"
@@ -972,7 +972,7 @@ router.post("/legal-notice", verifyToken, async (req, res) => {
 
     const today = new Date().toLocaleDateString("en-IN", { day: "numeric", month: "long", year: "numeric" });
 
-    const prompt = `You are a Senior Advocate of the Supreme Court of India drafting a formal LEGAL NOTICE.
+    const prompt = `You are an automated legal drafting engine.
 
 Generate a complete, professional, court-ready Legal Notice with the following structure and details:
 

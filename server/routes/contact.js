@@ -11,12 +11,12 @@ router.post("/", async (req, res) => {
             return res.status(400).json({ error: "All fields are required" });
         }
 
-        // Configure Transporter (Use Env Variables in Prod)
+        // Configure Transporter
         const transporter = nodemailer.createTransport({
             service: "gmail",
             auth: {
-                user: process.env.EMAIL_USER || "nyaynow.demo@gmail.com", // Fallback for demo
-                pass: process.env.EMAIL_PASS || "demo_password"
+                user: process.env.EMAIL_USER,
+                pass: process.env.EMAIL_PASS
             }
         });
 

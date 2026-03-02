@@ -1,8 +1,15 @@
 ﻿const express = require('express');
 const router = express.Router();
 const User = require('../models/User');
-// All users OR search
-router.get('/', async (req, res) => {
+const verifyToken = require('../middleware/authMiddleware');
+
+// GET /api/users -> Admin/Internal search
+// Should probably be restricted to admins in production
+router.get('/', verifyToken, async (req, res) => {
+  if (req.userRole !== 'admin') {
+    return res.status(403).json({ message: "Forbidden: Admin only" });
+  }
+
   const { q, role } = req.query;
   let filter = {};
 
@@ -16,14 +23,15 @@ router.get('/', async (req, res) => {
       { phone: { $regex: q } }
     ];
   }
-  const users = await User.find(filter).limit(200);
+  const users = await User.find(filter).limit(200).select("-password -otp");
   res.json(users);
 });
+
 // GET /api/users/public/:id - Get Public Profile of any user (usually lawyer)
 router.get("/public/:id", async (req, res) => {
   try {
     const user = await User.findById(req.params.id)
-      .select("-password -__v -otp -otpExpires"); // Exclude sensitive hidden fields
+      .select("-password -__v -otp -otpExpires -email -phone"); // Exclude private info
 
     if (!user) return res.status(404).json({ message: "User not found" });
 
@@ -34,52 +42,34 @@ router.get("/public/:id", async (req, res) => {
   }
 });
 
-// Get one user by ID, Phone, or Email
-router.get('/:id', async (req, res) => {
-  let query = {};
-  if (req.params.id.match(/^[0-9a-fA-F]{24}$/)) {
-    query = { _id: req.params.id };
-  } else if (req.params.id.includes('@')) {
-    query = { email: req.params.id };
-  } else {
-    query = { phone: req.params.id };
-  }
-
-  const user = await User.findOne(query);
-  if (!user) return res.status(404).end();
-  res.json(user);
-});
-
-// Update user by ID, Phone, or Email
-router.put('/:id', async (req, res) => {
-  let query = {};
-  if (req.params.id.match(/^[0-9a-fA-F]{24}$/)) {
-    query = { _id: req.params.id };
-  } else if (req.params.id.includes('@')) {
-    query = { email: req.params.id };
-  } else {
-    query = { phone: req.params.id };
-  }
-
-  const updated = await User.findOneAndUpdate(
-    query,
-    req.body,
-    { new: true }
-  );
-  res.json(updated);
-});
-// GET /api/users/public/:id - Get Public Profile of any user (usually lawyer)
-router.get("/public/:id", async (req, res) => {
+// PUT /api/users/me - Secure Profile Update
+router.put("/me", verifyToken, async (req, res) => {
   try {
-    const user = await User.findById(req.params.id)
-      .select("-password -__v -otp -otpExpires"); // Exclude sensitive hidden fields
+    const updates = req.body;
+    // Prevent role change via this route
+    delete updates.role;
+    delete updates.password;
 
+    const user = await User.findByIdAndUpdate(req.userId, updates, { new: true }).select("-password");
     if (!user) return res.status(404).json({ message: "User not found" });
-
     res.json(user);
   } catch (err) {
     console.error(err);
-    res.status(500).json({ message: "Server Error" });
+    res.status(500).json({ message: "Failed to update profile" });
+  }
+});
+
+// DELETE /api/users/me - Right to be Forgotten (DPDP Act 2023)
+router.delete("/me", verifyToken, async (req, res) => {
+  try {
+    const user = await User.findByIdAndDelete(req.userId);
+    if (!user) return res.status(404).json({ message: "User not found" });
+
+    // Optional: Clean up other user data (messages, cases) if desired
+    res.json({ success: true, message: "Account deleted permanently." });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Failed to delete account" });
   }
 });
 

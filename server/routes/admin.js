@@ -7,8 +7,7 @@ const verifyToken = require('../middleware/authMiddleware');
 // GET /api/admin/stats
 router.get('/stats', verifyToken, async (req, res) => {
     try {
-        // Only allow admin (or upgrade to admin middleware)
-        // if (req.userRole !== 'admin') return res.status(403).json({ error: "Access denied" });
+        if (req.userRole !== 'admin') return res.status(403).json({ error: "Access denied" });
 
         const totalUsers = await User.countDocuments();
         const pendingLawyers = await User.countDocuments({ role: 'lawyer', verified: false });
@@ -34,8 +33,8 @@ router.get('/stats', verifyToken, async (req, res) => {
 // GET /api/admin/clients
 router.get('/clients', verifyToken, async (req, res) => {
     try {
+        if (req.userRole !== 'admin') return res.status(403).json({ error: "Access denied" });
         const clients = await User.find({ role: 'client' }).select('-password');
-        res.json(clients);
     } catch (err) {
         console.error(err);
         res.status(500).json({ error: "Fetch failed" });
@@ -43,9 +42,9 @@ router.get('/clients', verifyToken, async (req, res) => {
 });
 
 // GET /api/admin/pending-lawyers
-router.get('/pending-lawyers', async (req, res) => {
+router.get('/pending-lawyers', verifyToken, async (req, res) => {
     try {
-        // Add verifyToken middleware in production
+        if (req.userRole !== 'admin') return res.status(403).json({ error: "Access denied" });
         const lawyers = await User.find({ role: 'lawyer', verified: false }).select('-password');
         res.json(lawyers);
     } catch (err) {
@@ -55,8 +54,9 @@ router.get('/pending-lawyers', async (req, res) => {
 });
 
 // POST /api/admin/verify-lawyer/:id
-router.post('/verify-lawyer/:id', async (req, res) => {
+router.post('/verify-lawyer/:id', verifyToken, async (req, res) => {
     try {
+        if (req.userRole !== 'admin') return res.status(403).json({ error: "Access denied" });
         const { status } = req.body; // 'approved' or 'rejected'
         const user = await User.findById(req.params.id);
 

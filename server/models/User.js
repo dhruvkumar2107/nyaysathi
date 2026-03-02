@@ -144,9 +144,35 @@ const { syncLawyer, deleteRecord } = require("../utils/algolia");
 //   }
 // });
 
-userSchema.post("findOneAndDelete", function (doc) {
-  if (doc && doc.role === "lawyer") {
-    deleteRecord("lawyers", doc._id.toString());
+userSchema.post("findOneAndDelete", async function (doc) {
+  if (doc) {
+    const userId = doc._id;
+
+    // 1. Delete associated Lawyers in Algolia
+    if (doc.role === "lawyer") {
+      const { deleteRecord } = require("../utils/algolia");
+      deleteRecord("lawyers", userId.toString());
+    }
+
+    // 2. Cascade Delete all related collections
+    const Case = mongoose.model("Case");
+    const Invoice = mongoose.model("Invoice");
+    const Message = mongoose.model("Message");
+    const Connection = mongoose.model("Connection");
+    const Appointment = mongoose.model("Appointment");
+
+    try {
+      await Promise.all([
+        Case.deleteMany({ $or: [{ client: userId }, { lawyer: userId }] }),
+        Invoice.deleteMany({ $or: [{ clientId: userId }, { lawyerId: userId }] }),
+        Message.deleteMany({ $or: [{ sender: userId }, { recipient: userId }] }),
+        Connection.deleteMany({ $or: [{ clientId: userId }, { lawyerId: userId }] }),
+        Appointment.deleteMany({ $or: [{ clientId: userId }, { lawyerId: userId }] })
+      ]);
+      console.log(`🗑️ Deep Delete completed for User: ${userId}`);
+    } catch (err) {
+      console.error(`❌ Cascade Delete Error for ${userId}:`, err.message);
+    }
   }
 });
 

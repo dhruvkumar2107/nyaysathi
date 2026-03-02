@@ -1,9 +1,12 @@
-/**
- * NYAY-NOW FRONTEND API LAYER
- * Single source of truth for all backend calls
- */
-
 const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000/api";
+
+/**
+ * Helper to get Auth headers
+ */
+function getAuthHeader() {
+  const token = typeof window !== "undefined" ? localStorage.getItem("token") : null;
+  return token ? { "Authorization": `Bearer ${token}` } : {};
+}
 
 /* =====================================================
    AI FEATURES
@@ -18,6 +21,7 @@ export async function askAssistant(question) {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
+      ...getAuthHeader()
     },
     body: JSON.stringify({ question }),
   });
@@ -38,6 +42,7 @@ export async function analyzeIssue(text) {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
+      ...getAuthHeader()
     },
     body: JSON.stringify({ text }),
   });
@@ -58,6 +63,7 @@ export async function analyzeAgreement(text) {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
+      ...getAuthHeader()
     },
     body: JSON.stringify({ text }),
   });
@@ -112,13 +118,13 @@ export async function fetchNearby(lat, lng) {
 ===================================================== */
 
 /**
- * Fetch messages for a lawyer
- * GET /api/messages?lawyer=NAME
+ * Fetch messages for a conversation
+ * GET /api/messages/:otherUserId
  */
-export async function fetchMessages(lawyerName) {
-  const res = await fetch(
-    `${API_BASE}/messages?lawyer=${encodeURIComponent(lawyerName)}`
-  );
+export async function fetchMessages(otherUserId) {
+  const res = await fetch(`${API_BASE}/messages/${otherUserId}`, {
+    headers: getAuthHeader()
+  });
 
   if (!res.ok) {
     throw new Error("Failed to fetch messages");
@@ -129,15 +135,16 @@ export async function fetchMessages(lawyerName) {
 
 /**
  * Send message
- * POST /api/messages
+ * POST /api/messages/send
  */
-export async function sendMessage(message) {
-  const res = await fetch(`${API_BASE}/messages`, {
+export async function sendMessage(recipientId, content) {
+  const res = await fetch(`${API_BASE}/messages/send`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
+      ...getAuthHeader()
     },
-    body: JSON.stringify(message),
+    body: JSON.stringify({ recipientId, content }),
   });
 
   if (!res.ok) {
@@ -161,6 +168,7 @@ export async function uploadFile(file) {
 
   const res = await fetch(`${API_BASE}/uploads`, {
     method: "POST",
+    headers: getAuthHeader(),
     body: formData,
   });
 

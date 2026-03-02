@@ -1,17 +1,9 @@
-const express = require('express');
-const router = express.Router();
-const Case = require('../models/Case');
-const User = require('../models/User');
-const Event = require('../models/Event');
-const Appointment = require('../models/Appointment');
-const Invoice = require('../models/Invoice');
-const Post = require('../models/Post');
+const verifyToken = require('../middleware/authMiddleware');
 
-// GET /api/crm/insights?userId=xyz
-router.get('/insights', async (req, res) => {
+// GET /api/crm/insights
+router.get('/insights', verifyToken, async (req, res) => {
     try {
-        const { userId } = req.query;
-        if (!userId) return res.status(400).json({ error: "UserId required" });
+        const userId = req.userId; // Force authenticated ID
 
         // 1. Fetch Core Data
         const cases = await Case.find({

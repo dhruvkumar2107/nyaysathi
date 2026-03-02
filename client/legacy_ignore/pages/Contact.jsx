@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import toast from 'react-hot-toast';
 import { motion } from 'framer-motion';
-import { Mail, MapPin, Clock, Send, ArrowRight, Twitter, Linkedin, Github, MessageSquare, Zap, Phone } from 'lucide-react';
+import { Mail, MapPin, Clock, Send, ArrowRight, Twitter, Linkedin, Github, MessageSquare, Zap, Phone, Shield } from 'lucide-react';
 import Navbar from "../../src/components/Navbar";
 import Footer from "../../src/components/Footer";
 import axios from 'axios';
@@ -164,6 +164,26 @@ export default function Contact() {
                                         <span className="hidden sm:block text-[10px]">{s.label}</span>
                                     </a>
                                 ))}
+                            </div>
+                        </div>
+
+                        {/* Grievance Redressal */}
+                        <div className="p-6 rounded-2xl bg-rose-500/10 border border-rose-500/20">
+                            <h3 className="text-white font-bold text-sm mb-2 flex items-center gap-2">
+                                <Shield size={16} className="text-rose-400" /> Statutory Grievance Redressal
+                            </h3>
+                            <p className="text-slate-500 text-[9px] mb-3 leading-relaxed font-medium uppercase tracking-tighter">
+                                IT Rules 2021 Intermediary Compliance
+                            </p>
+                            <div className="flex justify-between items-center">
+                                <div>
+                                    <p className="text-slate-600 text-[8px] uppercase font-black mb-0.5">Officer</p>
+                                    <p className="text-white font-bold text-xs uppercase tracking-widest">Dhruv Kumar</p>
+                                </div>
+                                <div className="text-right">
+                                    <p className="text-slate-600 text-[8px] uppercase font-black mb-0.5">Email</p>
+                                    <p className="text-rose-400 font-bold text-xs tracking-widest">grievance@nyaynow.in</p>
+                                </div>
                             </div>
                         </div>
 

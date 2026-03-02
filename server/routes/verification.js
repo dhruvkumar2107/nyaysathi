@@ -44,7 +44,7 @@ router.post('/verify-status', async (req, res) => {
             await User.findByIdAndUpdate(userId, {
                 verified: true,
                 verificationStatus: 'verified',
-                barCouncilId: `AADHAAR-VERIFIED-${data.aadhaar_number?.slice(-4)}`
+                barCouncilId: `DIGILOCKER-VERIFIED-${Math.random().toString(36).substring(7).toUpperCase()}`
             });
 
             res.json({ success: true, name: data.name });

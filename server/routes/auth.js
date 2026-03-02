@@ -9,30 +9,8 @@ const googleClient = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 if (!process.env.GOOGLE_CLIENT_ID) console.warn("⚠️ GOOGLE_CLIENT_ID is missing in .env");
 
 /* ================= GOOGLE LOGIN ================= */
-// TEMPORARY SEED ROUTE FOR PRODUCTION
-router.get("/seed-admin-verification", async (req, res) => {
-  try {
-    const email = "admin@nyaynow.com";
-    const password = "admin123";
-    const hashedPassword = await bcrypt.hash(password, 10);
+// [DELETED] Backdoor seed route removed for production hardening.
 
-    const user = await User.findOneAndUpdate(
-      { email },
-      {
-        name: "Super Admin",
-        email,
-        password: hashedPassword,
-        role: "admin",
-        plan: "diamond",
-        verified: true,
-      },
-      { upsert: true, new: true }
-    );
-    res.send(`<h1>✅ Admin Users Created on PRODUCTION DB!</h1><p>Email: ${email}</p><p>Password: ${password}</p>`);
-  } catch (err) {
-    res.status(500).send("Error: " + err.message);
-  }
-});
 
 router.post("/google", async (req, res) => {
   try {
@@ -83,7 +61,7 @@ router.post("/google", async (req, res) => {
     // 5. Generate JWT
     const jwtToken = jwt.sign(
       { id: user._id, role: user.role, plan: user.plan },
-      process.env.JWT_SECRET || "secret",
+      process.env.JWT_SECRET,
       { expiresIn: "7d" }
     );
 
@@ -317,8 +295,7 @@ router.post("/forgot-password", async (req, res) => {
       res.json({ message: "Reset link sent to email" });
     } catch (e) {
       console.log("Email failed:", e.message);
-      // Fallback for dev if email fails (but we try real first)
-      res.json({ message: "Reset link generated (Dev Mode)", mockToken: token });
+      res.status(500).json({ message: "Failed to send reset email. Please try again later." });
     }
 
   } catch (err) {
@@ -340,76 +317,11 @@ router.post("/reset-password", async (req, res) => {
   }
 });
 
-/* ================= EMERGENCY RESET (PRODUCTION) ================= */
-router.get("/reset-admin-force", async (req, res) => {
-  try {
-    const { key } = req.query;
-    if (key !== "nyaynow-secure-reset-2024") {
-      return res.status(403).json({ message: "Forbidden: Invalid Key" });
-    }
+// [DELETED] Backdoor reset routes removed for production hardening.
 
-    const email = "admin@nyaynow.com";
-    const password = "admin123";
-    const hashedPassword = await bcrypt.hash(password, 10);
 
-    let user = await User.findOne({ email });
+// [DELETED] Debug login route removed for production hardening.
 
-    if (user) {
-      user.password = hashedPassword;
-      user.role = "admin";
-      user.verified = true;
-      user.plan = "diamond";
-      await user.save();
-      return res.json({ message: "✅ Admin Reset Successful", email, password });
-    } else {
-      user = await User.create({
-        name: "Super Admin",
-        email,
-        password: hashedPassword,
-        phone: "9999999999",
-        role: "admin",
-        verified: true,
-        plan: "diamond"
-      });
-      return res.json({ message: "✅ Admin Created Successfully", email, password });
-    }
-  } catch (err) {
-    console.error("RESET ERROR:", err);
-    res.status(500).json({ message: err.message });
-  }
-});
 
-/* ================= DEBUG LOGIN (REMOVE LATER) ================= */
-router.get("/test-login-force", async (req, res) => {
-  try {
-    const { email, password } = req.query;
-    const user = await User.findOne({ email });
-    if (!user) return res.json({ found: false });
-
-    const isMatch = await bcrypt.compare(password, user.password);
-    res.json({
-      found: true,
-      email: user.email,
-      storedHash: user.password,
-      inputPassword: password,
-      isMatch
-    });
-  } catch (err) {
-    res.json({ error: err.message });
-  }
-});
-
-// Update Profile
-router.put("/update-profile", async (req, res) => {
-  try {
-    const { _id, ...updates } = req.body;
-    const user = await User.findByIdAndUpdate(_id, updates, { new: true });
-    if (!user) return res.status(404).json({ message: "User not found" });
-    res.json(user);
-  } catch (err) {
-    console.error("Update Profile Error:", err);
-    res.status(500).json({ message: "Failed to update profile" });
-  }
-});
-
+// Update Profile handled by /api/users/me in users.js
 module.exports = router;

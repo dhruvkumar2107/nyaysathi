@@ -19,13 +19,13 @@ export default function Home() {
             <section className="py-20 border-y border-white/5 bg-[#020617] relative overflow-hidden">
                 <div className="absolute inset-0 pointer-events-none bg-gradient-to-r from-[#020617] via-transparent to-[#020617] z-10" />
                 <div className="max-w-7xl mx-auto px-6 mb-12 text-center">
-                    <p className="text-[11px] font-black text-blue-500 uppercase tracking-[0.4em]">Trusted by the Vanguards of Indian Law</p>
+                    <p className="text-[11px] font-black text-blue-500 uppercase tracking-[0.4em]">Bridging the Path to Justice</p>
                 </div>
 
                 <div className="flex overflow-hidden group select-none">
                     <div className="flex animate-marquee whitespace-nowrap gap-16 items-center px-8">
                         {[
-                            "SUPREME COURT OF INDIA", "HIGH COURT OF DELHI", "BAR COUNCIL", "LEGAL AID SERVICES", "NALSAR UNIVERSITY", "NLSIU BANGALORE", "CENTRAL ADMINISTRATIVE TRIBUNAL"
+                            "JUDICIAL INTELLIGENCE", "LEGAL RESEARCH NETWORK", "VERIFIED COUNSEL", "STATUTORY COMPLIANCE", "NATIVE DIALECT AI", "LEGAL ACCESSIBILITY", "INDIAN CONSTITUTIONAL LAW"
                         ].map((name) => (
                             <span key={name} className="text-2xl md:text-3xl font-serif font-black text-white/20 hover:text-blue-400/50 transition-colors duration-500 tracking-[0.15em] cursor-default">{name}</span>
                         ))}
@@ -33,7 +33,7 @@ export default function Home() {
                     {/* Duplicate for seamless loop */}
                     <div className="flex animate-marquee whitespace-nowrap gap-16 items-center px-8" aria-hidden="true">
                         {[
-                            "SUPREME COURT OF INDIA", "HIGH COURT OF DELHI", "BAR COUNCIL", "LEGAL AID SERVICES", "NALSAR UNIVERSITY", "NLSIU BANGALORE", "CENTRAL ADMINISTRATIVE TRIBUNAL"
+                            "JUDICIAL INTELLIGENCE", "LEGAL RESEARCH NETWORK", "VERIFIED COUNSEL", "STATUTORY COMPLIANCE", "NATIVE DIALECT AI", "LEGAL ACCESSIBILITY", "INDIAN CONSTITUTIONAL LAW"
                         ].map((name) => (
                             <span key={name} className="text-2xl md:text-3xl font-serif font-black text-white/20 hover:text-blue-400/50 transition-colors duration-500 tracking-[0.15em] cursor-default">{name}</span>
                         ))}

@@ -26,10 +26,8 @@ const allowedOrigins = [
 
 const io = new Server(server, {
   cors: {
-    origin: (origin, callback) => {
-      // Allow ANY origin by reflecting it back
-      callback(null, true);
-    },
+    origin: allowedOrigins,
+    credentials: true
   }
 });
 
@@ -41,12 +39,21 @@ const { nodeProfilingIntegration } = require("@sentry/profiling-node");
 
 /* ================= SENTRY INIT ================= */
 Sentry.init({
-  dsn: process.env.SENTRY_DSN || "", // User needs to provide this
+  dsn: process.env.SENTRY_DSN || "",
   integrations: [
     nodeProfilingIntegration(),
   ],
   tracesSampleRate: 1.0,
   profilesSampleRate: 1.0,
+  beforeSend(event) {
+    if (event.request && event.request.data) {
+      if (typeof event.request.data === 'string') {
+        event.request.data = event.request.data.replace(/"password":".*?"/g, '"password":"[REDACTED]"');
+        event.request.data = event.request.data.replace(/"token":".*?"/g, '"token":"[REDACTED]"');
+      }
+    }
+    return event;
+  },
 });
 
 /* ================= MIDDLEWARE ================= */
@@ -74,17 +81,35 @@ app.use(helmet({
 }));
 
 const limiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 300, // Limit each IP to 300 requests per windowMs
+  windowMs: 15 * 60 * 1000,
+  max: 300,
   standardHeaders: true,
   legacyHeaders: false,
 });
 app.use(limiter);
 
+// 🛡️ AUTH LIMITER (Brute-force protection)
+const authLimiter = rateLimit({
+  windowMs: 60 * 60 * 1000, // 1 hour
+  max: 10, // 10 attempts per hour
+  message: { error: "Too many login attempts. Try again in an hour." },
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+app.use("/api/auth", authLimiter);
+
+// 🛡️ AI LIMITER (Cost overflow protection)
+const aiLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 50, // 50 AI requests per 15 min
+  message: { error: "AI capacity limit reached. Please wait a moment." },
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+app.use("/api/ai", aiLimiter);
+
 app.use(cors({
-  origin: (origin, callback) => {
-    callback(null, true);
-  },
+  origin: allowedOrigins,
   credentials: true,
 }));
 
@@ -244,10 +269,13 @@ loadRoute("/api/confessions", "./routes/confessions"); // ANONYMOUS CONFESSION B
 app.use((err, req, res, next) => {
   console.error("❌ Global Error Caught at", req.originalUrl, ":", err);
   Sentry.captureException(err);
+
+  const isDev = process.env.NODE_ENV === 'development';
+
   res.status(500).json({
     error: "Internal Server Error",
-    message: err.message,
-    path: req.originalUrl
+    message: isDev ? err.message : "Something went wrong. Please try again later.",
+    path: isDev ? req.originalUrl : undefined
   });
 });
 

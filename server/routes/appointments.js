@@ -1,8 +1,6 @@
-const express = require("express");
-const router = express.Router();
-const Appointment = require("../models/Appointment");
 const User = require("../models/User");
 const Notification = require("../models/Notification");
+const verifyToken = require("../middleware/authMiddleware");
 
 // Helper to create notification and emit socket event
 const createNotification = async (io, userId, message, type, link) => {
@@ -17,11 +15,11 @@ const createNotification = async (io, userId, message, type, link) => {
     }
 };
 
-// POST /api/appointments
-// Book an appointment
-router.post("/", async (req, res) => {
+// Book an appointment (Secure Client Link)
+router.post("/", verifyToken, async (req, res) => {
     try {
-        const { clientId, lawyerId, date, slot, notes } = req.body;
+        const { lawyerId, date, slot, notes } = req.body;
+        const clientId = req.userId; // Securely identify client
 
         // Check availability (basic)
         const existing = await Appointment.findOne({ lawyerId, date, slot, status: "confirmed" });
@@ -56,11 +54,11 @@ router.post("/", async (req, res) => {
     }
 });
 
-// GET /api/appointments?userId=...&role=...
-// List appointments
-router.get("/", async (req, res) => {
+// List appointments (Secure Scoping)
+router.get("/", verifyToken, async (req, res) => {
     try {
-        const { userId, role } = req.query;
+        const userId = req.userId;
+        const role = req.userRole;
         const filter = role === "lawyer" ? { lawyerId: userId } : { clientId: userId };
 
         const appointments = await Appointment.find(filter)
@@ -75,11 +73,19 @@ router.get("/", async (req, res) => {
     }
 });
 
-// PUT /api/appointments/:id
-// Update status
-router.put("/:id", async (req, res) => {
+// Update status (Secure Ownership check)
+router.put("/:id", verifyToken, async (req, res) => {
     try {
         const { status, meetingLink } = req.body;
+
+        const existing = await Appointment.findById(req.params.id);
+        if (!existing) return res.status(404).json({ error: "Not found" });
+
+        // Only the lawyer or the client of this appointment can update/cancel it
+        if (existing.lawyerId.toString() !== req.userId && existing.clientId.toString() !== req.userId) {
+            return res.status(403).json({ error: "Unauthorized" });
+        }
+
         const updated = await Appointment.findByIdAndUpdate(
             req.params.id,
             { status, meetingLink },

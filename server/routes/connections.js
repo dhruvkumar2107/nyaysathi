@@ -1,8 +1,7 @@
-const express = require("express");
-const router = express.Router();
 const Connection = require("../models/Connection");
 const User = require("../models/User");
 const Notification = require("../models/Notification");
+const verifyToken = require("../middleware/authMiddleware");
 
 // Helper to create notification and emit socket event
 const createNotification = async (io, userId, message, type, link) => {
@@ -17,12 +16,10 @@ const createNotification = async (io, userId, message, type, link) => {
     }
 };
 
-// GET /api/connections?userId=...
-// Fetch all active connections for a user
-// GET /api/connections?userId=...&status=...
-// Fetch connections (default: active)
-router.get("/", async (req, res) => {
-    const { userId, status } = req.query;
+// Fetch all active connections for the authenticated user
+router.get("/", verifyToken, async (req, res) => {
+    const { status } = req.query;
+    const userId = req.userId;
     try {
         const query = { $or: [{ clientId: userId }, { lawyerId: userId }] };
 
@@ -59,11 +56,15 @@ router.get("/", async (req, res) => {
     }
 });
 
-// POST /api/connections
-// Request a connection
-router.post("/", async (req, res) => {
-    const { clientId, lawyerId, initiatedBy } = req.body;
+// Request a connection (Secure Scoping)
+router.post("/", verifyToken, async (req, res) => {
+    const { recipientId } = req.body;
+    const clientId = req.userRole === 'client' ? req.userId : req.body.clientId;
+    const lawyerId = req.userRole === 'lawyer' ? req.userId : req.body.lawyerId;
+    const initiatedBy = req.userId;
+
     try {
+        if (!recipientId) return res.status(400).json({ error: "Recipient required" });
         const existing = await Connection.findOne({ clientId, lawyerId });
         if (existing) {
             if (existing.status === "active") return res.status(400).json({ error: "Already connected" });
@@ -83,7 +84,7 @@ router.post("/", async (req, res) => {
         const recipientId = initiatedBy === clientId ? lawyerId : clientId;
         const initiator = await User.findById(initiatedBy);
         const recipient = await User.findById(recipientId);
-        
+
         // Link to dashboard with correct tab
         const link = recipient.role === 'lawyer' ? "/lawyer/dashboard?tab=clients" : "/client/dashboard";
 
@@ -102,13 +103,19 @@ router.post("/", async (req, res) => {
     }
 });
 
-// PUT /api/connections/:id
-// Update status (active/rejected)
-router.put("/:id", async (req, res) => {
+// Update status (Secure Response check)
+router.put("/:id", verifyToken, async (req, res) => {
     try {
         const { status } = req.body; // active, rejected
         const connection = await Connection.findById(req.params.id);
         if (!connection) return res.status(404).json({ error: "Connection not found" });
+
+        // Only the recipient can accept/reject the request
+        const recipientId = connection.initiatedBy.toString() === connection.clientId.toString() ? connection.lawyerId : connection.clientId;
+
+        if (recipientId.toString() !== req.userId) {
+            return res.status(403).json({ error: "Only the recipient can respond to this request" });
+        }
 
         const oldStatus = connection.status;
         connection.status = status;
@@ -117,10 +124,10 @@ router.put("/:id", async (req, res) => {
         // Notify the initiator (the one who sent the request)
         const initiatorId = connection.initiatedBy;
         const responderId = connection.clientId.toString() === initiatorId.toString() ? connection.lawyerId : connection.clientId;
-        
+
         const initiator = await User.findById(initiatorId);
         const responder = await User.findById(responderId);
-        
+
         let link = "/messages";
         if (status !== 'active') {
             link = initiator.role === 'lawyer' ? "/lawyer/dashboard" : "/client/dashboard";

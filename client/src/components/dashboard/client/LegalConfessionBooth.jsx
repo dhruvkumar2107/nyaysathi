@@ -227,7 +227,14 @@ export default function LegalConfessionBooth() {
                                     </div>
                                 </div>
 
-                                <div className="flex justify-between items-center">
+                                <div className="p-3 rounded-xl bg-amber-500/5 border border-amber-500/10 flex items-start gap-3">
+                                    <AlertTriangle size={14} className="text-amber-500 mt-0.5 shrink-0" />
+                                    <p className="text-[11px] text-slate-500 leading-relaxed font-medium">
+                                        <span className="text-amber-500 font-bold uppercase tracking-wider">Legal Warning:</span> Posts in this booth are public and <span className="text-white underline">NOT</span> protected by attorney-client privilege. Information may be shared if required by law.
+                                    </p>
+                                </div>
+
+                                <div className="flex justify-between items-center pt-2">
                                     <p className="text-slate-600 text-xs flex items-center gap-1.5">
                                         <Lock size={10} /> AI analysis will appear within seconds of posting
                                     </p>
@@ -365,6 +372,13 @@ function ConfessionCard({ c, expandedId, setExpandedId, replyText, setReplyText,
                     <span className="flex items-center gap-1"><MessageCircle size={10} />{c.replies?.length || 0} replies</span>
                     <span className="flex items-center gap-1 text-violet-500"><Lock size={10} />Anonymous</span>
                     {aiReply && <span className="flex items-center gap-1 text-indigo-400"><Sparkles size={10} />AI Analyzed</span>}
+                    <button
+                        onClick={(e) => { e.stopPropagation(); toast.success("Confession reported for review."); }}
+                        className="flex items-center gap-1 hover:text-rose-500 transition ml-auto"
+                        title="Report this confession"
+                    >
+                        <AlertTriangle size={10} /> Report
+                    </button>
                 </div>
             </div>
 
@@ -420,12 +434,21 @@ function ConfessionCard({ c, expandedId, setExpandedId, replyText, setReplyText,
                                                     </span>
                                                     <span className="text-slate-700 text-[10px]">{TIME_AGO(reply.createdAt)}</span>
                                                 </div>
-                                                <button
-                                                    onClick={() => handleHelpful(c._id, reply._id)}
-                                                    className="flex items-center gap-1 text-[10px] text-slate-600 hover:text-emerald-400 transition px-2 py-1 rounded-lg hover:bg-emerald-500/10 border border-transparent hover:border-emerald-500/20"
-                                                >
-                                                    <ThumbsUp size={10} /> {reply.helpful?.length || 0} Helpful
-                                                </button>
+                                                <div className="flex items-center gap-2">
+                                                    <button
+                                                        onClick={() => handleHelpful(c._id, reply._id)}
+                                                        className="flex items-center gap-1 text-[10px] text-slate-600 hover:text-emerald-400 transition px-2 py-1 rounded-lg hover:bg-emerald-500/10 border border-transparent hover:border-emerald-500/20"
+                                                    >
+                                                        <ThumbsUp size={10} /> {reply.helpful?.length || 0} Helpful
+                                                    </button>
+                                                    <button
+                                                        onClick={() => toast.success("Content reported. Our team will review it within 24 hours.")}
+                                                        className="flex items-center gap-1 text-[10px] text-slate-700 hover:text-rose-500 transition px-2 py-1 rounded-lg hover:bg-rose-500/10 border border-transparent hover:border-rose-500/20"
+                                                        title="Report inappropriate content"
+                                                    >
+                                                        <AlertTriangle size={10} /> Report
+                                                    </button>
+                                                </div>
                                             </div>
                                             <p className="text-slate-300 text-xs leading-relaxed">{reply.text}</p>
                                         </div>

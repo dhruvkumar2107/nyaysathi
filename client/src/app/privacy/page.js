@@ -1,5 +1,5 @@
 'use client'
-import PrivacyPolicy from "../../../legacy_ignore/pages/legal/PrivacyPolicy";
+import PrivacyPolicy from "../../components/PrivacyPolicy";
 
 export default function PrivacyPage() {
     return <PrivacyPolicy />;

@@ -2,6 +2,7 @@
 const router = express.Router();
 const Razorpay = require("razorpay");
 const crypto = require("crypto");
+const verifyToken = require("../middleware/authMiddleware");
 const User = require("../models/User");
 
 /* -------------------- RAZORPAY INIT -------------------- */
@@ -10,23 +11,28 @@ const razorpay = new Razorpay({
   key_secret: process.env.RZP_KEY_SECRET
 });
 
-/* -------------------- CREATE ORDER -------------------- */
+const Payment = require("../models/Payment");
+
 /**
  * POST /api/payments/create-order
  */
-router.post("/create-order", async (req, res) => {
+router.post("/create-order", verifyToken, async (req, res) => {
   try {
-    const { amount_rupees, plan, email } = req.body;
+    const { amount_rupees, plan } = req.body;
 
-    if (!amount_rupees || !plan || !email) {
+    // Fetch current user email from DB to ensure integrity
+    const user = await User.findById(req.userId);
+    if (!user) return res.status(404).json({ error: "User not found" });
+
+    if (!amount_rupees || !plan) {
       return res.status(400).json({ error: "Missing required fields" });
     }
 
     const order = await razorpay.orders.create({
       amount: amount_rupees * 100, // paise
       currency: "INR",
-      receipt: `receipt_${Date.now()}`,
-      notes: { plan, email }
+      receipt: `receipt_${Date.now()}_${req.userId.substring(0, 5)}`,
+      notes: { plan, email: user.email, userId: req.userId }
     });
 
     res.json({
@@ -45,14 +51,13 @@ router.post("/create-order", async (req, res) => {
 /**
  * POST /api/payments/verify
  */
-router.post("/verify", async (req, res) => {
+router.post("/verify", verifyToken, async (req, res) => {
   try {
     const {
       razorpay_order_id,
       razorpay_payment_id,
       razorpay_signature,
       plan,
-      email,
       amount // Expect amount passed from frontend for record keeping
     } = req.body;
 
@@ -75,19 +80,14 @@ router.post("/verify", async (req, res) => {
     const Payment = require("../models/Payment");
 
     // 1. Upgrade User
-    // Logic: Only Gold/Diamond plans grant the "Verified" badge automatically
-    const shouldVerify = ["gold", "diamond"].includes(plan.toLowerCase());
-
+    // NOTE: We have removed automatic verification on payment to ensure BCI compliance
+    // and avoid consumer fraud risk. Verification is now a manual administrative action.
     const updateData = {
       plan: plan.toLowerCase()
     };
 
-    if (shouldVerify) {
-      updateData.verified = true;
-    }
-
-    const updatedUser = await User.findOneAndUpdate(
-      { email },
+    const updatedUser = await User.findByIdAndUpdate(
+      req.userId,
       updateData,
       { new: true }
     );

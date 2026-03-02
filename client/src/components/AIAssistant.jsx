@@ -136,7 +136,7 @@ export default function AIAssistant() {
                             <div className="flex justify-between items-center mt-3 px-1">
                                 <p className="text-[9px] text-slate-600 font-bold uppercase tracking-widest flex items-center gap-1">
                                     <span className="w-1 h-1 bg-slate-600 rounded-full"></span>
-                                    End-to-End Encrypted
+                                    Secure & Encrypted
                                 </p>
                                 <p className="text-[9px] text-indigo-400 font-black uppercase tracking-widest">
                                     NyayNow AI 2.5

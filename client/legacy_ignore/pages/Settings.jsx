@@ -42,7 +42,7 @@ export default function Settings() {
 
     const handleSaveProfile = async () => {
         try {
-            const { data } = await axios.put(`/api/users/${user._id || user.id}`, formData);
+            const { data } = await axios.put(`/api/users/me`, formData);
             updateUser(data);
             toast.success("Profile updated successfully");
 
@@ -73,7 +73,7 @@ export default function Settings() {
             if (section === 'notifications') setNotifications(data);
             if (section === 'privacy') setPrivacy(data);
 
-            await axios.put(`/api/users/${user._id || user.id}`, { settings: updatedSettings });
+            await axios.put(`/api/users/me`, { settings: updatedSettings });
             toast.success("Settings saved successfully");
         } catch (err) {
             console.error(err);
@@ -294,6 +294,29 @@ export default function Settings() {
                                                     <div className={`absolute top-1 w-4 h-4 bg-white rounded-full transition ${privacy.showStatus ? 'right-1' : 'left-1'}`}></div>
                                                 </div>
                                             </div>
+                                        </div>
+                                    </div>
+
+                                    <div className="pt-6 border-t border-white/5">
+                                        <h4 className="font-bold text-red-400 mb-4">Danger Zone</h4>
+                                        <div className="p-6 bg-red-500/5 border border-red-500/20 rounded-2xl">
+                                            <p className="text-sm text-slate-400 mb-4">Once you delete your account, there is no going back. All your legal data, documents, and interactions will be permanently erased as per the DPDP Act 2023.</p>
+                                            <button
+                                                onClick={async () => {
+                                                    if (window.confirm("ARE YOU ABSOLUTELY SURE? This will permanently delete your legal identity on NyayNow.")) {
+                                                        try {
+                                                            await axios.delete('/api/users/me');
+                                                            toast.success("Account deleted. Farewell.");
+                                                            window.location.href = "/";
+                                                        } catch (err) {
+                                                            toast.error("Failed to delete account. Please contact support.");
+                                                        }
+                                                    }
+                                                }}
+                                                className="px-6 py-2 bg-red-600 text-white text-xs font-bold rounded-lg hover:bg-red-700 transition"
+                                            >
+                                                Permanently Delete Account
+                                            </button>
                                         </div>
                                     </div>
                                 </div>

@@ -2,6 +2,7 @@ const express = require("express");
 const User = require("../models/User");
 
 const { generateMultimodalWithFallback } = require("../utils/aiUtils");
+const verifyToken = require("../middleware/authMiddleware");
 const router = express.Router();
 
 /* ---------------- GET LAWYERS (PAGINATED & FILTERED) ---------------- */
@@ -72,45 +73,38 @@ const { GoogleGenerativeAI } = require("@google/generative-ai");
 const axios = require("axios");
 
 /* ---------------- VERIFY ID (OCR) ---------------- */
-router.post("/verify-id", async (req, res) => {
+router.post("/verify-id", verifyToken, async (req, res) => {
     try {
-        const { userId, imageUrl } = req.body;
-        if (!userId || !imageUrl) return res.status(400).json({ error: "Missing data" });
+        const { imageUrl } = req.body;
+        if (!imageUrl) return res.status(400).json({ error: "Missing image URL" });
 
         // 1. Fetch Image
         let imageBuffer;
+        // ... (fetch logic remains same) ...
         if (imageUrl.startsWith("http")) {
             const response = await axios.get(imageUrl, { responseType: "arraybuffer" });
             imageBuffer = Buffer.from(response.data);
         } else {
-            // Local file (fallback)
             const fs = require("fs");
             const path = require("path");
-            try {
-                // Remove leading slash if present for local path join
-                const relativePath = imageUrl.startsWith("/") ? imageUrl.slice(1) : imageUrl;
-                const fullPath = path.join(__dirname, "..", relativePath);
-                imageBuffer = fs.readFileSync(fullPath);
-            } catch (e) {
-                console.error("Local file read error:", e);
-                return res.status(400).json({ error: "Could not read image file" });
-            }
+            const relativePath = imageUrl.startsWith("/") ? imageUrl.slice(1) : imageUrl;
+            const fullPath = path.join(__dirname, "..", relativePath);
+            imageBuffer = fs.readFileSync(fullPath);
         }
 
+        const ocrPrompt = "Verify if this is a valid Bar Council ID. Extract the ID number and return JSON: {valid: boolean, idNumber: string}";
+
         const result = await generateMultimodalWithFallback([
-            prompt,
+            ocrPrompt,
             {
                 inlineData: {
                     data: imageBuffer.toString("base64"),
-                    mimeType: "image/jpeg", // Assuming JPEG/PNG
+                    mimeType: "image/jpeg",
                 },
             },
         ]);
 
         const responseText = await result.response.text();
-        console.log("Raw Gemini OCR Response:", responseText);
-
-        // 3. Parse JSON
         let text = responseText.replace(/```json/g, "").replace(/```/g, "").trim();
         const start = text.indexOf("{");
         const end = text.lastIndexOf("}");
@@ -120,9 +114,9 @@ router.post("/verify-id", async (req, res) => {
 
         const data = JSON.parse(text);
 
-        // 4. Update User
+        // 4. Update ONLY the logged-in user
         if (data.valid) {
-            await User.findByIdAndUpdate(userId, {
+            await User.findByIdAndUpdate(req.userId, {
                 verified: true,
                 barCouncilId: data.idNumber || ""
             });

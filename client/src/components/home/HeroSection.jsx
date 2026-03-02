@@ -57,10 +57,10 @@ export default function HeroSection() {
                         className="max-w-3xl mx-auto space-y-6"
                     >
                         <p className="text-lg md:text-2xl text-slate-400 font-medium leading-relaxed tracking-tight">
-                            NyayNow democratizes justice through <span className="text-white border-b border-blue-500/50">Multi-Dialect AI</span>. Built for citizens searching for clarity and the <span className="text-white">vanguard</span> of modern law.
+                            NyayNow democratizes justice through <span className="text-white border-b border-blue-500/50">Multi-Dialect AI</span>. Built for citizens searching for clarity and the <span className="text-white">modernizer</span> of Indian legal research.
                         </p>
                         <p className="text-blue-400/80 text-xs font-black uppercase tracking-[0.3em] pb-4">
-                            Supercharge Your Practice with Tools Trusted by India's Top Advocates
+                            Automate Your Practice with Research Tools for Modern Advocates
                         </p>
                     </motion.div>
                 </div>
@@ -113,12 +113,12 @@ export default function HeroSection() {
                     <div className="w-1.5 h-1.5 rounded-full bg-slate-800" />
                     <div className="flex items-center gap-2 group cursor-default hover:text-emerald-400 transition-colors">
                         <ShieldCheck size={12} />
-                        <span>BCI Compliant</span>
+                        <span>BCI Guidelines Aware</span>
                     </div>
                     <div className="w-1.5 h-1.5 rounded-full bg-slate-800" />
                     <div className="flex items-center gap-2 group cursor-default hover:text-amber-400 transition-colors">
                         <span className="text-base leading-none italic font-serif">A+</span>
-                        <span>Global Rating</span>
+                        <span>Global System Uptime</span>
                     </div>
                 </motion.div>
             </div>

@@ -22,8 +22,14 @@ const resetAdmin = async () => {
         await mongoose.connect(mongoUri);
         console.log("✅ Connected to MongoDB");
 
-        const email = "admin@nyaynow.com";
-        const password = "admin123";
+        const email = process.env.ADMIN_EMAIL || "admin@nyaynow.com";
+        const password = process.env.ADMIN_PASSWORD;
+
+        if (!password) {
+            console.error("❌ ERROR: ADMIN_PASSWORD environment variable is not set.");
+            process.exit(1);
+        }
+
         const hashedPassword = await bcrypt.hash(password, 10);
 
         let admin = await User.findOne({ email });

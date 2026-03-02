@@ -1,12 +1,10 @@
-const express = require('express');
-const router = express.Router();
-const Event = require('../models/Event');
-
 const Appointment = require('../models/Appointment');
+const verifyToken = require('../middleware/authMiddleware');
 
 // GET EVENTS (Unified: Custom Events + Appointments)
-router.get('/', async (req, res) => {
-    const { userId, type } = req.query;
+router.get('/', verifyToken, async (req, res) => {
+    const userId = req.userId;
+    const { type } = req.query;
     try {
         const query = { $or: [{ lawyer: userId }, { client: userId }] };
         if (type) query.type = type;
@@ -41,10 +39,14 @@ router.get('/', async (req, res) => {
     }
 });
 
-// CREATE EVENT
-router.post('/', async (req, res) => {
+// CREATE EVENT (Secure Ownership)
+router.post('/', verifyToken, async (req, res) => {
     try {
-        const event = new Event(req.body);
+        const eventData = {
+            ...req.body,
+            [req.userRole]: req.userId // Force self as participant
+        };
+        const event = new Event(eventData);
         await event.save();
         res.json(event);
     } catch (err) {
@@ -52,11 +54,20 @@ router.post('/', async (req, res) => {
     }
 });
 
-// UPDATE STATUS (e.g., Complete/Cancel)
-router.patch('/:id/status', async (req, res) => {
+// UPDATE STATUS (Secure Ownership)
+router.patch('/:id/status', verifyToken, async (req, res) => {
     try {
         const { status } = req.body;
-        const event = await Event.findByIdAndUpdate(req.params.id, { status }, { new: true });
+        const event = await Event.findById(req.params.id);
+        if (!event) return res.status(404).json({ error: "Event not found" });
+
+        // Check if user is participant
+        if (event.lawyer?.toString() !== req.userId && event.client?.toString() !== req.userId) {
+            return res.status(403).json({ error: "Unauthorized" });
+        }
+
+        event.status = status;
+        await event.save();
         res.json(event);
     } catch (err) {
         res.status(500).json({ error: "Update failed" });

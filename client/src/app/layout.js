@@ -65,6 +65,7 @@ import AIAssistant from '../components/AIAssistant'
 import Navbar from '../components/Navbar'
 import EliteCursor from '../components/EliteCursor'
 import ScrollProgress from '../components/ScrollProgress'
+import CookieConsent from '../components/CookieConsent'
 
 export default function RootLayout({ children }) {
     return (
@@ -78,6 +79,7 @@ export default function RootLayout({ children }) {
                     {children}
                     <Toaster position="bottom-right" />
                     <AIAssistant />
+                    <CookieConsent />
                 </Providers>
             </body>
         </html>

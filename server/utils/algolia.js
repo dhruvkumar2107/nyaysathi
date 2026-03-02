@@ -35,7 +35,6 @@ const syncLawyer = async (user) => {
         experience: user.experience || 0,
         hourlyRate: user.consultationFee || 0,
         languages: user.languages || [],
-        rating: user.stats?.rating || 0,
         verified: user.verified || false,
         image: user.profileImage || null
     };

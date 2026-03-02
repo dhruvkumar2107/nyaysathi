@@ -5,6 +5,7 @@ import Link from "next/link"
 import { motion, AnimatePresence } from "framer-motion"
 import { Search, MapPin, ShieldCheck, Filter } from "lucide-react"
 import Image from "next/image"
+import VerifiedBadge from "../VerifiedBadge"
 
 export default function MarketplaceClient({ initialLawyers }) {
     const [lawyers] = useState(initialLawyers || [])
@@ -160,11 +161,9 @@ function LawyerCard({ lawyer }) {
                         </div>
                     </div>
                 </Link>
-                {lawyer.verified && (
-                    <div className="bg-emerald-500/10 text-emerald-400 px-2 py-1 rounded-md flex items-center gap-1 text-[10px] font-bold uppercase tracking-wider border border-emerald-500/20">
-                        <ShieldCheck size={12} /> Verified
-                    </div>
-                )}
+                <div className="flex flex-col items-end gap-1">
+                    <VerifiedBadge plan={lawyer.plan} verified={lawyer.verified} verificationStatus={lawyer.verificationStatus} />
+                </div>
             </div>
             <div className="flex items-center gap-6 mb-6 p-4 bg-black/20 rounded-xl border border-white/5 text-xs">
                 <div>
