@@ -57,10 +57,10 @@ export default function HeroSection() {
                         className="max-w-3xl mx-auto space-y-6"
                     >
                         <p className="text-lg md:text-2xl text-slate-400 font-medium leading-relaxed tracking-tight">
-                            NyayNow democratizes justice through <span className="text-white border-b border-blue-500/50">Multi-Dialect AI</span>. Built for citizens searching for clarity and the <span className="text-white">modernizer</span> of Indian legal research.
+                            NyayNow is a centralized legal intelligence engine powered by <span className="text-white border-b border-blue-500/50">Autonomous AI Models</span>. Built for modern enterprises searching for clarity and the <span className="text-white">modernization</span> of Indian legal operations.
                         </p>
                         <p className="text-blue-400/80 text-xs font-black uppercase tracking-[0.3em] pb-4">
-                            Automate Your Practice with Research Tools for Modern Advocates
+                            Automate Your Legal Intelligence With Institutional Grade Engineering
                         </p>
                     </motion.div>
                 </div>
@@ -78,7 +78,7 @@ export default function HeroSection() {
                             className="group relative w-full sm:w-auto px-10 py-5 rounded-2xl bg-white text-[#020617] font-bold text-lg hover:scale-[1.02] active:scale-[0.98] transition-all duration-300 shadow-[0_20px_40px_rgba(255,255,255,0.1)] flex items-center justify-center gap-2 overflow-hidden"
                         >
                             <span className="relative z-10">
-                                {!user ? "Start for Free" : "Command Center"}
+                                {!user ? "Enter System" : "Command Center"}
                             </span>
                             <ChevronRight size={20} className="relative z-10 group-hover:translate-x-1 transition-transform" />
                             <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/40 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000" />

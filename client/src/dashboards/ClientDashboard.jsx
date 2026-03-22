@@ -228,7 +228,8 @@ export default function ClientDashboard() {
           <div className="space-y-1 mt-8">
             <NavItem icon="📊" label="Overview" active={activeTab === 'overview'} onClick={() => setActiveTab('overview')} />
             <NavItem icon="⚖️" label="My Matters" active={activeTab === 'cases'} onClick={() => setActiveTab('cases')} />
-            {/* <NavItem icon="🔍" label="Find Lawyer" to="/marketplace" /> */}
+            <NavItem icon="🤖" label="Judge AI" to="/judge-ai" />
+            <NavItem icon="📝" label="Drafting Lab" to="/drafting" />
             <NavItem icon="📄" label="Quantum Vault" to="/agreements" />
             <NavItem icon="💬" label="Messages" to="/messages" />
             <NavItem icon="💳" label="Smart Escrow" active={activeTab === 'invoices'} onClick={() => setActiveTab('invoices')} />
