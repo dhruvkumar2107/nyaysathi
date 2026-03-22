@@ -10,7 +10,7 @@ export default function HeroSection() {
     const { user } = useAuth()
 
     return (
-        <section className="relative pt-24 pb-16 lg:pt-36 lg:pb-24 overflow-hidden text-center bg-[#020617]">
+        <section className="relative pt-24 pb-16 lg:pt-36 lg:pb-24 overflow-hidden text-center bg-[#000000]">
             {/* ULTRA-PREMIUM MESH GRADIENT */}
             <div className="absolute inset-0 pointer-events-none overflow-hidden">
                 <div className="absolute top-[-10%] left-[-10%] w-[60%] h-[60%] bg-blue-600/10 rounded-full blur-[120px] animate-pulse transition-all duration-[10s]" />
@@ -28,12 +28,12 @@ export default function HeroSection() {
                     initial={{ opacity: 0, scale: 0.95 }}
                     animate={{ opacity: 1, scale: 1 }}
                     transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
-                    className="inline-flex items-center gap-2.5 px-4 py-1.5 rounded-full bg-white/5 border border-white/10 text-blue-400 text-[11px] font-bold uppercase tracking-[0.2em] mb-12 backdrop-blur-3xl shadow-2xl"
+                    className="inline-flex items-center gap-2.5 px-4 py-1.5 rounded-full bg-white/5 border border-white/10 text-white/50 text-[10px] font-black uppercase tracking-[0.4em] mb-12 backdrop-blur-3xl shadow-2xl hover:border-blue-500/30 transition-colors"
                 >
-                    <ShieldCheck size={14} className="text-blue-500" />
+                    <div className="w-1.5 h-1.5 rounded-full bg-blue-500 animate-pulse" />
                     <span>Institutional Grade Legal AI</span>
                     <span className="w-1 h-1 rounded-full bg-white/20 mx-1" />
-                    <span className="text-slate-500">v2.0 Beta</span>
+                    <span className="text-white/20">v2.0 Beta</span>
                 </motion.div>
 
                 {/* MASSIVE TITLES */}
@@ -47,7 +47,7 @@ export default function HeroSection() {
                         <span className="text-transparent bg-clip-text bg-gradient-to-b from-white via-white to-white/40">
                             Get Clear, Instant Legal Help <br />
                         </span>
-                        <span className="text-blue-500 italic">In Your Language.</span>
+                        <span className="text-shimmer italic inline-block mt-4">In Your Language.</span>
                     </motion.h1>
 
                     <motion.div
@@ -74,7 +74,7 @@ export default function HeroSection() {
                 >
                     <MagneticButton>
                         <Link
-                            href={!user ? "/register" : (user.role === "lawyer" ? "/lawyer/dashboard" : "/client/dashboard")}
+                            href={!user ? "/register" : "/client/dashboard"}
                             className="group relative w-full sm:w-auto px-10 py-5 rounded-2xl bg-white text-[#020617] font-bold text-lg hover:scale-[1.02] active:scale-[0.98] transition-all duration-300 shadow-[0_20px_40px_rgba(255,255,255,0.1)] flex items-center justify-center gap-2 overflow-hidden"
                         >
                             <span className="relative z-10">

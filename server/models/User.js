@@ -38,6 +38,7 @@ const userSchema = new mongoose.Schema(
 
     password: {
       type: String,
+      select: false,
       // required: true, (Removed for Social Login support)
     },
 

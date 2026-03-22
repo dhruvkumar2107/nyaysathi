@@ -9,6 +9,10 @@ coverage
 # Production
 dist
 build
+.next
+client/.next
+out
+.turbo
 
 # Misc
 .DS_Store

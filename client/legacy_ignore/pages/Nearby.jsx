@@ -325,12 +325,10 @@ const Card = ({ data, type }) => (
 
 const LawyerCard = ({ data }) => (
   <div className="bg-white/5 hover:bg-white/10 p-4 rounded-2xl border border-white/5 transition flex gap-4 cursor-pointer group relative overflow-hidden">
-    {data.plan === 'diamond' && <div className="absolute top-0 right-0 w-16 h-16 bg-gradient-to-bl from-amber-500/20 to-transparent pointer-events-none"></div>}
     <img src={data.image} className="w-10 h-10 rounded-full border border-white/10" />
     <div className="flex-1 min-w-0">
       <h4 className="font-bold text-slate-200 text-sm truncate group-hover:text-white transition flex items-center gap-2">
         {data.name}
-        {data.plan === 'diamond' && <span className="text-[10px] bg-amber-500/20 text-amber-400 px-1.5 py-0.5 rounded border border-amber-500/30">PRO</span>}
       </h4>
       <p className="text-xs text-indigo-400 font-bold">{data.specialization}</p>
       <Link href={`/lawyer/${data.id}`} className="block mt-2 text-[10px] font-bold text-slate-500 hover:text-white uppercase tracking-wider transition">View Dossier →</Link>

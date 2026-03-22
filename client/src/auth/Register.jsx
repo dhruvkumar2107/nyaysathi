@@ -173,7 +173,7 @@ export default function Register() {
           <div className="flex gap-4 p-1 bg-midnight-950/50 rounded-2xl border border-white/5 backdrop-blur-sm">
             {[
               { id: 'client', label: 'Client', icon: '👤' },
-              { id: 'lawyer', label: 'Lawyer / Student', icon: '⚖️' }
+              // { id: 'lawyer', label: 'Lawyer / Student', icon: '⚖️' }
             ].map((r) => (
               <button
                 key={r.id}

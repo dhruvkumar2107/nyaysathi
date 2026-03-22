@@ -7,7 +7,7 @@ import { Scale, Mic, Users, FileText, Search, Briefcase, ChevronRight, Globe, Za
 
 export function BentoGrid() {
     return (
-        <section className="py-32 relative overflow-hidden bg-[#020617] border-y border-white/5">
+        <section className="py-32 relative overflow-hidden bg-[#000000] border-y border-white/5">
             <div className="max-w-[1400px] mx-auto px-6 relative z-10">
                 <div className="text-center mb-24">
                     <motion.div
@@ -40,7 +40,7 @@ export function BentoGrid() {
                         badge="Every Language"
                         className="md:col-span-4 md:row-span-1"
                     />
-                    <BentoCard
+                    {/* <BentoCard
                         title="Elite Network"
                         desc="Direct access to the top 1% of India's verified legal minds."
                         icon={<Users className="text-white" size={20} />}
@@ -48,7 +48,7 @@ export function BentoGrid() {
                         href="/marketplace"
                         badge="Verified"
                         className="md:col-span-4 md:row-span-2"
-                    />
+                    /> */}
                     <BentoCard
                         title="Drafting Lab"
                         desc="Generate contracts in seconds using BCI-standard templates."
@@ -63,16 +63,16 @@ export function BentoGrid() {
                         icon={<Search className="text-white" size={20} />}
                         color="from-indigo-500 via-violet-500 to-purple-500"
                         href="/research"
-                        className="md:col-span-4 md:row-span-1"
+                        className="md:col-span-12 md:row-span-1"
                     />
-                    <BentoCard
+                    {/* <BentoCard
                         title="Career Hub"
                         desc="Exclusive internships and mentorship programs for advocates."
                         icon={<Briefcase className="text-white" size={20} />}
                         color="from-blue-600 via-indigo-700 to-indigo-800"
                         href="/career"
                         className="md:col-span-4 md:row-span-1"
-                    />
+                    /> */}
                 </div>
             </div>
         </section>
@@ -123,7 +123,7 @@ function BentoCard({ title, desc, icon, color, href, badge, className, isLarge }
                     rotateY: rotate.y
                 }}
                 transition={{ type: "spring", stiffness: 300, damping: 30 }}
-                className={`relative group bg-[#030712] border border-white/5 rounded-[32px] ${isLarge ? 'p-12 md:p-16' : 'p-8'} overflow-hidden hover:border-blue-500/20 transition-all duration-700 flex flex-col h-full focus:outline-none focus:ring-2 focus:ring-blue-500/50`}
+                className={`relative group bg-[#020617]/50 border border-white/5 rounded-[32px] ${isLarge ? 'p-12 md:p-16' : 'p-8'} overflow-hidden hover:border-blue-500/20 transition-all duration-700 flex flex-col h-full focus:outline-none focus:ring-2 focus:ring-blue-500/50 hover-perspective`}
             >
                 {/* SPOTLIGHT */}
                 <div

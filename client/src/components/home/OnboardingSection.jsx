@@ -109,7 +109,7 @@ export default function OnboardingSection() {
                     <FeatureCard
                         icon={Search}
                         title="Discovery Engine"
-                        description="Access the top 1% of legal professionals through our proprietary matching algorithm and verified success metrics."
+                        description="Access verified Indian legal professionals through our proprietary matching system and verified credentials."
                         forWho="For Clients"
                         delay={0.1}
                     />

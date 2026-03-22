@@ -25,7 +25,7 @@ export default function Home() {
                 <div className="flex overflow-hidden group select-none">
                     <div className="flex animate-marquee whitespace-nowrap gap-16 items-center px-8">
                         {[
-                            "JUDICIAL INTELLIGENCE", "LEGAL RESEARCH NETWORK", "VERIFIED COUNSEL", "STATUTORY COMPLIANCE", "NATIVE DIALECT AI", "LEGAL ACCESSIBILITY", "INDIAN CONSTITUTIONAL LAW"
+                            "JUDICIAL INTELLIGENCE", "LEGAL RESEARCH NETWORK", "STATUTORY COMPLIANCE", "NATIVE DIALECT AI", "LEGAL ACCESSIBILITY", "INDIAN CONSTITUTIONAL LAW"
                         ].map((name) => (
                             <span key={name} className="text-2xl md:text-3xl font-serif font-black text-white/20 hover:text-blue-400/50 transition-colors duration-500 tracking-[0.15em] cursor-default">{name}</span>
                         ))}
@@ -33,7 +33,7 @@ export default function Home() {
                     {/* Duplicate for seamless loop */}
                     <div className="flex animate-marquee whitespace-nowrap gap-16 items-center px-8" aria-hidden="true">
                         {[
-                            "JUDICIAL INTELLIGENCE", "LEGAL RESEARCH NETWORK", "VERIFIED COUNSEL", "STATUTORY COMPLIANCE", "NATIVE DIALECT AI", "LEGAL ACCESSIBILITY", "INDIAN CONSTITUTIONAL LAW"
+                            "JUDICIAL INTELLIGENCE", "LEGAL RESEARCH NETWORK", "STATUTORY COMPLIANCE", "NATIVE DIALECT AI", "LEGAL ACCESSIBILITY", "INDIAN CONSTITUTIONAL LAW"
                         ].map((name) => (
                             <span key={name} className="text-2xl md:text-3xl font-serif font-black text-white/20 hover:text-blue-400/50 transition-colors duration-500 tracking-[0.15em] cursor-default">{name}</span>
                         ))}
@@ -48,7 +48,7 @@ export default function Home() {
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-12 lg:gap-24">
                         {[
                             { val: 100, suffix: "K+", label: "Legal Queries", color: "from-blue-400 to-indigo-500" },
-                            { val: 50, suffix: "K+", label: "Verified Lawyers", color: "from-blue-500 to-cyan-500" },
+                            // { val: 50, suffix: "K+", label: "Verified Lawyers", color: "from-blue-500 to-cyan-500" },
                             { val: 0, suffix: "", label: "Entry Fees", color: "from-emerald-400 to-teal-500" },
                             { val: 14, suffix: "", label: "Regional Dialects", color: "from-amber-400 to-orange-500" }
                         ].map((stat, i) => (

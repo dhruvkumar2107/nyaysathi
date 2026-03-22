@@ -266,7 +266,7 @@ const Pricing = () => {
             className="flex justify-center mb-6"
           >
             <div className="relative inline-flex bg-[#0f172a] border border-white/10 p-1.5 rounded-2xl shadow-inner gap-1">
-              {['client', 'lawyer'].map((type) => (
+              {['client'/*, 'lawyer'*/].map((type) => (
                 <button
                   key={type}
                   onClick={() => setUserType(type)}

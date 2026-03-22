@@ -42,7 +42,9 @@ if (process.env.CLOUDINARY_CLOUD_NAME) {
   console.log("📂 Using Local Disk for uploads (Warning: Ephemeral on Serverless)");
 }
 
-router.post("/", upload.single("file"), (req, res) => {
+const verifyToken = require("../middleware/authMiddleware");
+
+router.post("/", verifyToken, upload.single("file"), (req, res) => {
   if (!req.file)
     return res.status(400).json({ error: "File missing" });
 

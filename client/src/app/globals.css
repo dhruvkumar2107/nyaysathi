@@ -36,10 +36,13 @@ html {
 html,
 body,
 #root {
-  background-color: #020617;
+  background-color: #000000;
+  /* Pure OLED Black */
   color: #94a3b8;
   font-family: var(--font-sans);
   overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 h1,
@@ -49,8 +52,10 @@ h4,
 h5,
 h6 {
   font-family: var(--font-display);
-  letter-spacing: -0.02em;
+  letter-spacing: -0.05em;
+  /* Apple-Pro Tight Tracking */
   color: #f8fafc;
+  line-height: 0.95;
 }
 
 /* Premium Utilities */
@@ -92,6 +97,37 @@ h6 {
 
 .animate-marquee:hover {
   animation-play-state: paused;
+}
+
+/* Apple-Grade Text Shimmer */
+.text-shimmer {
+  background: linear-gradient(to right,
+      #ffffff 20%,
+      #3b82f6 40%,
+      #3b82f6 60%,
+      #ffffff 80%);
+  background-size: 200% auto;
+  color: #000;
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: shimmer 5s linear infinite;
+}
+
+@keyframes shimmer {
+  to {
+    background-position: 200% center;
+  }
+}
+
+/* Premium Card Hover Physics */
+.hover-perspective {
+  transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.5s ease;
+}
+
+.hover-perspective:hover {
+  transform: translateY(-8px) scale(1.02);
+  box-shadow: 0 40px 80px -15px rgba(0, 0, 0, 0.8);
 }
 
 /* Selection Theme */

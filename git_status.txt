@@ -1,0 +1,51 @@
+On branch main
+Your branch is ahead of 'origin/main' by 1 commit.
+  (use "git push" to publish your local commits)
+
+Changes not staged for commit:
+  (use "git add <file>..." to update what will be committed)
+  (use "git restore <file>..." to discard changes in working directory)
+	modified:   client/.next/cache/webpack/server-production/0.pack
+	modified:   client/.next/cache/webpack/server-production/index.pack
+	modified:   client/.next/prerender-manifest.js
+	modified:   client/.next/routes-manifest.json
+	modified:   client/legacy_ignore/pages/Nearby.jsx
+	modified:   client/legacy_ignore/pages/Pricing.jsx
+	modified:   client/src/app/globals.css
+	modified:   client/src/app/page.js
+	modified:   client/src/auth/Register.jsx
+	modified:   client/src/components/Footer.jsx
+	modified:   client/src/components/Navbar.jsx
+	modified:   client/src/components/home/BentoGrid.jsx
+	modified:   client/src/components/home/ComparisonSection.jsx
+	modified:   client/src/components/home/HeroSection.jsx
+	modified:   client/src/components/home/OnboardingSection.jsx
+	modified:   client/src/dashboards/ClientDashboard.jsx
+	modified:   server/index.js
+	modified:   server/models/User.js
+	modified:   server/routes/uploads.js
+
+Untracked files:
+  (use "git add <file>..." to include in what will be committed)
+	client/.next/BUILD_ID
+	client/.next/app-build-manifest.json
+	client/.next/app-path-routes-manifest.json
+	client/.next/build-manifest.json
+	client/.next/cache/webpack/client-production/
+	client/.next/cache/webpack/server-production/index.pack.old
+	client/.next/export-marker.json
+	client/.next/images-manifest.json
+	client/.next/next-minimal-server.js.nft.json
+	client/.next/next-server.js.nft.json
+	client/.next/prerender-manifest.json
+	client/.next/react-loadable-manifest.json
+	client/.next/required-server-files.json
+	client/.next/server/
+	client/.next/static/
+	client/.next/trace
+	client/.next/types/
+	git_log_debug.txt
+	git_status.txt
+	git_status_debug.txt
+
+no changes added to commit (use "git add" and/or "git commit -a")

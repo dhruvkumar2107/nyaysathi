@@ -228,7 +228,7 @@ export default function ClientDashboard() {
           <div className="space-y-1 mt-8">
             <NavItem icon="📊" label="Overview" active={activeTab === 'overview'} onClick={() => setActiveTab('overview')} />
             <NavItem icon="⚖️" label="My Matters" active={activeTab === 'cases'} onClick={() => setActiveTab('cases')} />
-            <NavItem icon="🔍" label="Find Lawyer" to="/marketplace" />
+            {/* <NavItem icon="🔍" label="Find Lawyer" to="/marketplace" /> */}
             <NavItem icon="📄" label="Documents" to="/agreements" />
             <NavItem icon="💬" label="Messages" to="/messages" />
             <NavItem icon="💳" label="Payments" active={activeTab === 'invoices'} onClick={() => setActiveTab('invoices')} />
@@ -379,7 +379,7 @@ export default function ClientDashboard() {
                       {activeCase ? activeCase.title : "No Active Legal Matters"}
                     </h2>
                     <p className="text-slate-400 max-w-lg leading-relaxed">
-                      {activeCase ? activeCase.desc : "Post a new case to get started with our AI legal assistance and connect with top lawyers."}
+                      {activeCase ? activeCase.desc : "Post a new case to get started with our AI legal assistance."}
                     </p>
                   </div>
                   {activeCase && <div className="text-right">
@@ -408,10 +408,10 @@ export default function ClientDashboard() {
                           <div className="text-[10px] text-indigo-300 mt-1">Check Win Probability</div>
                         </div>
                       </div>
-                      <div className="p-4 bg-white/5 rounded-2xl border border-white/10 text-center hover:bg-white/10 hover:border-indigo-500/30 transition cursor-pointer group" onClick={() => router.push('/marketplace')}>
+                      {/* <div className="p-4 bg-white/5 rounded-2xl border border-white/10 text-center hover:bg-white/10 hover:border-indigo-500/30 transition cursor-pointer group" onClick={() => router.push('/marketplace')}>
                         <div className="text-2xl mb-2 group-hover:scale-110 transition">🔍</div>
                         <div className="font-bold text-sm text-white">Find Lawyer</div>
-                      </div>
+                      </div> */}
                     </div>
                   )
                 }

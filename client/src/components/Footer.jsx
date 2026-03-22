@@ -87,7 +87,7 @@ const Footer = () => {
                 <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-12 border-t border-white/5 pt-24 mb-24">
                     <FooterColumn title="Intelligence">
                         <FooterLink href="/assistant">Legal Assistant</FooterLink>
-                        <FooterLink href="/judge-ai">Judge AI <Badge color="bg-blue-500/20 text-blue-400">Pro</Badge></FooterLink>
+                        <FooterLink href="/judge-ai">Judge AI</FooterLink>
                         <FooterLink href="/voice-assistant">NyayVoice</FooterLink>
                         <FooterLink href="/moot-court">Simulation VR</FooterLink>
                         <FooterLink href="/research">Precedent Engine</FooterLink>
@@ -102,8 +102,8 @@ const Footer = () => {
                     </FooterColumn>
 
                     <FooterColumn title="Network">
-                        <FooterLink href="/marketplace">Elite Directory</FooterLink>
-                        <FooterLink href="/lawyer/dashboard">For Advocates</FooterLink>
+                        {/* <FooterLink href="/marketplace">Elite Directory</FooterLink> */}
+                        {/* <FooterLink href="/lawyer/dashboard">For Advocates</FooterLink> */}
                         <FooterLink href="/client/dashboard">For Citizens</FooterLink>
                         <FooterLink href="/career">For Students</FooterLink>
                         <FooterLink href="/judiciary">For Judiciary</FooterLink>

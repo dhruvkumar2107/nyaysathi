@@ -143,20 +143,43 @@ async function connectDB() {
 }
 
 /* ================= SOCKET.IO ================= */
-io.on("connection", (socket) => {
-  console.log(`⚡ Client connected: ${socket.id}`);
+const jwt = require("jsonwebtoken");
 
-  // Join a personal room based on User ID/Email (sent from client)
+// JWT Handshake Middleware for Socket.io
+io.use((socket, next) => {
+  const token = socket.handshake.auth.token || socket.handshake.query.token;
+  if (!token) {
+    return next(new Error("Authentication error: No token provided"));
+  }
+
+  jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
+    if (err) return next(new Error("Authentication error: Invalid token"));
+    socket.user = decoded; // { id, role, email }
+    next();
+  });
+});
+
+io.on("connection", (socket) => {
+  const userId = socket.user.id;
+  console.log(`⚡ Secure Client connected: ${socket.id} (User: ${userId})`);
+
+  // Join a personal room based on User ID
   socket.on("join_room", (room) => {
+    // SECURITY: Users can only join their own room or a pool they have access to
+    if (room !== userId && room !== "lawyer_pool") {
+      console.warn(`⚠️ User ${userId} attempted to join unauthorized room: ${room}`);
+      return;
+    }
     socket.join(room);
-    // console.log(`User joined room: ${room}`);
   });
 
   // ---------------- LEGAL UBER (INSTANT CONSULT) ----------------
   // Lawyers join this pool to receive instant calls
   socket.on("join_lawyer_pool", () => {
+    if (socket.user.role !== "lawyer") {
+      return console.warn(`⚠️ Non-lawyer ${userId} tried to join lawyer pool`);
+    }
     socket.join("lawyer_pool");
-    // console.log(`Lawyer ${socket.id} joined instant pool`);
   });
 
   // Client requests a lawyer
