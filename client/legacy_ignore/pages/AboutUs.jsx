@@ -6,9 +6,8 @@ import Navbar from "../../src/components/Navbar";
 import Footer from "../../src/components/Footer";
 
 const STATS = [
-    { number: "1M+", label: "Case Laws Indexed", icon: <Scale size={20} />, color: 'text-indigo-400' },
-    { number: "50k+", label: "Documents Drafted", icon: <Zap size={20} />, color: 'text-amber-400' },
-    { number: "98%", label: "Accuracy Rate", icon: <Award size={20} />, color: 'text-emerald-400' },
+    { number: "BNS/BNSS", label: "Statutory Accuracy", icon: <Scale size={20} />, color: 'text-indigo-400' },
+    { number: "256-Bit", label: "End-to-End Encryption", icon: <Shield size={20} />, color: 'text-emerald-400' },
     { number: "24/7", label: "AI Availability", icon: <Globe size={20} />, color: 'text-purple-400' },
 ];
 
@@ -40,11 +39,8 @@ const VALUES = [
 ];
 
 const TIMELINE = [
-    { year: "2024", label: "Founded", desc: "NyayNow incorporated. Core legal reasoning engine development begins." },
-    { year: "Q1 2025", label: "Beta Launch", desc: "First 500 beta users. AI Legal Assistant and Drafting Lab released." },
-    { year: "Q3 2025", label: "Judge AI", desc: "Win Probability Predictor launched. 94% historical accuracy validated." },
-    { year: "Q4 2025", label: "Marketplace", desc: "Verified Lawyer Marketplace with 200+ verified advocates goes live." },
-    { year: "2026", label: "NyayVoice + NyayCourt", desc: "Multilingual voice AI and AI Courtroom Battle Simulator released." },
+    { year: "November 2025", label: "NyayNow Founded", desc: "Official launch of India's premier AI legal intelligence platform." },
+    { year: "Active", label: "NyayVoice + NyayCourt", desc: "Multilingual voice AI and AI Courtroom Battle Simulator released." },
 ];
 
 const fadeUp = { initial: { opacity: 0, y: 30 }, whileInView: { opacity: 1, y: 0 }, viewport: { once: true } };
@@ -92,9 +88,6 @@ export default function AboutUs() {
                         <a href="/assistant" className="px-8 py-4 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-xl shadow-lg shadow-indigo-600/20 transition inline-flex items-center gap-2">
                             Try Our AI <ArrowRight size={18} />
                         </a>
-                        <a href="/careers" className="px-8 py-4 bg-white/5 border border-white/10 hover:bg-white/10 text-white font-bold rounded-xl transition inline-flex items-center gap-2">
-                            Join Our Team <span className="text-emerald-400 text-xs font-bold bg-emerald-500/10 px-2 py-0.5 rounded-full border border-emerald-500/20">Hiring</span>
-                        </a>
                     </motion.div>
                 </div>
             </section>
@@ -126,7 +119,7 @@ export default function AboutUs() {
                             Legal services have historically been opaque, expensive, and inaccessible. For the average citizen, navigating the court system is daunting. For lawyers, hours are wasted on repetitive research that AI can do in seconds.
                         </p>
                         <div className="mt-6 space-y-2">
-                            {["2.5M+ pending cases in Indian courts", "Only 1 lawyer per 1,200 citizens", "Average legal fee: ₹5,000+ per consultation"].map((p, i) => (
+                            {["Transparency in Legal Proceedings", "Accessibility for Every Citizen", "Empowering Judicial Efficiency"].map((p, i) => (
                                 <div key={i} className="flex items-center gap-3 text-sm text-slate-500">
                                     <div className="w-1.5 h-1.5 rounded-full bg-red-500/60 flex-shrink-0" />
                                     {p}
@@ -143,7 +136,7 @@ export default function AboutUs() {
                             We deploy Large Legal Models trained on 50 years of Indian case law. Our AI doesn't just retrieve information; it reasons, drafts, and predicts outcomes with unprecedented precision — in English, Hindi, and regional languages.
                         </p>
                         <div className="mt-6 space-y-2">
-                            {["Legal Q&A in 10+ Indian languages", "Document drafting in under 60 seconds", "94% win-probability prediction accuracy"].map((p, i) => (
+                            {["Legal Q&A in Regional Languages", "Neural Precedent Matching", "Autonomous Document Synthesis"].map((p, i) => (
                                 <div key={i} className="flex items-center gap-3 text-sm text-slate-500">
                                     <div className="w-1.5 h-1.5 rounded-full bg-emerald-500/60 flex-shrink-0" />
                                     {p}
@@ -208,19 +201,15 @@ export default function AboutUs() {
                 </div>
             </section>
 
-            {/* CTA */}
             <section className="py-24 border-t border-white/5">
                 <motion.div {...fadeUp} className="max-w-3xl mx-auto px-6 text-center">
                     <h2 className="text-3xl md:text-4xl font-bold text-white font-serif mb-6">Be part of the Legal Revolution</h2>
                     <p className="text-slate-400 mb-10 text-lg leading-relaxed">
-                        We're a small team solving a massive problem. If democratizing justice with AI excites you, we want to talk.
+                        NyayNow is democratizing justice with AI. Join us in our mission to build the world's most advanced legal operating system for India.
                     </p>
                     <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                        <a href="/careers" className="px-8 py-4 bg-white text-black font-bold rounded-xl hover:bg-slate-200 inline-flex items-center justify-center gap-2 transition shadow-xl">
-                            Explore Careers <ArrowRight size={18} />
-                        </a>
-                        <a href="/contact" className="px-8 py-4 bg-white/5 border border-white/10 hover:bg-white/10 text-white font-bold rounded-xl inline-flex items-center justify-center gap-2 transition">
-                            Get in Touch
+                        <a href="/contact" className="px-8 py-4 bg-white text-black font-bold rounded-xl hover:bg-slate-200 inline-flex items-center justify-center gap-2 transition shadow-xl">
+                            Get in Touch <ArrowRight size={18} />
                         </a>
                     </div>
                 </motion.div>

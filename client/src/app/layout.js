@@ -7,7 +7,7 @@ const inter = Inter({ subsets: ['latin'], variable: '--font-inter' })
 const jakarta = Plus_Jakarta_Sans({ subsets: ['latin'], variable: '--font-jakarta' })
 
 export const metadata = {
-    metadataBase: new URL('https://nyaynow.com'),
+    metadataBase: new URL('https://nyaynow.in'),
     title: {
         default: 'NyayNow | AI Legal Intelligence & Lawyer Marketplace',
         template: '%s | NyayNow'
@@ -25,7 +25,7 @@ export const metadata = {
     openGraph: {
         title: 'NyayNow | AI Legal Intelligence & Lawyer Marketplace',
         description: 'NyayNow: AI-Powered Legal Assistant & Lawyer Marketplace for India. Get instant legal advice and connect with expert lawyers.',
-        url: 'https://nyaynow.com',
+        url: 'https://nyaynow.in',
         siteName: 'NyayNow',
         images: [
             {

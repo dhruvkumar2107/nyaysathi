@@ -182,7 +182,7 @@ export default function Contact() {
                                 </div>
                                 <div className="text-right">
                                     <p className="text-slate-600 text-[8px] uppercase font-black mb-0.5">Email</p>
-                                    <p className="text-rose-400 font-bold text-xs tracking-widest">grievance@nyaynow.in</p>
+                                    <p className="text-rose-400 font-bold text-xs tracking-widest">nyaynow.in@gmail.com</p>
                                 </div>
                             </div>
                         </div>

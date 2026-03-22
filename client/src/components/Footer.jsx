@@ -70,7 +70,7 @@ const Footer = () => {
                                     <form className="w-full md:w-auto flex flex-col sm:flex-row gap-3">
                                         <input
                                             type="email"
-                                            placeholder="admiralty@nyaynow.in"
+                                            placeholder="nyaynow.in@gmail.com"
                                             className="bg-white/5 border border-white/10 rounded-2xl px-6 py-4 text-white placeholder:text-slate-600 text-sm focus:outline-none focus:border-blue-500/50 transition-all w-full md:w-64"
                                         />
                                         <button className="bg-white text-[#020617] font-black px-8 py-4 rounded-2xl text-xs uppercase tracking-[0.2em] hover:bg-blue-500 hover:text-white transition-all duration-500 shadow-xl active:scale-95">
@@ -100,10 +100,10 @@ const Footer = () => {
                         <FooterLink href="/analytics">Court Analytics</FooterLink>
                     </FooterColumn>
 
-                    <FooterColumn title="Network">
-                        <FooterLink href="/client/dashboard">For Citizens</FooterLink>
+                    <FooterColumn title="Access">
+                        <FooterLink href="/login">Portal Login</FooterLink>
                         <FooterLink href="/register">Institutional Access</FooterLink>
-                        <FooterLink href="/about">For Judiciary</FooterLink>
+                        <FooterLink href="/assistant">Legal Intelligence</FooterLink>
                     </FooterColumn>
 
                     <FooterColumn title="Foundation">
@@ -114,15 +114,13 @@ const Footer = () => {
 
                     <FooterColumn title="Compliance">
                         <FooterLink href="/privacy">Privacy Policy</FooterLink>
-                        <FooterLink href="/contact">Grievance Redressal</FooterLink>
-                        <FooterLink href="/security">Security Shell</FooterLink>
                     </FooterColumn>
                 </div>
 
                 {/* BOTTOM BAR */}
                 <div className="pt-12 border-t border-white/5 flex flex-col lg:flex-row justify-between items-center gap-8">
                     <div className="flex flex-col md:flex-row items-center gap-6 text-slate-500 text-xs font-bold uppercase tracking-[0.2em]">
-                        <p>© {currentYear} NyayNow Legal Tech Pvt Ltd.</p>
+                        <p>© {currentYear} NyayNow Legal Tech. Est. Nov 2025.</p>
                         <div className="hidden md:block w-1 h-1 rounded-full bg-slate-800" />
                         <p>Made with Precision in India</p>
                     </div>
@@ -132,9 +130,8 @@ const Footer = () => {
                             <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_10px_rgba(16,185,129,0.5)]" />
                             <span className="group-hover:text-emerald-500 transition-colors">Systems Secure</span>
                         </div>
-                        <Link href="/status" className="hover:text-white transition-colors">Infrastructure</Link>
-                        <Link href="/security" className="hover:text-white transition-colors">Architecture</Link>
-                        <Link href="/roadmap" className="hover:text-white transition-colors">Deployment</Link>
+                        <span className="text-slate-700">|</span>
+                        <p className="text-slate-500">256-Bit SSL Intelligence Network</p>
                     </div>
                 </div>
 

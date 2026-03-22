@@ -174,7 +174,7 @@ export default function PrecedentEnginePage() {
                     <div className="flex items-center gap-3">
                          <Shield size={14} /> 256-Bit TLS Research Channel
                     </div>
-                    <p>© 2026 NyayNow Institutional Research</p>
+                    <p>© 2025 NyayNow Institutional Research</p>
                 </div>
             </footer>
         </div>

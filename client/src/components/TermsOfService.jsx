@@ -109,7 +109,7 @@ const TermsOfService = () => {
                     </section>
 
                     <section className="p-6 rounded-2xl bg-white/5 border border-white/10 italic text-sm">
-                        By using NyayNow, you agree to these terms. Last updated: March 2026.
+                        By using NyayNow, you agree to these terms. Last updated: November 2025.
                     </section>
                 </div>
             </motion.div>

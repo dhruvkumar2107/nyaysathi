@@ -61,7 +61,7 @@ const PrivacyPolicy = () => {
                             </div>
                             <div>
                                 <p className="text-[10px] text-slate-500 font-black uppercase tracking-tighter mb-0.5">Primary Email</p>
-                                <p className="text-purple-400 font-bold text-xs tracking-widest">dpo@nyaynow.in</p>
+                                <p className="text-purple-400 font-bold text-xs tracking-widest">nyaynow.in@gmail.com</p>
                             </div>
                         </div>
                     </section>
@@ -83,7 +83,7 @@ const PrivacyPolicy = () => {
                     </section>
 
                     <section className="p-6 rounded-2xl bg-white/5 border border-white/10 italic text-sm">
-                        Your privacy is our priority. Last updated: March 2026.
+                        Your privacy is our priority. Last updated: November 2025.
                     </section>
                 </div>
             </motion.div>

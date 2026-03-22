@@ -145,7 +145,7 @@ const Pricing = () => {
       features: [
         'Unlimited Connection Requests',
         'AI Paralegal Assistant',
-        'Moot Court VR Access',
+        'Enterprise Intelligence Suite',
         'Dedicated Account Manager',
         'White-label Client Portal',
         'Analytics Dashboard',
